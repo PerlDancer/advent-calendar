@@ -10,7 +10,7 @@ Suggestions for articles
 
 5. Common practiced with Dancer apps (move to template_toolkit or your favorite template system, etc.)
 
-6. ReST webservices (with Dancer::Plugin::REST and Serializers). API
+6. ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for Dancer::Plugin::REST)
 
 7. load_app
 
@@ -40,4 +40,4 @@ Suggestions for articles
 
 20. Writing Dancer specific tests.
 
-21. Dancer::Plugin::DBIC
+21. Dancer::Plugin::DBIC (dams)
