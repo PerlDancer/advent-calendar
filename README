@@ -6,17 +6,23 @@ Suggestions for articles
 
 3. Dancer::Plugin::Authorize
 
-4. How to work with sessions in cookies (Dancer::Session::Cookie, kappa@{github,cpan})
+4. How to work with sessions in cookies (Dancer::Session::Cookie,
+kappa@{github,cpan})
 
-5. Common practiced with Dancer apps (move to template_toolkit or your favorite template system, etc.)
+5. Common practiced with Dancer apps (move to template_toolkit or your favorite
+template system, etc.)
 
-6. ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for Dancer::Plugin::REST)
+6. ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+Dancer::Plugin::REST)
 
 7. load_app
 
 8. using dancer with middlewares
 
-9. Writing a Dancer plugin (need to think of one) (what about a Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone and sets some templates variables, or change the base url to m.domain...)
+9. Writing a Dancer plugin (need to think of one) (what about a
+Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
+and sets some templates variables, or change the base url to m.domain...)
+[ sukria ]
 
 10. How to contribute to Dancer core (covered in Franck's lastest blog post)
 
