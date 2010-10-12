@@ -1,0 +1,21 @@
+=head1 Writing ReST webservices with Dancer
+
+It's easy to write ReST webservices with Dancer ....
+
+=head1 The Basics
+
+What defines a ReST application
+
+=head2 Serializations
+
+Using Dancer's serializers
+
+=head1 Dancer::Plugin::Rest
+
+Using Dancer::Plugin::REST
+
+=head1 SEE ALSO
+
+=head1 AUTHOR
+
+franck: franck cuny <franck@lumberjaph.net>
