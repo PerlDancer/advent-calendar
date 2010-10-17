@@ -4,12 +4,53 @@ It's easy to write ReST webservices with Dancer ....
 
 =head1 The Basics
 
-What defines a ReST application
+What defines a ReST application 
 
 =head2 Serializations
 
-Using Dancer's serializers
+Dancer came with some serializers functions. Theses functions will help you to transform an arrayref or an hashref to a valid JSON or XML document. The core provides serializers for:
 
+=over 4
+
+=item B<JSON>
+
+with B<to_json> and B<from_json>.
+
+=item B<XML>
+
+with B<to_xml> and B<from_xml>. This serializer can be customized with ...
+
+=item B<YAML>
+
+with B<to_yaml> and B<from_yaml>.
+
+=back
+
+With this serializers, you can write similar code:
+
+    get '/user/:id' => sub {
+        my $id = params->{id};
+        my $user = $schema->resultset('Users')->find($id);
+        content_type 'application/json';
+        to_json({id => $id, name => $user->name});
+    };
+
+=head2 Let Dancer handle the serialization
+
+Now that we've saw how Dancer do the serialization, we will let Dancer make the work for us. In the configuration of your application, you can set a default serializer:
+
+    setting serializer => 'JSON';
+
+Now, when you write your route, you can write:
+
+     get '/user/:id' => sub {
+         my $id = params->{id};
+         my $user = $schema->resultset('Users')->find($id);
+         {id => $id, name => $user->name};
+     };
+
+As you can see, we don't use anymore the B<content_type> and B<to_json> function. When you set a default serializer, if your route return an arrayref or an hashref, Dancer will look if you have a default serializer defined, and if it's the case, will transform your response to the appropriate format, and set the correct content_type for your response.
+     
 =head1 Dancer::Plugin::Rest
 
 Using Dancer::Plugin::REST
