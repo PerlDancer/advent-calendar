@@ -86,6 +86,8 @@ makes our module object oriented.
 
 There are a three subroutines we should implement.
 
+=over 4 
+
 =item * serialize
 
 The subroutine that does the serialization process itself.
