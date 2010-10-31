@@ -3,7 +3,7 @@
 Dancer is a DSL for writing web applications. It's focused on
 providing the obvious and the feature set is limited on purpose.
 
-For advanced or particular needs, Dancer'DSL can be extended by plugins.
+For advanced or particular needs, Dancer's DSL can be extended by plugins.
 
 This article will explain the basics and concepts of Dancer plugins
 and will guide you through the writing of your first plugin:
