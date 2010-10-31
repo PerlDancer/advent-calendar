@@ -239,6 +239,132 @@ Fine, let's run the test:
 Great! We know now for sure that is_mobile_device works, that's a good
 start!
 
+=head3 The default template token
+
+We now want to make sure all of our template calls got the
+C<is_mobile_device> token, to do that. Our test application will now
+only provide a route handler that calls C<template>. Obviously, for
+this to work we need ... a template to process. Dancer::Test takes
+care for us to initialize the views directory to t/views, so we can
+provide our test script with some views without polluting the root
+directory of our distribution.
+
+So we first create a view:
+
+    $ mkdir t/views
+    $ echo "is_mobile_device: <% is_mobile_device %>" > t/views/index.tt
+
+The view is very basic, it just shows the interpolation of the
+C<is_mobile_device> token. Let's use it in our test script.
+
+    {
+        use Dancer;
+        use Dancer::Plugin::MobileDevice;
+
+        get '/' => sub {
+            template 'index', {}, {layout => 0};
+        };
+    }
+
+Same as previously, we define a route handler that does just what we
+need, you'll see that we've given some extra options to the
+C<template> keyword in order to disable the layout. Indeed, our plugin
+sets autoamtically a layout for mobile clients, and we don't want to
+see that for the moment.
+
+The second argument given to C<template> is an empty hash which is
+actually the tokens hash. It should have been populated by our plugin
+under the hood and we'll make sure of that.
+
+    use Dancer::Test;
+
+    $ENV{HTTP_USER_AGENT} = 'Android';
+    response_content_is [GET => '/'], 
+        "is_mobile_device: 1\n", 
+        "token is_mobile_device is present and valid for Android";
+
+    $ENV{HTTP_USER_AGENT} = 'Mozilla';
+    response_content_is [GET => '/'], 
+        "is_mobile_device: 0\n", 
+        "token is_mobile_device is present and valid for Mozilla";
+
+Let's run the test to make sure everything's fine:
+
+    $ perl -Ilib t/02-tokens.t
+    1..2
+    ok 1 - token is_mobile_device is present and valid for Android
+    ok 2 - token is_mobile_device is present and valid for Mozilla
+
+Cool, we now have one more thing to test: making sure the layout
+changes appropriately, that the job of our last test script.
+
+
+=head3 The dynamic layout
+
+In this last test we want to be sure the layout is changed to 'mobile'
+whenver a mobile device is served, and that the original layout is
+reset afterwards (either if it was defined or not).
+
+To do that we'll use the same technique as before, but with this time,
+suing the layouts:
+
+    $ mkdir t/views/layouts
+    $ echo "mobile:\n<% content %>" > t/views/layout/mobile.tt
+    $ echo "main:\n<% content %>" > t/views/layout/main.tt
+
+We now have our layouts waiting for being used in the t/views/layouts
+directory, let's use it.
+
+    {
+        use Dancer;
+        use Dancer::Plugin::MobileDevice;
+
+        get '/' => sub {
+            template 'index';
+        };
+    }
+
+Just a basic route handler, like before, but this time, if a layout is
+set, we'll use it.
+
+We want first to test the behaviour of the app when no layout is set:
+
+    use Dancer::Test;
+
+    $ENV{HTTP_USER_AGENT} = 'Android';
+    response_content_like [GET => '/'], 
+        qr{mobile\nis_mobile_device: 1}ms, 
+        "mobile layout is set for mobile agents";
+
+    $ENV{HTTP_USER_AGENT} = 'Mozilla';
+    response_content_is [GET => '/'], 
+        "is_mobile_device: 0\n", 
+        "no layout for non-mobile agents";
+
+And then, when a layout is manually set by the user:
+
+    set layout => 'main';
+
+    $ENV{HTTP_USER_AGENT} = 'Android';
+    response_content_like [GET => '/'], 
+        qr{mobile\nis_mobile_device: 1}ms, 
+        "mobile layout is set for mobile agents";
+
+    $ENV{HTTP_USER_AGENT} = 'Mozilla';
+    response_content_like [GET => '/'], 
+        qr{main\nis_mobile_device: 0}ms, 
+        "main layout for non-mobile agents";
+
+Let's see if everything works:
+
+    $ perl -Ilib t/03-layouts.t
+    ok 1 - mobile layout is set for mobile agents
+    ok 2 - no layout for non-mobile agents
+    ok 3 - mobile layout is set for mobile agents
+    ok 4 - main layout for non-mobile agents
+
+Great, everything works as expected!
+
 =head2 Conclusion
 
 Well, here we are, we now have a Dancer plugin that does what we
