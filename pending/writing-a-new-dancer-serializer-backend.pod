@@ -54,7 +54,7 @@ Since these are already taken (unless you want to change one implementation with
 another, such as L<YAML> for L<YAML::Tiny>), there's not much point to write
 them again.
 
-And since the recommended serializationf formats are already mentioned above,
+And since the recommended serialization formats are already mentioned above,
 it's a good reason to look into more nether regions, such as... UU encoding!
 
 Of course, UU encoding isn't a format in its own, just an encoding so it isn't
