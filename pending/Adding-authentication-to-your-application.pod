@@ -167,11 +167,19 @@ login page, e.g.
     use Dancer;
     use Dancer::Plugin::Authorize;
     
+    # check that Dancer::Plugin::Authorize
+    # has populated the user session info
     before sub {
-        # check that Dancer::Plugin::Authorize
-        # has populated the user session info
-        return redirect '/login' unless session('user');
-        return redirect '/login' unless session('user')->{'id'};
+        
+        if ( session('user') ) {
+            if ( session('user')->{id} ) {
+                return false;
+            }
+        }
+        
+        return redirect '/'
+        unless request->path eq '/' ;
+    
     };
     
     any '/login' => sub {
