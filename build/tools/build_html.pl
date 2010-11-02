@@ -15,21 +15,21 @@ local *Text::Wrap::wrap;
 my @articles = get_articles_list();
 my $anchors  = get_anchors(@articles);
 
-sub Pod::PseudoPod::HTML::end_L
-{
-    my $self = shift;
-    if ($self->{scratch} =~ s/\b(\w+)$//)
-    {
-        my $link = $1;
-        unless (exists $anchors->{$link}) {
-            warn "unknown link $link";
-            return;
-        }
-        $self->{scratch} .= '<a href="' . $anchors->{$link}[0] . "#$link\">"
-                                        . $anchors->{$link}[1] . '</a>';
-    }
-}
-
+#sub Pod::PseudoPod::HTML::end_L
+#{
+#    my $self = shift;
+#    if ($self->{scratch} =~ s/\b(\w+)$//)
+#    {
+#        my $link = $1;
+#        unless (exists $anchors->{$link}) {
+#            warn "unknown link $link";
+#            return;
+#        }
+#        $self->{scratch} .= '<a href="' . $anchors->{$link}[0] . "#$link\">"
+#                                        . $anchors->{$link}[1] . '</a>';
+#    }
+#}
+#
 for my $article (@articles)
 {
     my $out_fh = get_output_fh($article);

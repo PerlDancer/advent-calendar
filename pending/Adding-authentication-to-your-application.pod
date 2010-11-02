@@ -242,10 +242,12 @@ Even better, use RBAC in you TT (Template-Toolkit) templates as follows:
         </body>
     </html>
     
+=head2 Conslusion
+
 So you see, Dancer::Plugin::Authorize provides the best access control system using
 th best web application framework with minimal effort. Let keep web application development
 fun! Thanks for reading.
 
 =head1 Author
 
-Al Newkirk, C<< ime@ana.im> >>
+Al Newkirk, C<< we@ana.im> >>

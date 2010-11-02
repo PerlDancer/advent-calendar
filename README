@@ -1,51 +1,73 @@
 Suggestions for articles
 
-1. Dancer::Plugin::SiteMap (jamesronan)
+Flags: 
 
-2. Dancer::Plugin::Database (bigpresh)
+[ ] : up for adoption
+[A] : "Assigned", someone volunteered to write it
+[P] : "Pending", someone started wirting that article
+[R] : "Review", ready for review (needs typos fixes and proofreading)
+[D] : "Done", ready for publication
 
-3. Adding authentication to your application (alnewkirk)
+Note: the order is not the order of publication, but the order of submission
 
-4. How to work with sessions in cookies (Dancer::Session::Cookie,
-kappa@{github,cpan})
 
-5. Common practiced with Dancer apps (move to template_toolkit or your favorite
-template system, etc.)
+01. [A] Dancer::Plugin::SiteMap (jamesronan)
 
-6. ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
-Dancer::Plugin::REST)
+02. [A] Dancer::Plugin::Database (bigpresh)
 
-7. load_app
+03. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
 
-8. using dancer with middlewares
+04. [A] How to work with sessions in cookies (Dancer::Session::Cookie,
+        kappa@{github,cpan})
 
-9. Writing a Dancer plugin (need to think of one) (what about a
-Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
-and sets some templates variables, or change the base url to m.domain...)
-[ sukria ]
+05. [ ] Common practiced with Dancer apps (move to template_toolkit or your favorite
+        template system, etc.)
 
-10. How to contribute to Dancer core (covered in Franck's lastest blog post)
+06. [A] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+        Dancer::Plugin::REST)
 
-11. Why routes? How does route-based web works and why is it more fun?
+07. [ ] load_app (note: not sure if we should speak of load_app as we'll drop it after 1.2)
 
-12. Using the before (KiokuDB context)
+08. [ ] using dancer with middlewares
 
-13. Deploying Dancer (nmani, )
+09. [R] Writing a Dancer plugin (need to think of one) (what about a
+        Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
+        and sets some templates variables, or change the base url to m.domain...)
+        [ sukria ]
 
-14. Replacing old CGI code with Dancer
+10. [ ] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
-15. The concept of engines in Dancer's core (followed the 3 next items)
+11. [ ] Why routes? How does route-based web works and why is it more fun?
 
-16. Writing a new logger backend 
+12. [ ] Using the before (KiokuDB context)
 
-17. Writing a new session backend 
+13. [A] Deploying Dancer (nmani, )
 
-18. Writing a new serializer backend 
+14. [ ] Replacing old CGI code with Dancer
 
-19. Profiling/Debugging/Performance-testing Dancer applications.
+15. [A] The concept of engines in Dancer's core (followed the 3 next items)
+        I've already covered that topic in a blog-entry, I can refresh it for the
+        advent calendar (sukria)
 
-20. Writing Dancer specific tests.
+16. [P] Writing a new logger backend  (xsawyerx)
 
-21. Dancer::Plugin::DBIC (dams)
+17. [ ] Writing a new session backend 
 
-22. Dancer for static websites (BooK)
+18. [P] Writing a new serializer backend (xsawyerx)
+
+19. [ ] Profiling/Debugging/Performance-testing Dancer applications.
+
+20. [ ] Writing Dancer specific tests. (already covered in my article about
+        writing a plugin, maybe I should split them in two parts? sukria)
+
+21. [A] Dancer::Plugin::DBIC (dams)
+
+22. [A] Dancer for static websites (BooK)
+
+23. [ ]
+
+24. [ ]
+
+25. [ ] Dancer 1.2 is released! article based on the changelog with a word or
+        two about upcoming change planed for 1.4
+

@@ -1,10 +1,10 @@
 =head1 Writing a new Dancer serializer backend
 
-Writing serializers in L<Dancer> is so easy you'll can read this standing on
-your head!
+Writing serializers in L<Dancer> is so easy you can read this standing on your
+head!
 
 In this entry we'll be writing a new serializer for Dancer and upload it to
-CPAN! Feel free to add your owns once you finish reading this. :)
+CPAN! Feel free to add your own once you finish reading this. :)
 
 =head2 How do serializers work?
 
@@ -16,13 +16,13 @@ Serializers basically do two things:
 
 Take a data structure as a parameter and return serialized data.
 
-=item * Deserialize a data structure
+=item * Deserialize serialized data
 
-Take a serialized data as a parameter and return structured data.
+Take serialized data as a parameter and return structured data.
 
 =back
 
-=head2 Deciding on the serializer
+=head2 Deciding on the serialization format
 
 Serializes are so easy to write, Dancer already includes a few, such as:
 
@@ -30,7 +30,7 @@ Serializes are so easy to write, Dancer already includes a few, such as:
 
 =item * JSON
 
-Using L<JSON/JSON.pm>.
+Using L<JSON>.
 
 =item * XML
 
@@ -38,7 +38,7 @@ Using L<XML::Simple>.
 
 =item * YAML
 
-Using L<YAML/YAML.pm>.
+Using L<YAML>.
 
 =item * Dumper
 
@@ -54,10 +54,10 @@ Since these are already taken (unless you want to change one implementation with
 another, such as L<YAML> for L<YAML::Tiny>), there's not much point to write
 them again.
 
-And since the recommended serializers are already mentioned above, it's a good
-reason to look into more nether regions, such as... UU encoding!
+And since the recommended serialization formats are already mentioned above,
+it's a good reason to look into more nether regions, such as... UU encoding!
 
-Of course, UU encoding isn't a serializer, just an encoding so it isn't
+Of course, UU encoding isn't a format in its own, just an encoding so it isn't
 recursive and we need to encode an entire structure recursively. We'll cheat
 around it but using L<Storable>'s C<nfreeze> and then encoding it.
 
@@ -71,6 +71,7 @@ This should be the simplest skeleton, including just the required modules:
 
     use strict;
     use warnings;
+
     use Carp;
     use Storable 'nfreeze';
     use base 'Dancer::Serializer::Abstract';
@@ -117,7 +118,9 @@ The subroutine that does the deserialization process itself.
 
 This subroutine simply returns the content type of our serialization. This is
 good practice for web applications so we'll implement it. If we don't, it will
-default to I<text/plain>.
+default to I<text/plain>, which is good too.
+
+    sub content_type {'text/uuencode'}
 
 =back
 
