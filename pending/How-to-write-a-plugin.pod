@@ -47,7 +47,7 @@ The idea is to provide the following features:
 We want to serve a light HTML content when accessed by a mobile
 device, so we'll basically set a specific layout whenever a mobile
 client requests a page. That way, we can forgert about the layout and
-focus on our route handlers, and the plugin will hanlde that for us.
+focus on our route handlers, and the plugin will handle that for us.
 
 =item * boolean accessor C<is_mobile_device>
 
@@ -57,11 +57,11 @@ developer know if the current user agent is a mobile device or not.
 =item * default token in templates
 
 We want all of our template calls to be able to know of
-C<is_mobile_device>, so we want to make it a defaut tokens.
+C<is_mobile_device>, so we want to make it a default token.
 
 =back
 
-OK, I think this feature-set sounds to be a good start for
+OK, I think this feature-set sounds like a good start for
 C<Dancer::Plugin::MobileDevice>, let's start writing it!
 
 =head2 Writing the plugin
@@ -76,7 +76,7 @@ To start with, let's start with an empty plugin skeleton:
 
 That's it, we have an empty plugin. It does nothing yet, except
 registering itself to Dancer's core.
-We can now add a I<keyword> wich will be exported to our caller's
+We can now add a I<keyword> which will be exported to our caller's
 namespace (basically, the user's application that C<use> our plugin).
 
 =head3 Adding a keyword: C<is_mobile_device>
@@ -85,10 +85,10 @@ We want to provide a helper that returns a boolean value telling if
 the requesting user agent is mobile device or not, we'll do that by
 exporting a new keyword to Dancer's DSL.
 
-This keyword is basically a sub bound to a name (Dancer::Plugin takes
+This keyword is basically a subroutine bound to a name (Dancer::Plugin takes
 care of the exporting magic for us, we only have to declare new
-keywords with 'register' and register the plugin itslef when done with
-'register_plugin'.
+keywords with C<register> and register the plugin itslef when done with
+C<register_plugin>.
 
 The sub bound to our C<is_mobile_device> keyword should do one simple
 thing: test the user agent string of the incoming request against a
@@ -103,7 +103,7 @@ pattern of known mobile devices. This is as easy as the following:
 That's it. The C<request> keyword is Dancer-native and returns a
 L<Dancer::Request> object representing the current incoming request.
 It provides among other goodies an accessor to the user agent string
-(C<user_agent>) and we test it with a regular expression with famous
+(C<user_agent>) and we test it with a regular expression with well-known
 mobile device strings.
 
 Whenever it's called from a route handler (or a filter), it returns
@@ -124,7 +124,7 @@ mobile device. This will be done easily with a before filter:
 
 A C<before> filter is executed whenever a request is served, I<before>
 the route handler. This filter takes care to change the C<layout>
-setting whenever the is_mobile_device is true.
+setting whenever the C<is_mobile_device> is true.
 
 We don't want the layout setting to remain that way afterwards, we
 want to restore that setting to its original value after the request
@@ -170,7 +170,7 @@ plugin is not enough, you should write tests to validate your plugin
 before releasing it to the CPAN.
 
 We will now look at how easy it is to do, we'll write a test suite to
-make sure evrything provided by the plugin works as expected. Remeber
+make sure everything provided by the plugin works as expected. Remember
 that tests are still code, take quality seriously and your software
 will be better.
 
@@ -200,7 +200,7 @@ it within the test script, inside a lexical block:
         };
     }
 
-OK, we have a basic app that just loads the plugin and define one
+OK, we have a basic app that just loads the plugin and defines one
 route handler which only returns the value of C<is_mobile_device>.
 That's enough, we can now write the tests.
 
@@ -210,10 +210,10 @@ That's enough, we can now write the tests.
 Dancer::Test provides a complete set of test functions specialized for
 testing a Dancer application. Here we'll use the function
 C<response_content_is> which takes a request object (basically an
-array with a methoid and a path) and a value, and makes sure the route
+array with a method and a path) and a value, and makes sure the route
 handler returns a response that is the same as the expected value.
 
-We'll define a bunc of user agent strings we consider "mobile devices"
+We'll define a bunch of user agent strings we consider "mobile devices"
 and make sure the flag is set appropriately for them:
 
     my @mobile_devices = qw(Android iPhone PalmOS);
@@ -236,7 +236,7 @@ Fine, let's run the test:
     ok 3 - agent PalmOS is a mobile device
     ok 4 - Mozilla is not a mobile device
 
-Great! We know now for sure that is_mobile_device works, that's a good
+Great! We know now for sure that C<is_mobile_device works>, that's a good
 start!
 
 =head3 The default template token
@@ -245,7 +245,7 @@ We now want to make sure all of our template calls got the
 C<is_mobile_device> token, to do that. Our test application will now
 only provide a route handler that calls C<template>. Obviously, for
 this to work we need ... a template to process. Dancer::Test takes
-care for us to initialize the views directory to t/views, so we can
+care for us to initialize the views directory to F<t/views>, so we can
 provide our test script with some views without polluting the root
 directory of our distribution.
 
@@ -269,7 +269,7 @@ C<is_mobile_device> token. Let's use it in our test script.
 Same as previously, we define a route handler that does just what we
 need, you'll see that we've given some extra options to the
 C<template> keyword in order to disable the layout. Indeed, our plugin
-sets autoamtically a layout for mobile clients, and we don't want to
+automatically sets a layout for mobile clients, and we don't want to
 see that for the moment.
 
 The second argument given to C<template> is an empty hash which is
@@ -302,17 +302,17 @@ changes appropriately, that the job of our last test script.
 =head3 The dynamic layout
 
 In this last test we want to be sure the layout is changed to 'mobile'
-whenver a mobile device is served, and that the original layout is
-reset afterwards (either if it was defined or not).
+whenever a mobile device is served, and that the original layout is
+reset afterwards (whether it was defined or not).
 
-To do that we'll use the same technique as before, but with this time,
-suing the layouts:
+To do that we'll use the same technique as before, but this time
+with the layouts:
 
     $ mkdir t/views/layouts
     $ echo "mobile:\n<% content %>" > t/views/layout/mobile.tt
     $ echo "main:\n<% content %>" > t/views/layout/main.tt
 
-We now have our layouts waiting for being used in the t/views/layouts
+We now have our layouts waiting to be used in the F<t/views/layouts>
 directory, let's use it.
 
     {
@@ -371,7 +371,7 @@ Well, here we are, we now have a Dancer plugin that does what we
 wanted, writing a mobile-aware dancer app will now be much more
 easier.
 
-As you can imagine, I've wrote Dancer::Plugin::MobileDevice and
+As you can imagine, I've written Dancer::Plugin::MobileDevice and
 uploaded it to CPAN, so if you want to study it a bit more, feel free
 to grab the tarball.
 
