@@ -60,7 +60,7 @@ L<http://en.wikipedia.org/wiki/Rbac>.
 Dancer::Plugin::Authorize seperates authentication and access control into two
 namespaces, L<Dancer::Plugin::Authorize::Credentials> which is responsible for
 instructing Dancer::Plugin::Authorize where to find user accounts and how to
-authenticate them, and L<Dancer::Plugin::Authorize::Permissions> which specifics
+authenticate them, and L<Dancer::Plugin::Authorize::Permissions> which specifies
 the system access control roles, operations and actions.
 
 Dancer::Plugin::Authorize ships with 4 authentication modules out-of-the-box which
@@ -216,7 +216,7 @@ more advanced and sophisticated role-based access control using asa(), can(), an
         
     }
     
-Even better, use RBAC in you TT (Template-Toolkit) templates as follows:
+Even better, use RBAC in your TT (Template-Toolkit) templates as follows:
 
     use Dancer;
     use Dancer::Plugin::Authorize;
@@ -250,10 +250,10 @@ Even better, use RBAC in you TT (Template-Toolkit) templates as follows:
         </body>
     </html>
     
-=head2 Conslusion
+=head2 Conclusion
 
 So you see, Dancer::Plugin::Authorize provides the best access control system using
-th best web application framework with minimal effort. Let keep web application development
+the best web application framework with minimal effort. Let keep web application development
 fun! Thanks for reading.
 
 =head1 Author
