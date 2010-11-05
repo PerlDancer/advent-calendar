@@ -135,8 +135,7 @@ Yes, we did!
 =head3 helpers
 
 You can add helpers that will make it easier to use the C<serialize/deserialize>
-subroutines functionally outside of automatic serialization. This is common for
-serializers to implement.
+subroutines functionally outside of automatic serialization.
 
     # helpers
     sub from_uuencode {
