@@ -1,4 +1,4 @@
-=head1 How to write a plugin 
+=head1 How to write a plugin
 
 Dancer is a DSL for writing web applications. It's focused on
 providing the obvious and the feature set is limited on purpose.
@@ -280,13 +280,13 @@ under the hood and we'll make sure of that.
     use Dancer::Test;
 
     $ENV{HTTP_USER_AGENT} = 'Android';
-    response_content_is [GET => '/'], 
-        "is_mobile_device: 1\n", 
+    response_content_is [GET => '/'],
+        "is_mobile_device: 1\n",
         "token is_mobile_device is present and valid for Android";
 
     $ENV{HTTP_USER_AGENT} = 'Mozilla';
-    response_content_is [GET => '/'], 
-        "is_mobile_device: 0\n", 
+    response_content_is [GET => '/'],
+        "is_mobile_device: 0\n",
         "token is_mobile_device is present and valid for Mozilla";
 
 Let's run the test to make sure everything's fine:
@@ -334,13 +334,13 @@ We want first to test the behaviour of the app when no layout is set:
     use Dancer::Test;
 
     $ENV{HTTP_USER_AGENT} = 'Android';
-    response_content_like [GET => '/'], 
-        qr{mobile\nis_mobile_device: 1}ms, 
+    response_content_like [GET => '/'],
+        qr{mobile\nis_mobile_device: 1}ms,
         "mobile layout is set for mobile agents";
 
     $ENV{HTTP_USER_AGENT} = 'Mozilla';
-    response_content_is [GET => '/'], 
-        "is_mobile_device: 0\n", 
+    response_content_is [GET => '/'],
+        "is_mobile_device: 0\n",
         "no layout for non-mobile agents";
 
 And then, when a layout is manually set by the user:
@@ -348,13 +348,13 @@ And then, when a layout is manually set by the user:
     set layout => 'main';
 
     $ENV{HTTP_USER_AGENT} = 'Android';
-    response_content_like [GET => '/'], 
-        qr{mobile\nis_mobile_device: 1}ms, 
+    response_content_like [GET => '/'],
+        qr{mobile\nis_mobile_device: 1}ms,
         "mobile layout is set for mobile agents";
 
     $ENV{HTTP_USER_AGENT} = 'Mozilla';
-    response_content_like [GET => '/'], 
-        qr{main\nis_mobile_device: 0}ms, 
+    response_content_like [GET => '/'],
+        qr{main\nis_mobile_device: 0}ms,
         "main layout for non-mobile agents";
 
 Let's see if everything works:
