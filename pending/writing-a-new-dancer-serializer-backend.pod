@@ -73,7 +73,7 @@ This should be the simplest skeleton, including just the required modules:
     use warnings;
 
     use Carp;
-    use Storable 'nfreeze';
+    use Storable qw/ nfreeze thaw /;
     use base 'Dancer::Serializer::Abstract';
 
     # ...
@@ -96,7 +96,7 @@ The subroutine that does the serialization process itself.
     sub serialize {
         my ( $self, $entity ) = @_;
 
-        return pack( 'u', nfreeze $entity );
+        return pack( 'u', nfreeze($entity) );
     }
 
 Yes, that's it!
