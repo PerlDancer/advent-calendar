@@ -142,16 +142,48 @@ before we do that, let's create the database
 I'll go with SQLite, as it fits well with the aim of simplicity of this
 example. Let's create the SQLite file database:
 
-$> sqlite3 bookstore.db
-CREATE TABLE author(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstname text default '' not null, lastname text not null);
-CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, author_id INTEGER REFERENCES author (id), title text default '' not null );
+  $> sqlite3 bookstore.db
+  CREATE TABLE author(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstname text default '' not null, lastname text not null);
+  CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, author_id INTEGER REFERENCES author (id), title text default '' not null );
+
+Simple stuff: we have 2 tables, one for authors, and one for books, that points to the author table.
+
+=head3 Populate with some data
+
+Ian M. Banks
+Richard Matheson
+Frank Herbert
 
 
+=head2 Use DBIC
+
+Instead of interactign with the database using SQL, let's configure
+DBIX::Class. DBIC needs to understand how your data are organized in your
+database. There are two ways of letting DBIC know:
+
+=over
+
+=item *
+
+either by writing a set of Perl modules, called schema modules: they will describe the database schema, each module describing one entity,
+
+=item *
+
+or by letting DBIC connect to the database, explore it, and generate the schema itself.
+
+=back
+
+I'll demonstrate the use of the two solutions. I'm personnaly not a big fan of
+the detection method: on complex database, it doesn't get everything right, so
+one needs to help DBIC. I prefer describing the schema manually. But hey,
+TIMTOWDI.
+
+=head3
+
+ that will describe the
 
 
-
-
-
+ There are two ways of using DBIC. FirstDBIC needs a schema
 
 
 
