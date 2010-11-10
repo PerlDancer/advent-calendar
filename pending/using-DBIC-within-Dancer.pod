@@ -23,9 +23,28 @@ their books. The website will have one single page with a form, to query books
 or authors, and display the result.
 
 To keep this article short, the HTML will be simplistic, and the implementation
-will be a bit stupid. In real life you'd want to use templates, layouts, and
-probably more routes. However, I'll try to explain how to properly use
+will be a bit stupid. However, I'll try to explain how to properly use
 Dancer::Plugin::DBIC.
+
+The application will be structured as follow:
+
+=over
+
+=item *
+
+a Dancer route C</search> to handle the request, and decide if there is any
+search to perform, and send the results to the view
+
+=item *
+
+a view, that will display the search form, and the results if any.
+
+=item *
+
+a set of models, linked to a database, that will contain the books and authors.
+These models will be created using DBIC
+
+=back
 
 =head2 The basics
 
@@ -50,7 +69,7 @@ template engine:
 =head3 Create a view
 
 We need a view to display the search form, and below, the results, if any. The
-results will be feeded to the template engine as an C<arrayref> of results.
+results will be feeded by the route to the view as an C<arrayref> of results.
 Each result is a I<hashref>, with a C<author> key containing the name of the
 author, and a C<books> key containing an I<arrayref> of strings : the books
 names.
@@ -65,6 +84,76 @@ That explanation is probably hard to follow, so here is an example, much easier:
       books => [ 'book 3', 'book 4' ],
     }
   ]
+
+So, what will look the view like ? Here is a simple example, displaying the
+search form, and the results, if any. IT's written in Template Toolkit, except
+that Dancer changes the C<[‰ %]> format to be C<< <% %> >> instead.
+
+  # bookstore/views/search.tt
+  <p>
+  <form action="/search">
+  Search query: <input type="text" name="query" />
+  </form>
+  </p>
+  <br>  
+  
+  <% IF query.length %>
+    <p>Search query was : <% query %>.</p>
+    <% IF results.size %>
+      Results:
+      <ul>
+      <% FOREACH result IN results %>
+        <li>Author: <% result.author %>
+        <ul>
+        <% FOREACH book IN result.books %>
+          <li><% book %>
+        <% END %>
+        </ul>
+      <% END %>
+    <% ELSE %>
+      No result
+    <% END %>
+  <% END %>
+
+=head3 Create a route
+
+Let's create a simple Dancer route, to be added in the C<bookstore.pm> module:
+
+  # add in bookstore/lib/bookstore.pm
+  get '/search' => sub {
+      my $query = params->{query};
+      my @results = ();
+      if (length $query) {
+          @results = _perform_search($query);
+      }
+      template 'search', { query => $query,
+                           results => \@results,
+                         };
+  };
+
+It's rather simple: get the parameter called I<query>, if it exists perform the
+search, and in any case, call the C<search> view.
+
+So, as you can see, we need to write the C<_perform_search()> method. But
+before we do that, let's create the database
+
+=head3 Create a database
+
+I'll go with SQLite, as it fits well with the aim of simplicity of this
+example. Let's create the SQLite file database:
+
+$> sqlite3 bookstore.db
+CREATE TABLE author(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstname text default '' not null, lastname text not null);
+CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, author_id INTEGER REFERENCES author (id), title text default '' not null );
+
+
+
+
+
+
+
+
+
 
 We also need a view:
 
