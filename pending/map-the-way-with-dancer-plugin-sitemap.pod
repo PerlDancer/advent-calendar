@@ -1,0 +1,28 @@
+=head1 Map the Way with Dancer::Plugin::SiteMap
+
+I was sitting staring at yet another XML site map document when it came
+to me; It should be easier than this!
+
+Enter 
+L<Dancer::Plugin::SiteMap|http://search.cpan.org/~jamesr/Dancer-Plugin-SiteMap-0.05/lib/Dancer/Plugin/SiteMap.pm> 
+- The easy way to map.
+
+=head2 So How Does It Work?
+
+Simplicity itself:
+
+    use Dancer;
+    use Dancer::Plugin::SiteMap;
+
+That's it! Your Dancer App now has C</sitemap> and C</sitemap.xml>
+routes.
+
+=head2 What's In Store For The Future?
+
+Eventually I'd like to add support for optional custom template of
+the HTML SiteMap. 
+
+=head1 AUTHOR
+
+James Ronan <james@ronanweb.co.uk> 
+
