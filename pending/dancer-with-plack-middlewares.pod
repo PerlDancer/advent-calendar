@@ -1,16 +1,21 @@
 =head1 How to use Dancer with Plack's middlewares
 
-Plack is an awesome addition to the Perl ecosystem. One of it's key feature are the middlewares.
+Plack is an awesome addition to the Perl ecosystem. One of it's key feature are
+the middlewares.
 
-You can see a middleware as a L<Role|http://search.cpan.org/perldoc?Moose::Role>: a reusable components between your applications. This component will act both as a client and a server.
+You can see a middleware as a
+L<Role|http://search.cpan.org/perldoc?Moose::Role>: a reusable components
+between your applications. This component will act both as a client and a
+server.
 
-This article doesn't aim to present in detail how a middleware works. If you're not yet familiar with Plack's middleware, you can refer to thoses articles:
+This article doesn't aim to present in detail how a middleware works. If you're
+not yet familiar with L<Plack>'s middleware, you can refer to thoses articles:
 
 =over 4
 
-=item http://search.cpan.org/~miyagawa/Plack-0.9951/lib/Plack/Middleware.pm
+=item L<http://search.cpan.org/~miyagawa/Plack-0.9951/lib/Plack/Middleware.pm>
 
-=item http://advent.plackperl.org/2009/12/day-10-using-plack-middleware.html
+=item L<http://advent.plackperl.org/2009/12/day-10-using-plack-middleware.html>
 
 =back
 
@@ -24,13 +29,15 @@ Let's start by creating a simple Dancer application:
     + myapp/bin/app.pl
     ...
 
-Every Dancer application is a valid Plack application. When you're starting your project, you can choose between a standalone server, or using Plack:
+Every Dancer application is a valid Plack application. When you're starting
+your project, you can choose between a standalone server, or using Plack:
 
     $ ./bin/app.pl
     >> Dancer server 12481 listening on http://0.0.0.0:3000
     == Entering the development dance floor ...
 
-Doing this, it start my application using Dancer's standalone server on port 3000.
+Doing this, it start my application using Dancer's standalone server on port
+3000.
 
 Now, let's use Plack to start this application:
 
@@ -41,7 +48,13 @@ This time, it's the PSGI's standalone server that serve our application.
 
 =head2 Adding a first Middleware
 
-For this example, we will add a basic middleware: L<Plack::Middleware::ETag>. This one will add to all our response a new header: B<ETag>. The ETag is a mechanism to control cache validation. Most of the time, the value of the ETag is a hash of the content of the page returned to the client. The client will then store this value, and next time it requets the same page, he will ask to send the content only if it has been modified since the last request, using the ETag value to check.
+For this example, we will add a basic middleware: L<Plack::Middleware::ETag>.
+This one will add to all our response a new header: B<ETag>. The ETag is a
+mechanism to control cache validation. Most of the time, the value of the ETag
+is a hash of the content of the page returned to the client. The client will
+then store this value, and next time it requets the same page, he will ask to
+send the content only if it has been modified since the last request, using the
+ETag value to check.
 
 In your config.yml, add the following two lines:
 
@@ -60,9 +73,12 @@ now restart your application (with plackup), and let's do a request:
     ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146
     Content-Length: 5428
 
-The ETag header have been added to your response. If you redo the request, you'll see that the ETag value is the same.
+The ETag header have been added to your response. If you redo the request,
+you'll see that the ETag value is the same.
 
-Let's add another middleware: L<Plack::Middleware::ConditionalGet>. This middleware return no content if the client requested the content only if it had been modified since the previous request:
+Let's add another middleware: L<Plack::Middleware::ConditionalGet>. This
+middleware return no content if the client requested the content only if it had
+been modified since the previous request:
 
    plack_middlewares:
      - 
@@ -79,17 +95,22 @@ Let's add another middleware: L<Plack::Middleware::ConditionalGet>. This middlew
     X-Powered-By: Perl Dancer 1.1999_02
     ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146
 
-This time there is no B<Content-Lenght> header, because the value of the ETag header is the same, so no content has been returned to our request.
+This time there is no B<Content-Lenght> header, because the value of the ETag
+header is the same, so no content has been returned to our request.
        
 =head2 Using the Debug panels
 
-One very useful middleware while debuging your application is L<Plack::Middleware::Debug>. This middleware will inject some HTML code in your page.
+One very useful middleware while debuging your application is
+L<Plack::Middleware::Debug>. This middleware will inject some HTML code in your
+page.
 
 XXXXX insert screenshot
 
 =head2 More complexe
 
-Some middlewares require a more complex configuration, and you won't be use them as our previous examples. For this example, we want to add a simple authentication to access our application.
+Some middlewares require a more complex configuration, and you won't use
+them as in our previous examples. For this example, we want to add a simple
+authentication system to access our application.
 
 Edit your C<bin/app.pl> application, and replace the code with this one:
 
@@ -112,6 +133,11 @@ Edit your C<bin/app.pl> application, and replace the code with this one:
         $app;
     };
 
-First, we create a PSGI application (line 5). This application process the request and returns a PSGI compatible result. Next, we use the B<builder> keyword, provided by L<Plack::Builder>. Here we enable a middleware (B<Auth::Basic>), and we create a code ref for the authentication method.
+First, we create a PSGI application (line 5). This application process the
+request and returns a PSGI compatible result. Next, we use the B<builder>
+keyword, provided by L<Plack::Builder>. Here we enable a middleware
+(B<Auth::Basic>), and we create a code ref for the authentication method.
 
-If you start your application with plackup, and load the page in your browser, you will be prompted for a username and password to access the page.
+If you start your application with plackup, and load the page in your browser,
+you will be prompted for a username and password to access the page.
+
