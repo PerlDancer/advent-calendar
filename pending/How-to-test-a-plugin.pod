@@ -225,8 +225,7 @@ This article has been written by Alexis Sukrieh.
 
 =head2 Reviewers
 
-Proofreading and typo-fixing for this article have been made by XXX,
-YYY
+Proofreading and typo-fixing by XXX and YYY
 
 =head2 Copyright
 
