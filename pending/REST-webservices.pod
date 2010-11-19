@@ -2,7 +2,7 @@
 
 It's easy to write ReST webservices with Dancer ....
 
-=head1 The Basics
+=head2 The Basics
 
 What defines a ReST application 
 
@@ -61,12 +61,16 @@ Dancer will check if you have a default serializer defined.
 If that is the case,  it will serialize the response to the appropriate format
 and set the correct content type.
      
-=head1 Dancer::Plugin::Rest
+=head2 Dancer::Plugin::Rest
 
 Using Dancer::Plugin::REST
 
-=head1 SEE ALSO
+=head2 Author
 
-=head1 AUTHOR
+This article has been written by Franck Cuny for the Perl Dancer Advent
+Calendar 2010.
 
-franck: franck cuny <franck@lumberjaph.net>
+=head2 Copyright
+
+Copyright (C) 2010 by Franck Cuny C<< <franck@lumberjaph.net> >>.
+
