@@ -22,7 +22,8 @@ routes.
 Eventually I'd like to add support for optional custom template of
 the HTML SiteMap. 
 
-=head1 AUTHOR
+=head2 Author
 
-James Ronan <james@ronanweb.co.uk> 
+This article has been written by James Ronan C<< <james@ronanweb.co.uk> >> for
+the Perl Dancer Advent Calendar 2010.
 
