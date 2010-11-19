@@ -46,10 +46,18 @@ Once you have a good name, the project almost writes itself.
 
 FIXME
 
-=head1 Author
+=head2 Author
 
-Philippe Bruhat (BooK)
+This article has been written by Philippe Bruhat (BooK) for the Perl Dancer
+Advent Calendar 2010.
+
+=head2 Reviewers
+
+Proofreading and typo-fixing by Alexis Sukrieh.
+
+=head2 Copyright
+
+Copyright (C) 2010 by Philippe Bruhat (BooK).
 
 =cut
-
 
