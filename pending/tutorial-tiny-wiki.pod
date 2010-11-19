@@ -485,5 +485,10 @@ Here's the entire script from start to finish.
 
 =head2 Author
 
+This article has been written by Mark R. Allen for the Perl Dancer Advent
+Calendar.
+
+=head2 Copyright
+
 Copyright (C) 2010 by Mark R. Allen. 
 

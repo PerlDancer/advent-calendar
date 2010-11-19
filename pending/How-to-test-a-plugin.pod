@@ -223,10 +223,6 @@ article.
 
 This article has been written by Alexis Sukrieh.
 
-=head2 Reviewers
-
-Proofreading and typo-fixing by XXX and YYY
-
 =head2 Copyright
 
 Copyright (C) 2010 by Alexis Sukrieh C<< <sukria@sukria.net> >>
