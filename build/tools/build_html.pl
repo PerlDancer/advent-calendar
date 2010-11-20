@@ -37,9 +37,6 @@ for my $article (@articles)
 
     $parser->output_fh($out_fh);
 
-    # output a complete html document
-    $parser->add_body_tags(1);
-
     # add css tags for cleaner display
     $parser->add_css_tags(1);
 
@@ -84,13 +81,17 @@ sub get_output_fh
 {
     my $article = shift;
     my $name    = ( splitpath $article )[-1];
-    my $htmldir = catdir( qw( build html ) );
+    my $htmldir = catdir( qw( _posts ) );
 
-    $name       =~ s/\.pod/\.html/;
+    $name       =~ s/\.pod/\.textile/;
     $name       = catfile( $htmldir, $name );
 
     open my $fh, '>:utf8', $name
         or die "Cannot write to '$name': $!\n";
+    
+    print $fh "---\n";
+    print $fh "layout: post\n";
+    print $fh "---\n\n";
 
     return $fh;
 }
