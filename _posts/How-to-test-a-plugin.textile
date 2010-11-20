@@ -1,0 +1,189 @@
+---
+layout: post
+---
+
+<h2>Testing a Dancer application</h2>
+
+<p>In the previous article, we saw how to develop a plugin. We have written in our example a plugin named Dancer::Plugin::MobileDevice, we'll see in this one how to test it.</p>
+
+<p>In this article you will learn how to use the Dancer::Test module for building a good test suite for a Dancer application.</p>
+
+<h3>Why testing?</h3>
+
+<p>Writing a plugin for the Dancer ecosystem is a great thing to do; It's a very good way to contribute to the project, but writing the plugin is not enough, you should write tests to validate your plugin before releasing it to the CPAN.</p>
+
+<p>We will now look at how easy it is to do that and we'll write a test suite to make sure everything provided by the plugin works as expected. Remember that tests are still code. Take quality seriously and your software will be better.</p>
+
+<h4>The <code>is_mobile_device</code> keyword</h4>
+
+<p>Let's start by testing that our helper works as expected, with Dancer::Test this is easy to do:</p>
+
+<pre><code>    # t/01-is_mobile_device.t
+    use strict;
+    use warnings;
+    use Test::More import =&gt; [&#39;!pass&#39;];</code></pre>
+
+<p>First, note that we ask not to import Test::More's <code>pass</code> keyword, it's already exported by Dancer and we don't want our test script to produce a warning.</p>
+
+<p>First of all, we need a basic app that uses our plugin, we'll define it within the test script, inside a lexical block:</p>
+
+<pre><code>    {
+        use Dancer;
+        use Dancer::Plugin::MobileDevice;
+
+        get &#39;/&#39; =&gt; sub {
+            return is_mobile_device;
+        };
+    }</code></pre>
+
+<p>OK, we have a basic app that just loads the plugin and defines one route handler which only returns the value of <code>is_mobile_device</code>. That's enough, we can now write the tests.</p>
+
+<pre><code>    use Dancer::Test;</code></pre>
+
+<p>Dancer::Test provides a complete set of test functions specialized for testing a Dancer application. Here we'll use the function <code>response_content_is</code> which takes a request object (basically an array with a method and a path) and a value, and makes sure the route handler returns a response that is the same as the expected value.</p>
+
+<p>We'll define a bunch of user agent strings we consider "mobile devices" and make sure the flag is set appropriately for them:</p>
+
+<pre><code>    my @mobile_devices = qw(Android iPhone PalmOS);
+
+    for my $md (@mobile_devices) {
+        $ENV{HTTP_USER_AGENT} = $md;
+        response_content_is [GET =&gt; &#39;/&#39;], 1, &quot;agent $md is a mobile device&quot;;
+    }</code></pre>
+
+<p>And we finally add a non-mobile string:</p>
+
+<pre><code>    $ENV{HTTP_USER_AGENT} = &#39;Mozilla&#39;;
+    response_content_is [GET =&gt; &#39;/&#39;], 0, &quot;Mozilla is not a mobile device&quot;;</code></pre>
+
+<p>Let's run the test:</p>
+
+<pre><code>    $ perl -Ilib t/01-is_mobile_device.t
+    1..4
+    ok 1 - agent iPhone is a mobile device
+    ok 2 - agent Android is a mobile device
+    ok 3 - agent PalmOS is a mobile device
+    ok 4 - Mozilla is not a mobile device</code></pre>
+
+<p>Great! We know now for sure that <code>is_mobile_device works</code>, that's a good start!</p>
+
+<h4>The default template token</h4>
+
+<p>We now want to make sure all of our template calls got the <code>is_mobile_device</code> token. To do that, our test application will now only provide a route handler that calls <code>template</code>. Obviously, for this to work we need ... a template to process. Dancer::Test takes care for us to initialize the views directory to <i>t/views</i>, so we can provide our test script with some views without polluting the root directory of our distribution.</p>
+
+<p>So we first create a view:</p>
+
+<pre><code>    $ mkdir t/views
+    $ echo &quot;is_mobile_device: &lt;% is_mobile_device %&gt;&quot; &gt; t/views/index.tt</code></pre>
+
+<p>The view is very basic, it just shows the interpolation of the <code>is_mobile_device</code> token. Let's use it in our test script.</p>
+
+<pre><code>    {
+        use Dancer;
+        use Dancer::Plugin::MobileDevice;
+
+        get &#39;/&#39; =&gt; sub {
+            template &#39;index&#39;, {}, { layout =&gt; 0 };
+        };
+    }</code></pre>
+
+<p>Same as previously, we define a route handler that does just what we need. You'll see that we've given some extra options to the <code>template</code> keyword in order to disable the layout. Indeed, our plugin automatically sets a layout for mobile clients, and we don't want to see that for the moment.</p>
+
+<p>The second argument given to <code>template</code> is an empty hash which is actually the tokens hash. It should have been populated by our plugin under the hood and we'll make sure of that.</p>
+
+<pre><code>    use Dancer::Test;
+
+    $ENV{HTTP_USER_AGENT} = &#39;Android&#39;;
+    response_content_is [GET =&gt; &#39;/&#39;],
+        &quot;is_mobile_device: 1\n&quot;,
+        &quot;token is_mobile_device is present and valid for Android&quot;;
+
+    $ENV{HTTP_USER_AGENT} = &#39;Mozilla&#39;;
+    response_content_is [GET =&gt; &#39;/&#39;],
+        &quot;is_mobile_device: 0\n&quot;,
+        &quot;token is_mobile_device is present and valid for Mozilla&quot;;</code></pre>
+
+<p>Let's run the test to make sure everything's fine:</p>
+
+<pre><code>    $ perl -Ilib t/02-tokens.t
+    1..2
+    ok 1 - token is_mobile_device is present and valid for Android
+    ok 2 - token is_mobile_device is present and valid for Mozilla</code></pre>
+
+<p>Cool! @e now have one more thing to test: making sure the layout changes appropriately, the job of our last test script.</p>
+
+<h4>The dynamic layout</h4>
+
+<p>In this last test we want to be sure the layout is changed to 'mobile' whenever a mobile device is served, and that the original layout is reset afterwards (whether it was defined or not).</p>
+
+<p>To do that we'll use the same technique as before, but this time with the layouts:</p>
+
+<pre><code>    $ mkdir t/views/layouts
+    $ echo -e &quot;mobile:\n&lt;% content %&gt;&quot; &gt; t/views/layout/mobile.tt
+    $ echo -e &quot;main:\n&lt;% content %&gt;&quot; &gt; t/views/layout/main.tt</code></pre>
+
+<p><i>(or use your favorite editor to create our layout files)</i></p>
+
+<p>We now have our layouts waiting to be used in the <code>t/views/layouts</code> directory, let's use it.</p>
+
+<pre><code>    {
+        use Dancer;
+        use Dancer::Plugin::MobileDevice;
+
+        get &#39;/&#39; =&gt; sub {
+            template &#39;index&#39;;
+        };
+    }</code></pre>
+
+<p>Just a basic route handler, like before, but this time if a layout is set, we'll use it.</p>
+
+<p>We want first to test the behaviour of the app when no layout is set:</p>
+
+<pre><code>    use Dancer::Test;
+
+    $ENV{HTTP_USER_AGENT} = &#39;Android&#39;;
+    response_content_like [GET =&gt; &#39;/&#39;],
+        qr{mobile\nis_mobile_device: 1}ms,
+        &quot;mobile layout is set for mobile agents&quot;;
+
+    $ENV{HTTP_USER_AGENT} = &#39;Mozilla&#39;;
+    response_content_is [GET =&gt; &#39;/&#39;],
+        &quot;is_mobile_device: 0\n&quot;,
+        &quot;no layout for non-mobile agents&quot;;</code></pre>
+
+<p>And then, when a layout is manually set by the user:</p>
+
+<pre><code>    set layout =&gt; &#39;main&#39;;
+
+    $ENV{HTTP_USER_AGENT} = &#39;Android&#39;;
+    response_content_like [GET =&gt; &#39;/&#39;],
+        qr{mobile\nis_mobile_device: 1}ms,
+        &quot;mobile layout is set for mobile agents&quot;;
+
+    $ENV{HTTP_USER_AGENT} = &#39;Mozilla&#39;;
+    response_content_like [GET =&gt; &#39;/&#39;],
+        qr{main\nis_mobile_device: 0}ms,
+        &quot;main layout for non-mobile agents&quot;;</code></pre>
+
+<p>Let's see if everything works:</p>
+
+<pre><code>    $ perl -Ilib t/03-layouts.t
+    ok 1 - mobile layout is set for mobile agents
+    ok 2 - no layout for non-mobile agents
+    ok 3 - mobile layout is set for mobile agents
+    ok 4 - main layout for non-mobile agents</code></pre>
+
+<p>Great, everything works as expected!</p>
+
+<h3>Conclusion</h3>
+
+<p>Our plugin is now covered by the test suite we've written, and we can publish it to the CPAN. To go a step further, we could run coverage test with Devel::Cover in order to make sure our test suite goes through all the possible ways but that's beyond the scope of this article.</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Alexis Sukrieh.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Alexis Sukrieh <code><sukria@sukria.net></code></p>
+

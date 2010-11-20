@@ -1,0 +1,40 @@
+---
+layout: post
+---
+
+<h2>Dancer for static web sites</h2>
+
+<h3>Static?</h3>
+
+<p>To me, many "dynamic" sites web aren't really dynamic and could be generated with a commit/push hook whenever the source data is updated. RSS feeds can be generated from the list of generated files and their creation dates. If you have enough disk space, it's possible to generate all image sizes for a picture gallery in advance. And so on.</p>
+
+<p>Having a static web site ensures maximum speed (any webserver can handle static files) and security (without forms or databases, there is little chance for a SQL injection attack to be successful).</p>
+
+<p>With the return of JavaScript and the advent of AJAX, most of the "dynamism" of web sites comes from the web site authors' ability to use CSS and one of the many JavaScript frameworks available to animate, present, filter and download data on the client side (thus saving your resources)</p>
+
+<h3>Inspiration</h3>
+
+<p>I was really inspired by Jekyll (http://jekyllrb.com/), a "blog-aware, static website generator". But I'm not much of a blogger, and the web sites I wanted to generate needed to produce some "global" pages that depended on the fully generated site. For instance, a website consisting of a collection of articles, could have a tag cloud or an author scoreboard and still be fully static, as these files only need to be generated when an article is added or updated.</p>
+
+<p>I first tried to write my own generic static website generator (most of the code was produced during the Vienna Perl QA Hackathon, in April 2010). And thus <i>Papery</i> was born. But being generic is hard, and the project stalled quickly.</p>
+
+<p>At OSDC.fr, in October 2010, I had the opportunity to talk to a lot of people, including Alexis Sukrieh, Dancer's author. The idea of generating static websites using a dynamic framework appealed to a lot of people, and we brainstormed the name for a Dancer implementation during the conference (many thanks to Josette Garcia, from O'Reilly UK, for providing me with the exact English term I was looking for!)</p>
+
+<p>Once you have a good name, the project almost writes itself.</p>
+
+<h3>Concepts and workflow</h3>
+
+<p>FIXME</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Philippe Bruhat (BooK) for the Perl Dancer Advent Calendar 2010.</p>
+
+<h3>Reviewers</h3>
+
+<p>Proofreading and typo-fixing by Alexis Sukrieh.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Philippe Bruhat (BooK).</p>
+

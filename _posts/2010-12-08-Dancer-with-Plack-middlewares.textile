@@ -1,0 +1,122 @@
+---
+layout: post
+---
+
+<h2>How to use Dancer with Plack's middlewares</h2>
+
+<p>Plack is an awesome addition to the Perl ecosystem. One of it's key feature are the middlewares.</p>
+
+<p>You can see a middleware as a Role: a reusable components between your applications. This component will act both as a client and a server.</p>
+
+<p>This article doesn't aim to present in detail how a middleware works. If you're not yet familiar with Plack's middleware, you can refer to thoses articles:</p>
+
+<ul>
+
+<li>http://search.cpan.org/~miyagawa/Plack-0.9951/lib/Plack/Middleware.pm
+
+<li>http://advent.plackperl.org/2009/12/day-10-using-plack-middleware.html
+
+</ul>
+
+<h3>Dancer and Plack</h3>
+
+<p>Let's start by creating a simple Dancer application:</p>
+
+<pre><code>    $ dancer -a myapp
+    + myapp
+    + myapp/bin
+    + myapp/bin/app.pl
+    ...</code></pre>
+
+<p>Every Dancer application is a valid Plack application. When you're starting your project, you can choose between a standalone server, or using Plack:</p>
+
+<pre><code>    $ ./bin/app.pl
+    &gt;&gt; Dancer server 12481 listening on http://0.0.0.0:3000
+    == Entering the development dance floor ...</code></pre>
+
+<p>Doing this, it start my application using Dancer's standalone server on port 3000.</p>
+
+<p>Now, let's use Plack to start this application:</p>
+
+<pre><code>    $ plackup bin/app.pl
+    HTTP::Server::PSGI: Accepting connections at http://0:5000/</code></pre>
+
+<p>This time, it's the PSGI's standalone server that serve our application.</p>
+
+<h3>Adding a first Middleware</h3>
+
+<p>For this example, we will add a basic middleware: Plack::Middleware::ETag. This one will add to all our response a new header: <b>ETag</b>. The ETag is a mechanism to control cache validation. Most of the time, the value of the ETag is a hash of the content of the page returned to the client. The client will then store this value, and next time it requets the same page, he will ask to send the content only if it has been modified since the last request, using the ETag value to check.</p>
+
+<p>In your config.yml, add the following two lines:</p>
+
+<pre><code>    plack_middlewares:
+      -
+        - ETag</code></pre>
+
+<p>now restart your application (with plackup), and let's do a request:</p>
+
+<pre><code>    $ curl -D - http://localhost:5000
+    HTTP/1.0 200 OK
+    Date: Tue, 09 Nov 2010 15:49:30 GMT
+    Server: HTTP::Server::PSGI
+    Content-Type: text/html; charset=UTF-8
+    X-Powered-By: Perl Dancer 1.1999_02
+    ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146
+    Content-Length: 5428</code></pre>
+
+<p>The ETag header have been added to your response. If you redo the request, you'll see that the ETag value is the same.</p>
+
+<p>Let's add another middleware: Plack::Middleware::ConditionalGet. This middleware return no content if the client requested the content only if it had been modified since the previous request:</p>
+
+<pre><code>   plack_middlewares:
+     - 
+       - ConditionalGET
+     -
+       - ETag</code></pre>
+
+<p>(note: the order is important).</p>
+
+<pre><code>    $ curl -D - http://localhost:5000 -H &quot;If-None-Match: 5f6e450f378e384d4be6e0c081b9dd93026ff146&quot;
+    HTTP/1.0 304 Not Modified
+    Date: Tue, 09 Nov 2010 15:52:01 GMT
+    Server: HTTP::Server::PSGI
+    X-Powered-By: Perl Dancer 1.1999_02
+    ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146</code></pre>
+
+<p>This time there is no <b>Content-Lenght</b> header, because the value of the ETag header is the same, so no content has been returned to our request.</p>
+
+<h3>Using the Debug panels</h3>
+
+<p>One very useful middleware while debuging your application is Plack::Middleware::Debug. This middleware will inject some HTML code in your page.</p>
+
+<p>XXXXX insert screenshot</p>
+
+<h3>More complexe</h3>
+
+<p>Some middlewares require a more complex configuration, and you won't use them as in our previous examples. For this example, we want to add a simple authentication system to access our application.</p>
+
+<p>Edit your <code>bin/app.pl</code> application, and replace the code with this one:</p>
+
+<pre><code>    use Dancer;
+    use myapp;
+
+    use Plack::Builder;
+
+    my $app = sub {
+        my $env     = shift;
+        my $request = Dancer::Request-&gt;new($env);
+        Dancer-&gt;dance($request);
+    };
+
+    builder {
+        enable &quot;Auth::Basic&quot;, authenticator =&gt; sub {
+            my ( $username, $password ) = @_;
+            return $username eq &#39;admin&#39; &amp;&amp; $password eq &#39;s3cr3t&#39;;
+        };
+        $app;
+    };</code></pre>
+
+<p>First, we create a PSGI application (line 5). This application process the request and returns a PSGI compatible result. Next, we use the <b>builder</b> keyword, provided by Plack::Builder. Here we enable a middleware (<b>Auth::Basic</b>), and we create a code ref for the authentication method.</p>
+
+<p>If you start your application with plackup, and load the page in your browser, you will be prompted for a username and password to access the page.</p>
+

@@ -1,0 +1,69 @@
+---
+layout: post
+---
+
+<h2>Writing ReST webservices with Dancer</h2>
+
+<p>It's easy to write ReST webservices with Dancer ....</p>
+
+<h3>The Basics</h3>
+
+<p>What defines a ReST application</p>
+
+<h3>Serializaters</h3>
+
+<p>Dancer comes with some helper functions for serializing. Theses functions help you to serialize a Perl data structure to a JSON or XML document. The core provides serializers for:</p>
+
+<ul>
+
+<li><b>JSON</b>
+
+<p>with <b>to_json</b> and <b>from_json</b>.</p>
+
+<li><b>XML</b>
+
+<p>with <b>to_xml</b> and <b>from_xml</b>. This serializer can be customized with ...</p>
+
+<li><b>YAML</b>
+
+<p>with <b>to_yaml</b> and <b>from_yaml</b>.</p>
+
+</ul>
+
+<p>With these serializers, you can write:</p>
+
+<pre><code>    get &#39;/user/:id&#39; =&gt; sub {
+        my $id = params-&gt;{id};
+        my $user = $schema-&gt;resultset(&#39;Users&#39;)-&gt;find($id);
+        content_type &#39;application/json&#39;;
+        return to_json { id =&gt; $id, name =&gt; $user-&gt;name };
+    };</code></pre>
+
+<h3>Let Dancer handle the serialization</h3>
+
+<p>Now that we've seen how to do serialization manually, lets make Dancer do the work for us. You can configure your application to have a default serializer:</p>
+
+<pre><code>    set serializer =&gt; &#39;JSON&#39;;</code></pre>
+
+<p>Now, you can define a route like this:</p>
+
+<pre><code>     get &#39;/user/:id&#39; =&gt; sub {
+         my $id = params-&gt;{id};
+         my $user = $schema-&gt;resultset(&#39;Users&#39;)-&gt;find($id);
+         return { id =&gt; $id, name =&gt; $user-&gt;name };
+     };</code></pre>
+
+<p>As you can see, we no longer need to call the <b>content_type</b> and <b>to_json</b> functions. When you set a default serializer and your route returns an arrayref or hashref, Dancer will check if you have a default serializer defined. If that is the case, it will serialize the response to the appropriate format and set the correct content type.</p>
+
+<h3>Dancer::Plugin::Rest</h3>
+
+<p>Using Dancer::Plugin::REST</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Franck Cuny for the Perl Dancer Advent Calendar 2010.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Franck Cuny <code><franck@lumberjaph.net></code>.</p>
+

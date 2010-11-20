@@ -1,0 +1,425 @@
+---
+layout: post
+---
+
+<h2>Tutorial : writing a tiny blog engine</h2>
+
+<p>This article will guide you through the writing of a minimal but yet complete blog engine.</p>
+
+<h3>Origins of this tutoral</h3>
+
+<p>While I was investigating some Python web frameworks like Flask or Bottle I enjoyed the way they explained step by step how to build an example application which was a little more involved that a trivial example.</p>
+
+<p>Using the Flaskr sample application as my inspiration (OK, shamelessly plagerized) I translated that application to the Dancer framework so I could better understand how Dancer worked. (I'm learning it too!)</p>
+
+<p>So "Dancr" was born.</p>
+
+<p>Dancr is a simple "micro" blog which uses the SQLite database engine for simplicity's sake.</p>
+
+<h3>Required perl modules</h3>
+
+<p>Obviously you need Dancer. You also need the Template Toolkit, File::Slurp, and DBD::SQLite. These all can be installed using your CPAN client, as in:</p>
+
+<pre><code>  cpan Dancer Template File::Slurp DBD::SQLite</code></pre>
+
+<h3>The database</h3>
+
+<p>We're not going to spend a lot of time on the database, as it's not really the point of this particular tutorial.</p>
+
+<pre><code>  create table if not exists entries (
+    id integer primary key autoincrement,
+    title string not null,
+    text string not null
+  );</code></pre>
+
+<p>Here we have a single table with three columns: id, title, and text. The 'id' field is the primary key and will automatically get an ID assigned by the database engine when a row is inserted.</p>
+
+<p>We want our application to initialize the database automatically for us when we start it, so open your favorite text editor and create a file called 'dancr.pl'. We're going to put the following subroutines in that file:</p>
+
+<pre><code>  sub connect_db {
+    my $dbh = DBI-&gt;connect(&quot;dbi:SQLite:dbname=&quot;.setting(&#39;database&#39;)) or
+       die $DBI::errstr;
+
+    return $dbh;
+  }
+
+  sub init_db {
+    my $db = connect_db();
+    my $schema = read_file(&#39;./schema.sql&#39;);
+    $db-&gt;do($schema) or die $db-&gt;errstr;
+  }
+  </code></pre>
+
+<p>Nothing too fancy in here, I hope. Standard DBI except for the <code>setting('database')</code> thing - more on that in a bit. For now, just assume that the expression evaluates to file location for the database file.</p>
+
+<h3>Our first route handler</h3>
+
+<p>Let's tackle our first route handler now, the one for the root URL '/'. This is what it looks like:</p>
+
+<pre><code>  get &#39;/&#39; =&gt; sub {
+    my $db = connect_db();
+    my $sql = &#39;select id, title, text from entries order by id desc&#39;;
+    my $sth = $db-&gt;prepare($sql) or die $db-&gt;errstr;
+    $sth-&gt;execute or die $sth-&gt;errstr;
+    template &#39;show_entries.tt&#39;, { 
+       &#39;msg&#39; =&gt; get_flash(),
+       &#39;add_entry_url&#39; =&gt; uri_for(&#39;/add&#39;),
+       &#39;entries&#39; =&gt; $sth-&gt;fetchall_hashref(&#39;id&#39;),
+    };
+  };</code></pre>
+
+<p>As you can see, the handler is created by specifying the HTTP verb 'get' and the URL to match, '/' and finally a subroutine to do something once those conditions have been satisfied. Something you might not notice right away is the semicolon at the end of the route handler. Since the subroutine actually is a coderef, it requires a semicolon.</p>
+
+<p>Let's take a closer look at the subroutine. The first few lines are standard DBI. The only new concept as part of Dancer is that <code>template</code> directive at the end of the handler. That tells Dancer to process the output through one of its templating engines. In this case, we're using Template Toolkit which offers a lot more flexibility than the simple default Dancer template engine.</p>
+
+<p>Templates all go into the <code>views/</code> directory. Optionally, you can create a "layout" template which provides a consistent look and feel for all of your views. We'll construct our own layout template cleverly named <i>main.tt</i> a little later in this tutorial.</p>
+
+<p>What's going on with the hashref as the second argument to the template directive? Those are all of the parameters we want to pass into our template. We have a <code>msg</code> field which displays a message to the user when an event happens like a new entry is posted, or the user logs in or out. It's called a "flash" message because we only want to display it one time, not every time the / URL is rendered.</p>
+
+<p>The <code>uri_for</code> directive tells Dancer to provide a URI for that specific route, in this case, it is the route to post a new entry into the database. You might ask why we don't simply hardcode the <code>/add</code> URI in our application or templates. The best reason <b>not</b> to do that is because it removes a layer of flexibility on where to "mount" the web application. Although the application is coded to use the root URL <code>/</code> it might be better in the future to locate it under its own URL route (maybe <code>/dancr</code>?) - at that point we'd have to go through our application and the templates and update the URLs and hope we didn't miss any of them. By using the <code>uri_for</code> Dancer method, we can easily load the application wherever we like and not have to modify the application at all.</p>
+
+<p>Finally, the <code>entries</code> field contains a hashref with the results from our database query. Those results will be rendered in the template itself, so we just pass them in.</p>
+
+<p>So what does the <i>show_entries.tt</i> template look like? This:</p>
+
+<pre><code>  &lt;% IF session.logged_in %&gt;
+    &lt;form action=&quot;&lt;% add_entry_url %&gt;&quot; method=post class=add-entry&gt;
+      &lt;dl&gt;
+        &lt;dt&gt;Title:
+        &lt;dd&gt;&lt;input type=text size=30 name=title&gt;
+        &lt;dt&gt;Text:
+        &lt;dd&gt;&lt;textarea name=text rows=5 cols=40&gt;&lt;/textarea&gt;
+        &lt;dd&gt;&lt;input type=submit value=Share&gt;
+      &lt;/dl&gt;
+    &lt;/form&gt;
+  &lt;% END %&gt;
+  &lt;ul class=entries&gt;
+  &lt;% IF entries.size %&gt;
+    &lt;% FOREACH id IN entries.keys.nsort %&gt;
+      &lt;li&gt;&lt;h2&gt;&lt;% entries.$id.title %&gt;&lt;/h2&gt;&lt;% entries.$id.text %&gt;
+    &lt;% END %&gt;
+  &lt;% ELSE %&gt;
+    &lt;li&gt;&lt;em&gt;Unbelievable.  No entries here so far&lt;/em&gt;
+  &lt;% END %&gt;
+  &lt;/ul&gt;</code></pre>
+
+<p>Again, since this isn't a tutorial specifically about Template Toolkit, I'm going to gloss over the syntax here and just point out the section which starts with <code>&lt;ul class=entries&gt;</code> - this is the section where the database query results are displayed. You can also see at the very top some discussion about a session - more on that soon.</p>
+
+<h3>Other HTTP verbs</h3>
+
+<p>There are 8 defined HTTP verbs defined in RFC 2616: OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT. Of these, the majority of web applications focus on the verbs which closely map to the CRUD (Create, Retrieve, Update, Delete) operations most database driven applications need to implement.</p>
+
+<p>Dancer currently supports GET, PUT, POST, DELETE, OPTIONS which map to Retrieve, Create, Update, Delete respectively. Let's take a look now at the <code>/add</code> route handler which handles a POST operation.</p>
+
+<pre><code>  post &#39;/add&#39; =&gt; sub {
+     if ( not session(&#39;logged_in&#39;) ) {
+        send_error(&quot;Not logged in&quot;, 401);
+     }
+
+     my $db = connect_db();
+     my $sql = &#39;insert into entries (title, text) values (?, ?)&#39;;
+     my $sth = $db-&gt;prepare($sql) or die $db-&gt;errstr;
+     $sth-&gt;execute(params-&gt;{&#39;title&#39;}, params-&gt;{&#39;text&#39;}) or die $sth-&gt;errstr;
+
+     set_flash(&#39;New entry posted!&#39;);
+     redirect &#39;/&#39;;
+  };</code></pre>
+
+<p>As before, the HTTP verb begins the handler, followed by the route, and a subroutine to do something - in this case, it will insert a new entry into the database.</p>
+
+<p>The first check in the subroutine is the make sure the user sending the data is logged in. If not, the application sends back an error and stops processing. Otherwise, we have standard DBI stuff. Let me insert (heh, heh) a blatant plug here for always, always using parameterized INSERTs in your application SQL statements. It's the only way to be sure your application won't be vulnerable to SQL injection. (See http://www.bobby-tables.com for correct INSERT examples in multiple languages.) Here we're using the <code>params</code> convenience method to pull in the parameters in the current HTTP request. (You can see the 'title' and 'text' form parameters in the <i>show_entries.tt</i> template above.) Those values are inserted into the database, then we set a flash message for the user and redirect her back to the root URL.</p>
+
+<p>It's worth mentioning that the "flash message" is not part of Dancer, but a part of this specific application.</p>
+
+<h3>Logins and sessions</h3>
+
+<p>Dancer comes with a simple in-memory session manager out of the box. It supports a bunch of other session engines including YAML, memcached, browser cookies and others. For this application we're going to stick with the in-memory model which works great for development and tutorials, but won't persist across server restarts or scale very well in "real world" production scenarios.</p>
+
+<h3>Configuration options</h3>
+
+<p>To use sessions in our application, we have to tell Dancer to activate the session handler and initialize a session manager. To do that, we add some configuration directives toward the top of our dancr.pl file. But there are more options than just the session engine we want to set.</p>
+
+<pre><code>  set &#39;session&#39; =&gt; &#39;Simple&#39;;
+  set &#39;template&#39; =&gt; &#39;template_toolkit&#39;;
+  set &#39;logger&#39; =&gt; &#39;console&#39;;
+  set &#39;log&#39; =&gt; &#39;debug&#39;;
+  set &#39;show_errors&#39; =&gt; 1;
+  set &#39;access_log&#39; =&gt; 1;
+  set &#39;warnings&#39; =&gt; 1;</code></pre>
+
+<p>Hopefully these are fairly self-explanatory. We want the Simple session engine, the Template Toolkit template engine, logging enabled (at the 'debug' level with output to the console instead of a file), we want to show errors to the web browser, log access attempts and log Dancer warnings (instead of silently ignoring them)</p>
+
+<p>In a more sophisticated application you would want to put these configuration options into a YAML file, but for this tutorial, we're going to keep it simple. Dancer also supports the notion of application environments meaning you can create a configuration file for your development instance, and another config file for the production environment (with things like debugging and showing errors disabled perhaps.) Dancer also doesn't impose any limits on what parameters you can set using the <code>set</code> syntax. For this application we're going to embed our single username and password into the application itself.</p>
+
+<pre><code>  set &#39;username&#39; =&gt; &#39;admin&#39;;
+  set &#39;password&#39; =&gt; &#39;password&#39;;</code></pre>
+
+<p>Hopefully no one will ever guess our clever password! Obviously, you will want a more sophisticated user authentication scheme in any sort of non-tutorial application but this is good enough for our purposes.</p>
+
+<h3>Logging in</h3>
+
+<p>Now that Dancr is configured to handle sessions, let's take a look at the URL handler for the <code>/login</code> route.</p>
+
+<pre><code>  any [&#39;get&#39;, &#39;post&#39;] =&gt; &#39;/login&#39; =&gt; sub {
+     my $err;
+
+     if ( request-&gt;method() eq &quot;POST&quot; ) {
+       # process form input
+       if ( params-&gt;{&#39;username&#39;} ne setting(&#39;username&#39;) ) {
+         $err = &quot;Invalid username&quot;;
+       }
+       elsif ( params-&gt;{&#39;password&#39;} ne setting(&#39;password&#39;) ) {
+         $err = &quot;Invalid password&quot;;
+       }
+       else {
+         session &#39;logged_in&#39; =&gt; true;
+         set_flash(&#39;You are logged in.&#39;);
+         redirect &#39;/&#39;;
+       }
+    }
+
+    # display login form
+    template &#39;login.tt&#39;, { 
+      &#39;err&#39; =&gt; $err,
+    };
+  };
+ </code></pre>
+
+<p>This is the first handler which accepts two different verb types, a GET for a human browsing to the URL and a POST for the browser to submit the user's input to the web application. Since we're handling two different verbs, we check to see what verb is in the request. If it's <b>not</b> a POST, we drop down to the <code>template</code> directive and display the <i>login.tt</i> template.</p>
+
+<pre><code>  &lt;h2&gt;Login&lt;/h2&gt;
+  &lt;% IF err %&gt;&lt;p class=error&gt;&lt;strong&gt;Error:&lt;/strong&gt; &lt;% err %&gt;&lt;% END %&gt;
+  &lt;form action=&quot;&lt;% login_url %&gt;&quot; method=post&gt;
+    &lt;dl&gt;
+      &lt;dt&gt;Username:
+      &lt;dd&gt;&lt;input type=text name=username&gt;
+      &lt;dt&gt;Password:
+      &lt;dd&gt;&lt;input type=password name=password&gt;
+      &lt;dd&gt;&lt;input type=submit value=Login&gt;
+    &lt;/dl&gt;
+  &lt;/form&gt;</code></pre>
+
+<p>This is even simpler than our <i>show_entries.tt</i> template - but wait - there's a <code>login_url</code> template parameter and we're only passing in the <code>err</code> parameter. Where's the missing parameter? It's being generated and sent to the template in a <code>before_template</code> directive - we'll come back to that in a moment or two.</p>
+
+<p>So the user fills out the <i>login.tt</i> template and submits it back to the <code>/login</code> route handler. We now check the user input against our application settings and if they're incorrect, we alert the user, otherwise the application starts a session and sets the <code>logged_in</code> session parameter to the <code>true()</code> value. Dancer exports both a <code>true()</code> and <code>false()</code> convenience method which we use here. After that, it's another flash message and back to the root URL handler.</p>
+
+<h3>Logging out</h3>
+
+<p>And finally, we need a way to clear our user's session with the customary logout procedure.</p>
+
+<pre><code>  get &#39;/logout&#39; =&gt; sub {
+     session-&gt;destroy;
+     set_flash(&#39;You are logged out.&#39;);
+     redirect &#39;/&#39;;
+  };</code></pre>
+
+<p><code>session-&gt;destroy;</code> is Dancer's way to remove a stored session. We notify the user she is logged out and route her back to the root URL once again.</p>
+
+<h3>Layout and static files</h3>
+
+<p>We still have a missing puzzle piece or two. First, how can we use Dancer to serve our CSS stylesheet? Second, where are flash messages displayed? Third, what about the <code>before_template</code> directive?</p>
+
+<h3>Serving static files</h3>
+
+<p>In Dancer, static files should go into the <code>public/</code> directory, but in the application be sure to omit the <code>public/</code> element from the path. For example, the stylesheet for Dancr lives in <code>dancr/public/css/style.css</code> but is served from http://localhost:3000/css/style.css.</p>
+
+<p>If you wanted to build a mostly static web site you could simply write route handlers like this one:</p>
+
+<pre><code>  get &#39;/&#39; =&gt; sub {
+     send_file &#39;index.html&#39;;
+  };</code></pre>
+
+<p>where index.html would live in your <code>public/</code> directory.</p>
+
+<p><code>send_file</code> does exactly what it says: it loads a static file, then sends the contents of that file to the user.</p>
+
+<h3>Layouts</h3>
+
+<p>I mentioned near the beginning of this tutorial that it is possible to create a <code>layout</code> template. In Dancr, that layout is called <code>main</code> and it's set up by putting in a directive like this:</p>
+
+<pre><code>  layout &#39;main&#39;;</code></pre>
+
+<p>near the top of your web application. What this tells Dancer's template engine is that it should look for a file called <i>main.tt</i> in <code>dancr/views/layouts/</code> and insert the calls from the <code>template</code> directive into a template parameter called <code>content</code>.</p>
+
+<p>For this web application, the layout template looks like this.</p>
+
+<pre><code>  &lt;!doctype html&gt;
+  &lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Dancr&lt;/title&gt;
+    &lt;link rel=stylesheet type=text/css href=&quot;&lt;% css_url %&gt;&quot;&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class=page&gt;
+    &lt;h1&gt;Dancr&lt;/h1&gt;
+       &lt;div class=metanav&gt;
+       &lt;% IF not session.logged_in %&gt;
+         &lt;a href=&quot;&lt;% login_url %&gt;&quot;&gt;log in&lt;/a&gt;
+       &lt;% ELSE %&gt;
+         &lt;a href=&quot;&lt;% logout_url %&gt;&quot;&gt;log out&lt;/a&gt;
+       &lt;% END %&gt;
+    &lt;/div&gt;
+    &lt;% IF msg %&gt;
+      &lt;div class=flash&gt; &lt;% msg %&gt; &lt;/div&gt;
+    &lt;% END %&gt;
+    &lt;% content %&gt;
+  &lt;/div&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;</code></pre>
+
+<p>Aha! You now see where the flash message <code>msg</code> parameter gets rendered. You can also see where the content from the specific route handlers is inserted (the fourth line from the bottom in the <code>content</code> template parameter.)</p>
+
+<p>But what about all those other <code>*_url</code> template parameters?</p>
+
+<h3>Using <code>before_template</code></h3>
+
+<p>Dancer has a way to manipulate the template parameters before they're passed to the engine for processing. It's <code>before_template</code>. Using this directive, you can generate and set the URIs for the <code>/login</code> and <code>/logout</code> route handlers and the URI for the stylesheet. This is handy for situations like this where there are values which are re-used consistently across all (or most) templates. This cuts down on code-duplication and makes your app easier to maintain over time since you only need to update the values in this one place instead of everywhere you render a template.</p>
+
+<pre><code>  before_template sub {
+     my $tokens = shift;
+        
+     $tokens-&gt;{&#39;css_url&#39;} = request-&gt;base . &#39;css/style.css&#39;;
+     $tokens-&gt;{&#39;login_url&#39;} = uri_for(&#39;/login&#39;);
+     $tokens-&gt;{&#39;logout_url&#39;} = uri_for(&#39;/logout&#39;);
+  };</code></pre>
+
+<p>Here again I'm using <code>uri_for</code> instead of hardcoding the routes. This code block is executed before any of the templates are processed so that the template parameters have the appropriate values before being rendered.</p>
+
+<h3>Putting it all together</h3>
+
+<p>Here's the complete dancr.pl script from start to finish.</p>
+
+<pre><code> use Dancer;
+ use DBI;
+ use File::Spec;
+ use File::Slurp;
+ use Template;
+ 
+ set &#39;database&#39; =&gt; File::Spec-&gt;tmpdir() . &#39;dancr.db&#39;;
+ set &#39;session&#39; =&gt; &#39;Simple&#39;;
+ set &#39;template&#39; =&gt; &#39;template_toolkit&#39;;
+ set &#39;logger&#39; =&gt; &#39;console&#39;;
+ set &#39;log&#39; =&gt; &#39;debug&#39;;
+ set &#39;show_errors&#39; =&gt; 1;
+ set &#39;access_log&#39; =&gt; 1;
+ set &#39;warnings&#39; =&gt; 1;
+ set &#39;username&#39; =&gt; &#39;admin&#39;;
+ set &#39;password&#39; =&gt; &#39;password&#39;;
+ 
+ layout &#39;main&#39;;
+ 
+ my $flash;
+ 
+ sub set_flash {
+        my $message = shift;
+ 
+        $flash = $message;
+ }
+ 
+ sub get_flash {
+ 
+        my $msg = $flash;
+        $flash = &quot;&quot;;
+ 
+        return $msg;
+ }
+ 
+ sub connect_db {
+        my $dbh = DBI-&gt;connect(&quot;dbi:SQLite:dbname=&quot;.setting(&#39;database&#39;)) or
+                die $DBI::errstr;
+ 
+        return $dbh;
+ }
+ 
+ sub init_db {
+        my $db = connect_db();
+        my $schema = read_file(&#39;./schema.sql&#39;);
+        $db-&gt;do($schema) or die $db-&gt;errstr;
+ }
+ 
+ before_template sub {
+        my $tokens = shift;
+        
+        $tokens-&gt;{&#39;css_url&#39;} = request-&gt;base . &#39;css/style.css&#39;;
+        $tokens-&gt;{&#39;login_url&#39;} = uri_for(&#39;/login&#39;);
+        $tokens-&gt;{&#39;logout_url&#39;} = uri_for(&#39;/logout&#39;);
+ };
+ 
+ get &#39;/&#39; =&gt; sub {
+        my $db = connect_db();
+        my $sql = &#39;select id, title, text from entries order by id desc&#39;;
+        my $sth = $db-&gt;prepare($sql) or die $db-&gt;errstr;
+        $sth-&gt;execute or die $sth-&gt;errstr;
+        template &#39;show_entries.tt&#39;, { 
+                &#39;msg&#39; =&gt; get_flash(),
+                &#39;add_entry_url&#39; =&gt; uri_for(&#39;/add&#39;),
+                &#39;entries&#39; =&gt; $sth-&gt;fetchall_hashref(&#39;id&#39;),
+        };
+ };
+ 
+ post &#39;/add&#39; =&gt; sub {
+        if ( not session(&#39;logged_in&#39;) ) {
+                send_error(&quot;Not logged in&quot;, 401);
+        }
+ 
+        my $db = connect_db();
+        my $sql = &#39;insert into entries (title, text) values (?, ?)&#39;;
+        my $sth = $db-&gt;prepare($sql) or die $db-&gt;errstr;
+        $sth-&gt;execute(params-&gt;{&#39;title&#39;}, params-&gt;{&#39;text&#39;}) or die $sth-&gt;errstr;
+ 
+        set_flash(&#39;New entry posted!&#39;);
+        redirect &#39;/&#39;;
+ };
+ 
+ any [&#39;get&#39;, &#39;post&#39;] =&gt; &#39;/login&#39; =&gt; sub {
+        my $err;
+ 
+        if ( request-&gt;method() eq &quot;POST&quot; ) {
+                # process form input
+                if ( params-&gt;{&#39;username&#39;} ne setting(&#39;username&#39;) ) {
+                        $err = &quot;Invalid username&quot;;
+                }
+                elsif ( params-&gt;{&#39;password&#39;} ne setting(&#39;password&#39;) ) {
+                        $err = &quot;Invalid password&quot;;
+                }
+                else {
+                        session &#39;logged_in&#39; =&gt; true;
+                        set_flash(&#39;You are logged in.&#39;);
+                        redirect &#39;/&#39;;
+                }
+        }
+
+        # display login form
+        template &#39;login.tt&#39;, { 
+                &#39;err&#39; =&gt; $err,
+        };
+
+ };
+
+ get &#39;/logout&#39; =&gt; sub {
+        session-&gt;destroy;
+        set_flash(&#39;You are logged out.&#39;);
+        redirect &#39;/&#39;;
+ };
+
+ init_db();
+ start;</code></pre>
+
+<h3>Advanced route moves</h3>
+
+<p>There's a lot more to route matching than shown here. For example, you can match routes with regular expressions, or you can match pieces of a route like <code>/hello/:name</code> where the <code>:name</code> piece magically turns into a named parameter in your handler for manipulation.</p>
+
+<h3>Happy dancing!</h3>
+
+<p>I hope this effort has been helpful and interesting enough to get you exploring Dancer on your own. The framework is still under heavy development but it's definitely mature enough to use in a production project. Additionally, there are now a lot of great Dancer plugins which extend and enhance the capabilities of the the platform.</p>
+
+<p>Happy dancing!</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Mark R. Allen for the Perl Dancer Advent Calendar. It's also shipped with Dancer as Dancer::Tutorial.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Mark R. Allen.</p>
+

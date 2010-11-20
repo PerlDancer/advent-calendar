@@ -1,0 +1,27 @@
+---
+layout: post
+---
+
+<h2>Map the Way with Dancer::Plugin::SiteMap</h2>
+
+<p>I was sitting staring at yet another XML site map document when it came to me; It should be easier than this!</p>
+
+<p>Enter Dancer::Plugin::SiteMap - The easy way to map.</p>
+
+<h3>So How Does It Work?</h3>
+
+<p>Simplicity itself:</p>
+
+<pre><code>    use Dancer;
+    use Dancer::Plugin::SiteMap;</code></pre>
+
+<p>That's it! Your Dancer App now has <code>/sitemap</code> and <code>/sitemap.xml</code> routes.</p>
+
+<h3>What's In Store For The Future?</h3>
+
+<p>Eventually I'd like to add support for optional custom template of the HTML SiteMap.</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by James Ronan <code><james@ronanweb.co.uk></code> for the Perl Dancer Advent Calendar 2010.</p>
+

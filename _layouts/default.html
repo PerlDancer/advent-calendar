@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>{{ page.title }}</title>
+
+   <!--Homepage CSS-->
+   <link rel="stylesheet" href="/static/css/style.css" media="screen, projection" />
+
+   <link href="/index.atom" rel="alternate" title="Dancer Advent Calendar" type="application/atom+xml" />
+   
+   <link href="/favicon.ico" rel="shortcut icon" />
+   {% include analytics.html %}
+</head>
+<body>
+
+<div class="site">
+  <nav>
+    <div class="title">
+      <a href="/">Dancer advent calendar</a>
+      <a class="extra" rel="author" href="/about.html">about</a>
+    </div>
+  </nav>
+
+  {{ content }}
+
+  <footer>
+  <div class="footer">
+    <div class="contact">
+      <p>
+        Perl Dancer<br />
+        <a href="http://widget.mibbit.com/?settings=285bba04946885da044c7d1e16a79b46&server=irc.perl.org&channel=%23dancer">#dancer on irc.perl.org</a>
+      </p>
+    </div>
+    <div class="contact">
+      <p>
+        <a href="http://github.com/perldancer/">github.com/perldancer</a><br />
+        <a href="http://twitter.com/perldancer/">twitter.com/perldancer</a><br />
+      </p>
+    </div>
+    <div class="rss">
+      <a href="/index.atml">
+        <img src="/static/imgs/rss.png" alt="Subscribe to Atom Feed" />
+      </a>
+    </div>
+  </div>
+  </footer>
+</div>
+
+</body>
+</html>

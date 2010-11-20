@@ -1,0 +1,94 @@
+---
+layout: post
+---
+
+<h2>Authentication with Tiwtter OAuth</h2>
+
+<p>In this article we'll see how to authenticate our users via Twitter's OAuth mechanism. As this can be of common use, we'll do that in a plugin named <code>Dancer::Plugin::Auth::Twitter</code>.</p>
+
+<p>This plugin will be based on Net::Twitter, and as a bonus side-effect will export a <code>twitter</code> keyword to the application's namespace, allowing other route handlers to access the whole Twitter API with the authenticated user.</p>
+
+<h3>Basic OAuth principles</h3>
+
+<p>Explaining how OAuth works is beyond the scope of this article, on the other hand, you don't really need to understand the underlying logic of it to follow what will be done in this article. All you need to understand is that authentication with OAuth works with such a workflow:</p>
+
+<ol>
+
+<li>1. An unauthenticated user request a page on your app</li>
+
+<li>2. The application requests an authentication URL from Twitter's API, providing its <code>consumer_key</code> and <code>consumer_secret</code> keys as well as a <code>callback URL</code>.</li>
+
+<li>3. The application bounces the user to the authentication URL it has got from Twitter.</li>
+
+<li>4. The user redirected at Twitter and is prompted for allowing the application to access her profile and do actions on her behalf.</li>
+
+<li>5. When the user hits the <i>Allow</i> button, she's redirected back to the application, on the callback URL provided at step #2 with request token provided by Twitter as params.</li>
+
+<li>6. The user is back on the application, requesting the callback URL. The app uses the token given as parameters (automatically set at step 5 by Twitter redirect) and fetch the Twitter user object with a request to Twitter's API.</li>
+
+<p>The application stores the user object in a session (or do whatever to recognize the user on later requests).</p>
+
+<li>7. The user is authenticated and the application will recognize her.</li>
+
+</ol>
+
+<p>Our plugin should provide a simple way to implement this logic within a Dancer application, all the OAuth negociation being delegated to Net::Twitter.</p>
+
+<h3>First things first</h3>
+
+<p>Before starting we need to register a Twitter application so we can have our <code>consumer_key</code> and <code>consumer_secret</code> keys.</p>
+
+<p>Anyone can register a Twitter application at http://dev.twitter.com, just make sure it is a <i>Web</i> application.</p>
+
+<h3>Writing the plugin</h3>
+
+<h4>Configuration</h4>
+
+<p>First, our plugin needs a bit of configuration, as the application will need to know these <code>consumer_key</code> and <code>consumer_secret</code> keys.</p>
+
+<p>Each Dancer plugin can store their configuration bits inside the main app's configuration, under <code>plugins/PluginName</code>. PluginName being the name of the plugin module minus the <code>Dancer::Plugin</code> namespace.</p>
+
+<p>So as our plugin is named <code>Dancer::Plugin::Auth::Twitter</code> we'll be able to store our configuration under <code>plugins/Auth::Twitter</code> :</p>
+
+<pre><code>    # config.yml
+    ....
+    plugin:
+      &quot;Auth::Twitter&quot;:
+        consumer_key: &quot;abcd...&quot;
+        consumer_secret: &quot;1234...&quot;
+        callback_url: &quot;http://localhost:3000/auth/twitter/callback&quot;</code></pre>
+
+<p>In our plugin code, we'll be able to access our plugin setting directly with the <code>plugin_setting</code> code.</p>
+
+<h4>Initialization</h4>
+
+<p>TODO</p>
+
+<h4>Authentication URL</h4>
+
+<p>TODO</p>
+
+<h4>Callback URL</h4>
+
+<p>TODO</p>
+
+<h3>Using the plugin in your application</h3>
+
+<p>TODO</p>
+
+<h3>More details</h3>
+
+<p>As with previous articles in this advent calendar, the plugin described here has been uploaded to the CPAN at Dancer::Plugin::Auth::Twitter.</p>
+
+<p>The source code can also been accessed with GitHub at http://github.com/sukria/Dancer-Plugin-Auth-Twitter/.</p>
+
+<p>For more details about the plugin, you can check the example application that is shipped with Dancer::Plugin::Auth::Twitter in the <code>example/</code> directory. It should be working out of.</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Alexis Sukrieh for the Perl Dancer advent calendar 2010.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 Alexis Sukrieh <code><sukria@sukria.net></code>.</p>
+

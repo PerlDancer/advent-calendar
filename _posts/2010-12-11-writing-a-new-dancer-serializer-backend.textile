@@ -1,0 +1,185 @@
+---
+layout: post
+---
+
+<h2>Writing a new Dancer serializer backend</h2>
+
+<p>Writing serializers in Dancer is so easy you can read this standing on your head!</p>
+
+<p>In this entry we'll be writing a new serializer for Dancer and upload it to CPAN! Feel free to add your own once you finish reading this. :)</p>
+
+<h3>How do serializers work?</h3>
+
+<p>Serializers basically do two things:</p>
+
+<ul>
+
+<li>Serialize a data structure</li>
+
+<p>Take a data structure as a parameter and return serialized data.</p>
+
+<li>Deserialize serialized data</li>
+
+<p>Take serialized data as a parameter and return structured data.</p>
+
+</ul>
+
+<h3>Deciding on the serialization format</h3>
+
+<p>Serializes are so easy to write, Dancer already includes a few, such as:</p>
+
+<ul>
+
+<li>JSON</li>
+
+<p>Using JSON.</p>
+
+<li>XML</li>
+
+<p>Using XML::Simple.</p>
+
+<li>YAML</li>
+
+<p>Using YAML.</p>
+
+<li>Dumper</li>
+
+<p>Using Data::Dumper.</p>
+
+<li>Mutable</li>
+
+<p>A self-adjusting serializer that uses the <i>content type</i> and <i>accept</i> headers.</p>
+
+</ul>
+
+<p>Since these are already taken (unless you want to change one implementation with another, such as YAML for YAML::Tiny), there's not much point to write them again.</p>
+
+<p>And since the recommended serialization formats are already mentioned above, it's a good reason to look into more nether regions, such as... UU encoding!</p>
+
+<p>Of course, UU encoding isn't a format in its own, just an encoding so it isn't recursive and we need to encode an entire structure recursively. We'll cheat around it but using Storable's <code>nfreeze</code> and then encoding it.</p>
+
+<p><i>(credit goes out to Apache::Session for the idea)</i></p>
+
+<h3>Module skeleton</h3>
+
+<p>This should be the simplest skeleton, including just the required modules:</p>
+
+<pre><code>    package Dancer::Serializer::UUEncode;
+
+    use strict;
+    use warnings;
+
+    use Carp;
+    use Storable qw/ nfreeze thaw /;
+    use base &#39;Dancer::Serializer::Abstract&#39;;
+
+    # ...
+
+    1;</code></pre>
+
+<p>First, notice that we're using Dancer::Serializer::Abstract as a base, that's because we already implemented the Dancer integration logic under that base class. It promises us less work and more present and future portability. It also makes our module object oriented.</p>
+
+<p>There are a three subroutines we should implement.</p>
+
+<ul>
+
+<li>serialize</li>
+
+<p>The subroutine that does the serialization process itself.</p>
+
+<pre><code>    sub serialize {
+        my ( $self, $entity ) = @_;
+
+        return pack( &#39;u&#39;, nfreeze($entity) );
+    }</code></pre>
+
+<p>Yes, that's it!</p>
+
+<li>deserialize</li>
+
+<p>The subroutine that does the deserialization process itself.</p>
+
+<pre><code>    sub deserialize {
+        my ( $self, $content ) = @_;
+        my $data = thaw( unpack( &#39;u&#39;, $content ) );
+
+        defined $data or croak &quot;Couldn&#39;t thaw unpacked content &#39;$content&#39;&quot;;
+
+        return $data;
+    }</code></pre>
+
+<li>content_type</li>
+
+<p>This subroutine simply returns the content type of our serialization. This is good practice for web applications so we'll implement it. If we don't, it will default to <i>text/plain</i>, which is good too.</p>
+
+<pre><code>    sub content_type {&#39;text/uuencode&#39;}</code></pre>
+
+</ul>
+
+<p>We pretty much finished the serializer.</p>
+
+<h3>Did we really finish it so quickly?</h3>
+
+<p>Yes, we did!</p>
+
+<h3>What else can we do?</h3>
+
+<h4>helpers</h4>
+
+<p>You can add helpers that will make it easier to use the <code>serialize/deserialize</code> subroutines functionally outside of automatic serialization.</p>
+
+<pre><code>    # helpers
+    sub from_uuencode {
+        my ($uuencode) = @_;
+        my $s = Dancer::Serializer::UUEncode-&gt;new;
+
+        return $s-&gt;deserializer($uuencode);
+    }
+
+    sub to_uuencode {
+        my ($data) = @_;
+        my $s = Dancer::Serializer::UUEncode-&gt;new;
+
+        return $s-&gt;serialize($data);
+    }</code></pre>
+
+<h4>initializer</h4>
+
+<p>The <code>init</code> subroutine is run on initialize of our object, and helps you take care of initialize checks you might have.</p>
+
+<pre><code>    sub init {
+        # do some checks
+    }</code></pre>
+
+<h4>loader</h4>
+
+<p>The <code>loaded</code> subroutine is not run by Dancer itself but it is common practice to separate your lazy module loading to this subroutine and then run it using the initializer.</p>
+
+<p>If we would want to lazy load Storable, we could use these subroutines as such:</p>
+
+<pre><code>    sub loaded {
+        require Storable;
+        Storable-&gt;import(&#39;nfreeze&#39;);
+    }
+
+    sub init {
+        my ($self) = @_;
+        $self-&gt;loaded;
+    }</code></pre>
+
+<h3>CPAN, anyone?</h3>
+
+<p>While you've been reading this entry, I've taken the liberty to upload what we just wrote to CPAN and it should now be available as Dancer::Serializer::UUEncode. Nice, isn't it?</p>
+
+<p>Feel free to send me your names so I could add you to the CREDITS section in the POD! :)</p>
+
+<h2>SEE ALSO</h2>
+
+<p><i>Writing a new Dancer logger backend</i></p>
+
+<p><i>Writing a new Dancer session backend</i></p>
+
+<h2>AUTHOR</h2>
+
+<p>Sawyer X <xsawyerx@cpan.org></p>
+

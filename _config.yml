@@ -1,0 +1,9 @@
+pygments: 1
+future: true
+auto: true
+exclude:
+  - CALENDAR
+  - README
+  - build
+  - pending
+  - proofread

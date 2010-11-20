@@ -1,0 +1,231 @@
+---
+layout: post
+---
+
+<h2>Adding authentication to your application</h2>
+
+<p>Web application security, arguably the most important part of any system, is a task (or rather a pain-point) that most developers deal with during the development of each new system, in an ad-hoc manner. The complexity of this task is usually attributed to the TIMTOWTDI (there is more than one way to do it) nature of security in web applications. Most developers have no real understanding of what application security models exist, what models are popular, what models are recommended or why. This means that most developers, beyond the coding of the login screen, are mainly winging-it (making assumptions) as they go.</p>
+
+<p>Dancer::Plugin::Auth::RBAC takes the TIMTOWTDIBSCINABTE (there is more than one way to do it, but sometimes consistency isn't a bad thing either) approach towards web application system security by providing a standard, reusable RBAC (role-based access control) framework for your Dancer applications. Compared to other system security models (e.g. ACL, etc), Dancer::Plugin::Auth::RBAC provides flexible and granular access control through the use of roles, operations (tasks), and actions. In this article I will first explain why RBAC is the best security model choice, how RBAC works, and finally, show you a few examples on how Dancer::Plugin::Auth::RBAC approaches RBAC.</p>
+
+<h3>Why Role-Based Access Control</h3>
+
+<p>RBAC provides the most granular access control system, whereby a user may have multiple simultaneous permissions, which can have restrictable actions. The following is an attempt to illustrate this:</p>
+
+<pre><code>    user (the user)
+        role (has this role)
+            task (which has permission to)
+                action (perform this action)
+        role (also has this role)
+            task (which has permission to)
+                action (perform this action)</code></pre>
+
+<p>Like other ACL systems (access control lists), RBAC subjects (users) can have multiple roles. The difference between ACL and RBAC is the added granularity of the permissions (tasks) and actions. Using the example above, user access can be validated at 4-points (the existence of the user, the role(s) of the user, the permission(s) of the user, and the action(s) of the user). The following is an attempt to illustrate this:</p>
+
+<pre><code>    if ($user) {
+        if ($user-&gt;roles) {
+            if ($user-&gt;role($role)) {
+                if ($user-&gt;role($role)-&gt;task($task)) {
+                    if ($user-&gt;role($role)-&gt;task($task)-&gt;action) {
+                        # this is not actual code and is not executable
+                        # this illustrates the granularity of RBAC
+                    }
+                }
+            }
+        }
+    }</code></pre>
+
+<p>You can find more information on RBAC and its counterparts on Wikipedia at http://en.wikipedia.org/wiki/Rbac.</p>
+
+<h3>How RBAC Works in Dancer::Plugin::Auth::RBAC</h3>
+
+<p>Dancer::Plugin::Auth::RBAC seperates authentication and access control into two namespaces, Dancer::Plugin::Auth::RBAC::Credentials, which is responsible for instructing Dancer::Plugin::Auth::RBAC where to find user accounts and how to authenticate them, and Dancer::Plugin::Auth::RBAC::Permissions, which specifies the system access control roles, operations and actions.</p>
+
+<p>Dancer::Plugin::Auth::RBAC ships with 4 authentication modules out-of-the-box which are Config.pm, MySQL.pm, SQLite.pm, and PostgreSQL.pm. Currently Dancer::Plugin::Auth::RBAC only ships with one access control module which is Dancer::Plugin::Auth::RBAC::Permissions::Config, which should be sufficient for most use cases.</p>
+
+<p>A typical web application using Dancer::Plugin::Auth::RBAC should load the Dancer::Plugin::Auth::RBAC plugin and specify one authentication module and one access control module. Dancer::Plugin::Auth::RBAC will then provide all the neccessary functions needed to authenticate, restrict, revoke and grant access.</p>
+
+<h3>RBAC via Dancer::Plugin::Auth::RBAC</h3>
+
+<p>Here we will demonstrate how to utilize RBAC in your web application via Dancer::Plugin::Auth::RBAC. First we need to decide how we will be creating and storing user accounts. For demonstrational purposes we will use our application configuration file as our datastore for user accounts etc. This means for authentication we need to load Dancer::Plugin::Auth::RBAC::Credentials::Config and Dancer::Plugin::Auth::RBAC::Permissions::Config, since there is only one access control class. Our config.yml file should look as follows:</p>
+
+<pre><code>    plugins:
+      # loads the Dancer::Plugin::Auth::RBAC plugin
+      Authorize:
+        # all authentication related options
+        credentials:
+          # load the Dancer::Plugin::Auth::RBAC::Credentials::Config authentication class
+          class: Config
+          # Dancer::Plugin::Auth::RBAC::Credentials::Config class options
+          options:
+            # specify all the user accounts needed for Config.pm
+            accounts:
+              # user id
+              user01:
+                name: &quot;Joe Blow&quot;
+                password: foobar
+                roles:
+                  - guest
+                  - user
+              user02:
+                name: &quot;Bruce Wayne&quot;
+                password: barbaz
+                roles:
+                  - admin
+        # load all access control related options
+        permissions:
+          # load the Dancer::Plugin::Auth::RBAC::Permissions::Config access control class
+          class: Config
+          # Dancer::Plugin::Auth::RBAC::Permissions::Config class options
+          options:
+            control:
+              # specify the access control lists
+              # role
+              admin:
+                permissions:
+                  # operation
+                  manage accounts:
+                    operations:
+                      # actions
+                      - view
+                      - create
+                      - update
+                      - delete
+              # role
+              user:
+                permissions:
+                  # operation
+                  manage accounts:
+                    operations:
+                      # actions
+                      - view
+                      - create
+              guests:
+                permissions:
+                  manage accounts:
+                    operations:
+                      - view</code></pre>
+
+<p>Now that we have specified our plugin options in our application configuration file, we need to design our Dancer application to restrict access using the methods provided by Dancer::Plugin::Auth::RBAC. Dancer::Plugin::Auth::RBAC provides the auth() function to Dancer which returns a new instance of Dancer::Plugin::Auth::RBAC which provides asa(), can(), roles(), errors() and revoke().</p>
+
+<pre><code>    use Dancer;
+    use Dancer::Plugin::Auth::RBAC;
+    
+    # get new Dancer::Plugin::Auth::RBAC instance and check credentials
+    my $user = auth(params-&gt;{&#39;login&#39;}, params-&gt;{&#39;password&#39;});
+    
+    # check if authentication passed
+    if ($user-&gt;errors) {
+        return &#39;failed&#39;;
+    }
+    
+    # check if authenticated user has an admin role
+    if ($user-&gt;asa(&#39;admin&#39;)) {
+        return &#39;im an admin&#39;;
+    }
+    </code></pre>
+
+<p>Typical usuage would be to put user checking in a before filter and authentication login on the login page, e.g.</p>
+
+<pre><code>    use Dancer;
+    use Dancer::Plugin::Auth::RBAC;
+    
+    # check that Dancer::Plugin::Auth::RBAC
+    # has populated the user session info
+    before sub {
+        
+        unless (authd) {
+            return redirect &#39;/login&#39;
+            unless request-&gt;path eq &#39;/login&#39; ;
+        }        
+        
+        return redirect &#39;/&#39;
+        unless request-&gt;path eq &#39;/&#39; ;
+    
+    };
+    
+    any &#39;/login&#39; =&gt; sub {
+        my $user = auth(params-&gt;{&#39;login&#39;}, params-&gt;{&#39;password&#39;});
+        return redirect &#39;/dashboard&#39; unless $user-&gt;errors;
+    };</code></pre>
+
+<p>Once your basic user authentication and application security is in place you can move on to doing more advanced and sophisticated role-based access control using asa(), can(), and revoke().</p>
+
+<pre><code>    use Dancer;
+    use Dancer::Plugin::Auth::RBAC;
+    
+    # auth() will return a new Dancer::Plugin::Auth::RBAC instance using the
+    # authentication information stored in your session file
+    
+    my $user = auth;
+    
+    # check if the user has the specified role
+    if ($user-&gt;asa(&#39;admin&#39;)) {
+        return &#39;im an admin&#39;;
+    }
+    
+    # check if any of the users roles can perform the specified operation
+    my $operation = &#39;manage accounts&#39;;
+    if ($user-&gt;can($opertion)) {
+        
+        # user can manage accounts but can they ..
+        if ($user-&gt;can($opertion, &#39;create&#39;)) {
+            
+            # user can manage accounts and create them :}
+            
+        }
+        
+    }
+    </code></pre>
+
+<p>Even better, use RBAC in your TT (Template-Toolkit) templates as follows:</p>
+
+<pre><code>    use Dancer;
+    use Dancer::Plugin::Auth::RBAC;
+    
+    get &#39;/dashboard&#39; =&gt; sub {
+        
+        # use Dancer::Plugin::Auth::RBAC in your templates
+        template &#39;dashboard&#39;, {
+            &#39;auth&#39; =&gt; sub { return auth(@_) }
+        };
+    };
+    
+    .... in your TT template
+    
+    &lt;html&gt;
+        &lt;head&gt;
+            &lt;title&gt;The Dashboard&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;div &gt;
+                [% IF auth.asa(&#39;admin&#39;) %]
+                    &lt;div&gt;
+                        &lt;h1&gt;I am the administrative dashboard&lt;/h1&gt;
+                    &lt;/div&gt;
+                [% ELSE %]
+                    &lt;div&gt;
+                        &lt;h1&gt;I am the restricted access dashboard&lt;/h1&gt;
+                    &lt;/div&gt;
+                [% END %]
+            &lt;/div&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+    </code></pre>
+
+<h3>Conclusion</h3>
+
+<p>So you see, Dancer::Plugin::Auth::RBAC provides the best access control system using the best web application framework with minimal effort. Let's keep web application development fun! Thanks for reading.</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Al Newkirk for the Perl Dancer Advent Calendar 2010.</p>
+
+<h3>Reviewers</h3>
+
+<p>Proofreading and typo-fixing by Alexis Sukrieh.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Al Newkirk <code><we@ana.im></code></p>
+

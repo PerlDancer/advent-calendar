@@ -1,0 +1,142 @@
+---
+layout: post
+---
+
+<h2>How to write a plugin</h2>
+
+<p>Dancer is a DSL for writing web applications. It's focused on providing the obvious and the feature set is limited on purpose.</p>
+
+<p>For advanced or particular needs, Dancer's DSL can be extended by plugins.</p>
+
+<p>This article will explain the basics and concepts of Dancer plugins and will guide you through the writing of your first plugin: <code>Dancer::Plugin::MobileDevice</code>.</p>
+
+<h3>The Basics</h3>
+
+<p>Before starting to write our own plugin, let's explain what a plugin can do, and how.</p>
+
+<p>A plugin is a package that declares (with the <code>register</code> keyword) a set of <i>keywords</i> that are bound to <i>code refs</i>. When a plugin has performed all of its declarations, it registers itself in Dancer's core with the <code>register_plugin</code> keyword.</p>
+
+<p>Once a Dancer application imports a plugin, all of the keywords declared by the plugin are visible in the application's namespace, just as if they were part of Dancer's core DSL.</p>
+
+<p>A plugin can also do everything a regular Dancer application can do, like declaring a <code>before</code> filter, declaring a couple of route handlers or even running some Perl code at its import time.</p>
+
+<h3>The concept of a "mobile" plugin</h3>
+
+<p>Now that we know what a Dancer plugin is, and how it works, we have to find someting to do. I recently had the idea to implement a plugin that would provide the developer with a facility to detect if the user agent is a mobile device or not.</p>
+
+<p>When thinking of that idea, I realized it would be a perfect subject for an article, because the plugin itself will not be complicated while using an interesting subset of the possibilities.</p>
+
+<p>The idea is to provide the following features:</p>
+
+<ul>
+
+<li>dynamic layout</li>
+
+<p>We want to serve a light HTML content when accessed by a mobile device, so we'll basically set a specific layout whenever a mobile client requests a page. That way, we can forget about the layout and focus on our route handlers, and the plugin will handle that for us.</p>
+
+<li>boolean accessor <code>is_mobile_device</code></li>
+
+<p>Basically, the plugin should provide an accessor for letting the developer know if the current user agent is a mobile device or not.</p>
+
+<li>default token in templates</li>
+
+<p>We want all of our template calls to be able to know about <code>is_mobile_device</code>, so we want to make it a default token.</p>
+
+</ul>
+
+<p>OK, I think this feature-set sounds like a good start for <code>Dancer::Plugin::MobileDevice</code>, let's start writing it!</p>
+
+<h3>Writing the plugin</h3>
+
+<p>Let's start with an empty plugin skeleton:</p>
+
+<pre><code>    package Dancer::Plugin::MobileDevice;
+    use Dancer &#39;:syntax&#39;;
+    use Dancer::Plugin;
+
+    register_plugin;</code></pre>
+
+<p>That's it, we have an empty plugin. It does nothing yet, except registering itself to Dancer's core.</p>
+
+<p>We can now add a <i>keyword</i> which will be exported to our caller's namespace (basically, the user's application that <code>use</code> our plugin).</p>
+
+<h4>Adding a keyword: <code>is_mobile_device</code></h4>
+
+<p>We want to provide a helper that returns a boolean value telling if the requesting user agent is a mobile device or not, we'll do that by exporting a new keyword to Dancer's DSL.</p>
+
+<p>This keyword is basically a subroutine bound to a name (Dancer::Plugin takes care of the exporting magic for us, we only have to declare new keywords with <code>register</code> and register the plugin itself when done with <code>register_plugin</code>.</p>
+
+<p>The sub bound to our <code>is_mobile_device</code> keyword should do one simple thing: test the user agent string of the incoming request against a pattern of known mobile devices. This is as easy as the following:</p>
+
+<pre><code>    register &#39;is_mobile_device&#39; =&gt; sub {
+        return request-&gt;user_agent =~
+            /(iPhone|Android|BlackBerry|Mobile|Palm)/
+          ? 1 : 0;
+    };</code></pre>
+
+<p>That's it. The <code>request</code> keyword is Dancer-native and returns a Dancer::Request object representing the current incoming request. It provides among other goodies an accessor to the user agent string (<code>user_agent</code>) and we test it with a regular expression with well-known mobile device strings.</p>
+
+<p>Whenever it's called from a route handler (or a filter), it returns true or false depending on the match.</p>
+
+<h4>Dynamic layout</h4>
+
+<p>We now want to change the layout whenver a request is served for a mobile device. This can easily be done with a before filter:</p>
+
+<pre><code>    before sub {
+        var orig_layout =&gt; setting(&#39;layout&#39;);
+
+        if ( is_mobile_device() ) {
+            setting layout =&gt; &#39;mobile&#39;;
+        }
+    };</code></pre>
+
+<p>A <code>before</code> filter is executed whenever a request is served, <b>before</b> the route handler. This filter takes care of changing the <code>layout</code> setting whenever the <code>is_mobile_device</code> is true.</p>
+
+<p>We don't want the layout setting to remain that way afterwards, we want to restore that setting to its original value after the request is processed. That's why we save it first with the <code>var</code> keyword.</p>
+
+<p>Then, with an after filter, will reset it to its original value:</p>
+
+<pre><code>    after sub {
+        my $orig_layout = vars-&gt;{&#39;orig_layout&#39;};
+        setting layout =&gt; $orig_layout;
+    };</code></pre>
+
+<p>That way, if a non-mobile client comes just after a mobile one, the layout will be back to its original value.</p>
+
+<h4>Default token</h4>
+
+<p>Finally, we want our templates to be able to render specific content for mobile devices, so we want to provide all our templates wih a <code>is_mobile_device</code> token, whose value will be obviously given by the helper previously defined.</p>
+
+<p>This is easy to do, we just have to write a <code>before_template</code> filter, which will alter the default tokens hash table that is given to any <code>template</code> call.</p>
+
+<pre><code>    before_template sub {
+        my $tokens = shift;
+        $tokens-&gt;{&#39;is_mobile_device&#39;} = is_mobile_device();
+    };</code></pre>
+
+<p>That's it, we can now do this kind of conditions in our views:</p>
+
+<pre><code>    &lt;% if is_mobile_device %&gt;
+        some content for mobile devices
+    &lt;% end %&gt;</code></pre>
+
+<h3>Conclusion</h3>
+
+<p>Well, here we are, we now have a Dancer plugin that does what we wanted, writing a mobile-aware dancer app will now be much easier.</p>
+
+<p>As you can imagine, I've written Dancer::Plugin::MobileDevice and uploaded it to CPAN, so if you want to study it a bit more, feel free to grab the tarball.</p>
+
+<p>In our next article we'll see how to wirte a good test-suite for our plugin.</p>
+
+<h2>Author</h2>
+
+<p>This article has been written by Alexis Sukrieh for the PerlDancer Advent Calendar 2010.</p>
+
+<h3>Reviewers</h3>
+
+<p>Proofreading and typo-fixing by Philippe Bruhat and Sawyer X.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Alexis Sukrieh <code><sukria@sukria.net></code></p>
+

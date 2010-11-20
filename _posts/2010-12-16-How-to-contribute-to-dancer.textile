@@ -1,0 +1,87 @@
+---
+layout: post
+---
+
+<h2>How to contribute to Dancer</h2>
+
+<p>For our development projects, we rely a lot on Github. Lately, more and more people started contributing to Dancer (we've got nearly 40 contributors), but not all of them are familiar with Github or git. Here is a little step-by-step guide on how to contribute. You don't need to be a Perl expert to contribute, you can provide help by correcting documentation error, adding a new recipe to our cookbook, reporting bugs, adding tests, ...</p>
+
+<h3>The code</h3>
+
+<p>The main repository is hosted here. Lately, we've decided to switch to a new workflow in our process. Our two main branches are:</p>
+
+<ul>
+
+<li>master
+
+<li>devel
+
+</ul>
+
+<p>XXXX need to describe new workflow</p>
+
+<p>In the master branch we accept only bug fixes and doc fixes/updates. The current master branch will be the future 1.2 version.</p>
+
+<p>The devel branch is where we add new features, or improve existing features.</p>
+
+<h3>Contributing</h3>
+
+<p>First, go to github.com/sukria/dancer and click on the <b>fork</b> button. Now, here is a little tutorial on how to fetch the repository, list the local and remote branches, and track the remote devel branch.</p>
+
+<pre><code>    $ git clone git@github.com:your_user/Dancer.git
+    Initialized empty Git repository in /tmp/Dancer/.git/
+    remote: Counting objects: 9299, done.
+    remote: Compressing objects: 100% (4236/4236), done.
+    remote: Total 9299 (delta 5740), reused 8015 (delta 4862)
+    Receiving objects: 100% (9299/9299), 1.20 MiB | 111 KiB/s, done.
+    Resolving deltas: 100% (5740/5740), done.
+
+    $ cd Dancer
+
+    $ git branch -l                                                                                                                                    
+    * master
+
+    $ git branch -a
+    * master
+    remotes/origin/HEAD -&gt; origin/master
+    remotes/origin/after_filter
+    remotes/origin/devel
+    remotes/origin/hooks
+    remotes/origin/master
+    remotes/origin/plack-middlewares
+    remotes/origin/psgi-refactor
+    remotes/origin/refactor/dtsimple-removal
+    remotes/origin/refactoring/app
+
+    $ git branch --track devel origin/devel
+
+    $ git branch -l
+    devel
+    * master</code></pre>
+
+<p>Now that you know what the purpose of each branch is, you can decide to work on master or devel (<b>git checkout devel</b> to switch branch).</p>
+
+<h4>Sending your patch</h4>
+
+<p>As I've previously stated, we rely a lot on the github features and interface. So now you've written your patch. First, be sure to provide one or more tests, and to run the test suite (with <b>make test</b> or <b>prove -r t/</b>). If all the tests pass, you can send a pull request. For this, you go on your own fork on github (http://github.com/$user/dancer), and you click on the <b>Pull Request</b> button.</p>
+
+<p>You can at any time see all the commits done by others that have not yet been merged into one of our branches at this url.</p>
+
+<h4>Reporting and/or fixing bugs</h4>
+
+<p>We prefer to use the github issue tracker instead of RT. So if you want to report a bug, go <b>there|http://github.com/sukria/dancer/issues</b>.</p>
+
+<p>If your commit fixes a bug reported there, please add in your commit message something like 'closes gh-xxx" where xxx is the bug id.</p>
+
+<h3>Community work</h3>
+
+<p>There is nearly 40 differents contributors to Dancer. There is a lot of plugins and engines available on CPAN and github. This is a real community effort. Thank you to everyone who have contributed so far!</p>
+
+<h3>Author</h3>
+
+<p>This article has been written by Franck Cuny for the Perl Dancer Advent Calendar 2010.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by Franck Cuny</p>
+

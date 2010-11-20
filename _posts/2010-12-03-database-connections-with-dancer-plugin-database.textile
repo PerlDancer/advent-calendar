@@ -1,0 +1,74 @@
+---
+layout: post
+---
+
+<h2>Database connections with Dancer::Plugin::Database</h2>
+
+<p>The Dancer::Plugin::Database plugin is designed to make connecting to databases from your Dancer apps simple and painless. Connection details are stored in your app's configuration, and the connection is automatically established for you (and re-established if the connection went away).</p>
+
+<h3>How do I use it?</h3>
+
+<p>Using it can be as simple as:</p>
+
+<pre><code>    my $user = database-&gt;selectrow_hashref(
+      &#39;select * from users where username = ?&#39;, undef, param-&gt;{username}
+    );</code></pre>
+
+<p>Calling the <code>database</code> simply returns you a connected DBI object, so you can do whatever you'd usually do with a DBI object.</p>
+
+<pre><code>    get &#39;/widget/view/:id&#39; =&gt; sub {
+        my $sth = database-&gt;prepare(
+            &#39;select * from widgets where id = ?&#39;,
+        );
+        $sth-&gt;execute(params-&gt;{id});
+        template &#39;display_widget&#39;, { widget =&gt; $sth-&gt;fetchrow_hashref };
+    };</code></pre>
+
+<h3>How do I tell it my database connection details?</h3>
+
+<p>Configuration is simple - for instance, in <code>config.yml</code> you could simply add:</p>
+
+<pre><code>    plugins:
+        Database:
+            driver: &#39;SQLite&#39;
+            database: &#39;foo.sqlite&#39;</code></pre>
+
+<p>Or, let's say you're using MySQL, and would like to run queries automatically when you first get a connection to the database:</p>
+
+<pre><code>    plugins:
+        Database:
+            driver: &#39;mysql&#39;
+            database: &#39;databasename&#39;
+            username: &#39;fred&#39;
+            password: &#39;verysecretindeed&#39;
+            on_connect_do: [ &quot;SET NAMES &#39;utf8&#39;&quot;, &quot;SET CHARACTER SET &#39;utf8&#39;&quot; ]</code></pre>
+
+<h3>But what if I need to talk to multiple databases?</h3>
+
+<p>All of the above examples assume that you only want to connect to one database. For the majority of webapps, that's often true, but there are of course plenty of people who'll want to talk to multiple databases.</p>
+
+<p>That's easy enough - you can define multiple named connections in your app config, and pass a name to the <code>database</code> keyword - for example:</p>
+
+<pre><code>    plugins:
+        Database:
+            connections:
+                foo:
+                    driver: &quot;SQLite&quot;
+                    database: &quot;foo.sqlite&quot;
+                bar:
+                    driver: &quot;mysql&quot;
+                    host: &quot;localhost&quot;
+                    ....</code></pre>
+
+<p>The above defines two connections named <code>foo</code> and <code>bar</code>. You can use them simply:</p>
+
+<pre><code>    my $foo_dbh = database(&#39;foo&#39;);</code></pre>
+
+<h3>AUTHOR</h3>
+
+<p>This article has been written by David Precious <code><davidp@preshweb.co.uk></code> for the Perl Dancer Advent Calendar 2010.</p>
+
+<h3>Copyright</h3>
+
+<p>Copyright (C) 2010 by David Precious</p>
+

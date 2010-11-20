@@ -1,0 +1,171 @@
+---
+layout: post
+---
+
+<h2>Using DBIC (DBIX::Class) within a Dancer application</h2>
+
+<p><code>DBIX::Class</code>, also known as DBIC, is one of the many Perl ORM (<i>Object Relational Mapper</i>), but it's commonly recognized as the best and most widely used.</p>
+
+<p>This is a nice presentation from Leo : http://www.slideshare.net/ranguard/dbixclass-beginners-presentation</p>
+
+<p>Basically, DBIC allows you to interact with your SQL Database without writing any SQL.</p>
+
+<p>To do that, you need a set of <b>Schema classes</b> that describes your database structure. Then you can use DBIC to create, update, delete, search, and do many more things on the data that are in your database.</p>
+
+<p>From a Dancer web application, it is very easy to use DBIC, thanks to <code>Dancer::Plugin::DBIC</code>. This article wwill implement a simple web application to demonstrate the use of <code>Dancer::Plugin::DBIC</code>.</p>
+
+<h3>Simple example</h3>
+
+<p>Let's consider a simple Dancer application that allows to search for authors or books. The application is connected to a database, that contains authors, and their books. The website will have one single page with a form, to query books or authors, and display the result.</p>
+
+<p>To keep this article short, the HTML will be simplistic, and the implementation will be a bit stupid. However, I'll try to explain how to properly use Dancer::Plugin::DBIC.</p>
+
+<p>The application will be structured as follow:</p>
+
+<ul>
+
+<li>a Dancer route <code>/search</code> to handle the request, and decide if there is any search to perform, and send the results to the view</li>
+
+<li>a view, that will display the search form, and the results if any.</li>
+
+<li>a set of models, linked to a database, that will contain the books and authors. These models will be created using DBIC</li>
+
+</ul>
+
+<h3>The basics</h3>
+
+<h4>Create the application</h4>
+
+<p>Okay, that's easy enough:</p>
+
+<pre><code>  $&gt; dancer -a bookstore</code></pre>
+
+<h4>Change template type</h4>
+
+<p>We'll want to loop on results and display authors and books, and it's easier to use Template Toolkit to do that, rather than the default <code>Dancer::Template::Simple</code>.</p>
+
+<p>So let's specify in the configuration that we'll use Template Toolkit as template engine:</p>
+
+<pre><code>  # add in bookstore/config.yml
+  template: template_toolkit</code></pre>
+
+<h4>Create a view</h4>
+
+<p>We need a view to display the search form, and below, the results, if any. The results will be feeded by the route to the view as an <code>arrayref</code> of results. Each result is a <i>hashref</i>, with a <code>author</code> key containing the name of the author, and a <code>books</code> key containing an <i>arrayref</i> of strings : the books names.</p>
+
+<p>That explanation is probably hard to follow, so here is an example, much easier:</p>
+
+<pre><code>  # example of a list of results
+  [ { author =&gt; &#39;author 1&#39;,
+      books =&gt; [ &#39;book 1&#39;, &#39;book 2&#39; ],
+    },
+    { author =&gt; &#39;author 2&#39;,
+      books =&gt; [ &#39;book 3&#39;, &#39;book 4&#39; ],
+    }
+  ]</code></pre>
+
+<p>So, what will look the view like ? Here is a simple example, displaying the search form, and the results, if any. IT's written in Template Toolkit, except that Dancer changes the <code>[â° %]</code> format to be <code><% %></code> instead.</p>
+
+<pre><code>  # bookstore/views/search.tt
+  &lt;p&gt;
+  &lt;form action=&quot;/search&quot;&gt;
+  Search query: &lt;input type=&quot;text&quot; name=&quot;query&quot; /&gt;
+  &lt;/form&gt;
+  &lt;/p&gt;
+  &lt;br&gt;  
+  
+  &lt;% IF query.length %&gt;
+    &lt;p&gt;Search query was : &lt;% query %&gt;.&lt;/p&gt;
+    &lt;% IF results.size %&gt;
+      Results:
+      &lt;ul&gt;
+      &lt;% FOREACH result IN results %&gt;
+        &lt;li&gt;Author: &lt;% result.author %&gt;
+        &lt;ul&gt;
+        &lt;% FOREACH book IN result.books %&gt;
+          &lt;li&gt;&lt;% book %&gt;
+        &lt;% END %&gt;
+        &lt;/ul&gt;
+      &lt;% END %&gt;
+    &lt;% ELSE %&gt;
+      No result
+    &lt;% END %&gt;
+  &lt;% END %&gt;</code></pre>
+
+<h4>Create a route</h4>
+
+<p>Let's create a simple Dancer route, to be added in the <code>bookstore.pm</code> module:</p>
+
+<pre><code>  # add in bookstore/lib/bookstore.pm
+  get &#39;/search&#39; =&gt; sub {
+      my $query = params-&gt;{query};
+      my @results = ();
+      if (length $query) {
+          @results = _perform_search($query);
+      }
+      template &#39;search&#39;, { query =&gt; $query,
+                           results =&gt; \@results,
+                         };
+  };</code></pre>
+
+<p>It's rather simple: get the parameter called <i>query</i>, if it exists perform the search, and in any case, call the <code>search</code> view.</p>
+
+<p>So, as you can see, we need to write the <code>_perform_search()</code> method. But before we do that, let's create the database</p>
+
+<h4>Create a database</h4>
+
+<p>I'll go with SQLite, as it fits well with the aim of simplicity of this example. Let's create the SQLite file database:</p>
+
+<pre><code>  $&gt; sqlite3 bookstore.db
+  CREATE TABLE author(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstname text default &#39;&#39; not null, lastname text not null);
+  CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, author_id INTEGER REFERENCES author (id), title text default &#39;&#39; not null );</code></pre>
+
+<p>Simple stuff: we have 2 tables, one for authors, and one for books, that points to the author table.</p>
+
+<h4>Populate with some data</h4>
+
+<p>Ian M. Banks Richard Matheson Frank Herbert</p>
+
+<h3>Use DBIC</h3>
+
+<p>Instead of interactign with the database using SQL, let's configure DBIX::Class. DBIC needs to understand how your data are organized in your database. There are two ways of letting DBIC know:</p>
+
+<ul>
+
+<li>either by writing a set of Perl modules, called schema modules: they will describe the database schema, each module describing one entity,</li>
+
+<li>or by letting DBIC connect to the database, explore it, and generate the schema itself.</li>
+
+</ul>
+
+<p>I'll demonstrate the use of the two solutions. I'm personnaly not a big fan of the detection method: on complex database, it doesn't get everything right, so one needs to help DBIC. I prefer describing the schema manually. But hey, TIMTOWDI.</p>
+
+<h4></h4>
+
+<pre><code> that will describe the
+
+
+ There are two ways of using DBIC. FirstDBIC needs a schema</code></pre>
+
+<p>We also need a view:</p>
+
+<pre><code>  # </code></pre>
+
+<p>Let's add a route:</p>
+
+<pre><code>  # add in bookstore/lib/bookstore.pm
+  </code></pre>
+
+<p>But</p>
+
+<pre><code> way of writing the web application code
+
+
+
+ It&#39;s
+=head1 SEE ALSO</code></pre>
+
+<h2>AUTHOR</h2>
+
+<p>dams: Damien Krotkine <dams@zarb.org></p>
+

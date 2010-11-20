@@ -1,0 +1,131 @@
+---
+layout: post
+---
+
+<h2>Writing a new Dancer logger backend</h2>
+
+<p>As you may have noticed by now, it's pretty simple to write backends to Dancer. This time we'll be writing a logger backend.</p>
+
+<h3>How do loggers work?</h3>
+
+<p>When Dancer passes all the information it wants (or is asked by you) to log, it will pass it on to the logger class which will then use the picked backend to actually do the correct thing with the information (such as presenting it on the screen or saving it to a file).</p>
+
+<p>Dancer already has a few logging backends, such as:</p>
+
+<ul>
+
+<li>Console</li>
+
+<p>The new default for development environment, showing all the errors in the console from which you started the application. This helps you see everything right there on your screen while developing instead of making you check log files.</p>
+
+<li>File</li>
+
+<p>The default for most production environments, saving all the information in a chosen specific log file. This is also the default behavior with many web servers such as Apache.</p>
+
+</ul>
+
+<p>There are a few more loggers available on CPAN that you can download and configure your application to use. Feel free to explore.</p>
+
+<h3>Deciding on the logger backend</h3>
+
+<p>While writing log messages to a file is what most people do, that's just boring. Let's try to do something more interesting with <b>our</b> log messages!</p>
+
+<p>Do you like spinners? Of course you do, everyone does! Let's make a log backend that simply runs a spinner on our console. Every log message that comes in will make the spinner advance a bit.</p>
+
+<h3>Module skeleton</h3>
+
+<p>This should be the simplest skeleton, including just the required modules:</p>
+
+<pre><code>    package Dancer::Logger::Spinner;
+
+    use strict;
+    use warnings;
+
+    use base &#39;Dancer::Logger::Abstract&#39;;
+
+    sub _log {
+        ...
+    }
+
+    1;</code></pre>
+
+<p>If you've ever developed a Dancer engine or plugin, you'd notice that Dancer makes usage of abstract base classes. This ensures you implement the correct methods and helps you enforce present and future portability with Dancer itself. It also makes our module object oriented.</p>
+
+<p>There is only one subroutine we need to implement for our logger:</p>
+
+<ul>
+
+<li>_log</li>
+
+<p>This subroutine does the work. It gets two paramters: the level of the logging and the message itself. This helps you determine how important the message is.</p>
+
+<p>For our spinner, since we want to make it rock as much as possible, any message counts as another spin, so we won't differentiate between different levels.</p>
+
+<pre><code>    sub _log {
+        my ( $self, $level, $message ) = @_;
+        $self-&gt;advance_spinner();
+    }</code></pre>
+
+<p>Of course, if we aren't using the message level or the message itself, why are we expanding it out of <code>@_</code>? Just to show how it works. We could effectively write it the same as such:</p>
+
+<pre><code>    sub _log {
+        my $self = shift;
+        $self-&gt;advance_spinner();
+    }</code></pre>
+
+</ul>
+
+<p>Of course we haven't really written the <code>advance_spinner</code> method yet. We're also missing one important thing, the initialization of the spinner, the characters used by it and the counter we'll use to keep track of the array of characters.</p>
+
+<p>We can use the <code>init</code> method in the base class we inherited (Dancer::Logger::Abstract, remember?) to take care of all these things at initialization.</p>
+
+<pre><code>    sub init {
+        my $self = shift;
+        $self-&gt;{&#39;spinner_chars&#39;} = [ &#39;\\&#39;, &#39;|&#39;, &#39;/&#39;, &#39;-&#39;, &#39;x&#39; ];
+        $self-&gt;{&#39;spinner_count&#39;} = 0;
+    }</code></pre>
+
+<p>Now we need to implement the <code>advance_spinner</code> subroutine:</p>
+
+<pre><code>    sub advance_spinner {
+        my $self  = shift;
+        my $count = $self-&gt;{&#39;spinner_count&#39;};
+        my @chars = @{ $self-&gt;{&#39;spinner_chars&#39;} };
+
+        # these chars lifted from Brandon L. Black&#39;s Term::Spinner
+        print STDERR &quot;\010 \010&quot;;
+        print STDERR $chars[$count];
+
+        # if we reached over the array end, let&#39;s get back to the start
+        ++$count &gt; $#chars and $count = 0;
+
+        # increment the counter and update the hash
+        $self-&gt;{&#39;spinner_count&#39;} = $count;
+    }</code></pre>
+
+<p>One nice thing we can add is printing a newline when the code finishes so your terminal doesn't end up on the same line with the last printed character:</p>
+
+<pre><code>    sub DESTROY {
+        print STDERR &quot;\n&quot;;
+    }</code></pre>
+
+<p>And that's pretty much it.</p>
+
+<p><i>(we're printing to STDERR to enforce pipe flushing)</i></p>
+
+<h3>CPAN, anyone?</h3>
+
+<p>While you've been reading this entry, I've taken the liberty to upload what we just wrote to CPAN and it should now be available as Dancer::Logger::Spinner. Nice, isn't it?</p>
+
+<p>Feel free to send me your names so I could add you to the CREDITS section in the POD! :)</p>
+
+<h2>SEE ALSO</h2>
+
+<p><i>Writing a new Dancer serializer</i></p>
+
+<p><i>Writing a new Dancer session backend</i></p>
+
+<h2>AUTHOR</h2>
+
+<p>Sawyer X <xsawyerx@cpan.org></p>
+
