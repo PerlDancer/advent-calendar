@@ -1,0 +1,81 @@
+=head1 Database connections with Dancer::Plugin::Database
+
+The
+L<Dancer::Plugin::Database|http://search.cpan.org/dist/Dancer-Plugin-Database>
+plugin is designed to make connecting to databases from your Dancer apps simple
+and painless.  Connection details are stored in your app's configuration, and
+the connection is automatically established for you (and re-established if the
+connection went away).
+
+=head2 How do I use it?
+
+Using it can be as simple as:
+
+    my $user = database->selectrow_hashref(
+      'select * from users where username = ?', undef, param->{username}
+    );
+
+Calling the C<database> simply returns you a connected DBI object, so you can
+do whatever you'd usually do with a DBI object.
+
+    get '/widget/view/:id' => sub {
+        my $sth = database->prepare(
+            'select * from widgets where id = ?',
+        );
+        $sth->execute(params->{id});
+        template 'display_widget', { widget => $sth->fetchrow_hashref };
+    };
+
+=head2 How do I tell it my database connection details?
+
+Configuration is simple - for instance, in C<config.yml> you could simply add:
+
+    plugins:
+        Database:
+            driver: 'SQLite'
+            database: 'foo.sqlite'
+
+Or, let's say you're using MySQL, and would like to run queries automatically
+when you first get a connection to the database:
+
+    plugins:
+        Database:
+            driver: 'mysql'
+            database: 'databasename'
+            username: 'fred'
+            password: 'verysecretindeed'
+            on_connect_do: [ "SET NAMES 'utf8'", "SET CHARACTER SET 'utf8'" ]
+
+=head2 But what if I need to talk to multiple databases?
+
+All of the above examples assume that you only want to connect to one database.
+For the majority of webapps, that's often true, but there are of course plenty
+of people who'll want to talk to multiple databases.
+
+That's easy enough - you can define multiple named connections in your app
+config, and pass a name to the C<database> keyword - for example:
+
+    plugins:
+        Database:
+            connections:
+                foo:
+                    driver: "SQLite"
+                    database: "foo.sqlite"
+                bar:
+                    driver: "mysql"
+                    host: "localhost"
+                    ....
+
+The above defines two connections named C<foo> and C<bar>.  You can use them
+simply:
+
+    my $foo_dbh = database('foo');
+
+=head2 AUTHOR
+
+This article has been written by David Precious C<< <davidp@preshweb.co.uk> >>
+for the Perl Dancer Advent Calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 by David Precious

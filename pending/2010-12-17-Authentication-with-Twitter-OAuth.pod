@@ -1,0 +1,132 @@
+=head1 Authentication with Tiwtter OAuth
+
+In this article we'll see how to authenticate our users via Twitter's OAuth
+mechanism. As this can be of common use, we'll do that in a plugin named 
+C<< Dancer::Plugin::Auth::Twitter >>. 
+
+This plugin will be based on L<Net::Twitter>, and as a bonus side-effect will
+export a C<twitter> keyword to the application's namespace, allowing other
+route handlers to access the whole Twitter API with the authenticated user.
+
+=head2 Basic OAuth principles
+
+Explaining how OAuth works is beyond the scope of this article, on the other
+hand, you don't really need to understand the underlying logic of it to follow
+what will be done in this article. All you need to understand is that
+authentication with OAuth works with such a workflow:
+
+=over 4
+
+=item 1.
+
+An unauthenticated user request a page on your app
+
+=item 2.
+
+The application requests an authentication URL from Twitter's API, providing
+its C<consumer_key> and C<consumer_secret> keys as well as a C<callback URL>.
+        
+=item 3.
+
+The application bounces the user to the authentication URL it has got from
+Twitter.
+
+=item 4.
+
+The user redirected at Twitter and is prompted for allowing the application to
+access her profile and do actions on her behalf.
+
+=item 5.
+
+When the user hits the I<Allow> button, she's redirected back to the
+application, on the callback URL provided at step #2 with request token
+provided by Twitter as params.
+
+=item 6.
+
+The user is back on the application, requesting the callback URL. The app
+uses the token given as parameters (automatically set at step 5 by Twitter
+redirect) and fetch the Twitter user object with a request to Twitter's API.
+
+The application stores the user object in a session (or do whatever to
+recognize the user on later requests).
+
+=item 7
+
+The user is authenticated and the application will recognize her.
+
+=back
+
+Our plugin should provide a simple way to implement this logic within a Dancer
+application, all the OAuth negociation being delegated to L<Net::Twitter>.
+
+=head2 First things first
+
+Before starting we need to register a Twitter application so we can have our
+C<consumer_key> and C<consumer_secret> keys.
+
+Anyone can register a Twitter application at L<http://dev.twitter.com>, just
+make sure it is a I<Web> application.
+
+=head2 Writing the plugin
+
+=head3 Configuration
+
+First, our plugin needs a bit of configuration, as the application will need to
+know these C<consumer_key> and C<consumer_secret> keys.
+
+Each Dancer plugin can store their configuration bits inside the main app's
+configuration, under C<plugins/PluginName>. PluginName being the name of the
+plugin module minus the C<< Dancer::Plugin >> namespace.
+
+So as our plugin is named C<< Dancer::Plugin::Auth::Twitter >> we'll be able to
+store our configuration under C<< plugins/Auth::Twitter >> :
+
+    # config.yml
+    ....
+    plugin:
+      "Auth::Twitter":
+        consumer_key: "abcd..."
+        consumer_secret: "1234..."
+        callback_url: "http://localhost:3000/auth/twitter/callback"
+
+In our plugin code, we'll be able to access our plugin setting directly with
+the C<plugin_setting> code.
+
+=head3 Initialization
+
+TODO
+
+=head3 Authentication URL
+
+TODO
+
+=head3 Callback URL
+
+TODO
+
+=head2 Using the plugin in your application
+
+TODO
+
+=head2 More details
+
+As with previous articles in this advent calendar, the plugin described here
+has been uploaded to the CPAN at L<Dancer::Plugin::Auth::Twitter>.
+
+The source code can also been accessed with GitHub at
+L<http://github.com/sukria/Dancer-Plugin-Auth-Twitter/>.
+
+For more details about the plugin, you can check the example application that
+is shipped with L<Dancer::Plugin::Auth::Twitter> in the C<example/> directory. It
+should be working out of.
+
+=head2 Author
+
+This article has been written by Alexis Sukrieh for the Perl Dancer advent
+calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 Alexis Sukrieh C<< <sukria@sukria.net> >>.
+
