@@ -71,3 +71,20 @@ Note: the order is not the order of publication, but the order of submission
 25. [ ] Dancer 1.2 is released! article based on the changelog with a word or
         two about upcoming change planed for 1.4
 
+
+RENDERING ARTICLES
+
+To render the articles you'll need jekyll: https://github.com/mojombo/jekyll/
+
+next:
+
+    perl bin/tools/build_html.pl pending
+    jekyll
+
+you can browse the result:
+
+    jekyll --server
+
+and point your browser to http://localhost:4000
+
+
