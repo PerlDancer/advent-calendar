@@ -10,7 +10,7 @@ all image sizes for a picture gallery in advance. And so on.
 
 Having a static web site ensures maximum speed (any webserver can handle
 static files) and security (without forms or databases, there is little
-chance for a SQL injection attack to be successful).
+chance for an SQL injection attack to be successful).
 
 With the return of JavaScript and the advent of AJAX, most of the
 "dynamism" of web sites comes from the web site authors' ability to
