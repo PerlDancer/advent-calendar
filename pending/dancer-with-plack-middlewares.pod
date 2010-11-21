@@ -73,12 +73,12 @@ now restart your application (with plackup), and let's do a request:
     ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146
     Content-Length: 5428
 
-The ETag header have been added to your response. If you redo the request,
+The ETag header has been added to your response. If you redo the request,
 you'll see that the ETag value is the same.
 
 Let's add another middleware: L<Plack::Middleware::ConditionalGet>. This
-middleware return no content if the client requested the content only if it had
-been modified since the previous request:
+middleware returns no content to the client unless the content has been
+modified since the previous request:
 
    plack_middlewares:
      - 
