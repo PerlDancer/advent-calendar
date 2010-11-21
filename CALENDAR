@@ -1,0 +1,51 @@
+This is a proposal for articles order of publication
+
+
+ 1. Dancer 1.2 release announcement 
+
+ 2. Tutorial: the Dancr application
+
+ 3. Database connections with D:P::Database
+
+ 4. Using DBIx::Class within Dancer
+
+ 5. Adding authentication to your application
+
+ 6. How to write a plugin
+
+ 7. How to unit-test a Dancer application
+
+ 8. Dancer with Plack middlewares
+
+ 9. Tutorial Tiny Wiki
+
+10. Writing a Dancer Logger Backend
+
+11. Writing a Dancer Serializer backend
+
+12. REST webservices with Dancers
+
+13. Wallflower: Dancer for static web sites
+
+14. Authenticating users with Twitter
+
+15. Map the way with dancer plugin sitemap
+
+16. How to contribute to dancer
+
+17.
+
+18.
+
+19.
+
+20.
+
+21.
+
+22.
+
+23.
+
+24. The road to Dancer 1.4
+

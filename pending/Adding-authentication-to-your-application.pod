@@ -1,4 +1,4 @@
-=head1 Adding authentication to your application (The case for Dancer::Plugin::Authorize)
+=head1 Adding authentication to your application 
 
 Web application security, arguably the most important part of any system, is a task 
 (or rather a pain-point) that most developers deal with during the development of 
@@ -9,14 +9,14 @@ security models exist, what models are popular, what models are recommended or w
 This means that most developers, beyond the coding of the login screen, are mainly
 winging-it (making assumptions) as they go.
 
-L<Dancer::Plugin::Authorize> takes the TIMTOWTDIBSCINABTE (there is more than one
+L<Dancer::Plugin::Auth::RBAC> takes the TIMTOWTDIBSCINABTE (there is more than one
 way to do it, but sometimes consistency isn't a bad thing either) approach towards 
 web application system security by providing a standard, reusable RBAC (role-based 
 access control) framework for your Dancer applications. Compared to other system 
-security models (e.g. ACL, etc), Dancer::Plugin::Authorize provides flexible and 
+security models (e.g. ACL, etc), Dancer::Plugin::Auth::RBAC provides flexible and 
 granular access control through the use of roles, operations (tasks), and actions. 
 In this article I will first explain why RBAC is the best security model choice, how 
-RBAC works, and finally, show you a few examples on how Dancer::Plugin::Authorize
+RBAC works, and finally, show you a few examples on how Dancer::Plugin::Auth::RBAC
 approaches RBAC. 
 
 =head2 Why Role-Based Access Control
@@ -56,43 +56,43 @@ attempt to illustrate this:
 You can find more information on RBAC and its counterparts on Wikipedia at
 L<http://en.wikipedia.org/wiki/Rbac>.
 
-=head2 How RBAC Works in Dancer::Plugin::Authorize
+=head2 How RBAC Works in Dancer::Plugin::Auth::RBAC
 
-Dancer::Plugin::Authorize seperates authentication and access control into two
-namespaces, L<Dancer::Plugin::Authorize::Credentials>, which is responsible for
-instructing Dancer::Plugin::Authorize where to find user accounts and how to
-authenticate them, and L<Dancer::Plugin::Authorize::Permissions>, which specifies
+Dancer::Plugin::Auth::RBAC seperates authentication and access control into two
+namespaces, L<Dancer::Plugin::Auth::RBAC::Credentials>, which is responsible for
+instructing Dancer::Plugin::Auth::RBAC where to find user accounts and how to
+authenticate them, and L<Dancer::Plugin::Auth::RBAC::Permissions>, which specifies
 the system access control roles, operations and actions.
 
-Dancer::Plugin::Authorize ships with 4 authentication modules out-of-the-box which
+Dancer::Plugin::Auth::RBAC ships with 4 authentication modules out-of-the-box which
 are Config.pm, MySQL.pm, SQLite.pm, and PostgreSQL.pm. Currently 
-Dancer::Plugin::Authorize only ships with one access control module which is 
-Dancer::Plugin::Authorize::Permissions::Config, which should be sufficient for most 
+Dancer::Plugin::Auth::RBAC only ships with one access control module which is 
+Dancer::Plugin::Auth::RBAC::Permissions::Config, which should be sufficient for most 
 use cases.
 
-A typical web application using Dancer::Plugin::Authorize should load the 
-Dancer::Plugin::Authorize plugin and specify one authentication module and one 
-access control module. Dancer::Plugin::Authorize will then provide all the neccessary
+A typical web application using Dancer::Plugin::Auth::RBAC should load the 
+Dancer::Plugin::Auth::RBAC plugin and specify one authentication module and one 
+access control module. Dancer::Plugin::Auth::RBAC will then provide all the neccessary
 functions needed to authenticate, restrict, revoke and grant access.
 
-=head2 RBAC via Dancer::Plugin::Authorize
+=head2 RBAC via Dancer::Plugin::Auth::RBAC
 
 Here we will demonstrate how to utilize RBAC in your web application via 
-Dancer::Plugin::Authorize. First we need to decide how we will be creating and 
+Dancer::Plugin::Auth::RBAC. First we need to decide how we will be creating and 
 storing user accounts. For demonstrational purposes we will use our application 
 configuration file as our datastore for user accounts etc. This means for
-authentication we need to load Dancer::Plugin::Authorize::Credentials::Config and
-Dancer::Plugin::Authorize::Permissions::Config, since there is only one access 
+authentication we need to load Dancer::Plugin::Auth::RBAC::Credentials::Config and
+Dancer::Plugin::Auth::RBAC::Permissions::Config, since there is only one access 
 control class. Our config.yml file should look as follows:
 
     plugins:
-      # loads the Dancer::Plugin::Authorize plugin
+      # loads the Dancer::Plugin::Auth::RBAC plugin
       Authorize:
         # all authentication related options
         credentials:
-          # load the Dancer::Plugin::Authorize::Credentials::Config authentication class
+          # load the Dancer::Plugin::Auth::RBAC::Credentials::Config authentication class
           class: Config
-          # Dancer::Plugin::Authorize::Credentials::Config class options
+          # Dancer::Plugin::Auth::RBAC::Credentials::Config class options
           options:
             # specify all the user accounts needed for Config.pm
             accounts:
@@ -110,9 +110,9 @@ control class. Our config.yml file should look as follows:
                   - admin
         # load all access control related options
         permissions:
-          # load the Dancer::Plugin::Authorize::Permissions::Config access control class
+          # load the Dancer::Plugin::Auth::RBAC::Permissions::Config access control class
           class: Config
-          # Dancer::Plugin::Authorize::Permissions::Config class options
+          # Dancer::Plugin::Auth::RBAC::Permissions::Config class options
           options:
             control:
               # specify the access control lists
@@ -144,14 +144,14 @@ control class. Our config.yml file should look as follows:
 
 Now that we have specified our plugin options in our application configuration
 file, we need to design our Dancer application to restrict access using the methods 
-provided by Dancer::Plugin::Authorize. Dancer::Plugin::Authorize provides the auth()
-function to Dancer which returns a new instance of Dancer::Plugin::Authorize which 
+provided by Dancer::Plugin::Auth::RBAC. Dancer::Plugin::Auth::RBAC provides the auth()
+function to Dancer which returns a new instance of Dancer::Plugin::Auth::RBAC which 
 provides asa(), can(), roles(), errors() and revoke().
 
     use Dancer;
-    use Dancer::Plugin::Authorize;
+    use Dancer::Plugin::Auth::RBAC;
     
-    # get new Dancer::Plugin::Authorize instance and check credentials
+    # get new Dancer::Plugin::Auth::RBAC instance and check credentials
     my $user = auth(params->{'login'}, params->{'password'});
     
     # check if authentication passed
@@ -168,9 +168,9 @@ Typical usuage would be to put user checking in a before filter and authenticati
 login on the login page, e.g.
 
     use Dancer;
-    use Dancer::Plugin::Authorize;
+    use Dancer::Plugin::Auth::RBAC;
     
-    # check that Dancer::Plugin::Authorize
+    # check that Dancer::Plugin::Auth::RBAC
     # has populated the user session info
     before sub {
         
@@ -194,9 +194,9 @@ move on to doing more advanced and sophisticated role-based access control using
 asa(), can(), and revoke().
 
     use Dancer;
-    use Dancer::Plugin::Authorize;
+    use Dancer::Plugin::Auth::RBAC;
     
-    # auth() will return a new Dancer::Plugin::Authorize instance using the
+    # auth() will return a new Dancer::Plugin::Auth::RBAC instance using the
     # authentication information stored in your session file
     
     my $user = auth;
@@ -222,11 +222,11 @@ asa(), can(), and revoke().
 Even better, use RBAC in your TT (Template-Toolkit) templates as follows:
 
     use Dancer;
-    use Dancer::Plugin::Authorize;
+    use Dancer::Plugin::Auth::RBAC;
     
     get '/dashboard' => sub {
         
-        # use Dancer::Plugin::Authorize in your templates
+        # use Dancer::Plugin::Auth::RBAC in your templates
         template 'dashboard', {
             'auth' => sub { return auth(@_) }
         };
@@ -255,10 +255,20 @@ Even better, use RBAC in your TT (Template-Toolkit) templates as follows:
     
 =head2 Conclusion
 
-So you see, Dancer::Plugin::Authorize provides the best access control system using
+So you see, L<Dancer::Plugin::Auth::RBAC> provides the best access control system using
 the best web application framework with minimal effort. Let's keep web application 
 development fun! Thanks for reading.
 
-=head1 Author
+=head2 Author
 
-Al Newkirk, C<< we@ana.im> >>
+This article has been written by Al Newkirk for the Perl
+Dancer Advent Calendar 2010.
+
+=head2 Reviewers
+
+Proofreading and typo-fixing by Alexis Sukrieh.
+
+=head2 Copyright
+
+Copyright (C) 2010 by Al Newkirk C<< <we@ana.im> >>
+

@@ -553,5 +553,10 @@ Happy dancing!
 
 =head2 Author
 
+This article has been written by Mark R. Allen for the Perl Dancer Advent
+Calendar. It's also shipped with Dancer as L<Dancer::Tutorial>.
+
+=head2 Copyright
+
 Copyright (C) 2010 by Mark R. Allen. 
 

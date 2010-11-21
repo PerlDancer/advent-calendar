@@ -71,7 +71,11 @@ simply:
 
     my $foo_dbh = database('foo');
 
-=head1 AUTHOR
+=head2 AUTHOR
 
-David Precious <davidp@preshweb.co.uk>
+This article has been written by David Precious C<< <davidp@preshweb.co.uk> >>
+for the Perl Dancer Advent Calendar 2010.
 
+=head2 Copyright
+
+Copyright (C) 2010 by David Precious

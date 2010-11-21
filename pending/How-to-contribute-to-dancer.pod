@@ -1,10 +1,18 @@
 =head1 How to contribute to Dancer
 
-For our development projects, we rely a lot on L<Github|http://github.com/sukria/dancer>. Lately, more and more people started contributing to Dancer (we've got nearly 40 contributors), but not all of them are familiar with Github or git. Here is a little step-by-step guide on how to contribute. You don't need to be a Perl expert to contribute, you can provide help by correcting documentation error, adding a new recipe to our cookbook, reporting bugs, adding tests, ...
+For our development projects, we rely a lot on
+L<Github|http://github.com/sukria/dancer>. Lately, more and more people started
+contributing to Dancer (we've got nearly 40 contributors), but not all of them
+are familiar with Github or git. Here is a little step-by-step guide on how to
+contribute. You don't need to be a Perl expert to contribute, you can provide
+help by correcting documentation error, adding a new recipe to our cookbook,
+reporting bugs, adding tests, ...
 
 =head2 The code
 
-The main repository is hosted L<here|http://github.com/sukria/dancer>. Lately, we've decided to switch to a new workflow in our process. Our two main branches are:
+The main repository is hosted L<here|http://github.com/sukria/dancer>. Lately,
+we've decided to switch to a new workflow in our process. Our two main branches
+are:
 
 =over 4
 
@@ -16,13 +24,17 @@ The main repository is hosted L<here|http://github.com/sukria/dancer>. Lately, w
 
 XXXX need to describe new workflow
 
-In the master branch we accept only bug fixes and doc fixes/updates. The current master branch will be the future 1.2 version.
+In the master branch we accept only bug fixes and doc fixes/updates. The
+current master branch will be the future 1.2 version.
 
 The devel branch is where we add new features, or improve existing features.
 
 =head2 Contributing
 
-First, go to L<github.com/sukria/dancer|http://github.com/sukria/dancer> and click on the B<fork> button. Now, here is a little tutorial on how to fetch the repository, list the local and remote branches, and track the remote devel branch.
+First, go to L<github.com/sukria/dancer|http://github.com/sukria/dancer> and
+click on the B<fork> button. Now, here is a little tutorial on how to fetch the
+repository, list the local and remote branches, and track the remote devel
+branch.
 
     $ git clone git@github.com:your_user/Dancer.git
     Initialized empty Git repository in /tmp/Dancer/.git/
@@ -55,20 +67,42 @@ First, go to L<github.com/sukria/dancer|http://github.com/sukria/dancer> and cli
     devel
     * master
 
-Now that you know what the purpose of each branch is, you can decide to work on master or devel (B<git checkout devel> to switch branch).
+Now that you know what the purpose of each branch is, you can decide to work on
+master or devel (B<git checkout devel> to switch branch).
 
 =head3 Sending your patch
 
-As I've previously stated, we rely a lot on the github features and interface. So now you've written your patch. First, be sure to provide one or more tests, and to run the test suite (with B<make test> or B<prove -r t/>). If all the tests pass, you can send a pull request. For this, you go on your own fork on github (http://github.com/$user/dancer), and you click on the B<Pull Request> button.
+As I've previously stated, we rely a lot on the github features and interface.
+So now you've written your patch. First, be sure to provide one or more tests,
+and to run the test suite (with B<make test> or B<prove -r t/>). If all the
+tests pass, you can send a pull request. For this, you go on your own fork on
+github (http://github.com/$user/dancer), and you click on the B<Pull Request>
+button.
 
-You can at any time see all the commits done by others that have not yet been merged into one of our branches at L<this url|http://github.com/sukria/Dancer/forkqueue>.
+You can at any time see all the commits done by others that have not yet been
+merged into one of our branches at L<this
+url|http://github.com/sukria/Dancer/forkqueue>.
 
 =head3 Reporting and/or fixing bugs
 
-We prefer to use the github issue tracker instead of RT. So if you want to report a bug, go B<there|http://github.com/sukria/dancer/issues>.
+We prefer to use the github issue tracker instead of RT. So if you want to
+report a bug, go B<there|http://github.com/sukria/dancer/issues>.
 
-If your commit fixes a bug reported there, please add in your commit message something like 'closes gh-xxx" where xxx is the bug id.
+If your commit fixes a bug reported there, please add in your commit message
+something like 'closes gh-xxx" where xxx is the bug id.
 
 =head2 Community work
 
-There is nearly 40 differents contributors to Dancer. There is a lot of plugins and engines available on CPAN and github. This is a real community effort. Thank you to everyone who have contributed so far!
+There is nearly 40 differents contributors to Dancer. There is a lot of plugins
+and engines available on CPAN and github. This is a real community effort.
+Thank you to everyone who have contributed so far!
+
+=head2 Author
+
+This article has been written by Franck Cuny for the Perl Dancer Advent
+Calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 by Franck Cuny
+
