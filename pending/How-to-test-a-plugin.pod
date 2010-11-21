@@ -140,12 +140,12 @@ Let's run the test to make sure everything's fine:
     ok 1 - token is_mobile_device is present and valid for Android
     ok 2 - token is_mobile_device is present and valid for Mozilla
 
-Cool! @e now have one more thing to test: making sure the layout
-changes appropriately, the job of our last test script.
+Cool! We now have one more thing to test: making sure the layout
+changes appropriately, the job of our final test script.
 
 =head3 The dynamic layout
 
-In this last test we want to be sure the layout is changed to 'mobile'
+In this final test we want to be sure the layout is changed to 'mobile'
 whenever a mobile device is served, and that the original layout is
 reset afterwards (whether it was defined or not).
 
@@ -216,7 +216,7 @@ Great, everything works as expected!
 Our plugin is now covered by the test suite we've written, and we can
 publish it to the CPAN. To go a step further, we could run coverage
 test with L<Devel::Cover> in order to make sure our test suite goes
-through all the possible ways but that's beyond the scope of this
+through all the possible paths but that's beyond the scope of this
 article.
 
 =head2 Author
