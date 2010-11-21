@@ -1,12 +1,15 @@
 =head1 Authentication with Tiwtter OAuth
 
 In this article we'll see how to authenticate our users via Twitter's OAuth
-mechanism. As this can be of common use, we'll do that in a plugin named 
-C<< Dancer::Plugin::Auth::Twitter >>. 
+mechanism. We won't see the internal magic that occurs between the application
+and Twitter's API, as this is the job of C<< Dancer::Plugin::Auth::Twitter >>. 
 
 This plugin will be based on L<Net::Twitter>, and as a bonus side-effect will
 export a C<twitter> keyword to the application's namespace, allowing other
 route handlers to access the whole Twitter API with the authenticated user.
+
+This article will show you how to use that plugin to build a Twitter app with
+Dancer.
 
 =head2 Basic OAuth principles
 
@@ -68,9 +71,7 @@ C<consumer_key> and C<consumer_secret> keys.
 Anyone can register a Twitter application at L<http://dev.twitter.com>, just
 make sure it is a I<Web> application.
 
-=head2 Writing the plugin
-
-=head3 Configuration
+=head2 Configuring the plugin
 
 First, our plugin needs a bit of configuration, as the application will need to
 know these C<consumer_key> and C<consumer_secret> keys.
@@ -90,24 +91,68 @@ store our configuration under C<< plugins/Auth::Twitter >> :
         consumer_secret: "1234..."
         callback_url: "http://localhost:3000/auth/twitter/callback"
 
-In our plugin code, we'll be able to access our plugin setting directly with
-the C<plugin_setting> code.
+That's it! Our plugin is configured. We can now use it in our code.
 
 =head3 Initialization
 
-TODO
+At the very first, we must initilaizes the plugin (basically it needs to read
+the configuration and create its internal L<Net::Twitter> object. So our
+application must start with something like the following:
 
-=head3 Authentication URL
+    package MyApp;
+    use Dancer;
+    use Dancer::Plugin::Auth::Twitter;
 
-TODO
+    auth_twitter_init();
 
-=head3 Callback URL
+At this point, if your app doesn't provide all the configuration bits needed by
+the plugin, it will throw an exception.
 
-TODO
+=head3 Filtering unauthenticated users
 
-=head2 Using the plugin in your application
+Implementing an authentication system basically relies on a before filter,
+where you check if the user is authenticated, and if not, redirect her to an
+authentication URL.
 
-TODO
+That is what we need to do here, and as you can see it's pretty
+straight-forward:
+
+    before sub {
+        return if request->path =~ m{/auth/twitter/callback};
+        if (not session('twitter_user')) {
+            redirect twitter->auth_twitter_authenticate_url;
+        }
+    };
+
+This filter redirects any unauthenticated user to the authentication URL.
+Note that we don't want to do that redirect when the requested page is the
+callback URL defined by the plugin (this route handler is responsible for
+storing the authenticated user into the session).
+
+With our filter though, all our application routes expect an authenticated Twitter
+user, you could of course do something more clever to enable that filter only
+for a subset of your routes, but that is left as an exercise for the reader.
+
+=head2 Playing with Twitter
+
+Well, at this point, we're done. Yes, it's that simple. The only work that is
+left to the developer is to provide a before filter that redirect
+unauthenticated user to twitter->auth_twitter_authenticate_url when
+appropriate. All the dirty work of communicating with Twitter is handled under
+the hood.
+
+So now, we can play with it, let's do a "Twitter hello world":
+
+    get "/" => sub {
+        "Hello, ".session('twitter_user')->{'screen_name'};
+    };
+
+As our before filter will catch any unauthenticated user and redirect them to
+Twitter if needed, it's that simple.
+
+Note that the L<Net::Twitter> object accesible via the C<twitter> keyword
+allows you all that the Twitter ReST API provides, so your possibilities are
+endless.
 
 =head2 More details
 
