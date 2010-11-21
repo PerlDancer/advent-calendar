@@ -20,48 +20,41 @@ authentication with OAuth works with such a workflow:
 
 =over 4
 
-=item 1.
+=item
 
-An unauthenticated user request a page on your app
+An unauthenticated user requests a page on your app
 
-=item 2.
+=item 
 
 The application requests an authentication URL from Twitter's API, providing
 its C<consumer_key> and C<consumer_secret> keys as well as a C<callback URL>.
         
-=item 3.
+=item 
 
 The application bounces the user to the authentication URL it has got from
 Twitter.
 
-=item 4.
+=item 
 
-The user redirected at Twitter and is prompted for allowing the application to
+The user is redirected at Twitter and is prompted for allowing the application to
 access her profile and do actions on her behalf.
 
-=item 5.
+=item 
 
 When the user hits the I<Allow> button, she's redirected back to the
-application, on the callback URL provided at step #2 with request token
-provided by Twitter as params.
+application, on the callback URL provided before.
 
-=item 6.
+=item
 
-The user is back on the application, requesting the callback URL. The app
-uses the token given as parameters (automatically set at step 5 by Twitter
-redirect) and fetch the Twitter user object with a request to Twitter's API.
+The user is back on the application, requesting the callback URL. The callback
+URL stores the user's information in a session and go back to the first
+route requested by the user.
 
-The application stores the user object in a session (or do whatever to
-recognize the user on later requests).
+=item
 
-=item 7
-
-The user is authenticated and the application will recognize her.
+The user is now authenticated.
 
 =back
-
-Our plugin should provide a simple way to implement this logic within a Dancer
-application, all the OAuth negociation being delegated to L<Net::Twitter>.
 
 =head2 First things first
 
@@ -85,7 +78,7 @@ store our configuration under C<< plugins/Auth::Twitter >> :
 
     # config.yml
     ....
-    plugin:
+    plugins:
       "Auth::Twitter":
         consumer_key: "abcd..."
         consumer_secret: "1234..."
@@ -95,7 +88,7 @@ That's it! Our plugin is configured. We can now use it in our code.
 
 =head3 Initialization
 
-At the very first, we must initilaizes the plugin (basically it needs to read
+At the very first, we must initialize the plugin (basically it needs to read
 the configuration and create its internal L<Net::Twitter> object. So our
 application must start with something like the following:
 
@@ -125,7 +118,7 @@ straight-forward:
     };
 
 This filter redirects any unauthenticated user to the authentication URL.
-Note that we don't want to do that redirect when the requested page is the
+Note that we don't want to do that redirects when the requested page is the
 callback URL defined by the plugin (this route handler is responsible for
 storing the authenticated user into the session).
 
@@ -136,10 +129,10 @@ for a subset of your routes, but that is left as an exercise for the reader.
 =head2 Playing with Twitter
 
 Well, at this point, we're done. Yes, it's that simple. The only work that is
-left to the developer is to provide a before filter that redirect
-unauthenticated user to twitter->auth_twitter_authenticate_url when
+left to the developer is to provide a before filter that redirects
+unauthenticated users to C<< twitter->auth_twitter_authenticate_url >> when
 appropriate. All the dirty work of communicating with Twitter is handled under
-the hood.
+the hood by L<Dancer::Plugin::Auth::Twitter>.
 
 So now, we can play with it, let's do a "Twitter hello world":
 
@@ -156,15 +149,9 @@ endless.
 
 =head2 More details
 
-As with previous articles in this advent calendar, the plugin described here
-has been uploaded to the CPAN at L<Dancer::Plugin::Auth::Twitter>.
-
-The source code can also been accessed with GitHub at
-L<http://github.com/sukria/Dancer-Plugin-Auth-Twitter/>.
-
-For more details about the plugin, you can check the example application that
-is shipped with L<Dancer::Plugin::Auth::Twitter> in the C<example/> directory. It
-should be working out of.
+For more details about the plugin used in this article, you can check the
+example application that is shipped with L<Dancer::Plugin::Auth::Twitter> in
+the C<example/> directory. It should be working out of the box.
 
 =head2 Author
 
