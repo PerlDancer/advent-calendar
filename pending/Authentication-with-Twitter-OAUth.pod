@@ -1,12 +1,12 @@
 =head1 Authentication with Tiwtter OAuth
 
 In this article we'll see how to authenticate our users via Twitter's OAuth
-mechanism. We won't see the internal magic that occurs between the application
-and Twitter's API, as this is the job of C<< Dancer::Plugin::Auth::Twitter >>. 
+mechanism, using L<Dancer::Plugin::Auth::Twitter>. 
 
-This plugin will be based on L<Net::Twitter>, and as a bonus side-effect will
-export a C<twitter> keyword to the application's namespace, allowing other
-route handlers to access the whole Twitter API with the authenticated user.
+This plugin is based on L<Net::Twitter> and as a bonus side-effect exports
+a C<twitter> keyword to the application's namespace, allowing other
+route handlers to access the whole Twitter API on behalf of the authenticated 
+user.
 
 This article will show you how to use that plugin to build a Twitter app with
 Dancer.
