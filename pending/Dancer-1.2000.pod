@@ -1,0 +1,200 @@
+=head1 Dancer 1.2000 - a micro web framework milestone
+
+=head2 Dancer?
+
+L<Dancer> is a micro web framework that allows you to get a website up and
+running within a minute, if not sooner. It abstracts away a lot of nastiness
+that exists in web programming and let's you focus just on the important
+details, without compromising on control and strength.
+
+The inspiration for Dancer is the Ruby micro web framework B<Sinatra>, which we
+started to port and since then started diverging from Sinatra to our own path.
+
+It supports L<Plack>/L<PSGI> so you can enjoy the new modern Perl world, but it
+also supports an internal web server to allow you to rapidly develop your web
+application without setting up a web server.
+
+The following synopsis shows just how strong and yet simple Dancer really is:
+
+    get '/view/user/:id' => sub {
+        my $id = params->{'id'};
+        template user => { id => $id };
+    };
+
+This shows off a an HTTP B<GET> request route with a variable in it which is
+attached to an anonymous subroutine which gets the ID and renders a template
+(with supported inlined layout - even if not supported in your template engine
+of choice) with variables. It really is that simple.
+
+If you like this, you should check out the Dancer website and documentation for
+more information on what Dancer can do to ease your web programming pain and
+leaving you with the fun, interesting parts.
+
+=head2 Dancer 1.2000 is finally out
+
+We've been speaking our heads off on the B<1.2000> release of Dancer for a while
+now. Why are we excited so much, you say? Well, for a few reasons!
+
+=head3 The community blossomed
+
+The Dance community has grown with time and provided a nice warm place for
+people to raise questions, ideas and create things together. Version 1.2000
+presents a culmination of the communal work of a very large number of people,
+all from the community, in a wide variety of areas from documentation, bug
+tracing, bug fixes, features and even design.
+
+Therefor this release is dedicated to the Dancer community itself!
+
+=head3 UTF-8 FTW!
+
+One of the issues the community stressed is having unicode support, and we've
+decided it's was about time to implement it.
+
+Unicode support isn't as trivial as it sounds, though. You have to support it in
+the core of the framework for parameter and environment parsing, in the
+different template engines (and Dancer has quite a few) and all around.
+
+So now we have that! It's also on by default for you!
+
+=head3 Use the docs, Luke!
+
+If you like reading documentation (and who doesn't, really?), we made a lot of
+improvements to the docs. We've added a lot and changed quite a bit to make it
+clearer.
+
+While it still isn't perfect, it's a great place to start and you'll be able to
+understand more and more core layers of Dancer, and it will even give you a
+heads up if you feel like playing with the core, adding a feature, fixing a bug
+or simply better understand how Dancer works.
+
+=head3 Stable solid foundations
+
+Users should always be able to trust Dancer to be stable. We've put countless
+hours into fixing bugs and improving the quality to ensure that now, more than
+ever, Dancer is a solid foundation you can depend upon.
+
+While some of this work went into code, a major part went as well to
+documenting the code and writing plenty of tests to have a very high code
+coverage.
+
+Some of the work also included our internal policies, such as the deprecation
+policy. When Dancer 1.2000 finds you're doing something deprecated, it will not
+break, but instead inform you of it (via warning) so you will be able to fix it
+at your leisure. The entire 1.2xxx release series promises not to break your
+app, unless it is a critical fix (such as a security concern - which is
+business-critical). You are assured stability in upgrading to any 1.2xxx
+release.
+
+=head3 Deployability
+
+Yes, I<deployability> is indeed a word (we checked) and it is something that all
+web applications dread. Since Dancer itself supports PSGI/Plack, deploying it is
+not a difficult issue.
+
+However, the point that people find tricky is B<how>. How do I configure my
+Apache for Dancer? What if it's Lighttpd, or Nginx? What about.. what about...?
+
+Therefore, we put effort in preparing L<Dancer::Deployment> which carries out
+instructions on how to configure web servers for your Dancer application.
+
+We've also put more work for the CGI and FCGI runner files and they should prove
+to be more correct and aid you better in deploying your app.
+
+=head3 Oh, the pretty pretty colors
+
+Dancer comes with a scaffolding script that gives you a nice layout to play with
+when you just start programming. We've decided to give it a whirl as well and
+improved it quite a bit.
+
+Your new scaffolded app should be prettier and more impressive, without making
+any effort. It even uses the jQuery Javascript library! OMG jQuery!
+
+=head2 What's in the future for Dancer
+
+While we hope you enjoy version 1.2000, we're not about to rest on our laurels.
+We're still working on improving the core, the documentation, the code testing
+coverage, provide new features, expand and flex other features and provide a
+stable set of community plugins to remove more and more clutter to your work.
+
+=head2 Advent calendar? You too? Really?
+
+The advent calendar is our way of showcasing Dancer's ability by showing you how
+to write Dancer applications, plugins and engines. You'll learn how to deploy
+your apps on various backends and understand the beauty of simplicity that
+Dancer offers using its clean DSL and route-based structure.
+
+Stay tunes for more awesomeness!
+
+=head2 Credits
+
+Credit goes to the entire Dancer community for our 1.2000 release and the advent
+calendar. Dancer would definitely not be where its at right now without the love
+and care the community has given it.
+
+A great thanks goes (and not limited) to the following people (in alphabetical
+order):
+
+=over 4
+
+=item * Adam J. Foxson
+
+=item * Al Newkirk
+
+=item * Alexis Sukrieh
+
+=item * Anton Ukolov
+
+=item * Boris Shomodjvarac
+
+=item * crujones
+
+=item * Damien Krotkine
+
+=item * datamuc
+
+=item * Dave Doyle
+
+=item * David Precious
+
+=item * Franck Cuny
+
+=item * Gabor Szabo
+
+=item * Igor Bujna
+
+=item * Ivan
+
+=item * Mark Allen
+
+=item * Maurice
+
+=item * Mike Schroeder
+
+=item * Naveed Massjouni
+
+=item * Naveen Manivannan
+
+=item * Nick Langridge
+
+=item * Philippe Bruhat
+
+=item * Puneet Kishor
+
+=item * Rafał Pocztarski
+
+=item * Roman Galeev
+
+=item * Sawyer X
+
+=item * Sebastian de Castelberg
+
+=item * snearch
+
+=item * Stefan Oberwahrenbrock
+
+=item * Yanick Champoux
+
+=item * and everyone in the community we've missed.
+
+=back
+
