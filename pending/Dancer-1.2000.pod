@@ -160,7 +160,7 @@ order):
 
 =item * Damien Krotkine
 
-=item * datamuc
+=item * Danijel Tasov
 
 =item * Dave Doyle
 
