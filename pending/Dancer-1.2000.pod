@@ -18,13 +18,18 @@ The following synopsis shows just how strong and yet simple Dancer really is:
 
     get '/view/user/:id' => sub {
         my $id = params->{'id'};
-        template user => { id => $id };
+        my $userdetails = database->selectrow_hashref(
+            'select * from users where id=?', undef, params->{id}
+        );
+        template user => { user => $userdetails };
     };
 
 This shows off a an HTTP B<GET> request route with a variable in it which is
-attached to an anonymous subroutine which gets the ID and renders a template
-(with supported inlined layout - even if not supported in your template engine
-of choice) with variables. It really is that simple.
+attached to an anonymous subroutine which gets the ID, performs a simple
+database query (using L<Dancer::Plugin::Database> and passes the data to a
+template to render the resulting page.
+
+It really is that simple!
 
 If you like this, you should check out the Dancer website and documentation for
 more information on what Dancer can do to ease your web programming pain and
