@@ -4,7 +4,7 @@
 
 L<Dancer> is a micro web framework that allows you to get a website up and
 running within a minute, if not sooner. It abstracts away a lot of nastiness
-that exists in web programming and let's you focus just on the important
+that exists in web programming and lets you focus just on the important
 details, without compromising on control and strength.
 
 The inspiration for Dancer is the Ruby micro web framework B<Sinatra>, which we
@@ -33,11 +33,11 @@ leaving you with the fun, interesting parts.
 =head2 Dancer 1.2000 is finally out
 
 We've been speaking our heads off on the B<1.2000> release of Dancer for a while
-now. Why are we excited so much, you say? Well, for a few reasons!
+now. Why are we so excited, you ask? Well, for a few reasons!
 
 =head3 The community blossomed
 
-The Dance community has grown with time and provided a nice warm place for
+The Dancer community has grown with time and provided a nice warm place for
 people to raise questions, ideas and create things together. Version 1.2000
 presents a culmination of the communal work of a very large number of people,
 all from the community, in a wide variety of areas from documentation, bug
@@ -47,8 +47,8 @@ Therefor this release is dedicated to the Dancer community itself!
 
 =head3 UTF-8 FTW!
 
-One of the issues the community stressed is having unicode support, and we've
-decided it's was about time to implement it.
+One of the issues the community stressed is having Unicode support, and we've
+decided it was about time to implement it fully.
 
 Unicode support isn't as trivial as it sounds, though. You have to support it in
 the core of the framework for parameter and environment parsing, in the
@@ -66,6 +66,11 @@ While it still isn't perfect, it's a great place to start and you'll be able to
 understand more and more core layers of Dancer, and it will even give you a
 heads up if you feel like playing with the core, adding a feature, fixing a bug
 or simply better understand how Dancer works.
+
+All Dancer's features and keywords are documented; we also have a tutorial, a
+cookbook for those who prefer to see short examples of how to achieve common
+tasks, and full in-depth examples too.
+
 
 =head3 Stable solid foundations
 
@@ -88,13 +93,13 @@ release.
 =head3 Deployability
 
 Yes, I<deployability> is indeed a word (we checked) and it is something that all
-web applications dread. Since Dancer itself supports PSGI/Plack, deploying it is
-not a difficult issue.
+web applications dread. Since Dancer itself supports PSGI/Plack, deploying your
+Dancer apps is easy and flexible.
 
 However, the point that people find tricky is B<how>. How do I configure my
 Apache for Dancer? What if it's Lighttpd, or Nginx? What about.. what about...?
 
-Therefore, we put effort in preparing L<Dancer::Deployment> which carries out
+Therefore, we put effort in preparing L<Dancer::Deployment> which provides
 instructions on how to configure web servers for your Dancer application.
 
 We've also put more work for the CGI and FCGI runner files and they should prove
@@ -123,7 +128,7 @@ to write Dancer applications, plugins and engines. You'll learn how to deploy
 your apps on various backends and understand the beauty of simplicity that
 Dancer offers using its clean DSL and route-based structure.
 
-Stay tunes for more awesomeness!
+Stay tuned for more awesomeness!
 
 =head2 Credits
 
