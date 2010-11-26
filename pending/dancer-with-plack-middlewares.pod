@@ -97,14 +97,46 @@ modified since the previous request:
 
 This time there is no B<Content-Lenght> header, because the value of the ETag
 header is the same, so no content has been returned to our request.
-       
+
+=head2 Content compression
+
+Another common use case is the need to send content from the server to the
+client in a compressed format. For this, you can use
+L<Plack::Middleware::Deflater> that will compress the content on the fly to
+gzip if the client support this feture.
+
+A simple
+
+    plack_middlewares:
+      -
+        - Deflater
+
+will do the trick.
+
 =head2 Using the Debug panels
 
 One very useful middleware while debuging your application is
-L<Plack::Middleware::Debug>. This middleware will inject some HTML code in your
-page.
+L<Plack::Middleware::Debug> and L<Dancer::Debug>. Those middlewares will inject some HTML code in your
+page. To activate the panels, add this to your configuration:
 
-XXXXX insert screenshot
+
+ plack_middlewares:
+   -
+     - Debug
+     - panels
+     -
+       - Parameters
+       - Dancer::Version
+       - Dancer::Settings
+       - Memory
+
+Next time you'll visit your application, you should see this panel on the right:
+
+=for html <img src="/images/dancer_debug_02.png" />
+
+If you click on one of the element from the menu, the panel will open with something similar:
+
+=for html <img src="/images/dancer_debug_02.png" />
 
 =head2 More complexe
 
@@ -140,4 +172,18 @@ keyword, provided by L<Plack::Builder>. Here we enable a middleware
 
 If you start your application with plackup, and load the page in your browser,
 you will be prompted for a username and password to access the page.
+
+=head2 Credits
+
+A huge thanks to Marcel Grünauer and Tatsuhiko Miyagawa for the awesome
+L<Plack::Middleware::Debug>.
+
+=head2 Author
+
+This article has been written by franck cuny C<< <franck@lumberjaph.net> >>
+for the Perl Dancer Advent Calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 by franck cuny
 
