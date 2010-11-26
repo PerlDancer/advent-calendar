@@ -26,3 +26,5 @@ engines:
         start_tag: '[%'
         end_tag: '%]'
 
+# set this to one to be able to render future articles
+render_future: 0
