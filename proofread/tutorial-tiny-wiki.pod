@@ -85,7 +85,7 @@ handlers.
 
 This is the schema for our database.  We have an C<id> field, a C<code> field,
 a C<url> field, and a C<count> field.  If this were a more sophisticated 
-application the C<count> field might a part of an C<analytics> table, but
+application the C<count> field might be a part of an C<analytics> table, but
 we're all about keeping things simple, so it's just tacked on to our simple
 table design here.
 
@@ -134,7 +134,8 @@ Let's unpack the root URL (/) route handler line by line.
 
  any ['get', 'post'] => '/' => sub {
 
-We tell Dancer that this route handler works with both GET and POST requests. Next we specify the '/' URL to match and finally, begin an anonymous subroutine
+We tell Dancer that this route handler works with both GET and POST requests. 
+Next we specify the '/' URL to match and finally, begin an anonymous subroutine
 to do something when the first two conditions are met.
 
     my $msg;
@@ -147,7 +148,7 @@ user input from the form in the C<template> directive below.
 
         my $uri = URI->new( params->{'url'} );
 
-        if ( $uri->scheme !~ 'http' ) {
+        if ( $uri->scheme !~ /https?/ ) {
             $err = 'Error: Only HTTP or HTTPS URLs are accepted.';
         }
 
@@ -165,7 +166,7 @@ to reject that input with a message explaining what we're looking for.
             my $sth = $db->prepare($sql) or die $db->errstr;
             $sth->execute( $nid, $code, $uri->canonical() ) or die $sth->errstr;
 
-Hopefully this is all standard DBI programming for you. Nothing tremendously
+Hopefully this is all standard L<DBI> programming for you. Nothing tremendously
 mysterious going on here.
         
             $msg = $uri->as_string . " has been shrunk to " . 
