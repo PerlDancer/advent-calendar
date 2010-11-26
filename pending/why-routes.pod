@@ -1,0 +1,169 @@
+=head1 Why routes - route-based programming introduction
+
+In this article, we'll try to explain the basic premise behind Dancer, to make
+it easier for you to get started. That premise being
+I<route-based web programming>.
+
+=head2 Common web programming models
+
+=head3 CGI
+
+CGI is arguably the most common web programming model. Not because it's
+particularly good, but because it's the simplest to write (something which is no
+longer true, thanks to Dancer, as we'll see later on) and the easier to
+configure on a web server.
+
+Mainly CGI web programming entails the web server running a script, providing
+everything possible (such as request parameters) in the environment variable
+(C<%ENV>) and taking the standard output (I<STDOUT>) and returning that to the
+browser, except the first chunk which is used for internal browser usage (such
+as declaring content type, setting cookies, noting redirects and so forth).
+
+Every time a browser makes a requests, the server runs the CGI script and gets
+the information back to the browser. This is clearly very wasteful in resources.
+
+This can give programmers a lot of hassle. For example, you need to purify your
+environment variables, you need to print the content type (if you only provide
+one chunk of content without the internal browser chunk), the web server will
+crash your request and send the browser a 500 (Internal Server Error).
+
+You have to understand what a user wanted by checking the parameters. Even if
+use the great L<CGI> module, you still need to write the entire logic behind
+what should happen and when.
+
+For example, to print the main page, you may write code such as this:
+
+    use strict;
+    use warnings;
+    use CGI;
+
+    my $cgi = CGI->new;
+    if ( my $page = $cgi->param('page') ) {
+        if ( $page eq 'main' ) {
+            print $cgi->header( charset => 'UTF-8' );
+            # get main page and print it
+        }
+    }
+
+That's a lot of boilerplate, and we haven't really gone into parameters which
+define how the page will be displayed, templating boilerplate and pretty links.
+
+=head3 MVC
+
+MVC (Model, View, Controller) was a major breakthrough that allowed us to write
+our code more efficiently with reusable components and logical separation.
+
+An MVC framework allows you to separate your application to a I<Model> which
+handles your database connections - ORM-laden, usually, a I<View> which handles
+your output (usually through templates) with their configuration and preferences
+and finally a I<Controller> which contains your application logic.
+
+This allows you to write scalable, clean, understandable, reusable code.
+
+=head2 Namespace matching
+
+MVC relies on something we refer to as I<namespace matching>, which means that
+in order to dispatch a request to the correct code piece, the MVC framework will
+have a (usually predetermined) destination according to your application's
+namespace.
+
+In L<Catalyst>, for example, a request to I<http://myapp/view/articles/30> will
+be dispatched using the namespace I<MyAppName::View> (as long as our app is
+under a I<MyApp> namespace) to the file I<View.pm>, to the function I<articles>
+and will send I<30> to as a first parameter to the function.
+
+This easy logic allows Catalyst (and MVC frameworks) to be very accurate, but
+also more rigid. Catalyst itself has many ways of making it much more flexible.
+
+=head2 Routes
+
+Routes was an idea introduced by Ruby's B<Sinatra> framework (which we often
+credit) and takes a much cleaner and clearer approach to cut down on the
+added hierarchy complexity that MVC can add.
+
+Routes are basically paths the user takes which are attached to code that will
+be triggered when a user reaches the specific route.
+
+=head3 Basic dispatching
+
+Imagine a user making a GET request to I</>. The following route will catch it
+and execute the attached subroutine:
+
+    get '/' => sub { 'yay' };
+
+In L<Dancer>, every return value is actually the content the user will get - and
+don't worry, you don't have to specify what the content type is, although you
+can.
+
+Usually you will render a template, and you can do that just as easy:
+
+    get '/' => sub { template 'index' };
+
+You'll notice that routes are very succinct and easy to read.
+
+=head3 Parameters
+
+The code that routes run do not get any parameters and instead rely on framework
+keywords to get the information needed.  For example, to get the name of a user
+in a form that was I<POST>ed to a route:
+
+    post '/login' => sub {
+        return "Hello, ", params->{'name'};
+    };
+
+Routes are also able to specify variables in a given route, to allow for more
+dynamic routes. Here is an article view route:
+
+    get '/view/article/:id' => sub {
+        template 'article' => {
+            entry = get_article( params->{'id'} ),
+        };
+    };
+
+L<Dancer> does not carry an ORM or DB bindings with it because it aspires to be
+as lightweight as possible, but there are plugins which allow you to hook up to
+schemas straight from your app. Check out L<Dancer::Plugin::Database> and
+L<Dancer::Plugin::DBIC> for more on that.
+
+=head3 Regular expressions
+
+Routes have much more to offer but in case you're not fully happy with the
+default spec for routes, you can specify your own route in any way, shape or
+form you find comfortable using regexes:
+
+    get qr{ / view / articles / (\d+)(\.\d+)? }x => sub {
+        # the matches can then be fetched using splat()
+        my @matches = splat;
+    };
+
+I<(splat is a keyword that originated in Sinatra, blame them for the name :)>
+
+=head3 More
+
+Routes actually have another thing or two up their sleeve (such as being able
+to skip routes or filter routes by hostname or user agent strings), but you can
+read all about it on L<Dancer> and L<Dancer::Introduction>.
+
+=head2 Summary
+
+What we've gone over in this article is the difference between CGI programming,
+MVC programming and route-based programming (which was introduced by the micro
+web frameworks).
+
+You may ask, however, what should you choose for your project? Which is the
+best?
+
+It's all a matter of choice and you first know that every project may be
+different than the next. You might want to use Dancer for one project but prefer
+to use Catalyst for another (and hopefully never use pure CGI for anything), and
+that's perfectly fine, because that's what we do too. :)
+
+The major benefit of route-based web programming is that it's much lighter,
+requires no specific directory hierarchy or a strong separation of model and
+view (since in Dancer you can configure both in the main config file in
+two-three lines). It's easier and faster to get it up and running, that's for
+sure. It's also here to stay.
+
+=head2 Author
+
+Sawyer X
