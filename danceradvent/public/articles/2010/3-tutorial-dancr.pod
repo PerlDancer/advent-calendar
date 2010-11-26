@@ -3,7 +3,7 @@
 This article will guide you through the writing of a minimal but yet
 complete blog engine.
 
-=head2 Origins of this tutoral
+=head2 Origins of this tutorial
 
 While I was investigating some Python
 web frameworks like L<Flask|http://flask.pocoo.org/> or
