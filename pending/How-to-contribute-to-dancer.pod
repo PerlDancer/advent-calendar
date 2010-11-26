@@ -22,12 +22,14 @@ are:
 
 =back 
 
-XXXX need to describe new workflow
+The B<master> branch is stable and should be in a state that allow a release
+at any time. The B<devel> branch is used to our development.
 
-In the master branch we accept only bug fixes and doc fixes/updates. The
-current master branch will be the future 1.2 version.
+Each new feature new to be created in a B<feature/$name_of_the_feature> branch
+that will be merged into devel when it's done.
 
-The devel branch is where we add new features, or improve existing features.
+For this, we're using L<gitflow|https://github.com/nvie/gitflow/>, waiting for
+our very own L<gitflux|https://github.com/xsawyerx/gitflux> to be ready.
 
 =head2 Contributing
 
