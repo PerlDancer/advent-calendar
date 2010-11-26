@@ -19,6 +19,7 @@ color: #333;
 h1 {
 font-size: 28px;
 color: #000;
+margin: 0;
 }
 
 a  {color: #03c}
@@ -82,7 +83,6 @@ font-size: 16px;
 
 #about h3 {
 margin: 0;
-margin-bottom: 10px;
 font-size: 14px;
 }
 
@@ -115,56 +115,6 @@ padding: 10px;
 }
 
 
-#getting-started {
-border-top: 1px solid #ccc;
-margin-top: 25px;
-padding-top: 15px;
-}
-#getting-started h1 {
-margin: 0;
-font-size: 20px;
-}
-#getting-started h2 {
-margin: 0;
-font-size: 14px;
-font-weight: normal;
-color: #333;
-margin-bottom: 25px;
-}
-#getting-started ol {
-margin-left: 0;
-padding-left: 0;
-}
-#getting-started li {
-font-size: 18px;
-color: #888;
-margin-bottom: 25px;
-}
-#getting-started li h2 {
-margin: 0;
-font-weight: normal;
-font-size: 18px;
-color: #333;
-}
-#getting-started li p {
-color: #555;
-font-size: 13px;
-}
-
-
-#search {
-margin: 0;
-padding-top: 10px;
-padding-bottom: 10px;
-font-size: 11px;
-}
-#search input {
-font-size: 11px;
-margin: 2px;
-}
-#search-text {width: 170px}
-
-
 #sidebar ul {
 margin-left: 0;
 padding-left: 0;
@@ -183,11 +133,6 @@ margin-bottom: 5px;
 }
 
 
-h1, h2, h3, h4, h5 {
-font-family: sans-serif;
-margin: 1.2em 0 0.6em 0;
-}
-
 p {
 line-height: 1.5em;
 margin: 1.6em 0;
@@ -195,6 +140,7 @@ margin: 1.6em 0;
 
 pre, code, tt {
 	font-size: 13px;
+	color: #000;
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
