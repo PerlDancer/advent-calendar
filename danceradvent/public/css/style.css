@@ -24,8 +24,6 @@ margin: 0;
 
 a  {color: #03c}
 a:hover {
-background-color: #03c;
-color: white;
 text-decoration: none;
 }
 
@@ -49,8 +47,27 @@ filter: alpha(opacity=70);
 background-color: white;
 border: 1px solid #000;
 border-top: none;
+border-bottom: none;
 padding: 25px;
 width: 520px;
+}
+
+#sidebar a {
+	color: #444;
+}
+#sidebar a.homelink {
+	display: block;
+	text-decoration: none;
+	padding: 2px;
+	font-size: 18px;
+	font-weight: bold;
+	border-bottom: 2px solid #bba;
+}
+
+#sidebar p { 
+	margin: 0; 
+	color: #667;
+	padding: 0.5em;
 }
 
 #sidebar {
@@ -59,6 +76,9 @@ font-size: 12px;
 float: right;
 width: 160px;
 padding-top: 10px;
+background: url(/images/dancing-santa.png) no-repeat top left;
+height: 100%;
+padding-top: 190px;
 }
 
 #header, #about, #getting-started {
@@ -144,19 +164,23 @@ pre, code, tt {
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
-#footer a, { color: #77c; }
+#footer a { 
+	color: #af8b41; 
+}
+
 #footer {
 	clear: both;
-	padding: 2em;
+	padding: 0.5em;
 	margin-bottom: 0;
 	text-align: center;
 	font-family: sans-serif;
-	font-size: 12px;
+	font-size: 10px;
 	background-color: #000;
 	color: #aaa;
 	-moz-opacity: 0.80;
 	opacity: 0.80;
 	filter: alpha(opacity: 80);
+	border: 1px solid #000;
 }
 
 .advent-day {

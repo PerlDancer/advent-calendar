@@ -15,11 +15,20 @@
 <div id="page">
 
 <div id="sidebar">
-<a href="/">Dancer Advent Calendar</a><br />
+<a href="/" class="homelink">Dancer Advent Calendar</a><br />
+
+<p>
+The PerlDancer Advent Calendar is a community-driven project that aims 
+to showcase the Dancer micro-framework.
+</p>
+
+<p>
+Each day of december, one article about PerlDancer. Stay tuned for new moves!
+</p>
 
 <ul id="sidebar-items">
 <li>
-    <h3>Dancer community</h3>
+    <h3>About Dancer</h3>
     <ul class="links">
         <li><a href="http://www.perldancer.org/">Dancer homepage</a></li>
         <li><a href="http://twitter.com/PerlDancer">Official Twitter</a></li>
@@ -36,7 +45,7 @@
 
 
 <div id="footer">
-Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
+Powered by <a href="http://perldancer.org/">Dancer</a> 1.2
 </div>
 </div>
 
