@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
-<title>danceradvent</title>
+<title>[% IF title %] [% title %] | PerlDancer Advent Calendar[% ELSE %]PerlDancer Advent Calendar[% END %]</title>
 <link rel="stylesheet" href="[% request.base %]/css/style.css" />
 
 <!-- Grab Google CDN's jQuery. fall back to local if necessary -->

@@ -56,9 +56,18 @@ get '/:year/:day' => sub {
 
     my $parser = Pod::POM->new;
     my $pom = $parser->parse($article_pod);
+    
+    # fetch the title
+    my $title = $pom->head1;
+    if ($title && $title->[0]) {
+        $title = $title->[0]->title;
+    }
+
     my $html = Pod::POM::View::HTML->print($pom);
 
-    return template article => { content => $html };
+    return template article => { 
+        title => $title || "Perl Dancer Advent Calendar",
+        content => $html };
 };
 
 sub _article_viewable {
