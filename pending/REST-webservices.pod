@@ -33,10 +33,9 @@ The core provides serializers for:
 With these serializers, you can write:
 
     get '/user/:id' => sub {
-        my $id = params->{id};
-        my $user = $schema->resultset('Users')->find($id);
+        my $user = $schema->resultset('Users')->find(params->{id});
         content_type 'application/json';
-        return to_json { id => $id, name => $user->name };
+        return to_json { id => params->{id}, name => $user->name };
     };
 
 =head2 Let Dancer handle the serialization
@@ -79,7 +78,61 @@ So, if we take our previous example, by setting the serializer to B<mutable>, we
      
 =head2 Dancer::Plugin::REST
 
-There is an excellent plugin available to help you to write a ReST application: Dancer::Plugin::REST.
+There is an excellent plugin available to help you to write a ReST application: Dancer::Plugin::REST. With this one, you'll be able to declare route to access to resources, but also declare how you want to handle the format.
+
+=head3 Format
+
+As we have seen, you can already define the format by setting the B<serializer> option to a certain value (JSON, YAML, mutable, ...). The plugin add another way: by appending the format to your request. This mean you can declare this kind of route:
+
+    prepare_serializer_for_format;
+
+    get '/user/:id.:format' => sub {
+        my $user = $schema->resultset('Users')->find(params->{id});
+        return { id => params->{id}, name => $user->name };
+    };
+
+    $ curl http://localhost:5000/1.json
+    {"name":"franck","id":"1"}
+
+    $ curl -H 'Accept-Type: text/xml' http://localhost:5000/1.xml
+    <data name="franck" id="1" />
+
+=head3 Resources
+
+As stated at the begining of the article, with ReST you defined routes to access resources. So let's do this:
+
+    resource user => 
+        'get' => \&on_get_user,
+        'create' => \&on_create_user,
+        'delete' => \&on_delete_user,
+        'update' => \&on_update_user;
+
+    sub on_get_user {
+        ...
+        status_ok({ user => $users->id });
+    }
+
+    sub on_create_user {
+        ...
+        status_created({user => $user->id});
+    }
+
+    ...
+
+=head3 Helpers
+
+The plugin add also some helpers to return an appropriate HTTP status to your request.
+
+    post '/user/' => sub {
+        my $user = $schema->resultset('Users')->create(...);
+        status_created({ id => $user->id, name => $user->name });
+    };
+
+This will return a new HTTP response with a status to 201.
+    
+=head2 Credits
+
+Most of the work done on the serializers have been inspired by the excellent plugin Catalyst::Action::REST. Thanks to all the authors of this module.
 
 =head2 Author
 
