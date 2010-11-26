@@ -13,6 +13,18 @@ Advent Calendar affairs!)
 </p>
 
 <ol>
+
+<div class="advent-calendar">
+[% FOR a IN articles %]
+    [% IF a.viewable -%]
+        <a class="advent-day" href="/[% a.link || a.day %]">[% a.day %]</a>
+    [%- ELSE -%]
+        <span class="advent-day">[% a.day %]</span>
+    [%- END %]
+[% END %]
+</div>
+
+<!--
 [% FOR article IN articles %]
     <li>
     [% IF article.viewable %]
@@ -24,6 +36,7 @@ Advent Calendar affairs!)
     [% END %]
     </li>
 [% END %]
-</ol>
+-->
+<!-- </ol> -->
 
 

@@ -3,11 +3,30 @@ use Dancer ':syntax';
 use Dancer::Plugin::DebugDump;
 use Pod::POM;
 use Pod::POM::View::HTML;
+use List::Util qw/shuffle/;
+use autodie;
 our $VERSION = '0.1';
 
 my $article_dir = Dancer::FileUtils::path(
-        setting('appdir'), 'public', 'articles'
-    );
+    setting('appdir'), 'public', 'articles'
+);
+
+get '/other' => sub {
+    my @days = shuffle 1..24;
+    opendir my $dirh, $article_dir;
+    closedir $dirh;
+    my @articles;
+    for my $day (@days) {
+        push @articles, {
+            # _article_viewable should check if there is an article available
+            # and if 201012$day <= $current_date
+            #viewable => _article_viewable($day),
+            viewable => $day <= 2 ? 1 : 0, # TODO: fixme
+            day => $day,
+        };
+    }
+    return template 'index' => { articles => \@articles };
+};
 
 # Homepage is a list of articles
 get '/' => sub {
@@ -23,6 +42,7 @@ get '/' => sub {
     # viewable yet:
     my @articles;
     for my $filename (@article_filenames) {
+        my ($article_day) = $filename =~ m{^ (\d+) -}mx;
         my $parser = Pod::POM->new;
         my $pom = $parser->parse(
             Dancer::FileUtils::path($article_dir, $filename)
@@ -36,6 +56,7 @@ get '/' => sub {
             filename => $filename || '',
             link => (split /\./, $filename)[0],
             viewable => _article_viewable($filename),
+            day => $article_day,
         };
     }
     debug_dump("Articles" => \@articles);
@@ -55,7 +76,6 @@ get '/:article' => sub {
     if (!-f $pod_file) { return send_error("No such article!", 404); }
 
     # OK, are they allowed to see it yet? :)
-    my ($article_day) = params->{article} =~ m{^ (\d+) -}m;
     my ($year, $month, $day) = (localtime)[5,4,3];
     $year += 1900; $month++;
     if (!_article_viewable(params->{article})) {

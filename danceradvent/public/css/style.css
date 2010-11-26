@@ -194,3 +194,15 @@ padding-right: 160px;
 font-family: sans-serif;
 font-size: 10px;
 }
+
+.advent-day {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    display: inline-block;
+    height: 3em;
+    width: 3em;
+    margin: 3px;
+    padding: 2px;
+    text-decoration: none;
+    color: #000000;
+}
