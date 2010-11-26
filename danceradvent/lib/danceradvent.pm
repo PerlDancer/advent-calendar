@@ -66,7 +66,7 @@ sub _article_viewable {
     my $date = sprintf "%04d12%02d", $year, $day;
     # using gmtime
     my $today = strftime "%Y%m%d", gmtime(time);
-    $today = '20101205'; # TODO: remove me on going live
+    $today = '20101224'; # TODO: remove me on going live
 
     debug("Deciding whether $date is viewable on $today");
     if($date <= $today) {
