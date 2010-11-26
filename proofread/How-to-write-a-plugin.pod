@@ -97,8 +97,7 @@ pattern of known mobile devices. This is as easy as the following:
 
     register 'is_mobile_device' => sub {
         return request->user_agent =~
-            /(iPhone|Android|BlackBerry|Mobile|Palm)/
-          ? 1 : 0;
+            /(iPhone|Android|BlackBerry|Mobile|Palm)/;
     };
 
 That's it. The C<request> keyword is Dancer-native and returns a
@@ -134,8 +133,7 @@ is processed. That's why we save it first with the C<var> keyword.
 Then, with an after filter, will reset it to its original value:
 
     after sub {
-        my $orig_layout = vars->{'orig_layout'};
-        setting layout => $orig_layout;
+        setting layout => vars->{orig_layout};
     };
 
 That way, if a non-mobile client comes just after a mobile one, the
