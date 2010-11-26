@@ -17,11 +17,11 @@ application without setting up a web server.
 The following synopsis shows just how strong and yet simple Dancer really is:
 
     get '/view/user/:id' => sub {
-        my $id = params->{'id'};
-        my $userdetails = database->selectrow_hashref(
+        my $id      = params->{'id'};
+        my $details = database->selectrow_hashref(
             'select * from users where id=?', undef, params->{id}
         );
-        template user => { user => $userdetails };
+        template user => { user => $details };
     };
 
 This shows off a an HTTP B<GET> request route with a variable in it which is
