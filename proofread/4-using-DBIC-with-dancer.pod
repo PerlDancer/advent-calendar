@@ -1,11 +1,12 @@
-=head1 Using DBIC (DBIX::Class) within a Dancer application
+=head1 Using DBIx::Class within a Dancer application
 
-C<DBIX::Class>, also known as DBIC, is one of the many Perl ORM (I<Object Relational
-Mapper>), but it's commonly recognized as the best and most widely used.
+C<DBIx::Class>, also known as C<DBIC>, is one of the many Perl ORM 
+(I<Object Relational Mapper>), but it's commonly recognized as the best 
+and most widely used.
 
 This is a nice presentation from Leo : L<http://www.slideshare.net/ranguard/dbixclass-beginners-presentation>
 
-Basically, DBIC allows you to interact with your SQL Database without writing any SQL.
+Basically, C<DBIC> allows you to interact with your SQL Database without writing any SQL.
 
 To do that, you need a set of B<Schema classes> that describes your database
 structure. Then you can use DBIC to create, update, delete, search, and do many
@@ -143,8 +144,15 @@ I'll go with SQLite, as it fits well with the aim of simplicity of this
 example. Let's create the SQLite file database:
 
   $> sqlite3 bookstore.db
-  CREATE TABLE author(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstname text default '' not null, lastname text not null);
-  CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, author_id INTEGER REFERENCES author (id), title text default '' not null );
+  CREATE TABLE author( 
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+    firstname text default '' not null, 
+    lastname text not null);
+
+  CREATE TABLE books(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+    author_id INTEGER REFERENCES author (id), 
+    title text default '' not null );
 
 Simple stuff: we have 2 tables, one for authors, and one for books, that points to the author table.
 

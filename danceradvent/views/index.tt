@@ -1,0 +1,23 @@
+
+<h1>Perl Dancer Advent Calendar 2010</h1>
+
+<p>
+Happy Christmas, and welcome to the Dancer team's advent calendar for
+2010!
+</p>
+
+<p>
+We've assembled a set of articles about getting to grips with Dancer, one for
+each day in December up to Christmas Eve.  (As is pretty much traditional with
+Advent Calendar affairs!)
+</p>
+
+<div class="advent-calendar">
+[% FOR a IN articles %]
+    [% IF a.viewable -%]
+        <a class="advent-day" href="/[% year %]/[% a.day %]">[% a.day %]</a>
+    [%- ELSE -%]
+        <span class="advent-day">&nbsp;</span>
+    [%- END %]
+[% END %]
+</div>

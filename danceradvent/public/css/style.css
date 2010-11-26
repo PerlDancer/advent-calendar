@@ -1,0 +1,206 @@
+
+body {
+  font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
+margin: 0;
+margin-bottom: 25px;
+padding: 0;
+
+background-color: #000;
+background-image: url("/images/calendar-bg.jpg"); 
+background-repeat: no-repeat;
+background-position: top left;
+background-attachment:fixed;
+
+/* font-family: "Lucida Grande", "Bitstream Vera Sans", "Verdana"; */
+font-size: 16px;
+color: #333;
+}
+
+h1 {
+font-size: 28px;
+color: #000;
+margin: 0;
+}
+
+a  {color: #03c}
+a:hover {
+text-decoration: none;
+}
+
+
+#page {
+background-color: #ddd;
+width: 750px;
+margin: auto;
+margin-left: auto;
+padding-left: 0px;
+margin-right: auto;
+-moz-opacity: 0.90;
+opacity: 0.90;
+filter: alpha(opacity=90);
+}
+
+#content {
+-moz-opacity: 0.70;
+opacity: 70;
+filter: alpha(opacity=70);
+background-color: white;
+border: 1px solid #000;
+border-top: none;
+border-bottom: none;
+padding: 25px;
+width: 520px;
+}
+
+#sidebar a {
+	color: #444;
+}
+#sidebar a.homelink {
+	display: block;
+	text-decoration: none;
+	padding: 2px;
+	font-size: 18px;
+	font-weight: bold;
+	border-bottom: 2px solid #bba;
+}
+
+#sidebar p { 
+	margin: 0; 
+	color: #667;
+	padding: 0.5em;
+}
+
+#sidebar {
+font-family: sans-serif;
+font-size: 12px;
+float: right;
+width: 160px;
+padding-top: 10px;
+background: url(/images/dancing-santa.png) no-repeat top left;
+height: 100%;
+padding-top: 190px;
+}
+
+#header, #about, #getting-started {
+padding-left: 75px;
+padding-right: 30px;
+}
+
+
+#header {
+background-image: url("/images/perldancer.jpg"); 
+background-repeat: no-repeat;
+background-position: top left;
+height: 64px;
+}
+#header h1, #header h2 {margin: 0}
+#header h2 {
+color: #888;
+font-weight: normal;
+font-size: 16px;
+}
+
+
+#about h3 {
+margin: 0;
+font-size: 14px;
+}
+
+#about-content {
+background-color: #ffd;
+border: 1px solid #fc0;
+margin-left: -11px;
+}
+#about-content table {
+margin-top: 10px;
+margin-bottom: 10px;
+font-size: 11px;
+border-collapse: collapse;
+}
+#about-content td {
+padding: 10px;
+padding-top: 3px;
+padding-bottom: 3px;
+}
+#about-content td.name  {color: #555}
+#about-content td.value {color: #000}
+
+#about-content.failure {
+background-color: #fcc;
+border: 1px solid #f00;
+}
+#about-content.failure p {
+margin: 0;
+padding: 10px;
+}
+
+
+#sidebar ul {
+margin-left: 0;
+padding-left: 0;
+}
+#sidebar ul h3 {
+margin-top: 25px;
+font-size: 16px;
+padding-bottom: 10px;
+border-bottom: 1px solid #ccc;
+}
+#sidebar li {
+list-style-type: none;
+}
+#sidebar ul.links li {
+margin-bottom: 5px;
+}
+
+
+p {
+line-height: 1.5em;
+margin: 1.6em 0;
+}
+
+pre, code, tt {
+	font-size: 13px;
+	color: #000;
+    font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
+}
+
+#footer a { 
+	color: #af8b41; 
+}
+
+#footer {
+	clear: both;
+	padding: 0.5em;
+	margin-bottom: 0;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 10px;
+	background-color: #000;
+	color: #aaa;
+	-moz-opacity: 0.80;
+	opacity: 0.80;
+	filter: alpha(opacity: 80);
+	border: 1px solid #000;
+}
+
+.advent-day {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    display: inline-block;
+    height: 3em;
+    width: 3em;
+    margin: 10px;
+    padding: 5px;
+    text-decoration: none;
+    color: #000000;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+span.advent-day {
+	background: url(/images/perldancer.jpg) no-repeat top left;
+	opacity: 0.33;
+}
+
+a.advent-day {
+}

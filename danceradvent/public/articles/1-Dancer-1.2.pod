@@ -1,4 +1,4 @@
-=head1 Dancer 1.2000 - a micro web framework milestone
+=head1 Dancer 1.2 - a micro web framework milestone
 
 =head2 Dancer?
 
@@ -35,15 +35,15 @@ If you like this, you should check out the Dancer website and documentation for
 more information on what Dancer can do to ease your web programming pain and
 leaving you with the fun, interesting parts.
 
-=head2 Dancer 1.2000 is finally out
+=head2 Dancer 1.2 is finally out
 
-We've been speaking our heads off on the B<1.2000> release of Dancer for a while
+We've been speaking our heads off on the B<1.2> release of Dancer for a while
 now. Why are we so excited, you ask? Well, for a few reasons!
 
 =head3 The community blossomed
 
 The Dancer community has grown with time and provided a nice warm place for
-people to raise questions, ideas and create things together. Version 1.2000
+people to raise questions, ideas and create things together. Version 1.2
 presents a culmination of the communal work of a very large number of people,
 all from the community, in a wide variety of areas from documentation, bug
 tracing, bug fixes, features and even design.
@@ -88,7 +88,7 @@ documenting the code and writing plenty of tests to have a very high code
 coverage.
 
 Some of the work also included our internal policies, such as the deprecation
-policy. When Dancer 1.2000 finds you're doing something deprecated, it will not
+policy. When Dancer 1.2 finds you're doing something deprecated, it will not
 break, but instead inform you of it (via warning) so you will be able to fix it
 at your leisure. The entire 1.2xxx release series promises not to break your
 app, unless it is a critical fix (such as a security concern - which is
@@ -121,7 +121,7 @@ any effort. It even uses the jQuery Javascript library! OMG jQuery!
 
 =head2 What's in the future for Dancer
 
-While we hope you enjoy version 1.2000, we're not about to rest on our laurels.
+While we hope you enjoy version 1.2, we're not about to rest on our laurels.
 We're still working on improving the core, the documentation, the code testing
 coverage, provide new features, expand and flex other features and provide a
 stable set of community plugins to remove more and more clutter to your work.
@@ -137,7 +137,7 @@ Stay tuned for more awesomeness!
 
 =head2 Credits
 
-Credit goes to the entire Dancer community for our 1.2000 release and the advent
+Credit goes to the entire Dancer community for our 1.2 release and the advent
 calendar. Dancer would definitely not be where its at right now without the love
 and care the community has given it.
 

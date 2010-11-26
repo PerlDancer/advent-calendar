@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+<title>danceradvent</title>
+<link rel="stylesheet" href="[% request.base %]/css/style.css" />
+
+<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script>!window.jQuery && document.write('<script src="[% request.base%]/javascripts/jquery.js"><\/script>')</script>
+
+</head>
+<body>
+<div id="page">
+
+<div id="sidebar">
+<a href="/" class="homelink">Dancer Advent Calendar</a><br />
+
+<p>
+The PerlDancer Advent Calendar is a community-driven project that aims 
+to showcase the Dancer micro-framework.
+</p>
+
+<p>
+Each day of december, one article about PerlDancer. Stay tuned for new moves!
+</p>
+
+<ul id="sidebar-items">
+<li>
+    <h3>About Dancer</h3>
+    <ul class="links">
+        <li><a href="http://www.perldancer.org/">Dancer homepage</a></li>
+        <li><a href="http://twitter.com/PerlDancer">Official Twitter</a></li>
+        <li><a href="http://github.com/sukria/Dancer">Dancer on GitHub</a></li>
+    </ul>
+</ul>
+</div>
+
+
+<div id="content">
+[% content %]
+</div>
+
+
+
+<div id="footer">
+Powered by <a href="http://perldancer.org/">Dancer</a> 1.2
+</div>
+</div>
+
+
+
+</body>
+</html>
