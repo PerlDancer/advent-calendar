@@ -13,7 +13,6 @@ my $article_dir = Dancer::FileUtils::path(
 get '/' => sub {
     my $year = _default_year();
     redirect("/$year");
-
 };
 
 get '/notyet' => sub {
@@ -40,6 +39,7 @@ get '/:year' => sub {
 };
 
 get '/:year/:day' => sub {
+    # XXX better 404 page for this
     return send_error("not found", 404) if(params->{year} != _default_year());
     my $year = params->{year};
     my $day  = params->{day};
