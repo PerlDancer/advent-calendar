@@ -12,8 +12,6 @@ each day in December up to Christmas Eve.  (As is pretty much traditional with
 Advent Calendar affairs!)
 </p>
 
-<ol>
-
 <div class="advent-calendar">
 [% FOR a IN articles %]
     [% IF a.viewable -%]
@@ -23,20 +21,3 @@ Advent Calendar affairs!)
     [%- END %]
 [% END %]
 </div>
-
-<!--
-[% FOR article IN articles %]
-    <li>
-    [% IF article.viewable %]
-    <a href="/[% article.link %]">
-    [% article.title %]
-    </a>
-    [% ELSE %]
-    Secret!  Check back later
-    [% END %]
-    </li>
-[% END %]
--->
-<!-- </ol> -->
-
-
