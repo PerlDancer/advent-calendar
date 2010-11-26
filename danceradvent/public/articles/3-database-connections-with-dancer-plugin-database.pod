@@ -47,7 +47,9 @@ when you first get a connection to the database:
             database: 'databasename'
             username: 'fred'
             password: 'verysecretindeed'
-            on_connect_do: [ "SET NAMES 'utf8'", "SET CHARACTER SET 'utf8'" ]
+            on_connect_do: 
+              - "SET NAMES 'utf8'"
+              - "SET CHARACTER SET 'utf8'"
 
 =head2 But what if I need to talk to multiple databases?
 
