@@ -11,6 +11,16 @@ my $article_dir = Dancer::FileUtils::path(
 );
 
 get '/' => sub {
+    my $year = _default_year();
+    redirect("/$year");
+
+};
+
+get '/notyet' => sub {
+    template 'notyet';
+};
+
+get '/:year' => sub {
     my @articles;
     # randomly chosen
     my @days = (
@@ -21,25 +31,16 @@ get '/' => sub {
         push @articles, {
             # _article_viewable should check if there is an article available
             # and if 201012$day <= $current_date
-            viewable => _article_viewable(2010,$day),
+            viewable => _article_viewable(params->{year},$day),
             #viewable => $day <= 5 ? 1 : 0, # TODO: fixme
             day => $day,
         };
     }
-    return template 'index' => { year => 2010, articles => \@articles };
-};
-
-get '/notyet' => sub {
-    template 'notyet';
-};
-
-get '/:year' => sub {
-    # show a page for the specified year
-    return send_error("not found", 404);
+    return template 'index' => { year => params->{year}, articles => \@articles };
 };
 
 get '/:year/:day' => sub {
-    return send_error("not found", 404) if(params->{year} != 2010);
+    return send_error("not found", 404) if(params->{year} != _default_year());
     my $year = params->{year};
     my $day  = params->{day};
 
@@ -70,12 +71,24 @@ get '/:year/:day' => sub {
         content => $html };
 };
 
+sub _default_year {
+    my @time = localtime(time);
+    my $year = $time[5] + 1900;
+    $year;
+}
+
 sub _article_viewable {
     my ($year, $day) = @_;
     my $date = sprintf "%04d12%02d", $year, $day;
     # using gmtime
     my $today = strftime "%Y%m%d", gmtime(time);
-    $today = '20101224'; # TODO: remove me on going live
+
+    if (setting('render_future')) {
+        $today = sprintf "%04d12%02d", $year, 24;
+    }else{
+        my @date = localtime(time);
+        $today = sprintf "%04d%02d%02d", $date[5]+1900, $date[4]+1, $date[3];
+    }
 
     debug("Deciding whether $date is viewable on $today");
     if($date <= $today) {
@@ -88,9 +101,7 @@ sub _article_viewable {
 sub _article_exists {
     my ($year, $day) = @_;
 
-    # TODO: move articles into %Y
-    # my ($file) = glob("$article_dir/${year}/${day}-*.pod");
-    my ($file) = glob("$article_dir/${day}-*.pod");
+    my ($file) = glob("$article_dir/${year}/${day}-*.pod");
     if(defined $file) {
         return $file;
     }
