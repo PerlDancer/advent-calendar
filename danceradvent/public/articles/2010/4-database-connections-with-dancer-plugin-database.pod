@@ -13,7 +13,7 @@ Using it can be as simple as:
 
     my $user = database->selectrow_hashref(
       'select * from users where username = ?', 
-        undef, param->{username}
+        undef, params->{username}
     );
 
 Calling the C<database> simply returns you a connected DBI object, so you can
