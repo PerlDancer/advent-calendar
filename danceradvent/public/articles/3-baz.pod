@@ -1,5 +1,0 @@
-=head1 Doing cool stuff with Dancer
-
-Dancer is quite nice, isn't it?
-
-
