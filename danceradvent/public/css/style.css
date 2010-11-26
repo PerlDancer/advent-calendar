@@ -1,16 +1,18 @@
 
 body {
-font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
+  font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
 margin: 0;
 margin-bottom: 25px;
 padding: 0;
-background-color: #ddd;
-background-image: url("/images/perldancer-bg.jpg"); 
+
+background-color: #000;
+background-image: url("/images/calendar-bg.jpg"); 
 background-repeat: no-repeat;
 background-position: top left;
+background-attachment:fixed;
 
-font-family: "Lucida Grande", "Bitstream Vera Sans", "Verdana";
-font-size: 13px;
+/* font-family: "Lucida Grande", "Bitstream Vera Sans", "Verdana"; */
+font-size: 16px;
 color: #333;
 }
 
@@ -34,11 +36,17 @@ margin: auto;
 margin-left: auto;
 padding-left: 0px;
 margin-right: auto;
+-moz-opacity: 0.90;
+opacity: 0.90;
+filter: alpha(opacity=90);
 }
 
 #content {
+-moz-opacity: 0.70;
+opacity: 70;
+filter: alpha(opacity=70);
 background-color: white;
-border: 3px solid #aaa;
+border: 1px solid #000;
 border-top: none;
 padding: 25px;
 width: 500px;
@@ -186,13 +194,19 @@ code, tt {
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
+#footer a, { color: #77c; }
 #footer {
-clear: both;
-padding-top: 2em;
-text-align: center;
-padding-right: 160px;
-font-family: sans-serif;
-font-size: 10px;
+	clear: both;
+	padding: 2em;
+	margin-bottom: 0;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 12px;
+	background-color: #000;
+	color: #aaa;
+	-moz-opacity: 0.80;
+	opacity: 0.80;
+	filter: alpha(opacity: 80);
 }
 
 .advent-day {
@@ -201,8 +215,18 @@ font-size: 10px;
     display: inline-block;
     height: 3em;
     width: 3em;
-    margin: 3px;
-    padding: 2px;
+    margin: 10px;
+    padding: 5px;
     text-decoration: none;
     color: #000000;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+span.advent-day {
+	background: url(/images/perldancer.jpg) no-repeat top left;
+	opacity: 0.33;
+}
+
+a.advent-day {
 }
