@@ -16,6 +16,8 @@ WriteMakefile(
         'YAML'       => 0,
         'Dancer'     => 1.2000,
         'POSIX'      => 0,
+        'Pod::POM'   => 0,
+        'Dancer::Plugin::DebugDump' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'danceradvent-*' },
