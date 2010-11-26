@@ -10,9 +10,10 @@ my $article_dir = Dancer::FileUtils::path(
     setting('appdir'), 'public', 'articles'
 );
 
+my $current_year = (localtime(time))[5] + 1900;
+
 get '/' => sub {
-    my $year = _default_year();
-    redirect("/$year");
+    redirect("/$current_year");
 };
 
 get '/notyet' => sub {
@@ -40,7 +41,7 @@ get '/:year' => sub {
 
 get '/:year/:day' => sub {
     # XXX better 404 page for this
-    return send_error("not found", 404) if(params->{year} != _default_year());
+    return send_error("not found", 404) if(params->{year} != $current_year);
     my $year = params->{year};
     my $day  = params->{day};
 
@@ -71,12 +72,6 @@ get '/:year/:day' => sub {
         content => $html };
 };
 
-sub _default_year {
-    my @time = localtime(time);
-    my $year = $time[5] + 1900;
-    $year;
-}
-
 sub _article_viewable {
     my ($year, $day) = @_;
     my $date = sprintf "%04d12%02d", $year, $day;
@@ -87,7 +82,7 @@ sub _article_viewable {
         $today = sprintf "%04d12%02d", $year, 24;
     }else{
         my @date = localtime(time);
-        $today = sprintf "%04d%02d%02d", $date[5]+1900, $date[4]+1, $date[3];
+        $today = sprintf "%04d%02d%02d", $current_year, $date[4]+1, $date[3];
     }
 
     debug("Deciding whether $date is viewable on $today");
