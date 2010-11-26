@@ -48,38 +48,38 @@ get '/:year' => sub {
 };
 
 get '/:year/:day' => sub {
-    return send_error("this is not valid date", 404) unless
-    _control_date(params->{year}, params->{day});
+    return send_error( "this is not valid date", 404 )
+      unless _control_date( params->{year}, params->{day} );
+
     # XXX better 404 page for this
-    return send_error("not found", 404) if(params->{year} != $current_year);
+    return send_error( "not found", 404 )
+      if ( params->{year} != $current_year );
     my $year = params->{year};
     my $day  = params->{day};
 
-    return send_error("Ho Ho Ho", 403) if $day !~ /^\d+$/;
-    return send_error("Ho Ho Ho", 403) if $year !~ /^\d+$/;
+    return template 'notyet' unless ( _article_viewable( $year, $day ) );
 
-    return template 'notyet' unless (_article_viewable($year,$day));
+    my ($pod_file) = _article_exists( $year, $day );
 
-    my ($pod_file) = _article_exists($year, $day);
-
-    return send_error("No such article", 404) if(! defined $pod_file);
+    return send_error( "No such article", 404 ) if ( !defined $pod_file );
 
     my $article_pod = Dancer::FileUtils::read_file_content($pod_file);
 
     my $parser = Pod::POM->new;
-    my $pom = $parser->parse($article_pod);
-    
+    my $pom    = $parser->parse($article_pod);
+
     # fetch the title
     my $title = $pom->head1;
-    if ($title && $title->[0]) {
+    if ( $title && $title->[0] ) {
         $title = $title->[0]->title;
     }
 
     my $html = Pod::POM::View::HTML->print($pom);
 
-    return template article => { 
+    return template article => {
         title => $title || "Perl Dancer Advent Calendar",
-        content => $html };
+        content => $html
+    };
 };
 
 sub _article_viewable {
