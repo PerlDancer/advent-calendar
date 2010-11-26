@@ -3,104 +3,90 @@ use Dancer ':syntax';
 use Dancer::Plugin::DebugDump;
 use Pod::POM;
 use Pod::POM::View::HTML;
-use List::Util qw/shuffle/;
-use autodie;
+use POSIX qw/strftime/;
 our $VERSION = '0.1';
 
 my $article_dir = Dancer::FileUtils::path(
     setting('appdir'), 'public', 'articles'
 );
 
-get '/other' => sub {
-    my @days = shuffle 1..24;
-    opendir my $dirh, $article_dir;
-    closedir $dirh;
+get '/' => sub {
     my @articles;
+    # randomly chosen
+    my @days = (
+        19,12,6,4,5,13,22,17,3,23,21,9,
+        16,24,11,10,15,20,7,8,14,1,18,2,
+    );
     for my $day (@days) {
         push @articles, {
             # _article_viewable should check if there is an article available
             # and if 201012$day <= $current_date
-            #viewable => _article_viewable($day),
-            viewable => $day <= 2 ? 1 : 0, # TODO: fixme
+            viewable => _article_viewable(2010,$day),
+            #viewable => $day <= 5 ? 1 : 0, # TODO: fixme
             day => $day,
         };
     }
-    return template 'index' => { articles => \@articles };
-};
-
-# Homepage is a list of articles
-get '/' => sub {
-    opendir my $dirh, $article_dir
-    or die "Failed to open $article_dir - $!";
-
-    # Assumptions here: articles dir will contain articles named with a leading
-    # day number, e.g. 1-foo.pod, 2-bar.pod
-    my @article_filenames = sort grep { /^\d+/ } readdir $dirh;
-    closedir $dirh;
-
-    # Assemble a list of article title & filenames, along with whether they're
-    # viewable yet:
-    my @articles;
-    for my $filename (@article_filenames) {
-        my ($article_day) = $filename =~ m{^ (\d+) -}mx;
-        my $parser = Pod::POM->new;
-        my $pom = $parser->parse(
-            Dancer::FileUtils::path($article_dir, $filename)
-        );
-        # Use the first =head1 as a title
-        my ($head1) = $pom->head1;
-        my $title = $head1->title;
-#        $title =~ s/^=head1\s+//i; # Why would I want that?
-        push @articles, {
-            title => $title || '',
-            filename => $filename || '',
-            link => (split /\./, $filename)[0],
-            viewable => _article_viewable($filename),
-            day => $article_day,
-        };
-    }
-    debug_dump("Articles" => \@articles);
-    return template 'index' => { articles => \@articles };
+    return template 'index' => { year => 2010, articles => \@articles };
 };
 
 get '/notyet' => sub {
     template 'notyet';
 };
 
+get '/:year' => sub {
+    # show a page for the specified year
+    return send_error("not found", 404);
+};
 
-# Read an article
-get '/:article' => sub {
-    my $pod_file =  Dancer::FileUtils::path(
-        $article_dir, params->{article} . '.pod'
-    );
-    if (!-f $pod_file) { return send_error("No such article!", 404); }
+get '/:year/:day' => sub {
+    return send_error("not found", 404) if(params->{year} != 2010);
+    my $year = params->{year};
+    my $day  = params->{day};
 
-    # OK, are they allowed to see it yet? :)
-    my ($year, $month, $day) = (localtime)[5,4,3];
-    $year += 1900; $month++;
-    if (!_article_viewable(params->{article})) {
-        return redirect '/notyet';
-    }
+    return send_error("Ho Ho Ho", 403) if $day !~ /^\d+$/;
+    return send_error("Ho Ho Ho", 403) if $year !~ /^\d+$/;
+
+    return template 'notyet' unless (_article_viewable($year,$day));
+
+    my ($pod_file) = _article_exists($year, $day);
+
+    return send_error("No such article", 404) if(! defined $pod_file);
 
     my $article_pod = Dancer::FileUtils::read_file_content($pod_file);
 
     my $parser = Pod::POM->new;
     my $pom = $parser->parse($article_pod);
     my $html = Pod::POM::View::HTML->print($pom);
-    return template article => { content => $html };
 
+    return template article => { content => $html };
 };
 
 sub _article_viewable {
-    my $filename = shift;
-    debug("Deciding whether $filename is viewable");
-    my ($article_day) = $filename =~ m{^ (\d+) -}x or return 0;
-    my ($year, $month, $day) = (localtime)[5,4,3];
-    $year += 1900; $month++;
-    $month = 12; $day = 2; # TODO: delete before going live.
-    return ($year == 2010 && ($month < 12 || $day < $article_day)) ? 0 : 1;
+    my ($year, $day) = @_;
+    my $date = sprintf "%04d12%02d", $year, $day;
+    # using gmtime
+    my $today = strftime "%Y%m%d", gmtime(time);
+    $today = '20101205'; # TODO: remove me on going live
+
+    debug("Deciding whether $date is viewable on $today");
+    if($date <= $today) {
+        return defined _article_exists($year, $day);
+    }
+
+    return undef
 }
 
+sub _article_exists {
+    my ($year, $day) = @_;
 
+    # TODO: move articles into %Y
+    # my ($file) = glob("$article_dir/${year}/${day}-*.pod");
+    my ($file) = glob("$article_dir/${day}-*.pod");
+    if(defined $file) {
+        return $file;
+    }
+
+    return undef;
+}
 
 true;

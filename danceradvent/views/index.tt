@@ -17,7 +17,7 @@ Advent Calendar affairs!)
 <div class="advent-calendar">
 [% FOR a IN articles %]
     [% IF a.viewable -%]
-        <a class="advent-day" href="/[% a.link || a.day %]">[% a.day %]</a>
+        <a class="advent-day" href="/[% year %]/[% a.day %]">[% a.day %]</a>
     [%- ELSE -%]
         <span class="advent-day">[% a.day %]</span>
     [%- END %]
