@@ -21,27 +21,35 @@ get '/notyet' => sub {
 };
 
 get '/:year' => sub {
-    my $year = params->{year};
-    return send_error("this is not a valid year", 404) if ($year !~ /^\d{4}$/);
+    return send_error( "this is not a valid year", 404 )
+      unless _control_date( params->{year} );
+
     my @articles;
+
     # randomly chosen
     my @days = (
-        19,12,6,4,13,22,17,3,23,21,9,
-        16,24,11,5,10,15,20,7,8,14,1,18,2,
+        19, 12, 6, 4,  13, 22, 17, 3, 23, 21, 9,  16,
+        24, 11, 5, 10, 15, 20, 7,  8, 14, 1,  18, 2,
     );
     for my $day (@days) {
+
         push @articles, {
+
             # _article_viewable should check if there is an article available
             # and if 201012$day <= $current_date
-            viewable => _article_viewable($year,$day),
+            viewable => _article_viewable( params->{year}, $day ),
+
             #viewable => $day <= 5 ? 1 : 0, # TODO: fixme
             day => $day,
         };
     }
-    return template 'index' => { year => $year, articles => \@articles };
+    return template 'index' =>
+      { year => params->{year}, articles => \@articles };
 };
 
 get '/:year/:day' => sub {
+    return send_error("this is not valid date", 404) unless
+    _control_date(params->{year}, params->{day});
     # XXX better 404 page for this
     return send_error("not found", 404) if(params->{year} != $current_year);
     my $year = params->{year};
@@ -93,6 +101,14 @@ sub _article_viewable {
     }
 
     return undef
+}
+
+sub _control_date {
+    my ( $year, $day ) = @_;
+    my $valid = 1;
+    $valid = 0 if $year !~ /^\d{4}$/;
+    $valid = 0 if ( $day && $day !~ /^\d\d?$/ );
+    return $valid;
 }
 
 sub _article_exists {
