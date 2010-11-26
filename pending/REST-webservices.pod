@@ -1,31 +1,32 @@
 =head1 Writing ReST webservices with Dancer
 
-It's easy to write ReST webservices with Dancer ....
+It's really easy to write ReST webservices with Dancer.
 
-=head2 The Basics
+A ReST application is defined by:
 
-What defines a ReST application 
+=over 4
 
-=head2 Serializaters
+=item a route to a resource
 
-Dancer comes with some helper functions for serializing.
-Theses functions help you to serialize a Perl data structure to a JSON or XML
-document.
+=item an HTTP verb
+
+=item a format
+
+=back
+
+=head2 Serializers
+
+Dancer comes with some helper functions, in order to help you to serialize your Perl data strcture to something like JSON or XML.
+
 The core provides serializers for:
 
 =over 4
 
-=item B<JSON>
+=item B<JSON> (to_json and from_json)
 
-with B<to_json> and B<from_json>.
+=item B<XML> (to_xml and from_xml)
 
-=item B<XML>
-
-with B<to_xml> and B<from_xml>. This serializer can be customized with ...
-
-=item B<YAML>
-
-with B<to_yaml> and B<from_yaml>.
+=item B<YAML> (to_yaml and from_yaml)
 
 =back
 
@@ -40,8 +41,11 @@ With these serializers, you can write:
 
 =head2 Let Dancer handle the serialization
 
+=head3 Using JSON
+
 Now that we've seen how to do serialization manually, lets make Dancer do the
 work for us.
+
 You can configure your application to have a default serializer:
 
     set serializer => 'JSON';
@@ -54,16 +58,28 @@ Now, you can define a route like this:
          return { id => $id, name => $user->name };
      };
 
-As you can see, we no longer need to call the B<content_type> and B<to_json>
-functions.
-When you set a default serializer and your route returns an arrayref or hashref,
-Dancer will check if you have a default serializer defined.
-If that is the case,  it will serialize the response to the appropriate format
-and set the correct content type.
-     
-=head2 Dancer::Plugin::Rest
+As you can see, we no longer need to call the B<content_type> and B<to_json> functions. When you set a default serializer and your route returns an arrayref or hashref, Dancer will check if you have a default serializer defined. If that is the case,  it will serialize the response to the appropriate format and set the correct content type.
 
-Using Dancer::Plugin::REST
+=head3 Let the user select the format.
+
+If you have installed the required dependancies for using all the supported serializers by Dancer (XML::Simple, YAML and JSON), you can even let the user choose in which format he prefers to have the content of the request. For this, you'll need to set the serliazer to B<mutable>. From now on, you can select your format by defining the correct value in the HTTP header of your request (Content-Type when doing a POST or PUT operation, and Accept-Type for GET and DELETE).
+
+So, if we take our previous example, by setting the serializer to B<mutable>, we can do the following:
+
+    $ curl http://localhost:5000/1
+    {"name":"franck","id":"1"}
+
+    $ curl -H 'Accept-Type: text/x-yaml' http://localhost:5000/1
+    ---
+    id: 1
+    name: franck
+
+    $ curl -H 'Accept-Type: text/xml' http://localhost:5000/1
+    <data name="franck" id="1" />
+     
+=head2 Dancer::Plugin::REST
+
+There is an excellent plugin available to help you to write a ReST application: Dancer::Plugin::REST.
 
 =head2 Author
 
