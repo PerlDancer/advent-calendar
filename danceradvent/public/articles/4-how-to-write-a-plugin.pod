@@ -172,7 +172,7 @@ to grab the tarball.
 
 In our next article we'll see how to write a good test-suite for our plugin. 
 
-=head1 Author
+=head2 Author
 
 This article has been written by Alexis Sukrieh for the PerlDancer Advent
 Calendar 2010.
