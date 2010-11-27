@@ -4,12 +4,12 @@ Plack is an awesome addition to the Perl ecosystem. One of it's key feature are
 the middlewares.
 
 You can see a middleware as a
-L<Role|http://search.cpan.org/perldoc?Moose::Role>: a reusable components
-between your applications. This component will act both as a client and a
-server.
+L<Role|http://search.cpan.org/perldoc?Moose::Role>: a reusable component
+shared between your applications. This component will act both as a client and
+as a server.
 
-This article doesn't aim to present in detail how a middleware works. If you're
-not yet familiar with L<Plack>'s middleware, you can refer to these articles:
+This article doesn't aim to present in details how a middleware works. If you're
+not yet familiar with L<Plack>'s middlewares, you can refer to these articles:
 
 =over 4
 
@@ -36,7 +36,7 @@ your project, you can choose between a standalone server, or using Plack:
     >> Dancer server 12481 listening on http://0.0.0.0:3000
     == Entering the development dance floor ...
 
-Doing this, it start my application using Dancer's standalone server on port
+Doing this starts my application using Dancer's standalone server on port
 3000.
 
 Now, let's use Plack to start this application:
@@ -44,17 +44,16 @@ Now, let's use Plack to start this application:
     $ plackup bin/app.pl
     HTTP::Server::PSGI: Accepting connections at http://0:5000/
 
-This time, it's the PSGI's standalone server that serve our application.
+This time, it's the PSGI's standalone server that serves our application.
 
 =head2 Adding a first Middleware
 
 For this example, we will add a basic middleware: L<Plack::Middleware::ETag>.
-This one will add to all our response a new header: B<ETag>. The ETag is a
+This one will append to all our responses a new header: B<ETag>. The ETag is a
 mechanism to control cache validation. Most of the time, the value of the ETag
-is a hash of the content of the page returned to the client. The client will
-then store this value, and next time it requests the same page, he will ask to
-send the content only if it has been modified since the last request, using the
-ETag value to check.
+is a checksum of the page's content returned to the client. The client will
+then store this value, and next time it requests the same page, it will request
+the content only if the checksum has changed. 
 
 In your config.yml, add the following two lines:
 
@@ -62,7 +61,7 @@ In your config.yml, add the following two lines:
       -
         - ETag
 
-now restart your application (with plackup), and let's do a request:
+Now restart your application (with plackup), and let's do a request:
 
     $ curl -D - http://localhost:5000
     HTTP/1.0 200 OK
@@ -77,8 +76,8 @@ The ETag header has been added to your response. If you redo the request,
 you'll see that the ETag value is the same.
 
 Let's add another middleware: L<Plack::Middleware::ConditionalGet>. This
-middleware returns no content to the client unless the content has been
-modified since the previous request:
+middleware makes sure the application returns content to the client 
+only if the content has been modified since the previous request:
 
    plack_middlewares:
      - 
@@ -86,9 +85,10 @@ modified since the previous request:
      -
        - ETag
 
-(note: the order is important).
+I<Note that the order is important.>
 
-    $ curl -D - http://localhost:5000 -H "If-None-Match: 5f6e450f378e384d4be6e0c081b9dd93026ff146"
+    $ curl -D - http://localhost:5000 \
+      -H "If-None-Match: 5f6e450f378e384d4be6e0c081b9dd93026ff146"
     HTTP/1.0 304 Not Modified
     Date: Tue, 09 Nov 2010 15:52:01 GMT
     Server: HTTP::Server::PSGI
@@ -96,16 +96,16 @@ modified since the previous request:
     ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146
 
 This time there is no B<Content-Length> header, because the value of the ETag
-header is the same, so no content has been returned to our request.
+header is the same, so we don't have any content returned for that request.
 
 =head2 Content compression
 
 Another common use case is the need to send content from the server to the
 client in a compressed format. For this, you can use
-L<Plack::Middleware::Deflater> that will compress the content on the fly to
-gzip if the client support this feature.
+L<Plack::Middleware::Deflater> that will compress the content on-the-fly with
+gzip if the client supports this feature.
 
-A simple
+A simple:
 
     plack_middlewares:
       -
@@ -115,10 +115,13 @@ will do the trick.
 
 =head2 Using the Debug panels
 
-One very useful middleware while debugging your application is
-L<Plack::Middleware::Debug> and L<Dancer::Debug>. Those middlewares will inject some HTML code in your
-page. To activate the panels, add this to your configuration:
+Some very useful middlewares to use while debugging your application are
+L<Plack::Middleware::Debug> and L<Dancer::Debug>. 
 
+Those middlewares will inject some HTML code in your page, providing lots of
+useful information about your application, the current request and the response
+returned. 
+To activate their panels, add this to your configuration:
 
  plack_middlewares:
    -
@@ -165,13 +168,13 @@ Edit your C<bin/app.pl> application, and replace the code with this one:
         $app;
     };
 
-First, we create a PSGI application (line 5). This application process the
-request and returns a PSGI compatible result. Next, we use the B<builder>
+First, we create a PSGI application (line 5). This application processes the
+request and returns a PSGI-compatible result. Next, we use the B<builder>
 keyword, provided by L<Plack::Builder>. Here we enable a middleware
 (B<Auth::Basic>), and we create a code ref for the authentication method.
 
 If you start your application with plackup, and load the page in your browser,
-you will be prompted for a username and password to access the page.
+you will be prompted for a username and a password to access the page.
 
 =head2 Credits
 

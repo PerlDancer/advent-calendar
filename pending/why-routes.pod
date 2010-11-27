@@ -8,7 +8,7 @@ I<route-based web programming>.
 
 =head3 CGI
 
-CGI is arguably the most common web programming model. Not because it's
+CGI (Common Gateway Interface) is arguably the most common web programming model. Not because it's
 particularly good, but because it's the simplest to write (something which is no
 longer true, thanks to Dancer, as we'll see later on) and the easier to
 configure on a web server.
@@ -19,7 +19,7 @@ everything possible (such as request parameters) in the environment variable
 browser, except the first chunk which is used for internal browser usage (such
 as declaring content type, setting cookies, noting redirects and so forth).
 
-Every time a browser makes a requests, the server runs the CGI script and gets
+Every time a browser makes a request, the server runs the CGI script and gets
 the information back to the browser. This is clearly very wasteful in resources.
 
 This can give programmers a lot of hassle. For example, you need to purify your
@@ -67,7 +67,7 @@ in order to dispatch a request to the correct code piece, the MVC framework will
 have a (usually predetermined) destination according to your application's
 namespace.
 
-In L<Catalyst>, for example, a request to I<http://myapp/view/articles/30> will
+In L<Catalyst>, for example, a request to C<http://myapp/view/articles/30> will
 be dispatched using the namespace I<MyAppName::View> (as long as our app is
 under a I<MyApp> namespace) to the file F<View.pm>, to the function I<articles>
 and will send I<30> to as a first parameter to the function.
