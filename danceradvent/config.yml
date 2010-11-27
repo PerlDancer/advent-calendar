@@ -19,6 +19,7 @@ charset: "UTF-8"
 # template_toolkit: TT
 
 template: "template_toolkit"
+start_year: 2010
 
 engines:
     template_toolkit:
