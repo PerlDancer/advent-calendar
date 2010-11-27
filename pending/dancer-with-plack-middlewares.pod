@@ -9,7 +9,7 @@ between your applications. This component will act both as a client and a
 server.
 
 This article doesn't aim to present in detail how a middleware works. If you're
-not yet familiar with L<Plack>'s middleware, you can refer to thoses articles:
+not yet familiar with L<Plack>'s middleware, you can refer to these articles:
 
 =over 4
 
@@ -52,7 +52,7 @@ For this example, we will add a basic middleware: L<Plack::Middleware::ETag>.
 This one will add to all our response a new header: B<ETag>. The ETag is a
 mechanism to control cache validation. Most of the time, the value of the ETag
 is a hash of the content of the page returned to the client. The client will
-then store this value, and next time it requets the same page, he will ask to
+then store this value, and next time it requests the same page, he will ask to
 send the content only if it has been modified since the last request, using the
 ETag value to check.
 
@@ -95,7 +95,7 @@ modified since the previous request:
     X-Powered-By: Perl Dancer 1.1999_02
     ETag: 5f6e450f378e384d4be6e0c081b9dd93026ff146
 
-This time there is no B<Content-Lenght> header, because the value of the ETag
+This time there is no B<Content-Length> header, because the value of the ETag
 header is the same, so no content has been returned to our request.
 
 =head2 Content compression
@@ -103,7 +103,7 @@ header is the same, so no content has been returned to our request.
 Another common use case is the need to send content from the server to the
 client in a compressed format. For this, you can use
 L<Plack::Middleware::Deflater> that will compress the content on the fly to
-gzip if the client support this feture.
+gzip if the client support this feature.
 
 A simple
 
@@ -115,7 +115,7 @@ will do the trick.
 
 =head2 Using the Debug panels
 
-One very useful middleware while debuging your application is
+One very useful middleware while debugging your application is
 L<Plack::Middleware::Debug> and L<Dancer::Debug>. Those middlewares will inject some HTML code in your
 page. To activate the panels, add this to your configuration:
 
@@ -138,7 +138,7 @@ If you click on one of the element from the menu, the panel will open with somet
 
 =for html <img src="/images/dancer_debug_02.png" />
 
-=head2 More complexe
+=head2 More complex
 
 Some middlewares require a more complex configuration, and you won't use
 them as in our previous examples. For this example, we want to add a simple

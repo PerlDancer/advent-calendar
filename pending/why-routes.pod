@@ -69,7 +69,7 @@ namespace.
 
 In L<Catalyst>, for example, a request to I<http://myapp/view/articles/30> will
 be dispatched using the namespace I<MyAppName::View> (as long as our app is
-under a I<MyApp> namespace) to the file I<View.pm>, to the function I<articles>
+under a I<MyApp> namespace) to the file F<View.pm>, to the function I<articles>
 and will send I<30> to as a first parameter to the function.
 
 This easy logic allows Catalyst (and MVC frameworks) to be very accurate, but

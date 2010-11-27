@@ -82,8 +82,8 @@ github (http://github.com/$user/dancer), and you click on the B<Pull Request>
 button.
 
 You can at any time see all the commits done by others that have not yet been
-merged into one of our branches at L<this
-url|http://github.com/sukria/Dancer/forkqueue>.
+merged into one of our branches at
+L<this URL|http://github.com/sukria/Dancer/forkqueue>.
 
 =head3 Reporting and/or fixing bugs
 
@@ -95,7 +95,7 @@ something like 'closes gh-xxx" where xxx is the bug id.
 
 =head2 Community work
 
-There is nearly 40 differents contributors to Dancer. There is a lot of plugins
+There is nearly 40 different contributors to Dancer. There is a lot of plugins
 and engines available on CPAN and github. This is a real community effort.
 Thank you to everyone who have contributed so far!
 

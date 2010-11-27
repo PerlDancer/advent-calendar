@@ -69,7 +69,7 @@ There is only one subroutine we need to implement for our logger:
 
 =item * _log
 
-This subroutine does the work. It gets two paramters: the level of the logging
+This subroutine does the work. It gets two parameters: the level of the logging
 and the message itself. This helps you determine how important the message is.
 
 For our spinner, since we want to make it rock as much as possible, any message
