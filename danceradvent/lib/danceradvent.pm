@@ -2,7 +2,7 @@ package danceradvent;
 use Dancer ':syntax';
 use Dancer::Plugin::DebugDump;
 use Pod::POM;
-use Pod::POM::View::HTML;
+use Pod::POM::View::InlineHTML;
 use POSIX qw/strftime/;
 our $VERSION = '0.1';
 
@@ -74,7 +74,7 @@ get '/:year/:day' => sub {
         $title = $title->[0]->title;
     }
 
-    my $html = Pod::POM::View::HTML->print($pom);
+    my $html = Pod::POM::View::InlineHTML->print($pom);
 
     return template article => {
         title => $title || "Perl Dancer Advent Calendar",
