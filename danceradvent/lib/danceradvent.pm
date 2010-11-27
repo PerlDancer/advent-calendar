@@ -2,7 +2,7 @@ package danceradvent;
 use Dancer ':syntax';
 use Dancer::Plugin::DebugDump;
 use Pod::POM;
-use Pod::POM::View::HTML;
+use Pod::POM::View::InlineHTML;
 use POSIX qw/strftime/;
 our $VERSION = '0.1';
 
@@ -10,9 +10,14 @@ my $article_dir = Dancer::FileUtils::path(
     setting('appdir'), 'public', 'articles'
 );
 
-my $current_year = (localtime(time))[5] + 1900;
+before sub {
+    vars->{current_year} = 2010; # TODO: replace with code that finds
+                                 # the last advent calendar season
+                                 # to lazy for date math now
+};
 
 get '/' => sub {
+    my $current_year = vars->{current_year};
     redirect("/$current_year");
 };
 
@@ -48,12 +53,10 @@ get '/:year' => sub {
 };
 
 get '/:year/:day' => sub {
+    # XXX better 404 page for this
     return send_error( "this is not valid date", 404 )
       unless _control_date( params->{year}, params->{day} );
 
-    # XXX better 404 page for this
-    return send_error( "not found", 404 )
-      if ( params->{year} != $current_year );
     my $year = params->{year};
     my $day  = params->{day};
 
@@ -74,7 +77,7 @@ get '/:year/:day' => sub {
         $title = $title->[0]->title;
     }
 
-    my $html = Pod::POM::View::HTML->print($pom);
+    my $html = Pod::POM::View::InlineHTML->print($pom);
 
     return template article => {
         title => $title || "Perl Dancer Advent Calendar",
@@ -90,9 +93,6 @@ sub _article_viewable {
 
     if (setting('render_future')) {
         $today = sprintf "%04d12%02d", $year, 24;
-    }else{
-        my @date = localtime(time);
-        $today = sprintf "%04d%02d%02d", $current_year, $date[4]+1, $date[3];
     }
 
     debug("Deciding whether $date is viewable on $today");
