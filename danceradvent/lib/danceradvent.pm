@@ -11,13 +11,25 @@ my $article_dir = Dancer::FileUtils::path(
 );
 
 before sub {
-    vars->{current_year} = 2010; # TODO: replace with code that finds
-                                 # the last advent calendar season
-                                 # to lazy for date math now
+    my @date = localtime(time);
+    my $current_year = $date[5] + 1900;
+
+    if (!setting('render_future')) {
+        if (($date[4] + 1) < 12 && ($current_year > setting('start_year'))) {
+            $current_year--;
+        }
+        if (params->{year} && params->{year} > $current_year) {
+            debug("we need to redirect to $current_year");
+            redirect("/$current_year");
+        }
+    }
+
+    vars->{current_year} = $current_year;
 };
 
 get '/' => sub {
     my $current_year = vars->{current_year};
+    debug "going to $current_year";
     redirect("/$current_year");
 };
 
