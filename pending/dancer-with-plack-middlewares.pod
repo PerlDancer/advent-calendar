@@ -135,7 +135,7 @@ To activate their panels, add this to your configuration:
 
 Next time you'll visit your application, you should see this panel on the right:
 
-=for html <img src="/images/dancer_debug_02.png" />
+=for html <img src="/images/dancer_debug_01.png" />
 
 If you click on one of the element from the menu, the panel will open with something similar:
 

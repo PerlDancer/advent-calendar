@@ -54,6 +54,10 @@ width: 520px;
 min-height: 570px;
 }
 
+#content img {
+	border-left: 1px solid #aaa;
+}
+
 #sidebar a {
 	color: #444;
 }
