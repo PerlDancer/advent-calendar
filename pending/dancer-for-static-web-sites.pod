@@ -8,7 +8,7 @@ RSS feeds can be generated from the list of generated files and their
 creation dates. If you have enough disk space, it's possible to generate
 all image sizes for a picture gallery in advance. And so on.
 
-Having a static web site ensures maximum speed (any webserver can handle
+Having a static web site ensures maximum speed (any web server can handle
 static files) and security (without forms or databases, there is little
 chance for an SQL injection attack to be successful).
 

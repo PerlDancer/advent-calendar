@@ -1,4 +1,4 @@
-=head1 Authentication with Tiwtter OAuth
+=head1 Authentication with Twitter OAuth
 
 In this article we'll see how to authenticate our users via Twitter's OAuth
 mechanism, using L<Dancer::Plugin::Auth::Twitter>. 
@@ -143,7 +143,7 @@ So now, we can play with it, let's do a "Twitter hello world":
 As our before filter will catch any unauthenticated user and redirect them to
 Twitter if needed, it's that simple.
 
-Note that the L<Net::Twitter> object accesible via the C<twitter> keyword
+Note that the L<Net::Twitter> object accessible via the C<twitter> keyword
 allows you all that the Twitter ReST API provides, so your possibilities are
 endless.
 

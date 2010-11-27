@@ -13,7 +13,7 @@ structure. Then you can use DBIC to create, update, delete, search, and do many
 more things on the data that are in your database.
 
 From a Dancer web application, it is very easy to use DBIC, thanks to
-C<Dancer::Plugin::DBIC>. This article wwill implement a simple web application to
+C<Dancer::Plugin::DBIC>. This article will implement a simple web application to
 demonstrate the use of C<Dancer::Plugin::DBIC>.
 
 =head2 Simple example
@@ -70,7 +70,7 @@ template engine:
 =head3 Create a view
 
 We need a view to display the search form, and below, the results, if any. The
-results will be feeded by the route to the view as an C<arrayref> of results.
+results will be fed by the route to the view as an C<arrayref> of results.
 Each result is a I<hashref>, with a C<author> key containing the name of the
 author, and a C<books> key containing an I<arrayref> of strings : the books
 names.
@@ -86,8 +86,8 @@ That explanation is probably hard to follow, so here is an example, much easier:
     }
   ]
 
-So, what will look the view like ? Here is a simple example, displaying the
-search form, and the results, if any. IT's written in Template Toolkit, except
+So, what will look the view like? Here is a simple example, displaying the
+search form, and the results, if any. It's written in Template Toolkit, except
 that Dancer changes the C<[‰ %]> format to be C<< <% %> >> instead.
 
   # bookstore/views/search.tt
@@ -159,13 +159,14 @@ Simple stuff: we have 2 tables, one for authors, and one for books, that points 
 =head3 Populate with some data
 
 Ian M. Banks
-Richard Matheson
-Frank Herbert
 
+Richard Matheson
+
+Frank Herbert
 
 =head2 Use DBIC
 
-Instead of interactign with the database using SQL, let's configure
+Instead of interacting with the database using SQL, let's configure
 DBIX::Class. DBIC needs to understand how your data are organized in your
 database. There are two ways of letting DBIC know:
 
@@ -181,10 +182,10 @@ or by letting DBIC connect to the database, explore it, and generate the schema 
 
 =back
 
-I'll demonstrate the use of the two solutions. I'm personnaly not a big fan of
+I'll demonstrate the use of the two solutions. I'm personally not a big fan of
 the detection method: on complex database, it doesn't get everything right, so
 one needs to help DBIC. I prefer describing the schema manually. But hey,
-TIMTOWDI.
+TIMTOWTDI.
 
 =head3
 

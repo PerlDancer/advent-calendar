@@ -25,4 +25,3 @@ engines:
         ENCODING: 'utf8'
         start_tag: '[%'
         end_tag: '%]'
-

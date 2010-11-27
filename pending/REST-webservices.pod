@@ -1,6 +1,6 @@
-=head1 Writing ReST webservices with Dancer
+=head1 Writing ReST web services with Dancer
 
-It's really easy to write ReST webservices with Dancer.
+It's really easy to write ReST web services with Dancer.
 
 A ReST application is defined by:
 
@@ -16,7 +16,7 @@ A ReST application is defined by:
 
 =head2 Serializers
 
-Dancer comes with some helper functions, in order to help you to serialize your Perl data strcture to something like JSON or XML.
+Dancer comes with some helper functions, in order to help you to serialize your Perl data structure to something like JSON or XML.
 
 The core provides serializers for:
 
@@ -61,7 +61,7 @@ As you can see, we no longer need to call the B<content_type> and B<to_json> fun
 
 =head3 Let the user select the format.
 
-If you have installed the required dependancies for using all the supported serializers by Dancer (XML::Simple, YAML and JSON), you can even let the user choose in which format he prefers to have the content of the request. For this, you'll need to set the serliazer to B<mutable>. From now on, you can select your format by defining the correct value in the HTTP header of your request (Content-Type when doing a POST or PUT operation, and Accept-Type for GET and DELETE).
+If you have installed the required dependencies for using all the supported serializers by Dancer (XML::Simple, YAML and JSON), you can even let the user choose in which format he prefers to have the content of the request. For this, you'll need to set the serializer to B<mutable>. From now on, you can select your format by defining the correct value in the HTTP header of your request (Content-Type when doing a POST or PUT operation, and Accept-Type for GET and DELETE).
 
 So, if we take our previous example, by setting the serializer to B<mutable>, we can do the following:
 
@@ -99,7 +99,7 @@ As we have seen, you can already define the format by setting the B<serializer> 
 
 =head3 Resources
 
-As stated at the begining of the article, with ReST you defined routes to access resources. So let's do this:
+As stated at the beginning of the article, with ReST you defined routes to access resources. So let's do this:
 
     resource user => 
         'get' => \&on_get_user,

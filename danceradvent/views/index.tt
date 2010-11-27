@@ -1,9 +1,9 @@
 
-<h1>Perl Dancer Advent Calendar 2010</h1>
+<h1>Perl Dancer Advent Calendar [% year %]</h1>
 
 <p>
 Happy Christmas, and welcome to the Dancer team's advent calendar for
-2010!
+[% year %]!
 </p>
 
 <p>
