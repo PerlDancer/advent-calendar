@@ -89,7 +89,7 @@ That's it! Our plugin is configured. We can now use it in our code.
 =head3 Initialization
 
 At the very first, we must initialize the plugin (basically it needs to read
-the configuration and create its internal L<Net::Twitter> object. So our
+the configuration and create its internal L<Net::Twitter> object). So our
 application must start with something like the following:
 
     package MyApp;
@@ -118,7 +118,7 @@ straight-forward:
     };
 
 This filter redirects any unauthenticated user to the authentication URL.
-Note that we don't want to do that redirects when the requested page is the
+Note that we don't want to do that redirection when the requested page is the
 callback URL defined by the plugin (this route handler is responsible for
 storing the authenticated user into the session).
 
