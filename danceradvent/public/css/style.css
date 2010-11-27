@@ -209,4 +209,12 @@ span.advent-day {
 }
 
 a.advent-day {
+	background-color: #af8b41;
+	color: #000;
+	opacity: 0.80;
+}
+
+a.advent-day:hover {
+	opacity: 0.99;
+	color: #eee;
 }
