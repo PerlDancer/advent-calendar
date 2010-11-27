@@ -6,7 +6,10 @@ use Test::Spelling;
 
 add_stopwords(<DATA>);
 
-all_pod_files_spelling_ok('.');
+all_pod_files_spelling_ok(
+    qw/ proofread pending /,
+    File::Spec->catfile( qw/ danceradvent public articles 2010 / ),
+);
 
 __DATA__
 ACL
