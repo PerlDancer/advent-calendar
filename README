@@ -17,7 +17,7 @@ Note: the order is not the order of publication, but the order of submission
 
 03. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
 
-04. [A] How to work with sessions in cookies (Dancer::Session::Cookie,
+04. [R] How to work with sessions in cookies (Dancer::Session::Cookie,
         kappa@{github,cpan})
 
 05. [ ] Common practiced with Dancer apps (move to template_toolkit or your favorite

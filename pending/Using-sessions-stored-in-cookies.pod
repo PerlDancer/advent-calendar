@@ -1,0 +1,131 @@
+=head1 Storing sessions in cookies
+
+=head2 History of stateful HTTP
+
+Since HTTP is a stateless protocol each request-response pair
+is independent. There's no state kept between responses (hence I<stateless>).
+This feature of HTTP turned out to be both a blessing that allowed
+the web to scale so well and a hoop to jump through for developers of
+websites where the design requires keeping of state between page loads.
+
+Well, this deficiency is a thing of the past since Netscape invented
+HTTP cookies in 1994. Cookies provide an elegant way of emulating
+application state by transferring a piece of data from server
+out-of-band and keeping it on the client side. This piece is tied to a
+particalar set of web pages via its parameters and is sent alongside
+each request from client back to server so that the server could
+restore the state and serve the request in a particular context.
+
+Early uses of cookies included shopping carts that stored a list of
+selected goods right in the cookie until the purchase was completed.
+Then personalized web came and lots of websites introduced "my"
+sections (e.g. My Yahoo) which required users to sign up/sign in to
+their accounts. Storing login credentials in cookies is
+inherently insecure both for users who risk losing them to
+eavesdroppers on open networks and for websites because cookies 
+could be tampered with by malicious clients.
+
+So sessions emerged. The trick is to store data securely in the
+database while delivering a cookie with only a session identifier.
+The identifers are taken from a huge space so that guessing or
+brute-forcing become infeasible. This is the most popular way of
+implementing statefulness over HTTP since then.
+
+=head2 Problems with sessions
+
+The problems arise with load. Each and every request inside a session
+required a database query to retrieve the session data by its
+identifier or to prove the session invalid. Usability concerns require
+sessions to be long (all those "remember me on this computer"
+checkboxes) and that means a session store should have room for a huge
+number of sessions while being sufficiently fast to serve a query for
+each page hit.
+
+Modern websites try to work around session storage problems by using
+special storages like I<Memcached> and there's a
+L<Dancer::Session::Memcached> plugin to implement such a scheme in a
+Dancer application. That usually means replacing the database problems
+with memcached problems, like memcached not being persistent between
+reboots or not guaranteeing storage for any long period of time due to
+being a cache and not a general purpose database.
+
+=head2 Using cookies more
+
+There's an old Russian saying - "everything new is well-forgotten
+old" and that is exactly what is going on with storing sessions in
+cookies like in the old times of first shopping carts. The trick is
+that there is another good way of securing your sessions which does
+not involve any database and that is I<cryptography>. Server stores
+session data on the client side in encrypted cookies.
+
+Basically, server sends this HTTP header:
+
+	Set-Cookie: s=base64(encrypt(serialize($session_hash)))
+
+Client will return this cookie with each subsequent request and server
+will check the validity of the data by reversing all the operations it
+performed when creating the cookie and verifying the embedded
+checksum. It will then have the session data readily available without
+any database access. Mismatched checksum means invalid (same as
+expired) session and also gives a hint about a tampering attempt going
+on.
+
+Little can be added to this. This method is not new and is in
+production use on some of the most loaded websites in the world for
+years. It is a kind of well-kept secret of doing secure stateful HTTP
+under heavy load.  Personally, I tend to use it everywhere I can
+because it is also simpler than creating a server-side session store.
+
+The reason it is not used more widely I think lies in the frameworks
+which power a large percentage of all new websites and do not
+implement this mechanism. Fortunately, Dancer is not one of them.
+
+=head2 Using cookies to store sessions in Dancer
+
+The session plugin L<Dancer::Session::Cookie> implements encrypted
+cookies storage for sessions in a Dancer application. I wrote it more
+than a year ago and it had very little changes since then because it's
+very simple and there's little room for bugs to fix or for
+improvements.
+
+To install the plugin you will need three modules from CPAN which are
+not in base perl distribution: L<Crypt::Rijndael>, L<Crypt::CBC> for
+encryption/decryption and L<String::CRC32> for the checksum which is
+used to validate sessions.
+
+After installation, add these lines to your F<config.yml>:
+
+    session: "cookie"
+    session_cookie_key: "random encryption key"
+
+You should initialize your B<session_cookie_key> with a random string of 16
+or more characters right away to ensure the uniqueness of your
+encryption. You should also implement protection for F<config.yml> by
+setting some permissions and not pushing it to github :) Compromised
+encryption key may potentially lead to all sorts of bad things.
+
+Session expiration may be implemented on both sides. First, by using a
+built-in expiration features of HTTP cookies. But since the client is
+not trusted you can also save session creation time right inside that
+session and check it when you validate sessions. Automatic expiration is not
+implemented in L<Dancer::Session::Cookie>, patches are welcome.
+
+There's a limit on the size of cookies but it varies across browsers.
+A good practical limit to use is 4096 bytes - supported in all major
+browsers for a long time. This is plenty of space and if your sessions
+do not fit this is probably a sign of something strange happening.
+
+=head2 SEE ALSO
+
+See L<Dancer::Session> for details about session usage in route handlers.
+
+See L<Plack::Middleware::Session::Cookie>,
+L<Catalyst::Plugin::CookiedSession>, L<Mojolicious::Controller/session> for alternative implementation of this mechanism.
+
+=head2 Author
+
+This article has been written by Alex Kapranoff for the Perl Dancer Advent Calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 by Alex Kapranoff C<< <kappa@cpan.org> >>
