@@ -24,8 +24,8 @@ database engine for simplicity's sake.
 
 =head2 Required Perl modules
 
-Obviously you need L<Dancer>.  You also need the L<Template Toolkit|Template>,
-L<File::Slurp>, and L<DBD::SQLite>.  These all can be installed using your CPAN
+Obviously you need L<Dancer>.  You also need L<Template Toolkit|Template>,
+L<File::Slurp> and L<DBD::SQLite>. These all can be installed using your CPAN
 client, as in:
 
   cpan Dancer Template File::Slurp DBD::SQLite
