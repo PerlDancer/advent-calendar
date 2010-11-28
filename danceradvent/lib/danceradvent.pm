@@ -61,29 +61,29 @@ get '/feed/:year' => sub {
 
     $articles = [sort {$a->{day} <=> $b->{day}} @$articles];
     
-    foreach (reverse @$articles) {
-        next unless $_->{viewable} == 1;
-        my ($pod_file) = _article_exists( params->{year}, $_->{day} );
+    foreach my $article ( reverse @$articles ) {
+        next unless $article->{viewable} == 1;
+        my ($pod_file) = _article_exists( params->{year}, $article->{day} );
         my ( $title, $html ) = _pod_to_html($pod_file);
         my $permalink = URI->new( request->base );
-        $permalink->path( params->{year} . '/' . $_->{day} );
-        push @entries, {
-            title => $title,
-            #            content => $html,
-            link   => $permalink,
-            issued => DateTime->new(
+        $permalink->path( params->{year} . '/' . $article->{day} );
+        push @entries,
+          {
+            title   => $title,
+            content => $html,
+            link    => $permalink,
+            issued  => DateTime->new(
                 year  => params->{year},
                 month => 12,
-                day   => $_->{day}
+                day   => $article->{day}
             ),
-        };
+          };
     }
-
    
     create_feed(
-        format => 'rss',
-        title  => 'Dancer Advent Calendar ' . params->{year},
-        link   => request->base,
+        format  => 'rss',
+        title   => 'Dancer Advent Calendar ' . params->{year},
+        link    => request->base,
         entries => \@entries,
     );
 };
@@ -106,6 +106,8 @@ get '/:year/:day' => sub {
 
     return template article => {
         title => $title || "Perl Dancer Advent Calendar",
+        year  => $year,
+        day   => $day,
         content => $html
     };
 };
