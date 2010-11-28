@@ -13,7 +13,7 @@ Note: the order is not the order of publication, but the order of submission
 
 01. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
 
-02. [P] Dancer::Plugin::Database (bigpresh)
+02. [D] Dancer::Plugin::Database (bigpresh)
 
 03. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
 
@@ -30,14 +30,14 @@ Note: the order is not the order of publication, but the order of submission
 
 08. [R] using dancer with middlewares
 
-09. [R] Writing a Dancer plugin (need to think of one) (what about a
+09. [D] Writing a Dancer plugin (need to think of one) (what about a
         Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
         and sets some templates variables, or change the base url to m.domain...)
         [ sukria ]
 
 10. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
-11. [ ] Why routes? How does route-based web works and why is it more fun?
+11. [P] Why routes? How does route-based web works and why is it more fun?
 
 12. [ ] Using the before (KiokuDB context)
 
@@ -57,7 +57,7 @@ Note: the order is not the order of publication, but the order of submission
 
 19. [ ] Profiling/Debugging/Performance-testing Dancer applications.
 
-20. [P] Writing Dancer specific tests. (already covered in my article about
+20. [D] Writing Dancer specific tests. (already covered in my article about
         writing a plugin, maybe I should split them in two parts? sukria)
 
 21. [A] Dancer::Plugin::DBIC (dams)
@@ -71,3 +71,10 @@ Note: the order is not the order of publication, but the order of submission
 25. [P] Dancer 1.2 is released! article based on the changelog with a word or
         two about upcoming change planed for 1.4
 
+26. [P] Authentication with Twitter OAuth (sukria)        
+
+27. [P] ournowrimo app (yanick champoux)
+
+28. [D] shrinkr (tutorial)
+
+29. [D] dancr (tutorial)
