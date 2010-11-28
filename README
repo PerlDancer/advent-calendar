@@ -23,19 +23,19 @@ Note: the order is not the order of publication, but the order of submission
 05. [ ] Common practiced with Dancer apps (move to template_toolkit or your favorite
         template system, etc.)
 
-06. [P] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+06. [R] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
         Dancer::Plugin::REST)
 
 07. [ ] load_app (note: not sure if we should speak of load_app as we'll drop it after 1.2)
 
-08. [P] using dancer with middlewares
+08. [R] using dancer with middlewares
 
 09. [R] Writing a Dancer plugin (need to think of one) (what about a
         Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
         and sets some templates variables, or change the base url to m.domain...)
         [ sukria ]
 
-10. [P] How to contribute to Dancer core (covered in Franck's lastest blog post)
+10. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
 11. [ ] Why routes? How does route-based web works and why is it more fun?
 
@@ -64,7 +64,7 @@ Note: the order is not the order of publication, but the order of submission
 
 22. [A] Dancer for static websites (BooK)
 
-23. [P] Dancer::Plugin::Feed (franck)
+23. [R] Dancer::Plugin::Feed (franck)
 
 24. [P] Dancer's ecosystem
 
