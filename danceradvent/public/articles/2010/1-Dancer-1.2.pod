@@ -131,7 +131,9 @@ stable set of community plugins to remove more and more clutter to your work.
 The advent calendar is our way of showcasing Dancer's ability by showing you how
 to write Dancer applications, plugins and engines. You'll learn how to deploy
 your apps on various backends and understand the beauty of simplicity that
-Dancer offers using its clean DSL and route-based structure.
+Dancer offers using its clean
+L<DSL|http://en.wikipedia.org/wiki/Domain-specific_language> and route-based
+structure.
 
 Stay tuned for more awesomeness!
 

@@ -1,7 +1,8 @@
 =head1 How to write a plugin
 
-Dancer is a DSL for writing web applications. It's focused on
-providing the obvious and the feature set is limited on purpose.
+Dancer is a L<DSL|http://en.wikipedia.org/wiki/Domain-specific_language> for
+writing web applications. It's focused on providing the obvious and the feature
+set is limited on purpose.
 
 For advanced or particular needs, Dancer's DSL can be extended by plugins.
 
