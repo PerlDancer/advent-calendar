@@ -1,19 +1,26 @@
 =head1 Adding a feed to your application
 
-Now that you have written a nice application with Dancer, you want to add a RSS feed to publish your articles. For this task, you can use the plugin L<Dancer::Plugin::Feed>.
+Now that you have written a nice application with Dancer, you want to add a RSS
+feed to publish your articles. For this task, you can use the plugin
+L<Dancer::Plugin::Feed>.
 
-The goal of this module is to provide an easy way to generate a feed in B<Atom> or B<RSS>. For this tutorial, we will see how we use it in the Advent Calendar application.
+The goal of this module is to provide an easy way to generate a feed in B<Atom>
+or B<RSS>. For this tutorial, we will see how we use it in the Advent Calendar
+application.
 
 =head2 Adding a simple feed
 
-In the advent calendar application, each articles is stored in a POD file on disk. Each day, one new article will be visible, and should be added to the feed. We will see how to do that.
+In the advent calendar application, each articles is stored in a POD file on
+disk. Each day, one new article will be visible, and should be added to the
+feed. We will see how to do that.
 
 First, we add our plugin.
 
     use Dancer;
     use Dancer::Plugin::Feed;
 
-Now we need a function that will, for each day, return the list of articles, with, for each articles, if it should be visible:
+Now we need a function that will, for each day, return the list of articles,
+with, for each articles, if it should be visible:
     
     sub _articles {
         my $year = shift;
@@ -33,7 +40,8 @@ Now we need a function that will, for each day, return the list of articles, wit
         # decide if this article should be visible at this date
     }
 
-And of course, we need to build each article from POD, set the date of the publication, the title, the permalink, ...
+And of course, we need to build each article from POD, set the date of the
+publication, the title, the permalink, ...
 
    sub _article {
         my ( $year, $day ) = @_;
@@ -47,7 +55,8 @@ And of course, we need to build each article from POD, set the date of the publi
         };
     }
 
-And to finish, our route to return the content of the RSS feed. This route get the B<year> as argument, and ask for the list of articles of this year
+And to finish, our route to return the content of the RSS feed. This route get
+the B<year> as argument, and ask for the list of articles of this year
 
     get '/feed/:year/rss' => sub {
         my $articles = _articles( params->{year} );
@@ -58,11 +67,14 @@ And to finish, our route to return the content of the RSS feed. This route get t
         );
     };
 
-That's it. The important part here is the B<create_feed> method. This method take a list of parameters that will be used to build the feed.    
+That's it. The important part here is the B<create_feed> method. This method
+take a list of parameters that will be used to build the feed.    
 
 =head3 How to let the user choose the format
 
-In the previous exemple, we've seen how to create a RSS feed. But maybe some of your users would have prefered an Atom feed, so we will let the decide what format they prefer. We only need to update our previous route for this:
+In the previous exemple, we've seen how to create a RSS feed. But maybe some of
+your users would have prefered an Atom feed, so we will let the decide what
+format they prefer. We only need to update our previous route for this:
 
   get '/feed/:year/:format' => sub {
     my $format = params->{format};
@@ -75,7 +87,8 @@ In the previous exemple, we've seen how to create a RSS feed. But maybe some of 
 
 =head3 Setting default values in your configuration
 
-You can of course configure the default values for your feed in the configuration. We can create this configuration:
+You can of course configure the default values for your feed in the
+configuration. We can create this configuration:
 
     plugins:
       Feed:
@@ -86,7 +99,8 @@ You can of course configure the default values for your feed in the configuratio
                 
 =head3 Aliases methods
 
-L<Dancer::Plugin::Feed> export another two methods: B<create_rss_feed> and B<create_atom_feed>. Those method set the B<format> argument for you.
+L<Dancer::Plugin::Feed> export another two methods: B<create_rss_feed> and
+B<create_atom_feed>. Those method set the B<format> argument for you.
 
     get '/feed/atom' => sub {
         create_atom_feed(...);
@@ -102,7 +116,8 @@ L<XML::Feed>
 
 =head2 Author
 
-This article has been written by franck cuny for the Perl Dancer Advent Calendar 2010.
+This article has been written by franck cuny for the Perl Dancer Advent Calendar
+2010.
 
 =head2 Copyright
 
