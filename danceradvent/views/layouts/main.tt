@@ -37,7 +37,7 @@ Each day of December until Christmas, one article about PerlDancer. Stay tuned f
         <li><a href="http://www.perldancer.org/">Dancer homepage</a></li>
         <li><a href="http://twitter.com/PerlDancer">Official Twitter</a></li>
         <li><a href="http://github.com/sukria/Dancer">Dancer on GitHub</a></li>
-        <li><a href="[% uri_base %]/feed/[% year %]">Calendar's RSS feed</a></li>
+        <li><a class="feed" href="[% uri_base %]/feed/[% year %]">RSS</a></li>
     </ul>
 </li>
 </ul>

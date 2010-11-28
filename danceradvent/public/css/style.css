@@ -220,3 +220,14 @@ a.advent-day:hover {
 	opacity: 0.99;
 	color: #eee;
 }
+
+.feed {
+    border:1px solid;
+    border-color:#FC9 #630 #330 #F96;
+    padding:0 3px;
+    font:bold 10px verdana,sans-serif;
+    color:#FFF !important;
+    background:#F60;
+    text-decoration:none;
+    margin:4px;
+}
