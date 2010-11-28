@@ -3,6 +3,8 @@ use Dancer ':syntax';
 use Dancer::Plugin::DebugDump;
 use Pod::POM;
 use Pod::POM::View::InlineHTML;
+use Dancer::Plugin::Feed;
+use URI;
 use POSIX qw/strftime/;
 our $VERSION = '0.1';
 
@@ -41,27 +43,44 @@ get '/:year' => sub {
     return send_error( "this is not a valid year", 404 )
       unless _control_date( params->{year} );
 
-    my @articles;
+    my $articles = _articles_viewable(params->{year});
 
-    # randomly chosen
-    my @days = (
-        19, 12, 6, 4,  13, 22, 17, 3, 23, 21, 9,  16,
-        24, 11, 5, 10, 15, 20, 7,  8, 14, 1,  18, 2,
-    );
-    for my $day (@days) {
+    return template 'index' =>
+      { year => params->{year}, articles => $articles };
+};
 
-        push @articles, {
+get '/feed/:year' => sub {
+    my $articles = _articles_viewable( params->{year} );
 
-            # _article_viewable should check if there is an article available
-            # and if 201012$day <= $current_date
-            viewable => _article_viewable( params->{year}, $day ),
+    my @entries;
 
-            #viewable => $day <= 5 ? 1 : 0, # TODO: fixme
-            day => $day,
+    $articles = [sort {$a->{day} <=> $b->{day}} @$articles];
+    
+    foreach (reverse @$articles) {
+        next unless $_->{viewable} == 1;
+        my ($pod_file) = _article_exists( params->{year}, $_->{day} );
+        my ( $title, $html ) = _pod_to_html($pod_file);
+        my $permalink = URI->new( request->base );
+        $permalink->path( params->{year} . '/' . $_->{day} );
+        push @entries, {
+            title => $title,
+            #            content => $html,
+            link   => $permalink,
+            issued => DateTime->new(
+                year  => params->{year},
+                month => 12,
+                day   => $_->{day}
+            ),
         };
     }
-    return template 'index' =>
-      { year => params->{year}, articles => \@articles };
+
+   
+    create_feed(
+        format => 'rss',
+        title  => 'Dancer Advent Calendar ' . params->{year},
+        link   => request->base,
+        entries => \@entries,
+    );
 };
 
 get '/:year/:day' => sub {
@@ -78,6 +97,17 @@ get '/:year/:day' => sub {
 
     return send_error( "No such article", 404 ) if ( !defined $pod_file );
 
+    my ($title, $html) = _pod_to_html($pod_file);
+
+    return template article => {
+        title => $title || "Perl Dancer Advent Calendar",
+        content => $html
+    };
+};
+
+sub _pod_to_html {
+    my $pod_file = shift;
+
     my $article_pod = Dancer::FileUtils::read_file_content($pod_file);
 
     my $parser = Pod::POM->new;
@@ -85,17 +115,40 @@ get '/:year/:day' => sub {
 
     # fetch the title
     my $title = $pom->head1;
+
     if ( $title && $title->[0] ) {
         $title = $title->[0]->title;
     }
 
     my $html = Pod::POM::View::InlineHTML->print($pom);
+    return ($title, $html);
+}
 
-    return template article => {
-        title => $title || "Perl Dancer Advent Calendar",
-        content => $html
-    };
-};
+sub _articles_viewable {
+    my $year = shift;
+
+    # randomly chosen
+    my @days = (
+        19, 12, 6, 4,  13, 22, 17, 3, 23, 21, 9,  16,
+        24, 11, 5, 10, 15, 20, 7,  8, 14, 1,  18, 2,
+    );
+
+    my @articles;
+    
+    for my $day (@days) {
+
+        push @articles, {
+
+            # _article_viewable should check if there is an article available
+            # and if 201012$day <= $current_date
+            viewable => _article_viewable( $year, $day ),
+
+            #viewable => $day <= 5 ? 1 : 0, # TODO: fixme
+            day => $day,
+        };
+    }
+    return \@articles;
+}
 
 sub _article_viewable {
     my ($year, $day) = @_;
