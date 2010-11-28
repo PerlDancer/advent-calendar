@@ -161,8 +161,9 @@ Simple stuff: we have 2 tables, one for authors, and one for books, that points 
 Ian M. Banks
 
 Richard Matheson
-
 Frank Herbert
+Isaac Asimov
+Clive Barker
 
 =head2 Use DBIC
 
