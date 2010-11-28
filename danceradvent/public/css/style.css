@@ -231,3 +231,12 @@ a.advent-day:hover {
     text-decoration:none;
     margin:4px;
 }
+
+/* TODO: i'm not good in colors */
+.pod-document pre {
+    background-color: #FFD;
+    font-family: Inconsolata, Consolas, "Bitstream Vera Sans Mono", "Courier New", monospace;
+    padding: 5px;
+    border: 1px solid;
+    border-color: #FF0 #000 #000 #FF0;
+}
