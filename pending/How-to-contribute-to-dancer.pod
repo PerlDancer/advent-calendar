@@ -106,5 +106,5 @@ Calendar 2010.
 
 =head2 Copyright
 
-Copyright (C) 2010 by Franck Cuny
+Copyright (C) 2010 by franck cuny C<< <franck@lumberjaph.net> >>
 

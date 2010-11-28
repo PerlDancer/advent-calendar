@@ -118,3 +118,17 @@ This plugin provides an easy way to obtain L<DBIx::Class::ResultSet> instances v
 
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::DBIC>)
 
+=head2 Author
+
+This article has been written by Franck Cuny for the Perl Dancer Advent
+Calendar 2010.
+
+=head2 Reviewers
+
+Proofreading and typo-fixing by Damien Krotkine.
+
+=head2 Copyright
+
+Copyright (C) 2010 by Franck Cuny C<< <franck@lumberjaph.net> >>.
+
+
