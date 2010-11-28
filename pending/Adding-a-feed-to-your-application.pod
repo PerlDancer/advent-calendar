@@ -10,7 +10,7 @@ application.
 
 =head2 Adding a simple feed
 
-In the advent calendar application, each articles is stored in a POD file on
+In the advent calendar application, each article is stored in a POD file on
 disk. Each day, one new article will be visible, and should be added to the
 feed. We will see how to do that.
 
@@ -55,8 +55,8 @@ publication, the title, the permalink, ...
         };
     }
 
-And to finish, our route to return the content of the RSS feed. This route get
-the B<year> as argument, and ask for the list of articles of this year
+And to finish, our route to return the content of the RSS feed. This route gets
+the B<year> as an argument, and returns the list of articles for this year:
 
     get '/feed/:year/rss' => sub {
         my $articles = _articles( params->{year} );
@@ -72,7 +72,7 @@ take a list of parameters that will be used to build the feed.
 
 =head3 How to let the user choose the format
 
-In the previous exemple, we've seen how to create a RSS feed. But maybe some of
+In the previous example, we've seen how to create a RSS feed. But maybe some of
 your users would have prefered an Atom feed, so we will let the decide what
 format they prefer. We only need to update our previous route for this:
 
@@ -85,6 +85,9 @@ format they prefer. We only need to update our previous route for this:
     );
   };
 
+Now, they can use e.g. C</2010/atom>.
+
+
 =head3 Setting default values in your configuration
 
 You can of course configure the default values for your feed in the
@@ -92,7 +95,7 @@ configuration. We can create this configuration:
 
     plugins:
       Feed:
-        title: PerlDancer advent Calendar
+        title: PerlDancer Advent Calendar
         copyright: PerlDancer
         tagline: PerlDancer advent calendar, a community effort
         description: this is a description for our calendar
