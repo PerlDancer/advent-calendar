@@ -12,6 +12,11 @@ my $article_dir = Dancer::FileUtils::path(
     setting('appdir'), 'public', 'articles'
 );
 
+before_template sub {
+    my $tokens = shift;
+    $tokens->{uri_base} = request->base->path eq '/' ? '' : request->base->path;
+};
+
 before sub {
     my @date = localtime(time);
     my $current_year = $date[5] + 1900;
