@@ -70,6 +70,10 @@ This plugin helps you write a RESTful webservice with Dancer. This plugin will b
 
 =head3 Dancer::Plugin::Params::Normalization
 
+This plugin helps you make automatic transformations on requests' parameters,
+for instance, make them all lowercase. It has easy-to-use defaults, but can do
+complex and precise normalization upon configuration.
+
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::Params::Normalization>)
 
 =head3 Dancer::Plugin::Mongo
