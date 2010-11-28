@@ -18,4 +18,47 @@ sub view_verbatim {
     return $self->SUPER::view_verbatim($text);
 }
 
+# currently this should cover all that we need
+# L<Foo::Bar>
+# L<Alias|Foo::Bar>
+# L<http://example.com/>
+# L<Alias|http://example.com/>
+# TODO: What doesn't work? Linking to sections: L</"foo"> or L<perlsync/"Foo">
+# or L<Alias|perlsync/"Foo">
+sub view_seq_link {
+    no warnings;
+    use 5.010;
+    my ($self, $link) = @_;
+
+    # L<http://example.com>
+    if ( $link =~ m{\A \w+ :// [^|]+ \Z}x ) {
+        return make_href($link, $link);
+    }
+
+    my $external = "http://search.cpan.org/perldoc?";
+
+    my ($title, $target) = split /\|/, $link, 2;
+    $target = $title unless ($target);
+
+    if ( $target =~ m{\A \w+ :// [^|]+ \Z}x ) {
+        return make_href($target, $title);
+    }
+
+    return make_href($external . $target, $title);
+}
+
+# Let's do all link handling in view_seq_link
+sub view_seq_text {
+    my ($self, $text) = @_;
+    for($text) {
+        s/&/&amp;/g;
+        s/</&lt;/g;
+        s/>/&gt;/g;
+    }
+    return $text;
+}
+
+sub make_href {
+    goto &Pod::POM::View::HTML::make_href
+}
 1
