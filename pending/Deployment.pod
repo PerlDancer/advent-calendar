@@ -1,0 +1,322 @@
+=head1 Deploying Dancer - VERY EARLY DRAFT QUALITY
+
+There are numerous ways to deploy L<Dancer> as mentioned on L<Dancer::Deployment> but
+we'll discuss two commonly used methods in production environments:
+
+=over 4
+=item 1. CGI / FastCGI
+=item 2. Reverse Proxy
+=back
+
+=head1 CGI
+
+A lot of shared hosting providers allow only CGI execution on Apache.
+One is also not allowed to edit F<httpd.conf> or override certain values. With 
+this in mind, lets see how you could deploy on a shared hosting environment. 
+This method will vary based on your specific hosting environment but this 
+method has been tested successfully on the following services successfully:
+
+=over 4
+=item L<NearlyFreeSpeech.Net|http:/www.nearlyfreespeech.net>
+=back
+
+=head2 Requirements
+
+The hosting company obviously has to install latest L<Plack> and L<Dancer> along with all
+modules that you are using in your application. Most are very good about installing 
+these for you upon request. On many, you can also use L<local::lib> and build 
+modules in your own directory.
+
+You are better off requesting the following:
+L<Task::Plack> 
+L<Template>
+L<Task::Dancer>
+...and application specific modules
+
+Note #1: L<Plack::Runner> is what will actually be providing the CGI environment to Apache. 
+Note #2: If L<Task::Dancer> fails for the hosting company, request individuals modules instead.
+
+=head2 Preparation
+
+Locate the F<dispatch.cgi> inside the 'public' folder of your dancer application. 
+We are going to make a symbolic link to F<dispatch.cgi>. Where you put that link 
+is up to your personal preference, how you want the url to appear (sans 
+mod_rewrite), and specifics relating to your hosting company. Lets 
+assume the root directory for your domain.
+
+From your domain root directory, type: C<ln -s myapp/public/dispatch.cgi index.cgi>
+
+=head2 Apache
+
+At this point L<http://www.mydomain.com/> should render the '/' route if your
+hosting company set the Apache defaults properly.
+
+If that's the case then you're essentially done. Add your rewrite rules (if any) and then go 
+grab a beer.
+
+If it didn't render properly then you have to create and edit the .htaccess inside 
+the root or Dancer application's root directory to allow for executing the scripts along with
+verifying any permissions.
+
+=head3 .htaccess
+
+First you need to set F<index.cgi> as your directory index. You may also need to add handlers 
+for cgi-scripts. This really depends on your hosting company though any redundant values
+would either be overridden or rejected silently by the server so don't worry.
+
+    DirectoryIndex index.cgi
+    AddHandler cgi-script .cgi .pl
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+
+=head4 Rewrite Rules 
+
+If you decided to use your F<index.cgi> file in your server root directory and DirectoryIndex is set 
+then a rewrite rule is rarely necessary. Regardless here's a simple rewrite rule: 
+
+   RewriteEngine on
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteRule ^myapp/public/index.cgi/(.*)  /$1 [L,R=301]
+
+Read up on L<mod_rewrite|http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html>.
+
+If you wish to do something fancy like L<http://myapp.mydomain.com> then you would just need a DNS 
+CNAME along with mod_rewrite.
+
+=head3 Common Problems
+
+If everything appears as it should, then you should be fine. If you're having issues with B<file paths> then 
+check the following below. There are usually two or three reasons for this:
+
+=over 4
+=item 1. Permissions - Does the B<webserver user> have access to read, and possibly execute, the file?
+=item 2. 'public/' - Is the file inside '/public'? It shoud work otherwise check your config.yml paths carefully.
+=item 3. Absolute Path - If you plan to use files outside of 'public/' make sure the path is B<system absolute>.
+=over 2
+=item a. The environment that your application runs under and the one your account uses are usually different
+=item b. '/home/public', '/home/htdocs', ect.. are NOT absolute paths but set by user environments usually. *  
+=back
+=back
+
+* A cheap/easy way to find out the absolute path is to write a simple 'phpinfo.php' script 
+("<?php phpinfo();?>") and search for the value of '_SERVER["SCRIPT_FILENAME"]' when 
+you access it from the web. It should include references to the internal system paths.
+
+=head2 FastCGI
+
+For the few shared hosting companies that support FastCGI, just do the same thing as with
+CGI for F<dispatch.fcgi> but in Apache's .htaccess:
+
+    DirectoryIndex .fcgi
+    AddHandler fastcgi-script .fcgi
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+
+So easy a caveman could do it.
+
+=head2 Caching
+
+On shared hosting, caching is done automatically. Caching yourself could actually decrease your 
+site's performance! B<Just don't worry about it.>
+
+=head1 Reverse Proxy
+
+L<Reverse proxy|http://en.wikipedia.org/wiki/Reverse_proxy> is a technique of proxying HTTP requests
+to backend server(s). The advantages include load balancing, greater performance, and easier
+administration. This method is preferred for VPS, cloud, and any set up where you have root access.
+
+=head2 Frontend Server: nginx
+
+L<Nginx|www.nginx.net> is an high performance, evented HTTP server. It very fast at serving static files.
+B<Your Dancer application should never server static files!> Regardless of what frontend server you use, 
+remember that your Dancer should only be used to generate dynamic content or process tasks. Serving 
+static files ties up resources and significantly decreases performance.
+
+Installing nginx is beyond the scope of this document. Google it for your specific OS.
+
+On both CentOS and Debian, the files of interest should be under '/ect/nginx/'. The layout of the files
+will be different but for the most part there will be a nginx.conf along with a 'site-available' folder.
+
+Depending on how you installed nginx (repo/source/ect), your nginx.conf should contain only information
+relating to nginx as a whole. You can, though not recommended, put everything into 'nginx.conf'. 
+It is recommended to include an 'include' if not already present pointing to sites-available or custom folder:
+
+
+Example (/etc/nginx)/nginx.conf:
+
+ # Create separate user just for webserver (if not automatically created)
+ user www-data;
+
+ # Set worker_processes to 1 (or # of cores) minimum and 2x-3x cores maximum. 
+ # Max Clients = worker_processes * (worker_connections/4)
+ worker_processes  2;
+
+ # Set affinity so that each core receives equal load/power or set to specific cores (Optional)
+ # Equally balanced on 2 / 4 cores respectively:
+ worker_cpu_affinity 0101 1010;
+ # worker_cpu_affinity 1000 0100 0010 0001;
+
+
+ error_log  /var/log/nginx/main_error.log;
+ pid        /var/run/nginx.pid;
+ 
+ events {
+
+   # If you didn't read above note: max clients = worker_processes * (worker_connections/4)
+   # Set the maximum number of connections per worker. Play around for max performance.
+   # Divided by 4 because browser requires 2 connections. Reverse proxy = another 2 connections
+   # per request. Thus 2 + 2 = 7 .. no 3 .. 9?
+   worker_connections  1024;
+
+   # There are 7 different polling methods nginx can use. Here are recommended for each OS though
+   # you should play around and see what works best for you.
+   # Linux (2.6+) / FreeBSD & OS X / Solaris 10 respectively: 
+   use epoll;
+   # use kselect;
+   # use eventport;
+   # Note: You might have to recompile nginx w/ specific options to access some of these.
+
+   # multi_accept on;
+ }
+ 
+ http {
+     
+   # This mime.types thing may cause a lot of trouble if you're doing anything advance.
+   # 90% of the time you don't have to touch it.
+   include       /etc/nginx/mime.types;
+ 
+   access_log	/var/log/nginx/access.log;
+ 
+   default_type       application/octet-stream;
+
+   sendfile        on;
+   #tcp_nopush     on;
+ 
+   #keepalive_timeout  0;
+   keepalive_timeout  65;
+   tcp_nodelay        on;
+ 
+   # Turn off compression if there is a caching server in front of nginx.
+   # Play around with optimizing buffer size and ect. based on your needs.
+   #gzip  on;
+   #gzip_min_length  1100;
+   #gzip_buffers     4 8k;
+   #gzip_types       text/plain;
+   #gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+ 
+   # Include other configs..
+   include /etc/nginx/conf.d/*.conf;
+   include /etc/nginx/sites-enabled/*;
+ }
+
+
+Example (/etc/nginx)/sites-available/default:
+
+ # Specify the number of backend servers along with how you want them distrbuted. You can use domain name, IP address, 
+ # port, or unix sockets. By default, nginx uses round robin. Stick with IP addresses and ports. 
+ # See Backend Servers section for how to set up multple instances on one machine.
+
+ upstream backend {
+  server 127.0.0.1:5000; 
+  server 127.0.0.1:5001;
+  server 127.0.0.2:5000; 
+  #server 127.0.0.2:5001 weight=5;
+  #server bobscomputer;
+  #server unix:/tmp/starman.pid;
+ }
+ 
+ server {
+         
+	 # Port 80 is implied but with a caching server, you need different port if caching server is in front. 
+	 #listen        80;
+         server_name   mydomain.com;
+	 
+	 # It is recommended you create a separate access log for 
+	 #access_log ;
+
+	 # This is different access log directly relating to  
+	 
+	 # Serve static files using nginx thus allowing Dancer to handle more dynamic content requests.
+	 # B<Huge> performance boost! First you must move all your static ('/public') folder to the same
+	 # server as nginx or accessible from by nginx over the network.
+         location ^~ (/images/|/css/|/javascripts/) {
+	     root /var/www/myapp/public;
+             expires 30d;
+         }
+ 
+         # This is where all  magic happens. Everything in this block goes directly to Dancer. What's going on?
+	 # We set specific headers that L<Plack::Middleware::ReverseProxy> expects. Using this information,
+	 # it overwrites certain environmental variables with the values we want. When Dancer receives it, 
+	 # it's as if Dancer is facing the intertubes.  
+         location / {
+             proxy_set_header Host $http_host;
+             proxy_set_header X-Forwarded-Host $host;
+             proxy_set_header X-Real-IP $remote_addr;
+             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_pass http://backend;
+         }
+         # Note: If you add a frontend caching server, the above section will have to change completely 
+         # along with serveral other things.
+ }
+
+=head3 HTTP 1.1 vs HTTP 1.0
+
+Though nginx communicates in HTTP 1.1 to the client, it uses HTTP 1.0 for the backends. If you need
+keep-alives or chunked requests/responses, then you can either try some 3rd party patches or you can 
+use something like L<haproxy>. This shouldn't be a problem for an overwhelming majority of users and
+won't affect the backend server since most HTTP 1.1 servers simply switch to HTTP 1.0 when not available.
+
+=head2 Plack::Middleware::ReverseProxy
+
+L<Plack::Middleware::ReverseProxy> solves a problem associated with reverse proxy. When the request is
+sent from the intertubes to your frontend server, that request is forwared to backend server. That backend 
+server believes that the request orginated from the frontend server and not the intertubes. Thus the IP 
+address and other environment variables are associated with the frontend server. When your logs/debug says
+that 100% of your users came from 192.168.1.10 or similiar then there's a problem.
+
+L<Plack::Middleware::ReverseProxy> reads these special headers sent from the frontend server that include 
+the correct information. It takes that information and overwrites the environmental variables before 
+sending those values to your Dancer application. Thus Dancer is none the wiser.
+
+=head2 Backend Server: Starman/Twiggy/ect..
+
+The backend server really depends on your needs. L<Starman> offers the best performance. Set the number
+of workers based on your server specs.
+
+    plackup -D -E deployment -s Starman --workers=10 -a app.pl -p 5000 
+
+Dancer unoffically supports Websockets and other streaming processes via Web::Hippie in which case you would 
+need to use a non-blocking, async server such as L<Twiggy>. 
+B<Don't worry about it since it's not official yet.>
+
+    plackup -D -E deployment -s Twiggy -a app.pl -p 5000
+
+If you plan to use a non-preforking, single-threaded server make sure to 
+start one instance per CPU core, adjust nginx.conf accordingly, and restart nginx.
+
+    plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5000
+    plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5001
+    plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5002
+    plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5003
+
+B<Note:> Using HTTP::Server::PSGI is B<NOT> a good idea for production. Just using it as an example.
+
+B<Note #2:> Sometimes the -D option in plackup doesn't properly daemonize the server since it's the 
+backend server's responsibility to respect this option. A cheap way to force a process to daemonize
+is to use C<nohup plackup ... &>. 
+
+B<Note #3:> It's probably a good idea to create a start up script that launches you servers and 
+in the background.
+
+=head2 Caching
+
+Caching it up to you and your personal preferences. Usually it's best to use URL matching. I suggest
+putting a caching server in front of nginx such as Varnish or Squid. The request flow should be:
+
+Intertubes -> Varnish -> Nginx -> Starman backends
+
+=head1 SEE ALSO
+
+L<Dancer::Deployment>
+
+=head1 AUTHOR
+
+nmani: Naveen Manivannan <nmani@nashresearch.com>
