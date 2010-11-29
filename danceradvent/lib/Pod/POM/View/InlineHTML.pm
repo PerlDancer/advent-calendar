@@ -15,7 +15,12 @@ sub view_verbatim {
     my ($self, $text) = @_;
     $text = expand_leading_tabs(8, $text);
     $text = outdent($text);
-    return $self->SUPER::view_verbatim($text);
+    for ($text) {
+        s/&/&amp;/g;
+        s/</&lt;/g;
+        s/>/&gt;/g;
+    }
+    return qq{<pre class="prettyprint">$text</pre>\n\n};
 }
 
 # currently this should cover all that we need
