@@ -1,7 +1,7 @@
 =head1 Dancer's ecosystem
 
 Dancer's community is getting more important every day. Today, we will see
-some usefull plugin or engines contributed from the community.
+some useful plugin or engines contributed from the community.
 
 =head2 Templates
 
@@ -19,8 +19,8 @@ code instead of defining its own language.
 L<Template::Tiny> is an implementation of a subset of L<Template::Toolkit>
 (the major parts) which takes much less memory and is faster. If you're only
 using the main functions of Template::Toolkit, you could use
-L<Template::Tiny>. You can also seemlessly move back to L<Template::Toolkit>
-whenver you want.
+L<Template::Tiny>. You can also seamlessly move back to L<Template::Toolkit>
+whenever you want.
 
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Tiny>)
 
@@ -102,7 +102,7 @@ complex and precise normalization upon configuration.
 =head3 Dancer::Plugin::Mongo
 
 L<Dancer::Plugin::Mongo> provides a wrapper around B<MongoDB>. Add the
-appropriate configuraton options to your config.yml and then you can access a
+appropriate configuration options to your config.yml and then you can access a
 MongoDB database using the 'mongo' keyword.
 
     use Dancer;

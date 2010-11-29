@@ -73,7 +73,7 @@ take a list of parameters that will be used to build the feed.
 =head3 How to let the user choose the format
 
 In the previous example, we've seen how to create a RSS feed. But maybe some of
-your users would have prefered an Atom feed, so we will let the decide what
+your users would have preferred an Atom feed, so we will let the decide what
 format they prefer. We only need to update our previous route for this:
 
   get '/feed/:year/:format' => sub {
