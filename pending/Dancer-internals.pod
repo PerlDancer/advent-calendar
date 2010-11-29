@@ -1,0 +1,31 @@
+=head1 Dive into Dancer's internals
+
+This article is intented to describe how major parts of Dancer are designed, in
+order to help developers understand better the way it works.
+
+We'll see that we can basically split Dancer into three distinct scopes: the
+core, engines and plugins. We'll see what are the differences between those
+three parts and what are the concepts behind them.
+
+If you intend to contribute to Dancer, this article should be a good start to
+clarify how things fit together.
+
+=head2 a word about the concept behind Dancer
+
+As you may have read already, Dancer was first inspired by
+L<http://www.sintrarb.com|Sinatra>. It quickly evolved towards a complete
+micro-framework with its own personality and taste.
+
+The idea that remained our major guideline though is the I<micro> concept: we
+want Dancer to remain lightweight, avoiding as much as possible to confuse the
+user with a lots of things to configure and a huge amount of concepts to master.
+
+This basic idea is the soul of Dancer: you may find other great perl frameworks
+out there, they all have strong advantages and do address interesting fields, 
+but I don't think one has as much as Dancer the goal of providing the most
+effortless interface for web development.
+
+This quest of expressivity and simplicity leads to a particular design, I'll try
+to explain here.
+
+
