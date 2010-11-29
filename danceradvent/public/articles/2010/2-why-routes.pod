@@ -8,10 +8,10 @@ I<route-based web programming>.
 
 =head3 CGI
 
-CGI (Common Gateway Interface) is arguably the most common web programming model. Not because it's
-particularly good, but because it's the simplest to write (something which is no
-longer true, thanks to Dancer, as we'll see later on) and the easier to
-configure on a web server.
+CGI (Common Gateway Interface) is arguably the most common web programming
+model. Not because it's particularly good, but because it's the simplest to
+write (something which is no longer true, thanks to Dancer, as we'll see later
+on) and the easier to configure on a web server.
 
 Mainly CGI web programming entails the web server running a script, providing
 everything possible (such as request parameters) in the environment variable

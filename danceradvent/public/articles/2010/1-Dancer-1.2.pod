@@ -99,7 +99,7 @@ release.
 
 Yes, I<deployability> is indeed a word (we checked) and it is something that all
 web applications dread. Since Dancer itself supports PSGI/Plack, deploying your
-Dancer apps is easy and flexible.
+Dancer applications is easy and flexible.
 
 However, the point that people find tricky is B<how>. How do I configure my
 Apache for Dancer? What if it's Lighttpd, or Nginx? What about.. what about...?
@@ -117,7 +117,7 @@ when you just start programming. We've decided to give it a whirl as well and
 improved it quite a bit.
 
 Your new scaffolded app should be prettier and more impressive, without making
-any effort. It even uses the jQuery Javascript library! OMG jQuery!
+any effort. It even uses the jQuery JavaScript library! OMG jQuery!
 
 =head2 What's in the future for Dancer
 
@@ -130,8 +130,8 @@ stable set of community plugins to remove more and more clutter to your work.
 
 The advent calendar is our way of showcasing Dancer's ability by showing you how
 to write Dancer applications, plugins and engines. You'll learn how to deploy
-your apps on various backends and understand the beauty of simplicity that
-Dancer offers using its clean
+your applications on various backends and understand the beauty of simplicity
+that Dancer offers using its clean
 L<DSL|http://en.wikipedia.org/wiki/Domain-specific_language> and route-based
 structure.
 

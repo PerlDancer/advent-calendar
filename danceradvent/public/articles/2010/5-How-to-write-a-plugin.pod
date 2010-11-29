@@ -112,7 +112,7 @@ true or false depending on the match.
 
 =head3 Dynamic layout
 
-We now want to change the layout whenver a request is served for a
+We now want to change the layout whenever a request is served for a
 mobile device. This can easily be done with a before filter:
 
     before sub {
@@ -143,7 +143,7 @@ layout will be back to its original value.
 =head3 Default token
 
 Finally, we want our templates to be able to render specific content
-for mobile devices, so we want to provide all our templates wih a
+for mobile devices, so we want to provide all our templates with a
 C<is_mobile_device> token, whose value will be obviously given by the
 helper previously defined.
 

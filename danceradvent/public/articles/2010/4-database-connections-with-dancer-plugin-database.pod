@@ -2,10 +2,10 @@
 
 The
 L<Dancer::Plugin::Database|http://search.cpan.org/dist/Dancer-Plugin-Database>
-plugin is designed to make connecting to databases from your Dancer apps simple
-and painless.  Connection details are stored in your app's configuration, and
-the connection is automatically established for you (and re-established if the
-connection went away).
+plugin is designed to make connecting to databases from your Dancer applications
+simple and painless.  Connection details are stored in your application's
+configuration, and the connection is automatically established for you (and
+re-established if the connection went away).
 
 =head2 How do I use it?
 
@@ -54,8 +54,8 @@ when you first get a connection to the database:
 =head2 But what if I need to talk to multiple databases?
 
 All of the above examples assume that you only want to connect to one database.
-For the majority of webapps, that's often true, but there are of course plenty
-of people who'll want to talk to multiple databases.
+For the majority of web applications, that's often true, but there are of course
+plenty of people who'll want to talk to multiple databases.
 
 That's easy enough - you can define multiple named connections in your app
 config, and pass a name to the C<database> keyword - for example:
