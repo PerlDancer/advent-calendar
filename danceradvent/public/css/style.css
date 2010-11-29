@@ -171,6 +171,14 @@ pre, code, tt {
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
+/* TODO: i'm not good in colors */
+.pod-document pre {
+	border-left: 2px solid #AAA;
+	background-color: #eee;
+	padding: 1em;
+	color: #000;
+}
+
 #footer a { 
 	color: #af8b41; 
 }
@@ -232,11 +240,4 @@ a.advent-day:hover {
     margin:4px;
 }
 
-/* TODO: i'm not good in colors */
-.pod-document pre {
-    background-color: #FFD;
-    font-family: Inconsolata, Consolas, "Bitstream Vera Sans Mono", "Courier New", monospace;
-    padding: 5px;
-    border: 1px solid;
-    border-color: #FF0 #000 #000 #FF0;
-}
+
