@@ -12,7 +12,7 @@ Well, this deficiency is a thing of the past since Netscape invented
 HTTP cookies in 1994. Cookies provide an elegant way of emulating
 application state by transferring a piece of data from server
 out-of-band and keeping it on the client side. This piece is tied to a
-particalar set of web pages via its parameters and is sent alongside
+particular set of web pages via its parameters and is sent alongside
 each request from client back to server so that the server could
 restore the state and serve the request in a particular context.
 
@@ -27,7 +27,7 @@ could be tampered with by malicious clients.
 
 So sessions emerged. The trick is to store data securely in the
 database while delivering a cookie with only a session identifier.
-The identifers are taken from a huge space so that guessing or
+The identifiers are taken from a huge space so that guessing or
 brute-forcing become infeasible. This is the most popular way of
 implementing statefulness over HTTP since then.
 
@@ -37,7 +37,7 @@ The problems arise with load. Each and every request inside a session
 required a database query to retrieve the session data by its
 identifier or to prove the session invalid. Usability concerns require
 sessions to be long (all those "remember me on this computer"
-checkboxes) and that means a session store should have room for a huge
+check boxes) and that means a session store should have room for a huge
 number of sessions while being sufficiently fast to serve a query for
 each page hit.
 
