@@ -133,7 +133,7 @@ under the hood and we'll make sure of that.
         "is_mobile_device: 0\n",
         "token is_mobile_device is present and valid for Mozilla";
 
-Let's run the test to make sure everything's fine:
+Let's run the test to make sure everything is fine:
 
     $ perl -Ilib t/02-tokens.t
     1..2
@@ -173,7 +173,7 @@ directory, let's use it.
 Just a basic route handler, like before, but this time if a layout is
 set, we'll use it.
 
-We want first to test the behaviour of the app when no layout is set:
+We want first to test the behavior of the app when no layout is set:
 
     use Dancer::Test;
 

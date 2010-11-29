@@ -111,7 +111,7 @@ happens like a new entry is posted, or the user logs in or out.  It's called a
 
 The C<uri_for> directive tells Dancer to provide a URI for that specific route,
 in this case, it is the route to post a new entry into the database.  You might
-ask why we don't simply hardcode the C</add> URI in our application or
+ask why we don't simply hard-code the C</add> URI in our application or
 templates.  The best reason B<not> to do that is because it removes a layer of
 flexibility on where to "mount" the web application. Although the application
 is coded to use the root URL C</> it might be better in the future to locate it
@@ -203,7 +203,7 @@ part of this specific application.
 =head2 Logins and sessions
 
 Dancer comes with a simple in-memory session manager out of the box.  It
-supports a bunch of other session engines including YAML, memcached, browser
+supports a bunch of other session engines including YAML, Memcached, browser
 cookies and others.  For this application we're going to stick with the
 in-memory model which works great for development and tutorials, but won't
 persist across server restarts or scale very well in "real world" production
@@ -216,13 +216,13 @@ session handler and initialize a session manager.  To do that, we add some
 configuration directives toward the top of our dancr.pl file.  But there are
 more options than just the session engine we want to set.
 
-  set 'session' => 'Simple';
-  set 'template' => 'template_toolkit';
-  set 'logger' => 'console';
-  set 'log' => 'debug';
+  set 'session'     => 'Simple';
+  set 'template'    => 'template_toolkit';
+  set 'logger'      => 'console';
+  set 'log'         => 'debug';
   set 'show_errors' => 1;
-  set 'access_log' => 1;
-  set 'warnings' => 1;
+  set 'access_log ' => 1;
+  set 'warnings'    => 1;
 
 Hopefully these are fairly self-explanatory. We want the Simple session engine,
 the Template Toolkit template engine, logging enabled (at the 'debug' level
