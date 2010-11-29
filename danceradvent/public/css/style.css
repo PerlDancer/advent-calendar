@@ -23,15 +23,19 @@ margin: 0;
 border-bottom: 2px solid #af8b41;
 }
 
-a  {color: #03c}
+a  {
+	color: #5d2809;
+	text-decoration: underline;
+}
+
 a:hover {
-text-decoration: none;
+	text-decoration: none;
 }
 
 
 #page {
 background-color: #ddd;
-width: 750px;
+width: 810px;
 margin: auto;
 margin-left: auto;
 padding-left: 0px;
@@ -51,8 +55,8 @@ background-color: white;
 border-top: none;
 border-bottom: none;
 padding: 25px;
-width: 520px;
-min-height: 570px;
+width: 590px;
+min-height: 590px;
 }
 
 #content img {
@@ -171,6 +175,14 @@ pre, code, tt {
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
+/* TODO: i'm not good in colors */
+.pod-document pre {
+	border-left: 2px solid #AAA;
+	background-color: #eee;
+	padding: 1em;
+	color: #000;
+}
+
 #footer a { 
 	color: #af8b41; 
 }
@@ -230,4 +242,9 @@ a.advent-day:hover {
     background:#F60;
     text-decoration:none;
     margin:4px;
+}
+
+div.advent-calendar {
+	width: 520px;
+	margin: auto;
 }

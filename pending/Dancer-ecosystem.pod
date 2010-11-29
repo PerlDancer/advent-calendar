@@ -1,0 +1,161 @@
+=head1 Dancer's ecosystem
+
+Dancer's community is getting more important every day. Today, we will see
+some usefull plugin or engines contributed from the community.
+
+=head2 Templates
+
+=head3 Dancer::Template::Tenjin
+
+L<Tenjin> is a fast and feature-full templating engine that can be used by
+Dancer for production purposes. In comparison to L<Template::Toolkit>, it is
+much more lightweight, has almost no dependencies, and supports embedded Perl
+code instead of defining its own language.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Tenjin>)
+
+=head3 Dancer::Template::Tiny
+
+L<Template::Tiny> is an implementation of a subset of L<Template::Toolkit>
+(the major parts) which takes much less memory and is faster. If you're only
+using the main functions of Template::Toolkit, you could use
+L<Template::Tiny>. You can also seemlessly move back to L<Template::Toolkit>
+whenver you want.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Tiny>)
+
+=head3 Dancer::Template::Semantic
+
+Template::Semantic is a template engine for XHTML/XML based on XML::LibXML
+that doesn't use any template syntax. This module takes pure XHTML/XML as a
+template, and uses XPath or CSS selectors to assign values.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Semantic>)
+
+=head3 Dancer::Template::Mason
+
+As you could have guessed, this is an interface between Dancer's template
+engine abstraction layer and the L<HTML::Mason> templating system.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Mason>)
+
+=head3 Dancer::Template::HtmlTemplate
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::HtmlTemplate>)
+
+=head3 Dancer::Template::Xslate
+
+L<Text::Xslate> is a template engine, tuned for persistent applications, safe
+as an HTML generator, and with rich features.
+
+The concept of Xslate is strongly influenced by L<Text::MicroTemplate> and
+Template-Toolkit 2, but the central philosophy of Xslate is different from
+them. That is, the philosophy is sandboxing that the template logic should not
+have no access outside the template beyond your permission.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Xslate>)
+
+=head2 Logger
+
+=head3 Dancer::Logger::Syslog
+
+This module implements a logger engine that send log messages to B<syslog>,
+through the L<Sys::Syslog> module.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Logger::Syslog>)
+
+=head3 Dancer::Logger::PSGI
+
+This class is an interface between your Dancer's application and
+B<psgix.logger>. Message will be logged in whatever logger you decided to use
+in your L<Plack> handler. If no logger is defined, nothing will be logged.
+
+(on CPAN/ L<http://search.cpan.org/perldoc?Dancer::Logger::PSGI>)
+
+=head3 Dancer::Logger::Spinner
+
+When using this logger and running your application in the terminal, you will
+see a text spinner running on each message it gets. If you have a page with a
+lot of request, and they will come in fast, you'll see the spinner running. If
+you have an app with very little requests in each page or if it is slow, the
+spinner will run slowly.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Logger::Spinner>)
+
+=head2 Plugins
+
+=head3 Dancer::Plugin::REST
+
+This plugin helps you write a RESTful webservice with Dancer. This plugin will
+be detailed in another article about B<ReST>.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::REST>)
+
+=head3 Dancer::Plugin::Params::Normalization
+
+This plugin helps you make automatic transformations on requests' parameters,
+for instance, make them all lowercase. It has easy-to-use defaults, but can do
+complex and precise normalization upon configuration.
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::Params::Normalization>)
+
+=head3 Dancer::Plugin::Mongo
+
+L<Dancer::Plugin::Mongo> provides a wrapper around B<MongoDB>. Add the
+appropriate configuraton options to your config.yml and then you can access a
+MongoDB database using the 'mongo' keyword.
+
+    use Dancer;
+    use Dancer::Plugin::Mongo;
+
+    get '/widget/view/:id' => sub {
+        my $widget = mongo->database->table->find_one({ id => params->{id} });
+    }
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::Mongo>)
+
+=head3 Dancer::Plugin::Database
+
+Provides an easy way to obtain a connected DBI database handle by simply
+calling the database keyword within your Dancer application.
+
+    use Dancer;
+    use Dancer::Plugin::Database;
+
+    get '/widget/view/:id' => sub {
+        my $sth = database->prepare( 'select * from widgets where id = ?' );
+        $sth->execute(params->{id});
+        template 'display_widget', { widget => $sth->fetchrow_hashref };
+    };
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::Database>)
+
+=head3 Dancer::Plugin::DBIC
+
+This plugin provides an easy way to obtain L<DBIx::Class::ResultSet> instances
+via the the function schema(), which it automatically imports. You just need
+to point to a dsn in your Dancer configuration file. So you no longer have to
+write boilerplate DBIC setup code.
+
+    use Dancer;
+    use Dancer::Plugin::DBIC;
+
+    get '/profile/:id' => sub {
+        my $user = schema->resultset('Users')->find(params->{id});
+        template user_profile => { user => $user };
+    };
+
+(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::DBIC>)
+
+=head2 Author
+
+This article has been written by Franck Cuny for the Perl Dancer Advent
+Calendar 2010.
+
+=head2 Reviewers
+
+Proofreading and typo-fixing by Damien Krotkine.
+
+=head2 Copyright
+
+Copyright (C) 2010 by Franck Cuny C<< <franck@lumberjaph.net> >>.

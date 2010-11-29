@@ -1,5 +1,4 @@
-
-=head1 Tutorial : shrinkr, an URL shortener
+=head1 Tutorial: shrinkr, an URL shortener
 
 This article will guide you through the writing of working URL shortener
 written with Dancer.

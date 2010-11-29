@@ -8,66 +8,81 @@ Flags:
 [R] : "Review", ready for review (needs typos fixes and proofreading)
 [D] : "Done", ready for publication
 
-Note: the order is not the order of publication, but the order of submission
 
+==== PUBLISHING ORDER:
 
-01. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
+01. [P] Dancer 1.2 is released! article based on the changelog with a word or
+        two about upcoming change planed for 1.4
 
-02. [P] Dancer::Plugin::Database (bigpresh)
+02. [P] Why routes? How does route-based web works and why is it more fun?
 
-03. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
+03. [D] dancr (tutorial)
 
-04. [A] How to work with sessions in cookies (Dancer::Session::Cookie,
-        kappa@{github,cpan})
+04. [D] Dancer::Plugin::Database (bigpresh)
 
-05. [ ] Common practiced with Dancer apps (move to template_toolkit or your favorite
-        template system, etc.)
-
-06. [P] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
-        Dancer::Plugin::REST)
-
-07. [ ] load_app (note: not sure if we should speak of load_app as we'll drop it after 1.2)
-
-08. [P] using dancer with middlewares
-
-09. [R] Writing a Dancer plugin (need to think of one) (what about a
+05. [D] Writing a Dancer plugin (need to think of one) (what about a
         Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
         and sets some templates variables, or change the base url to m.domain...)
         [ sukria ]
 
-10. [P] How to contribute to Dancer core (covered in Franck's lastest blog post)
+06. [D] Writing Dancer specific tests. (already covered in my article about
+        writing a plugin, maybe I should split them in two parts? sukria)
 
-11. [ ] Why routes? How does route-based web works and why is it more fun?
+15. [D] shrinkr (tutorial)
 
-12. [ ] Using the before (KiokuDB context)
+==== NEED TO BE REVIEWED
 
-13. [A] Deploying Dancer (nmani, )
+xx. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
 
-14. [ ] Replacing old CGI code with Dancer
+xx. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
 
-15. [A] The concept of engines in Dancer's core (followed the 3 next items)
+xx. [R] How to work with sessions in cookies (Dancer::Session::Cookie,
+        kappa@{github,cpan})
+
+xx. [R] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+        Dancer::Plugin::REST)
+
+xx. [R] using dancer with middlewares
+
+xx. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
+
+xx. [R] Dancer::Plugin::Feed (franck)
+
+==== NOT YET FINISHED
+
+xx. [P] Writing a new logger backend  (xsawyerx)
+
+xx. [P] Writing a new serializer backend (xsawyerx)
+
+xx. [P] Dancer's ecosystem
+
+xx. [P] Authentication with Twitter OAuth (sukria)        
+
+xx. [P] ournowrimo app (yanick champoux)
+
+xx. [P] Dancer::Plugin::DBIC (dams)
+
+xx. [P] Dancer for static websites (BooK)
+
+==== NOT YET STARTED
+
+xx. [A] Deploying Dancer (nmani, )
+
+xx. [A] The concept of engines in Dancer's core (followed the 3 next items)
         I've already covered that topic in a blog-entry, I can refresh it for the
         advent calendar (sukria)
 
-16. [P] Writing a new logger backend  (xsawyerx)
+==== LOOKING FOR AN AUTHOR
 
-17. [ ] Writing a new session backend 
+xx. [ ] Common practiced with Dancer apps (move to template_toolkit or your favorite
+        template system, etc.)
 
-18. [P] Writing a new serializer backend (xsawyerx)
+xx. [ ] Profiling/Debugging/Performance-testing Dancer applications.
 
-19. [ ] Profiling/Debugging/Performance-testing Dancer applications.
+xx. [ ] Writing a new session backend 
 
-20. [ ] Writing Dancer specific tests. (already covered in my article about
-        writing a plugin, maybe I should split them in two parts? sukria)
+xx. [ ] Using the before (KiokuDB context)
 
-21. [A] Dancer::Plugin::DBIC (dams)
+xx. [ ] load_app (note: not sure if we should speak of load_app as we'll drop it after 1.2)
 
-22. [A] Dancer for static websites (BooK)
-
-23. [ ]
-
-24. [ ]
-
-25. [ ] Dancer 1.2 is released! article based on the changelog with a word or
-        two about upcoming change planed for 1.4
-
+xx. [ ] Replacing old CGI code with Dancer

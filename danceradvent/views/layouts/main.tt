@@ -14,8 +14,12 @@
     !window.jQuery && document.write('<script src="[% uri_base %]/javascripts/jquery.js"><\/script>')
 /* ]]> */</script>
 
+<!-- Prettyfy -->
+<link href="/css/prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="/javascripts/prettify.js"></script>
+
 </head>
-<body>
+<body onload="prettyPrint()">
 <div id="page">
 
 <div id="sidebar">

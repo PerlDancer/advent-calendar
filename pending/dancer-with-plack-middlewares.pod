@@ -37,14 +37,15 @@ your project, you can choose between a standalone server, or using Plack:
     == Entering the development dance floor ...
 
 Doing this starts my application using Dancer's standalone server on port
-3000.
+B<3000>.
 
 Now, let's use Plack to start this application:
 
     $ plackup bin/app.pl
     HTTP::Server::PSGI: Accepting connections at http://0:5000/
 
-This time, it's the PSGI's standalone server that serves our application.
+This time, it's the PSGI's standalone server that serves our application, and
+it listen on port B<5000>.
 
 =head2 Adding a first Middleware
 
