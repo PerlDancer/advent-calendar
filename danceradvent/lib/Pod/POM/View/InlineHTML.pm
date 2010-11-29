@@ -1,3 +1,4 @@
+use strict;
 package Pod::POM::View::InlineHTML;
 use base qw(Pod::POM::View::HTML);
 use Text::Outdent qw/outdent expand_leading_tabs/;
@@ -32,7 +33,6 @@ sub view_verbatim {
 # or L<Alias|perlsync/"Foo">
 sub view_seq_link {
     no warnings;
-    use 5.010;
     my ($self, $link) = @_;
 
     # L<http://example.com>
@@ -63,7 +63,55 @@ sub view_seq_text {
     return $text;
 }
 
+sub view_head_generic {
+    my ($self, $head, $level) = @_;
+    my $title = $head->title->present($self);
+    my $anchor = anchorify($title);
+    return qq(<h${level}><a name="${anchor}"></a>${title}</h1>\n\n)
+        . $head->content->present($self);
+}
+
+sub view_head1 {
+    my ($self, $head1) = @_;
+    $self->view_head_generic($head1, 1);
+}
+
+sub view_head2 {
+    my ($self, $head2) = @_;
+    $self->view_head_generic($head2, 2);
+}
+
+sub view_head3 {
+    my ($self, $head3) = @_;
+    $self->view_head_generic($head3, 3);
+}
+
+sub view_head4 {
+    my ($self, $head4) = @_;
+    $self->view_head_generic($head4, 4);
+}
+
 sub make_href {
     goto &Pod::POM::View::HTML::make_href
 }
+
+sub htmlify {
+    my( $heading) = @_;
+    $heading =~ s/(\s+)/ /g;
+    $heading =~ s/\s+\Z//;
+    $heading =~ s/\A\s+//;
+    # The hyphen is a disgrace to the English language.
+    # $heading =~ s/[-"?]//g;
+    $heading =~ s/["?]//g;
+    $heading = lc( $heading );
+    return $heading;
+}
+
+sub anchorify {
+    my $title = shift;
+    $title = htmlify($title);    
+    $title =~ s/\W/_/g;
+    return $title;
+}
+
 1
