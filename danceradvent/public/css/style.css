@@ -35,7 +35,7 @@ a:hover {
 
 #page {
 background-color: #ddd;
-width: 750px;
+width: 810px;
 margin: auto;
 margin-left: auto;
 padding-left: 0px;
@@ -55,7 +55,7 @@ background-color: white;
 border-top: none;
 border-bottom: none;
 padding: 25px;
-width: 520px;
+width: 590px;
 min-height: 590px;
 }
 
@@ -244,4 +244,7 @@ a.advent-day:hover {
     margin:4px;
 }
 
-
+div.advent-calendar {
+	width: 520px;
+	margin: auto;
+}
