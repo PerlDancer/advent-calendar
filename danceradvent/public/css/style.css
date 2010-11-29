@@ -23,9 +23,13 @@ margin: 0;
 border-bottom: 2px solid #af8b41;
 }
 
-a  {color: #03c}
+a  {
+	color: #5d2809;
+	text-decoration: underline;
+}
+
 a:hover {
-text-decoration: none;
+	text-decoration: none;
 }
 
 
