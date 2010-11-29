@@ -48,6 +48,8 @@ xx. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
 xx. [R] Dancer::Plugin::Feed (franck)
 
+xx. [R] Deploying Dancer (nmani)
+
 ==== NOT YET FINISHED
 
 xx. [P] Writing a new logger backend  (xsawyerx)
@@ -65,8 +67,6 @@ xx. [P] Dancer::Plugin::DBIC (dams)
 xx. [P] Dancer for static websites (BooK)
 
 ==== NOT YET STARTED
-
-xx. [A] Deploying Dancer (nmani, )
 
 xx. [A] The concept of engines in Dancer's core (followed the 3 next items)
         I've already covered that topic in a blog-entry, I can refresh it for the
