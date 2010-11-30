@@ -69,10 +69,11 @@ get '/feed/:year' => sub {
         $permalink->path( params->{year} . '/' . $article->{day} );
         push @entries,
           {
-            title   => $title,
-            content => $html,
-            link    => $permalink,
-            issued  => DateTime->new(
+            title    => $title,
+            content  => $html,
+            link     => $permalink,
+            category => 'perl',
+            issued   => DateTime->new(
                 year  => params->{year},
                 month => 12,
                 day   => $article->{day}
