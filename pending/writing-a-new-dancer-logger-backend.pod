@@ -63,6 +63,8 @@ makes usage of abstract base classes. This ensures you implement the correct
 methods and helps you enforce present and future portability with Dancer itself.
 It also makes our module object oriented.
 
+=head2 Methods
+
 There is only one subroutine we need to implement for our logger:
 
 =over 4 
