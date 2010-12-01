@@ -20,12 +20,55 @@ The idea that remained our major guideline though is the I<micro> concept: we
 want Dancer to remain lightweight, avoiding as much as possible to confuse the
 user with a lots of things to configure and a huge amount of concepts to master.
 
-This basic idea is the soul of Dancer: you may find other great perl frameworks
-out there, they all have strong advantages and do address interesting fields, 
-but I don't think one has as much as Dancer the goal of providing the most
-effortless interface for web development.
-
-This quest of expressivity and simplicity leads to a particular design, I'll try
+This quest of expressivity and simplicity leads to a particular design I'll try
 to explain here.
 
+=head2 The DSL
 
+The first visible layer of Dancer is the set of keywords that are exported to
+the application that I<use>s L<Dancer>. 
+
+Those keywords let the user build their application. C<get>, C<redirect>,
+C<params> or C<request> are some of them. The main goal of Dancer is to provide
+the user with a new tiny language that is web-application-oriented, this is what
+we call a I<DSL>.
+
+As this set of keywords is the very first thing a user will have to use to build
+a web application with Dancer, it's very important for it to be succint,
+expressive and powerfull. On the other hand, it must not become a huge bag of
+keywords as time goes. We don't want this set to be oversized, as the saying
+goes: I<Less is more>.
+
+Those keywords are intended to be the basic rock upon which your application is
+built. But of course, this set should be extendable, that is where plugins come
+into play.
+
+On there are some very common use-case we wanted to address within Dancer
+without touching the core, and with more standardisation than simple plugins.
+Those fields are: logger, template and session engines. 
+
+So what is the core actually, if all the important parts are handled by engines
+and if most of the specific needs should be addressed by plugins?
+Well, the core is what you see when you look at Dancer's soul: it's a distpacher.
+
+A dead-simple dispatcher whose only real internal job is to register route
+handlers with a shiny sytactic sugar.
+
+=head2 The Core
+
+The core is all what Dancer needs to regsiter route handlers, you have classes
+for all the main entities of a web application, like L<Dancer::App>, L<Dancer::Route> or
+L<Dancer::Request>.
+
+On top of that, you have the DSL itself, which is actually handled by L<Dancer>.
+You'll find in that package the list of exported keywords and their definition.
+Of course they all are alias to internal parts of the core. It's just the
+visilbe layer for the user.
+
+=head2 Engines
+
+=head2 Plugins
+
+=head2 Applications
+
+=head2 Author
