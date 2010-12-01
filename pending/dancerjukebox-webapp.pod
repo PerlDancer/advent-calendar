@@ -1,0 +1,44 @@
+=head1 DancerJukebox - controlling MPD from Dancer
+
+I've been using L<Music Player Daemon|http://www.musicpd.org/> to play my music
+for a long time, it really suits my needs.  It runs on a machine under my stairs
+and outputs music through various outputs (two soundcards, one hooked up to the
+amp and one to my headphones transmitter, and also Shoutcast streaming so I can
+listen from work), and can be controlled by a variety of clients, which need
+only speak a simple text-based protocol.
+
+Some time ago I wrote a jukebox-style music queuing webapp using
+L<Catalyst|http://www.catalystframework.org/>, which worked pretty well, but I
+did not enjoy coding or maintaining it.
+
+After having become familiar with Dancer, I decided it was time to re-write it
+using Dancer, so I sat down one evening and began.  To speak to MPD, I'm using
+L<Audio::MPD>, and I wanted to make it easy to get a connection, so I wrote up
+the code as a simple plugin, L<Dancer::Plugin::MPD>, which I released to CPAN.
+
+This lead to code as simple as, for example:
+
+  get '/skipnext' => sub { mpd->next; redirect '/'; };
+  get '/control/play/:id' => sub { mpd->play(params->{id}); redirect '/'; };
+
+Simple and easy.
+
+This time round, I was happy enough with the code to release it, so you'll find
+L<DancerJukebox on GitHub|http://github.com/bigpresh/DancerJukebox>.  The
+previous version was developed in a private Subversion repository, and I was
+never happy enough with it to release it.  Whilst I found Catalyst powerful, I
+found myself having to work "the Catalyst way", and didn't really enjoy it;
+re-writing it using Dancer was actually fun.
+
+I also added a very basic "admin" section to be used from my Android phone,
+allowing me to skip the playing song and remove requests from the queue in case
+anyone requests anything silly that I don’t want played, but didn’t actually use
+it. It only took a couple of minutes to add that feature, though!  At some
+point, I'll tweak that to make use of L<Dancer::Plugin::MobileDevice> (see
+previous advent calendar post on this) to automatically go to a basic layout,
+rather than implementing that myself.
+
+=head2 Author
+
+This article has been written by David Precious for the Perl Dancer Advent
+Calendar 2010.
