@@ -1,6 +1,7 @@
 package danceradvent;
 use Dancer ':syntax';
 use Dancer::Plugin::DebugDump;
+use DateTime;
 use Pod::POM;
 use Pod::POM::View::InlineHTML;
 use Dancer::Plugin::Feed;
@@ -62,7 +63,7 @@ get '/feed/:year' => sub {
     $articles = [sort {$a->{day} <=> $b->{day}} @$articles];
     
     foreach my $article ( reverse @$articles ) {
-        next unless $article->{viewable} == 1;
+        next unless $article->{viewable};
         my ($pod_file) = _article_exists( params->{year}, $article->{day} );
         my ( $title, $html ) = _pod_to_html($pod_file);
         my $permalink = URI->new( request->base );
