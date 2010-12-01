@@ -1,4 +1,4 @@
-=head1 Tutorial : writing a tiny blog engine
+=head1 Tutorial: writing a tiny blog engine
 
 This article will guide you through the writing of a minimal but yet
 complete blog engine.
