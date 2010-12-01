@@ -13,6 +13,13 @@ my $article_dir = Dancer::FileUtils::path(
     setting('appdir'), 'public', 'articles'
 );
 
+# an ignore_trailing slash option is cooking already
+get '/feed/:year/' => sub { redirect uri_for('/feed/'. params->{year} ) };
+get '/:year/'      => sub { redirect uri_for('/' . params->{year} ) };
+get '/:year/:day/' => sub {
+    redirect uri_for('/'. params->{year} . '/' . params->{day} )
+};
+
 before_template sub {
     my $tokens = shift;
     $tokens->{uri_base} = request->base->path eq '/' ? '' : request->base->path;
