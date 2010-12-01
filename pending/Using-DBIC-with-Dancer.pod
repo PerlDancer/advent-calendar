@@ -188,7 +188,28 @@ the detection method: on complex database, it doesn't get everything right, so
 one needs to help DBIC. I prefer describing the schema manually. But hey,
 TIMTOWTDI.
 
-=head3
+=head3 Use auto-detection
+
+Let's add some configuration in our Dancer application. We want to indicate
+that we want to use the C<Dancer::Plugin::DBIC> plugin, and how we want to use
+it. We also want to define a new DBIC schema, that we will call C<bookstore>.
+And we need to indicate that this schema is connected to the SQLite database we
+created.
+
+  # add in bookstore/config.yml
+  plugins:
+    DBIC:
+      bookstore:
+        dsn:  "dbi:SQLite:dbname=bookstore.db"
+
+You could potentially define more schemas, by adding more fields under the C<DBIC:> entry.
+
+B<Note> : you've noticed that we have only described which database to link the
+schema to. That way, we let C<Dancer::Plugin::DBIC> connect to the database and
+discover its schema, and make it available for us
+
+bookstore/environments/development.yml
+
 
  that will describe the
 
