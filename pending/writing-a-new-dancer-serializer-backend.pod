@@ -85,6 +85,8 @@ because we already implemented the Dancer integration logic under that base
 class. It promises us less work and more present and future portability. It also
 makes our module object oriented.
 
+=head2 Methods
+
 There are a three subroutines we should implement.
 
 =over 4 

@@ -16,8 +16,8 @@ Using it can be as simple as:
         undef, params->{username}
     );
 
-Calling the C<database> simply returns you a connected DBI object, so you can
-do whatever you'd usually do with a DBI object.
+Calling the C<database> keyword simply returns you a connected DBI object, so 
+you can do whatever you'd usually do with a DBI object.
 
     get '/widget/view/:id' => sub {
         my $sth = database->prepare(

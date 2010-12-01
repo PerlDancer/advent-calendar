@@ -1,0 +1,256 @@
+=head1 Writing a new Dancer session backend
+
+Sessions are a crucial point in any smart web application and help maintain user
+data across the website.
+
+Various session backends exist for Dancer, but is there one that you wrote
+yourself? Probably not. So, to help get you started, we're going to write one
+together!
+
+=head2 How do sessions work?
+
+Sessions are basically storage compartments for the web programmer to store
+anything he or she want to. You decide what to store, ranging from the user
+details to calculated information.
+
+Sessions can be stored inside browser cookies, Memcache or other mechanisms.
+
+Dancer already has a few session backends, such as:
+
+=over 4
+
+=item * Simple
+
+A very simple in-memory session backend that allows you to save session data in
+your memory. This helps when developing locally and allows you to clean all the
+sessions on an application restart.
+
+It also serves as a very quick proof-of-concept for Dancer session backends and
+should be very easy to understand.
+
+=item * Cookie
+
+A pretty common way of saving user information, inside the browser's cookies.
+
+Usually this is what you would use with your applications.
+
+L<Dancer::Session::Cookie> has a plus side of being encrypted also.
+
+=item * Memcache
+
+A more interesting approach that puts the session data inside a running Memcache
+which allows all processes to access it, have it replicated or accessed very
+quickly locally (or through a remote Memcache).
+
+=item * MongoDB
+
+Even more interesting yet, saving the session data inside a MongoDB document,
+providing some candy for the Document-DB audience out there. :)
+
+=item * PSGI
+
+The latest in PSGI-compatible technology, throwing all the session data handling
+on to PSGI to handle it.
+
+=back
+
+=head2 Deciding on the session backend
+
+I'll admit it took me some thought on what kind of session backend would be
+interesting for the article. At first I thought about having a backend that
+creates funny ASCII art for every session. Then I considered writing one that
+creates a directory structure of all the session data using L<Data::Visitor> but
+in the end I decided to pick something that could actually be used later.
+
+Our session backend will be L<KiokuDB>, an advanced object store (document)
+frontend written using L<Moose>. Hey, what not? :)
+
+=head2 Module skeleton
+
+The skeleton starts like this:
+
+    package Dancer::Session::KiokuDB;
+
+    use strict;
+    use warnings;
+    use Carp;
+    use base 'Dancer::Session::Abstract';
+
+    use KiokuDB;
+
+    # to have access to configuration data and a helper for paths
+    use Dancer::Logger;
+    use Dancer::Config    'setting';
+    use Dancer::FileUtils 'path';
+    use Dancer::ModuleLoader;
+
+    # ...
+
+    1;
+
+You'll notice we're using L<Dancer::Session::Abstract>, which helps us ensure we
+implement the correct methods and helps us enforce present and future
+portability with Dancer itself. It also makes our module object oriented.
+
+KiokuDB works on backends and we're going to use L<Dancer::ModuleLoader> to
+dynamically load these backend modules.
+
+=head2 Internal variables
+
+We're going to use two variables in the scope of the file:
+
+=over 4
+
+=item * C<$db>
+
+This variable will contain the KiokuDB database object.
+
+=item * C<$warned>
+
+We're going to depend on the user being able to specify any KiokuDB backend they
+want, but we also want the user not to have to do it so we're going to allow a
+default value.
+
+In case the user does not provide one, we're going to warn him before using our
+default backend. However, we don't want to alert them B<every> time they try to
+work with the session backend - only once. So this variable will contain a
+boolean of whether we've already warned the user before.
+
+=back
+
+    my ( $db, $warned );
+
+=head2 Methods
+
+Next, for our session backend, we'll need to implement the following methods:
+
+=over 4 
+
+=item * init
+
+This method initializes the session backend.
+
+We'll use this method to lazily load any additional modules.
+
+    sub init {
+        my $self    = shift;
+        my $backend = setting('kiokudb_backend') || 'Hash';
+        my $class   = "KiokuDB::Backend::$backend";
+        my %opts    = ();
+
+        # making sure that if we get backend opts, they're a hashref
+        if ( my $opts = setting('kiokudb_backend_opts') ) {
+            if ( ref $opts and ref $opts eq 'HASH' ) {
+                %opts = %{$opts};
+            } else {
+                croak 'kiokudb_backend_opts must be a hash reference';
+            }
+        }
+
+        # default is be to create
+        defined $opts{'create'} or $opts{'create'} = 1;
+
+        if ( not $warned ) {
+            Dancer::Logger::warning("No session KiokuDB backend, using 'Hash'");
+            $warned++;
+        }
+
+        Dancer::ModuleLoader->load($class)
+            or croak "Cannot load $class: perhaps you need to install it?";
+
+        $db = KiokuDB->new(
+            backend       => $class->new(%opts),
+            allow_classes => ['Dancer::Session::KiokuDB'],
+        );
+    }
+
+We're loading a dynamic backend, creating a new KiokuDB instance with the
+backend we loaded and options the user can give us. You'll notice we create
+by default. This is valid for backends that support creating files (BDB, DBI,
+etc.) and we've allows basic recursive folding of our object using
+I<allow_classes>.
+
+B<Important:> you should know that we've being very naive here by not providing
+any special L<KiokuDB::TypeMap> for our class. This means that if someone will
+use our KiokuDB session backend and try to store something KiokuDB does not know
+how to cleanly fold (such as more complex objects), it might fail. Not to worry,
+we'll document this behavior. :)
+
+=item * create
+
+This method creates a new session (hence the name) and returns an object of the
+new session. We'll also flush new data to the KiokuDB backend using our
+(yet-to-be-written) C<flush> method.
+
+    sub create {
+        my $class = shift;
+        my $self  = $class->new;
+
+        $self->flush;
+
+        return $self;
+    }
+
+=item * retrieve
+
+This method retrieves the session data. We're getting an ID to fetch and using
+KiokuDB this method can't be any easier:
+
+    sub retrieve {
+        my ( $self, $id ) = @_;
+        my $scope         = $db->new_scope;
+
+        # return object
+        return $db->lookup($id);
+    }
+
+We're creating a new scope (which KiokuDB requires) and then just looking up the
+ID.
+
+=item * destroy
+
+This method deletes the session object completely. Again, using Kioku, it's just
+too easy.
+
+    sub destroy {
+        my $self  = shift;
+        my $scope = $db->new_scope;
+
+        $db->delete($self);
+    }
+
+=item * flush
+
+This method is in charge of I<flushing> the data to the session storage.
+
+    sub flush {
+        my $self  = shift;
+        my $id    = $self->{'id'};
+        my $scope = $db->new_scope;
+
+        $db->insert( $id => $self );
+    }
+
+We're using an ID given in a hash key in the object as the ID for KiokuDB.
+
+=back
+
+=head2 CPAN, anyone?
+
+While you've been reading this entry, I've taken the liberty to upload what we
+just wrote to CPAN and it should now be available as
+L<Dancer::Session::KiokuDB>. Nice, isn't it?
+
+Feel free to send me your names so I could add you to the CREDITS section in the
+POD! :)
+
+=head1 SEE ALSO
+
+I<Writing a new Dancer serializer>
+
+I<Writing a new Dancer session backend>
+
+=head1 AUTHOR
+
+Sawyer X <xsawyerx@cpan.org>
+
