@@ -24,7 +24,7 @@ The following synopsis shows just how strong and yet simple Dancer really is:
         template user => { user => $details };
     };
 
-This shows off a an HTTP B<GET> request route with a variable in it which is
+This shows off an HTTP B<GET> request route with a variable in it which is
 attached to an anonymous subroutine which gets the ID, performs a simple
 database query (using L<Dancer::Plugin::Database> and passes the data to a
 template to render the resulting page.
@@ -140,7 +140,7 @@ Stay tuned for more awesomeness!
 =head2 Credits
 
 Credit goes to the entire Dancer community for our 1.2 release and the advent
-calendar. Dancer would definitely not be where its at right now without the love
+calendar. Dancer would definitely not be where it's at right now without the love
 and care the community has given it.
 
 A great thanks goes (and not limited) to the following people (in alphabetical
