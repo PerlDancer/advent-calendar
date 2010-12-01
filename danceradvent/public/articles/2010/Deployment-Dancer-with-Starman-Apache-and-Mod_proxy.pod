@@ -1,0 +1,66 @@
+=head1 Deployment of Dancer application with Starman, Apache and Mod_proxy
+
+=head2 Introduce
+
+To proceed of deployment's application, developed in b<Perl>, with help of b<Dancer> framework, it exits different manner to do.
+
+I introduce a solution which is , in a sense the better, cleaner and elegant sort In using L<Starman>.
+
+Starman is a web server L<PSGI>, written by b<Tatsuhiko Miyagawa>. PSGI ou Perl web server Gateway Interface is an interface between a web server and a web application written in Perl. PSGI can write some mobil applications, it is possible to use with b<mod_perl>, b<CGI>, b<FastCGI>.
+It is equivalent to web server gateway interface for b<Python> or b<Rack> for b<Ruby>. Starman is  the same of Gunicorn, a web server Python or Unicorn, a web server Ruby, even if some functions are missing. 
+
+The b<Apache> web server is a very great web server, but since a time, has changed a bit. It starts to want much more and have much more functions and utilities. Into production, it starts to manage applications, manage virtual host and more.
+At the beginning, Apache was not made to serve Perl applications, that's for what, it exits Mod_perl. I appreciates when an application is simple, do one things but great, be easy to configure and when everythings are separated. 
+
+This is the good reasons to use Starman which is doing just one thing and deserve correctly its application. It lets to server the reverse of management. It makes simple the configuration because Starman does not have configuration.
+
+=head2 Configure
+
+First, to install Starman.
+
+  sudo cpanm Starman 
+
+Once installed, you must go to the repertory of your application and start the server.
+
+  cd app 
+  plackup -s Starman app.pl
+
+Be aware, it will be a server by application. It is possible to specify the port number with -port. Then, you can use Apache, using it as proxy with mod_proxy and add port number in which you can redirectory the requests. 
+
+To make usefull Apache with mod_proxy, you need to activate several modules.
+
+  sudo a2enmod proxy proxy_http cache
+
+Then, you must configure all in a Apache.
+
+  <VirtualHost *:80>
+      ServerName example.com
+      ServerAlias www.example.com 
+ 
+      DocumentRoot /path/to/dancer/app 
+ 
+      <Proxy *>
+          Order deny,allow
+          Allow from allow
+      </Proxy>
+ 
+      ProxyPass / http://localhost:5000/
+      ProxyPassReverse / http://localhost:5000/
+ 
+  </VirtualHost>
+
+It will be possible to indicate to Apache , that it takes in charge, to deserve static fields if you prefer.
+
+  ProxyPass /public/favicon.ico !
+
+Once, the configurartion of our virtualhost finished, you add the website to Apache.
+
+  cd /etc/apache2/sites-available/
+  sudo a2ensite app_dancer
+
+You just have,now, to restart Apache.
+
+That's over.
+
+=head2 Conclusion
+To conclude, even you have several steps during intallation and makes the sensation to be a bit long, it is certainly the the more simplest solution. It is possible then, to replace Apache to a lighter server like b<Cherokee>, for example.
