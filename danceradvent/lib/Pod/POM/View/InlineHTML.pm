@@ -67,7 +67,7 @@ sub view_head_generic {
     my ($self, $head, $level) = @_;
     my $title = $head->title->present($self);
     my $anchor = anchorify($title);
-    return qq(<h${level}><a name="${anchor}"></a>${title}</h1>\n\n)
+    return qq(<h${level}><a name="${anchor}"></a>${title}</h${level}>\n\n)
         . $head->content->present($self);
 }
 
