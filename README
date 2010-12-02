@@ -50,6 +50,8 @@ xx. [R] Dancer::Plugin::Feed (franck)
 
 xx. [R] Deploying Dancer (nmani)
 
+xx. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
+
 ==== NOT YET FINISHED
 
 xx. [P] Writing a new logger backend  (xsawyerx)
