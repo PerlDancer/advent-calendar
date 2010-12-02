@@ -1,11 +1,14 @@
-=head1 Deploying Dancer - VERY EARLY DRAFT QUALITY
+=head1 Deploying Dancer in CGI and VPS Environments
 
 There are numerous ways to deploy L<Dancer> as mentioned on L<Dancer::Deployment> but
 we'll discuss two commonly used methods in production environments:
 
-=over 4
+=over
+
 =item 1. CGI / FastCGI
+
 =item 2. Reverse Proxy
+
 =back
 
 =head1 CGI
@@ -16,8 +19,10 @@ this in mind, lets see how you could deploy on a shared hosting environment.
 This method will vary based on your specific hosting environment but this 
 method has been tested successfully on the following services successfully:
 
-=over 4
+=over
+
 =item L<NearlyFreeSpeech.Net|http:/www.nearlyfreespeech.net>
+
 =back
 
 =head2 Requirements
@@ -28,17 +33,44 @@ these for you upon request. On many, you can also use L<local::lib> and build
 modules in your own directory.
 
 You are better off requesting the following:
+
+=over
+
+=item *
+
 L<Task::Plack> 
+
+=item *
+
 L<Template>
+
+=item *
+
 L<Task::Dancer>
+
+=item *
+
 ...and application specific modules
 
-Note #1: L<Plack::Runner> is what will actually be providing the CGI environment to Apache. 
-Note #2: If L<Task::Dancer> fails for the hosting company, request individuals modules instead.
+=back
+
+You should also request updates to these and other modules regularly.
+
+=over
+
+=item Note #1: 
+
+L<Plack::Runner> is what will actually be providing the CGI environment to Apache. 
+
+=item Note #2: 
+
+If L<Task::Dancer> fails for the hosting company, request individuals modules instead.
+
+=back
 
 =head2 Preparation
 
-Locate the F<dispatch.cgi> inside the 'public' folder of your dancer application. 
+Locate the F<dispatch.cgi> inside the 'public/' folder of your dancer application. 
 We are going to make a symbolic link to F<dispatch.cgi>. Where you put that link 
 is up to your personal preference, how you want the url to appear (sans 
 mod_rewrite), and specifics relating to your hosting company. Lets 
@@ -49,7 +81,7 @@ From your domain root directory, type: C<ln -s myapp/public/dispatch.cgi index.c
 =head2 Apache
 
 At this point L<http://www.mydomain.com/> should render the '/' route if your
-hosting company set the Apache defaults properly.
+hosting company set the Apache defaults for CGI properly.
 
 If that's the case then you're essentially done. Add your rewrite rules (if any) and then go 
 grab a beer.
@@ -71,30 +103,57 @@ would either be overridden or rejected silently by the server so don't worry.
 =head4 Rewrite Rules 
 
 If you decided to use your F<index.cgi> file in your server root directory and DirectoryIndex is set 
-then a rewrite rule is rarely necessary. Regardless here's a simple rewrite rule: 
+then a rewrite rule is rarely necessary. Regardless here's a simple rewrite rule:
 
    RewriteEngine on
    RewriteCond %{REQUEST_FILENAME} !-f
-   RewriteRule ^myapp/public/index.cgi/(.*)  /$1 [L,R=301]
+   RewriteRule ^/index.cgi/(.*)  /$1 [L,R=301]
 
 Read up on L<mod_rewrite|http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html>.
 
 If you wish to do something fancy like L<http://myapp.mydomain.com> then you would just need a DNS 
 CNAME along with mod_rewrite.
 
+=over 
+
+=item Note #1
+
+It is highly recommended that you create a rewrite rules that causes Apache to serve static files directly.
+
+=back
+
 =head3 Common Problems
 
 If everything appears as it should, then you should be fine. If you're having issues with B<file paths> then 
 check the following below. There are usually two or three reasons for this:
 
-=over 4
-=item 1. Permissions - Does the B<webserver user> have access to read, and possibly execute, the file?
-=item 2. 'public/' - Is the file inside '/public'? It shoud work otherwise check your config.yml paths carefully.
-=item 3. Absolute Path - If you plan to use files outside of 'public/' make sure the path is B<system absolute>.
-=over 2
-=item a. The environment that your application runs under and the one your account uses are usually different
-=item b. '/home/public', '/home/htdocs', ect.. are NOT absolute paths but set by user environments usually. *  
+=over 
+
+=item 1. 
+
+Permissions - Does the B<webserver user> have access to read, and possibly execute, the file? Your user account is
+rarely the web server user! You might have 'chgrp' the file(s) to the webserver user!
+
+=item 2. 
+
+'public/' - Is the file inside the application's 'public/'? It shoud work otherwise check your config.yml paths carefully.
+
+=item 3. 
+
+Absolute Path - If you plan to use files outside of '/public/' make sure the path is B<system absolute>.
+
+=over
+
+=item a. 
+
+The environment that your application runs under and the one your account uses are usually different!
+
+=item b. 
+
+'/home/public/', '/home/htdocs', ect.. are NOT absolute paths but set by user environments usually. *  
+
 =back
+
 =back
 
 * A cheap/easy way to find out the absolute path is to write a simple 'phpinfo.php' script 
@@ -166,7 +225,7 @@ Example (/etc/nginx)/nginx.conf:
    # per request. Thus 2 + 2 = 7 .. no 3 .. 9?
    worker_connections  1024;
 
-   # There are 7 different polling methods nginx can use. Here are recommended for each OS though
+   # There are 7 different polling methods nginx can use. Here are the recommended for each OS though
    # you should play around and see what works best for you.
    # Linux (2.6+) / FreeBSD & OS X / Solaris 10 respectively: 
    use epoll;
@@ -180,7 +239,7 @@ Example (/etc/nginx)/nginx.conf:
  http {
      
    # This mime.types thing may cause a lot of trouble if you're doing anything advance.
-   # 90% of the time you don't have to touch it.
+   # 90% of the time you don't have to touch it though.
    include       /etc/nginx/mime.types;
  
    access_log	/var/log/nginx/access.log;
@@ -225,24 +284,22 @@ Example (/etc/nginx)/sites-available/default:
  
  server {
          
-	 # Port 80 is implied but with a caching server, you need different port if caching server is in front. 
+	 # Port 80 is implied but with a caching server in front, you need a different port. 
 	 #listen        80;
          server_name   mydomain.com;
 	 
-	 # It is recommended you create a separate access log for 
-	 #access_log ;
-
-	 # This is different access log directly relating to  
+	 # It is recommended you create a separate access log for the server.
+	 access_log	/var/log/nginx/access_server.log;
 	 
 	 # Serve static files using nginx thus allowing Dancer to handle more dynamic content requests.
-	 # B<Huge> performance boost! First you must move all your static ('/public') folder to the same
+	 # Huge performance boost! First you must move all your static ('/public') folder to the same
 	 # server as nginx or accessible from by nginx over the network.
          location ^~ (/images/|/css/|/javascripts/) {
 	     root /var/www/myapp/public;
              expires 30d;
          }
  
-         # This is where all  magic happens. Everything in this block goes directly to Dancer. What's going on?
+         # This is where all magic happens. Everything in this block goes directly to Dancer. What's going on?
 	 # We set specific headers that L<Plack::Middleware::ReverseProxy> expects. Using this information,
 	 # it overwrites certain environmental variables with the values we want. When Dancer receives it, 
 	 # it's as if Dancer is facing the intertubes.  
@@ -276,6 +333,8 @@ L<Plack::Middleware::ReverseProxy> reads these special headers sent from the fro
 the correct information. It takes that information and overwrites the environmental variables before 
 sending those values to your Dancer application. Thus Dancer is none the wiser.
 
+Remember to add L<Plack::Middleware::ReverseProxy> to your config.yml same as with any other middlewares.
+
 =head2 Backend Server: Starman/Twiggy/ect..
 
 The backend server really depends on your needs. L<Starman> offers the best performance. Set the number
@@ -290,26 +349,37 @@ B<Don't worry about it since it's not official yet.>
     plackup -D -E deployment -s Twiggy -a app.pl -p 5000
 
 If you plan to use a non-preforking, single-threaded server make sure to 
-start one instance per CPU core, adjust nginx.conf accordingly, and restart nginx.
+start one instance per CPU core. Adjust nginx.conf accordingly, and restart nginx.
 
     plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5000
     plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5001
     plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5002
     plackup -D -E deployment -s HTTP::Server::PSGI -a app.pl -p 5003
 
-B<Note:> Using HTTP::Server::PSGI is B<NOT> a good idea for production. Just using it as an example.
+=over
 
-B<Note #2:> Sometimes the -D option in plackup doesn't properly daemonize the server since it's the 
+=item Note #1: 
+
+Using HTTP::Server::PSGI is B<NOT> a good idea for production. Just using it as an example.
+
+=item Note #2: 
+
+Sometimes the -D option in plackup doesn't properly daemonize the server since it's the 
 backend server's responsibility to respect this option. A cheap way to force a process to daemonize
 is to use C<nohup plackup ... &>. 
 
-B<Note #3:> It's probably a good idea to create a start up script that launches you servers and 
-in the background.
+=item Note #3: 
+
+It's probably a good idea to create a start up script that launches your servers and 
+initializes the environment in the background.
+
+=back 
 
 =head2 Caching
 
-Caching it up to you and your personal preferences. Usually it's best to use URL matching. I suggest
-putting a caching server in front of nginx such as Varnish or Squid. The request flow should be:
+Caching is up to you, your application's needs and your personal preferences. Usually it's best 
+to use URL matching. I suggest putting a caching server in front of nginx such as Varnish or Squid. 
+The request flow should be:
 
 Intertubes -> Varnish -> Nginx -> Starman backends
 
@@ -319,4 +389,4 @@ L<Dancer::Deployment>
 
 =head1 AUTHOR
 
-nmani: Naveen Manivannan <nmani@nashresearch.com>
+nmani ( Naveen Manivannan C<< <nmani@nashresearch.com> >> )
