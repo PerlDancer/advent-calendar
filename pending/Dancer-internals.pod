@@ -18,7 +18,7 @@ micro-framework with its own personality and taste.
 
 The idea that remained our major guideline though is the I<micro> concept: we
 want Dancer to remain lightweight, avoiding as much as possible to confuse the
-user with a lots of things to configure and a huge amount of concepts to master.
+user with lots of things to configure and a huge amount of concepts to master.
 
 This quest of expressivity and simplicity leads to a particular design I'll try
 to explain here.
@@ -31,11 +31,18 @@ the application that I<use>s L<Dancer>.
 Those keywords let the user build their application. C<get>, C<redirect>,
 C<params> or C<request> are some of them. The main goal of Dancer is to provide
 the user with a new tiny language that is web-application-oriented, this is what
-we call a I<DSL>.
+we call a DSL (I<Domain Specific Language>).
+
+Dancer took an original path regarding the Perl culture: the framework does not
+provide a direct Object-Oriented layer to the user. In a route handler, you
+don't unroll the C<@_> variable. In a Dancer application, everything is
+declarative. Doing it this way allows for very expressive instructions and this
+is the reason why so many people liked Dancer in the first place. With Dancer
+every bit you write is necessary.
 
 As this set of keywords is the very first thing a user will have to use to build
 a web application with Dancer, it's very important for it to be succint,
-expressive and powerfull. On the other hand, it must not become a huge bag of
+expressive and powerfull. On the other hand, it should not become a huge bag of
 keywords as time goes. We don't want this set to be oversized, as the saying
 goes: I<Less is more>.
 
@@ -43,16 +50,19 @@ Those keywords are intended to be the basic rock upon which your application is
 built. But of course, this set should be extendable, that is where plugins come
 into play.
 
-On there are some very common use-case we wanted to address within Dancer
-without touching the core, and with more standardisation than simple plugins.
-Those fields are: logger, template and session engines. 
+We also introduced another layer, between the core and plugins, that we call
+engines. Indeed, there are some very common use-cases we wanted to address
+within Dancer without touching the core, and with more standardisation than
+simple plugins can provide. Those fields are: loggers, template engines,
+serializers and session engines. 
 
 So what is the core actually, if all the important parts are handled by engines
 and if most of the specific needs should be addressed by plugins?
-Well, the core is what you see when you look at Dancer's soul: it's a distpacher.
+Well, the core is what you see when you look at Dancer's soul: it's a
+distpacher provided as a DSL.
 
 A dead-simple dispatcher whose only real internal job is to register route
-handlers with a shiny sytactic sugar.
+handlers with a shiny and powerful sytactic sugar.
 
 =head2 The Core
 
@@ -62,10 +72,22 @@ L<Dancer::Request>.
 
 On top of that, you have the DSL itself, which is actually handled by L<Dancer>.
 You'll find in that package the list of exported keywords and their definition.
-Of course they all are alias to internal parts of the core. It's just the
+Of course they all are aliases to internal parts of the core. It's just the
 visilbe layer for the user.
 
 =head2 Engines
+
+Engines were introduced quickly in Dancer's development. The main idea behind
+this concept was to allow Dancer to be as extensible as possible.
+
+For instance, the engine design allows Dancer to handle different template or
+session engines transparently. You can change the backend you use with a simple
+configuration update.
+
+Basically, any engine in Dancer is built upon the Abstract Class design
+pattern: if you want to write your own template engine for Dancer, you'll have
+to I<implement> the L<Dancer::Template::Abstract> class.
+
 
 =head2 Plugins
 
