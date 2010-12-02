@@ -197,15 +197,15 @@ C<DBIX::Class>, and let it discover our simple database schema.
 
 Then run it in the directory where F<bookstore.db> sits:
 
-  perl populate.db
+  perl populate_database.db
 
-And thatt's our database populated !
+And that's our database populated !
 
 =head2 Use Dancer::Plugin::DBIC
 
 Let's go back to our Dancer application now. Instead of interacting with the
 database using SQL, let's configure C<DBIX::Class>. DBIC needs to understand how
-your data are organized in your database. There are two ways of letting DBIC
+your data is organized in your database. There are two ways of letting DBIC
 know:
 
 =over
@@ -224,8 +224,8 @@ itself.
 
 We'll demonstrate the use of the two solutions. The author of this article
 (dams) is not a big fan of the detection method: on complex database, it
-doesn't get everything right, so one needs to help DBIC. describing
-the schema manually seems a cleaner option. But hey, TIMTOWTDI.
+doesn't get everything right, so one needs to help DBIC. Describing the schema
+manually in proper Perl classes seems a cleaner option. But hey, TIMTOWTDI.
 
 =head3 Use auto-detection
 
@@ -255,12 +255,12 @@ C<Dancer::Plugin::DBIC>. That's easily done:
   # add in bookstore/lib/bookstore.pm
   use Dancer::Plugin::DBIC;
 
-And now we can implement C<_perform_search> using
-C<Dancer::Plugin::DBIC>. It's super easy: the plugin gives you access to an
-additional keyword C<schema>, which you give the name of schema you want to
-retrieve. It returns a C<DBIx::Class::Schema::Loader> (because we let the
-plugin discover the schema for us). This returned object can then be used to
-get a resultset and perform searches, as per standard usage of C<DBIX::Class>.
+And now we can implement C<_perform_search> using C<Dancer::Plugin::DBIC>. The
+plugin gives you access to an additional keyword called B<schema>, which you give the
+name of schema you want to retrieve. It returns a
+C<DBIx::Class::Schema::Loader> (because we let the plugin discover the schema
+for us). This returned object can then be used to get a resultset and perform
+searches, as per standard usage of C<DBIX::Class>.
 
   # add in bookstore/lib/bookstore.pm
   sub _perform_search {
@@ -304,11 +304,12 @@ authors.
 Writing your own DBIC schema classes goes a bit beyond this article, but here
 are the basics. You can either have the C<.pm> files be generated from you
 using C<dbicdump> (see C<DBIx::Class::Schema::Loader>), and then you can modify
-them to fit your needs.
+them to fit your needs. Or you can write them yourself from scratch, as
+explained in the DBIC documentation.
 
-Or you can use the nice C<DBIx::Class::MooseColumns> that let's you write the
-DBIC schema classes using C<Moose>. This way of doing make it look more like
-ActiveRecord declaration.
+A third option is to use the nice C<DBIx::Class::MooseColumns> that let's you
+write the DBIC schema classes using C<Moose>. This way of doing make it look
+more like ActiveRecord declarations.
 
 You should put your schema classes in a place that Dancer will find. A good
 place is in F<bookstore/lib/>.
@@ -322,13 +323,13 @@ auto-detection method:
     DBIC:
       bookstore:
         schema_class: My::Bookstore::Schema
-        dsn:  "dbi:SQLite:dbname=bookstore.db"
+        dsn: "dbi:SQLite:dbname=bookstore.db"
 
 The rest will work exactly the same.
 
 =head2 Start the application
 
-Our bookstore lookup application can be started using the built-in server:
+Our bookstore lookup application can now be started using the built-in server:
 
   # start the web application
   bookstore/bin/app.pl
