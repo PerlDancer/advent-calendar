@@ -52,6 +52,8 @@ xx. [R] Deploying Dancer (nmani)
 
 xx. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
 
+xx. [R] Dancer::Plugin::DBIC (dams)
+
 ==== NOT YET FINISHED
 
 xx. [P] Writing a new logger backend  (xsawyerx)
@@ -63,8 +65,6 @@ xx. [P] Dancer's ecosystem
 xx. [P] Authentication with Twitter OAuth (sukria)        
 
 xx. [P] ournowrimo app (yanick champoux)
-
-xx. [P] Dancer::Plugin::DBIC (dams)
 
 xx. [P] Dancer for static websites (BooK)
 
