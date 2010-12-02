@@ -44,7 +44,8 @@ As this set of keywords is the very first thing a user will have to use to build
 a web application with Dancer, it's very important for it to be succint,
 expressive and powerfull. On the other hand, it should not become a huge bag of
 keywords as time goes. We don't want this set to be oversized, as the saying
-goes: I<Less is more>.
+goes: I<Less is more>. That's why I'm very picky when someone suggests to add a
+new keyword the core's DSL. 
 
 Those keywords are intended to be the basic rock upon which your application is
 built. But of course, this set should be extendable, that is where plugins come
@@ -62,7 +63,7 @@ Well, the core is what you see when you look at Dancer's soul: it's a
 distpacher provided as a DSL.
 
 A dead-simple dispatcher whose only real internal job is to register route
-handlers with a shiny and powerful sytactic sugar.
+handlers with a powerful sytactic sugar.
 
 =head2 The Core
 
