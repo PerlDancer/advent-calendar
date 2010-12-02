@@ -416,7 +416,13 @@ template parameters have the appropriate values before being rendered.
 
 =head2 Putting it all together
 
-Here's the complete dancr.pl script from start to finish: L<https://gist.github.com/716685>.
+If you want to test the application of this tutorial, you can grab the complete
+source code on
+L<GitHub|https://github.com/PerlDancer/advent-calendar-apps/tree/master/2010/03-dancr/>
+
+    git clone https://github.com/PerlDancer/advent-calendar-apps.git
+    cd advent-calendar-apps/2010/03-dancr/
+    perl dancr.pl
 
 =head2 Advanced route moves
 
