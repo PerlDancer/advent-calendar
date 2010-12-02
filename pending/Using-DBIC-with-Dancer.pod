@@ -4,7 +4,8 @@ C<DBIx::Class>, also known as C<DBIC>, is one of the many Perl ORM
 (I<Object Relational Mapper>), but it's commonly recognized as the best 
 and most widely used.
 
-This is a nice presentation from Leo : L<http://www.slideshare.net/ranguard/dbixclass-beginners-presentation>
+This is a nice presentation from Leo :
+L<http://www.slideshare.net/ranguard/dbixclass-beginners-presentation>
 
 Basically, C<DBIC> allows you to interact with your SQL Database without writing any SQL.
 
@@ -16,19 +17,19 @@ From a Dancer web application, it is very easy to use DBIC, thanks to
 C<Dancer::Plugin::DBIC>. This article will implement a simple web application to
 demonstrate the use of C<Dancer::Plugin::DBIC>.
 
-B<Note> : Although this article only skimm the surface of C<DBIX::Class>, it
-won't explain what C<DBIC> is or how to use it. We reommand you have a look at
+B<Note> : Although this article only skimms the surface of C<DBIX::Class>, it
+won't explain how to use it. We recommand you to have a look at
 C<DBIx::Class::Manual::Intro> or C<DBIx::Class::Manual::Example> if needed.
 
 =head2 The bookstore example
 
 Let's consider a simple Dancer application that allows to search for authors or
 books. The application is connected to a database, that contains authors, and
-their books. The website will have one single page with a form, to query books
-or authors, and display the result.
+their books. The website will have one single page with a form, that allows to
+query books or authors, and display the results.
 
 To keep this article short, the HTML will be simplistic, and the implementation
-will be a bit simple. However, we'll try to explain how to properly use
+as well. However, we'll try to explain how to properly use
 C<Dancer::Plugin::DBIC>.
 
 The application will be structured as follow:
@@ -90,9 +91,9 @@ That explanation is probably hard to follow, so here is an example, much easier:
     }
   ]
 
-So, what will look the view like? Here is a simple example, displaying the
-search form, and the results, if any. It's written in Template Toolkit, except
-that Dancer changes the C<[‰ %]> format to be C<< <% %> >> instead.
+So, what will the view look like? Here is a simple example, displaying the
+search form, and the results, if any. It's written in Template Toolkit, but
+Dancer changes the default C<[‰ %]> format to be C<< <% %> >> instead.
 
   # bookstore/views/search.tt
   <p>
@@ -140,11 +141,11 @@ It's rather simple: get the parameter called I<query>, if it exists perform the
 search, and in any case, call the C<search> view.
 
 So, as you can see, we need to write the C<_perform_search()> method. But
-before we do that, let's create the database
+before we do that, let's create the database.
 
 =head3 Create a database
 
-we'll go with SQLite, as it fits well with the aim of simplicity of this
+We'll go with SQLite, as it fits well with the aim of simplicity of this
 example. Let's create the SQLite file database:
 
   $> sqlite3 bookstore.db
@@ -296,13 +297,7 @@ get a resultset and perform searches, as per standard usage of C<DBIX::Class>.
   }
 
 We needed to do some data fiddling so that the books results are gathered by
-authors. Now if e search for C<The>, here is what we get :
-
-=for html <img src="/images/dancer_dbic.png" />
-
-As you can see, the page presents 4 results. The first one is an author's
-match, I<Richard MaB<the>son>. The next 2 ones are 2 of his books. The last one
-is I<B<The> Player of Games> (a great book btw...).
+authors.
 
 =head3 Use home-made schema classes
 
@@ -330,6 +325,21 @@ auto-detection method:
         dsn:  "dbi:SQLite:dbname=bookstore.db"
 
 The rest will work exactly the same.
+
+=head2 Start the application
+
+Our bookstore lookup application can be started using the built-in server:
+
+  # start the web application
+  bookstore/bin/app.pl
+
+Now if we search for C<The>, here is what we get :
+
+=for html <img src="/images/dancer_dbic.png" />
+
+As you can see, the page presents 4 results. The first one is an author's
+match, I<Richard MaB<the>son>. The next 2 ones are 2 of his books. The last one
+is I<B<The> Player of Games> (a great book btw...).
 
 =head2 Conclusion 
 
