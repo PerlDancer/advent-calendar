@@ -340,4 +340,4 @@ C<Dancer::Plugin::DBIC> is exactly that, and we hope we demonstrated it to you.
 
 =head2 AUTHOR
 
-dams: Damien Krotkine <dams@cpan.org>
+dams ( Damien Krotkine <dams@cpan.org> )
