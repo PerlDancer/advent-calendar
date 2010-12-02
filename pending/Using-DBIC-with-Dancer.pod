@@ -16,7 +16,11 @@ From a Dancer web application, it is very easy to use DBIC, thanks to
 C<Dancer::Plugin::DBIC>. This article will implement a simple web application to
 demonstrate the use of C<Dancer::Plugin::DBIC>.
 
-=head2 Simple example
+B<Note> : Although this article only skimm the surface of C<DBIX::Class>, it
+won't explain what C<DBIC> is or how to use it. We reommand you have a look at
+C<DBIx::Class::Manual::Intro> or C<DBIx::Class::Manual::Example> if needed.
+
+=head2 The bookstore example
 
 Let's consider a simple Dancer application that allows to search for authors or
 books. The application is connected to a database, that contains authors, and
@@ -24,8 +28,8 @@ their books. The website will have one single page with a form, to query books
 or authors, and display the result.
 
 To keep this article short, the HTML will be simplistic, and the implementation
-will be a bit stupid. However, I'll try to explain how to properly use
-Dancer::Plugin::DBIC.
+will be a bit simple. However, we'll try to explain how to properly use
+C<Dancer::Plugin::DBIC>.
 
 The application will be structured as follow:
 
@@ -33,7 +37,7 @@ The application will be structured as follow:
 
 =item *
 
-a Dancer route C</search> to handle the request, and decide if there is any
+a Dancer route B</search> to handle the request, and decide if there is any
 search to perform, and send the results to the view
 
 =item *
@@ -104,10 +108,10 @@ that Dancer changes the C<[‰ %]> format to be C<< <% %> >> instead.
       Results:
       <ul>
       <% FOREACH result IN results %>
-        <li>Author: <% result.author %>
+        <li>Author: <% result.author.replace("((?i)$query)", '<b>$1</b>') %>
         <ul>
         <% FOREACH book IN result.books %>
-          <li><% book %>
+          <li><% book.replace("((?i)$query)", '<b>$1</b>') %>
         <% END %>
         </ul>
       <% END %>
@@ -140,7 +144,7 @@ before we do that, let's create the database
 
 =head3 Create a database
 
-I'll go with SQLite, as it fits well with the aim of simplicity of this
+we'll go with SQLite, as it fits well with the aim of simplicity of this
 example. Let's create the SQLite file database:
 
   $> sqlite3 bookstore.db
@@ -149,44 +153,78 @@ example. Let's create the SQLite file database:
     firstname text default '' not null, 
     lastname text not null);
 
-  CREATE TABLE books(
+  CREATE TABLE book(
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-    author_id INTEGER REFERENCES author (id), 
+    author INTEGER REFERENCES author (id), 
     title text default '' not null );
 
 Simple stuff: we have 2 tables, one for authors, and one for books, that points to the author table.
 
 =head3 Populate with some data
 
-Ian M. Banks
+Let's write a script to populate the database with some data. We'll use
+C<DBIX::Class>, and let it discover our simple database schema.
 
-Richard Matheson
-Frank Herbert
-Isaac Asimov
-Clive Barker
+  # populate_database.pl
+  package My::Bookstore::Schema;
+  use base qw(DBIx::Class::Schema::Loader);
+  package main;
+  my $schema = My::Bookstore::Schema->connect('dbi:SQLite:dbname=bookstore.db');
+  $schema->populate('Author', [
+    [ 'firstname', 'lastname'],
+    [ 'Ian M.',    'Banks'   ],
+    [ 'Richard',   'Matheson'],
+    [ 'Frank',     'Herbert' ],
+  ]);
+  my @books_list = (
+    [ 'Consider Phlebas',    'Banks'    ],
+    [ 'The Player of Games', 'Banks'    ],
+    [ 'Use of Weapons',      'Banks'    ],
+    [ 'Dune',                'Herbert'  ],
+    [ 'Dune Messiah',        'Herbert'  ],
+    [ 'Children of Dune',    'Herbert'  ],
+    [ 'The Night Stalker',   'Matheson' ],
+    [ 'The Night Strangler', 'Matheson' ],
+  );
+  # transform author names into ids
+  $_->[1] = $schema->resultset('Author')->find({ lastname => $_->[1] })->id
+    foreach (@books_list);
+  $schema->populate('Book', [
+    [ 'title', 'author' ],
+    @books_list,
+  ]);
 
-=head2 Use DBIC
+Then run it in the directory where F<bookstore.db> sits:
 
-Instead of interacting with the database using SQL, let's configure
-DBIX::Class. DBIC needs to understand how your data are organized in your
-database. There are two ways of letting DBIC know:
+  perl populate.db
+
+And thatt's our database populated !
+
+=head2 Use Dancer::Plugin::DBIC
+
+Let's go back to our Dancer application now. Instead of interacting with the
+database using SQL, let's configure C<DBIX::Class>. DBIC needs to understand how
+your data are organized in your database. There are two ways of letting DBIC
+know:
 
 =over
 
 =item *
 
-either by writing a set of Perl modules, called schema modules: they will describe the database schema, each module describing one entity,
+either by writing a set of Perl modules, called schema modules: they will
+describe the database schema, each module describing one entity,
 
 =item *
 
-or by letting DBIC connect to the database, explore it, and generate the schema itself.
+or by letting DBIC connect to the database, explore it, and generate the schema
+itself.
 
 =back
 
-I'll demonstrate the use of the two solutions. I'm personally not a big fan of
-the detection method: on complex database, it doesn't get everything right, so
-one needs to help DBIC. I prefer describing the schema manually. But hey,
-TIMTOWTDI.
+We'll demonstrate the use of the two solutions. The author of this article
+(dams) is not a big fan of the detection method: on complex database, it
+doesn't get everything right, so one needs to help DBIC. describing
+the schema manually seems a cleaner option. But hey, TIMTOWTDI.
 
 =head3 Use auto-detection
 
@@ -202,39 +240,104 @@ created.
       bookstore:
         dsn:  "dbi:SQLite:dbname=bookstore.db"
 
-You could potentially define more schemas, by adding more fields under the C<DBIC:> entry.
+We could potentially define more schemas, by adding more fields under the C<DBIC:> entry.
 
 B<Note> : you've noticed that we have only described which database to link the
 schema to. That way, we let C<Dancer::Plugin::DBIC> connect to the database and
 discover its schema, and make it available for us
 
-bookstore/environments/development.yml
+Now that the configuration is done, let's see what needs to be done in the code.
 
-
- that will describe the
-
-
- There are two ways of using DBIC. FirstDBIC needs a schema
-
-
-
-We also need a view:
-
-  # 
-
-Let's add a route:
+First of all, we need to indicate to Dancer that we want to use
+C<Dancer::Plugin::DBIC>. That's easily done:
 
   # add in bookstore/lib/bookstore.pm
-  
-But 
+  use Dancer::Plugin::DBIC;
 
- way of writing the web application code
+And now we can implement C<_perform_search> using
+C<Dancer::Plugin::DBIC>. It's super easy: the plugin gives you access to an
+additional keyword C<schema>, which you give the name of schema you want to
+retrieve. It returns a C<DBIx::Class::Schema::Loader> (because we let the
+plugin discover the schema for us). This returned object can then be used to
+get a resultset and perform searches, as per standard usage of C<DBIX::Class>.
 
+  # add in bookstore/lib/bookstore.pm
+  sub _perform_search {
+      my ($query) = @_;
+      my $bookstore_schema = schema 'bookstore';
+      my @results;
+      # search in authors
+      my @authors = $bookstore_schema->resultset('Author')->search({
+        -or => [
+          firstname => { like => "%$query%" },
+          lastname  => { like => "%$query%" },
+        ]
+      });
+      push @results, map {
+          { author => join(' ', $_->firstname, $_->lastname),
+            books => [],
+          }
+      } @authors;
+      my %book_results;
+      # search in books
+      my @books = $bookstore_schema->resultset('Book')->search({
+          title => { like => "%$query%" },
+      });
+      foreach my $book (@books) {
+          my $author_name = join(' ', $book->author->firstname, $book->author->lastname);
+          push @{$book_results{$author_name}}, $book->title;
+      }
+      push @results, map {
+          { author => $_,
+            books => $book_results{$_},
+          }
+      } keys %book_results;
+      return @results;
+  }
 
+We needed to do some data fiddling so that the books results are gathered by
+authors. Now if e search for C<The>, here is what we get :
 
- It's
-=head1 SEE ALSO
+=for html <img src="/images/dancer_dbic.png" />
 
-=head1 AUTHOR
+As you can see, the page presents 4 results. The first one is an author's
+match, I<Richard MaB<the>son>. The next 2 ones are 2 of his books. The last one
+is I<B<The> Player of Games> (a great book btw...).
 
-dams: Damien Krotkine <dams@zarb.org>
+=head3 Use home-made schema classes
+
+Writing your own DBIC schema classes goes a bit beyond this article, but here
+are the basics. You can either have the C<.pm> files be generated from you
+using C<dbicdump> (see C<DBIx::Class::Schema::Loader>), and then you can modify
+them to fit your needs.
+
+Or you can use the nice C<DBIx::Class::MooseColumns> that let's you write the
+DBIC schema classes using C<Moose>. This way of doing make it look more like
+ActiveRecord declaration.
+
+You should put your schema classes in a place that Dancer will find. A good
+place is in F<bookstore/lib/>.
+
+Once your schema classes are in place, all you need to do is modify
+F<config.yml> to specify that you want to use them, instead of the default
+auto-detection method:
+
+  # change in bookstore/config.yml
+  plugins:
+    DBIC:
+      bookstore:
+        schema_class: My::Bookstore::Schema
+        dsn:  "dbi:SQLite:dbname=bookstore.db"
+
+The rest will work exactly the same.
+
+=head2 Conclusion 
+
+Well that was a rather long article, but we wanted to show a real example of
+using DBIC in Dancer. Most of the Dancer Plugins have the same spirit in
+common: be as simple as possible, and don't get in the way of the user.
+C<Dancer::Plugin::DBIC> is exactly that, and we hope we demonstrated it to you.
+
+=head2 AUTHOR
+
+dams: Damien Krotkine <dams@cpan.org>
