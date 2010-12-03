@@ -32,33 +32,33 @@ Flags:
 
 ==== NEED TO BE REVIEWED
 
-xx. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
+07. [R] Deploying Dancer (nmani)
 
-xx. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
-
-xx. [R] How to work with sessions in cookies (Dancer::Session::Cookie,
+08. [R] How to work with sessions in cookies (Dancer::Session::Cookie,
         kappa@{github,cpan})
 
-xx. [R] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+09. [R] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
         Dancer::Plugin::REST)
 
-xx. [R] using dancer with middlewares
+10. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
 
-xx. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
+11. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
 
-xx. [R] Dancer::Plugin::Feed (franck)
+12. [P] Authentication with Twitter OAuth (sukria)        
 
-xx. [R] Deploying Dancer (nmani)
+13. [R] using dancer with middlewares
 
-xx. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
+14. [R] Dancer::Plugin::DBIC (dams)
 
-xx. [R] Dancer::Plugin::DBIC (dams)
+16. [R] Dancer::Plugin::Feed (franck)
 
-xx. [P] Dancer's ecosystem
+17. [P] ournowrimo app (yanick champoux)
 
-xx. [P] Authentication with Twitter OAuth (sukria)        
+18. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
 
-xx. [P] ournowrimo app (yanick champoux)
+19. [P] Dancer's ecosystem
+
+20. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
 ==== NOT YET FINISHED
 
