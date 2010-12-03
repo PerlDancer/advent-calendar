@@ -169,18 +169,19 @@ wanted, writing a mobile-aware Dancer app will now be much easier.
 
 As you can imagine, I've written L<Dancer::Plugin::MobileDevice> and
 uploaded it to CPAN, so if you want to study it a bit more, feel free
-to grab the tarball.
+to grab the tarball. You can also check out the source code from
+L<GitHub|https://github.com/sukria/Dancer-Plugin-MobileDevice>.
 
-In our next article we'll see how to write a good test-suite for our plugin. 
+Furthermore, if you want to see this plugin in action, just use your smartphone to
+access the advent calendar. Indeed, our advent calendar is powered by
+L<Dancer|http://perldancer.org> and uses C<Dancer::Plugin::MobileDevice> to
+change the layout dynamically, just as explained in this article.
+
 
 =head2 Author
 
 This article has been written by Alexis Sukrieh for the PerlDancer Advent
 Calendar 2010.
-
-=head2 Reviewers
-
-Proofreading and typo-fixing by Philippe Bruhat, Sawyer X and David Precious.
 
 =head2 Copyright
 
