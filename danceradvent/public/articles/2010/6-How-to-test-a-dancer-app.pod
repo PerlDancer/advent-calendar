@@ -1,10 +1,11 @@
 =head1 Testing a Dancer application
 
-In the previous article, we saw how to develop a plugin. We have
-written in our example a plugin named L<Dancer::Plugin::MobileDevice>,
-we'll see in this one how to test it.
+In L<the previous article|http://advent.perldancer.org/2010/5>, we saw how to
+develop a plugin. We have written in our example a plugin named
+L<Dancer::Plugin::MobileDevice>, we'll see in this one how to test it.
 
-In this article you will learn how to use the L<Dancer::Test> module for
+As testing a plugin is pretty much the same thing as testing a complete application,
+you will learn in this article how to use the L<Dancer::Test> module for
 building a good test suite for a Dancer application.
 
 =head2 Why testing?
