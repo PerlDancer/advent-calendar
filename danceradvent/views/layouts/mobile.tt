@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+<title>[% IF title %] [% title %] | PerlDancer Advent Calendar[% ELSE %]PerlDancer Advent Calendar[% END %]</title>
+
+<link rel="stylesheet" href="[% uri_base %]/css/mobile.css" />
+
+<link rel="alternate" type="application/rss+xml" title="All Articles " href="[% uri_base %]/feed/[% year %]" /> 
+
+</head>
+<body>
+<div id="page">
+	<div id="content">
+		[% content %]
+	</div>
+
+	<div id="footer">
+		Powered by <a href="http://perldancer.org/">Dancer</a> 1.2
+	</div>
+</div>
+
+</body>
+</html>
