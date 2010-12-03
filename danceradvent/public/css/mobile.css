@@ -1,9 +1,11 @@
 body {
 	font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
-	margin: 0;
+	margin: 2em;
 	margin-bottom: 25px;
+	background: url(/images/dancing-santa.png) no-repeat top right;
 	padding: 0;
 	font-size: 16px;
+	padding-right: 90px;
 }
 
 h1 {
