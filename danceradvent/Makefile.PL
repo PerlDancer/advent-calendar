@@ -14,6 +14,7 @@ WriteMakefile(
     PREREQ_PM => {
         'Dancer'                    => 1.2000,
         'Dancer::Plugin::DebugDump' => 0,
+        'Dancer::Plugin::MobileDevice' => 0,
         'Dancer::Plugin::Feed'      => 0,
         'DateTime'                  => 0,
         'Pod::POM'                  => 0,

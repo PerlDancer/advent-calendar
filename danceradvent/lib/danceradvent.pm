@@ -4,7 +4,10 @@ use Dancer::Plugin::DebugDump;
 use DateTime;
 use Pod::POM;
 use Pod::POM::View::InlineHTML;
+
 use Dancer::Plugin::Feed;
+use Dancer::Plugin::MobileDevice;
+
 use URI;
 use POSIX qw/strftime/;
 our $VERSION = '0.1';
