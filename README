@@ -44,7 +44,7 @@ Flags:
 
 11. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
 
-12. [P] Authentication with Twitter OAuth (sukria)        
+12. [R] Authentication with Twitter OAuth (sukria)        
 
 13. [R] using dancer with middlewares
 
@@ -52,11 +52,11 @@ Flags:
 
 16. [R] Dancer::Plugin::Feed (franck)
 
-17. [P] ournowrimo app (yanick champoux)
+17. [R] ournowrimo app (yanick champoux)
 
 18. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
 
-19. [P] Dancer's ecosystem
+19. [R] Dancer's ecosystem
 
 20. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
