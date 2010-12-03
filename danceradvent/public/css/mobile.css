@@ -1,0 +1,64 @@
+body {
+	font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
+	margin: 0;
+	margin-bottom: 25px;
+	padding: 0;
+	font-size: 16px;
+}
+
+h1 {
+	font-size: 28px;
+	color: #000;
+	margin: 0;
+	border-bottom: 2px solid #af8b41;
+}
+.advent-day {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    text-decoration: none;
+    color: #000000;
+	font-size: 36px;
+	text-align: center;
+	font-weight: bold;
+    margin: 10px;
+    padding: 5px;
+}
+
+span.advent-day {
+	background: url(/images/perldancer.jpg) no-repeat top left;
+	opacity: 0.33;
+}
+
+a.advent-day {
+	background-color: #af8b41;
+	color: #000;
+	opacity: 0.95;
+}
+
+a.advent-day:hover {
+	opacity: 0.99;
+	color: #eee;
+}
+
+.feed {
+    border:1px solid;
+    border-color:#FC9 #630 #330 #F96;
+    padding:0 3px;
+    font:bold 10px verdana,sans-serif;
+    color:#FFF !important;
+    background:#F60;
+    text-decoration:none;
+    margin:4px;
+}
+
+div.advent-calendar {
+	width: 520px;
+	margin: auto;
+}
+#footer {
+	font-size: 10px;
+	margin-top: 1em;
+}
