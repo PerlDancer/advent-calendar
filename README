@@ -54,13 +54,13 @@ xx. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hob
 
 xx. [R] Dancer::Plugin::DBIC (dams)
 
+xx. [P] Dancer's ecosystem
+
 ==== NOT YET FINISHED
 
 xx. [P] Writing a new logger backend  (xsawyerx)
 
 xx. [P] Writing a new serializer backend (xsawyerx)
-
-xx. [P] Dancer's ecosystem
 
 xx. [P] Authentication with Twitter OAuth (sukria)        
 
