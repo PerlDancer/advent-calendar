@@ -1,8 +1,8 @@
-=head1 Writing ReST web services with Dancer
+=head1 Writing REST web services with Dancer
 
-It's really easy to write ReST web services with Dancer.
+It's really easy to write REST web services with Dancer.
 
-A ReST application is defined by:
+A REST application is defined by:
 
 =over 4
 
@@ -16,24 +16,25 @@ A ReST application is defined by:
 
 =head2 Serializers
 
-Dancer comes with some helper functions, in order to help you to serialize your Perl data structure to something like JSON or XML.
+Dancer comes with some helper functions, in order to help you to serialize your
+Perl data structure to something like JSON or XML.
 
 The core provides serializers for:
 
 =over 4
 
-=item B<JSON> (to_json and from_json)
+=item B<JSON> (C<to_json> and C<from_json>)
 
-=item B<XML> (to_xml and from_xml)
+=item B<XML> (C<to_xml> and C<from_xml>)
 
-=item B<YAML> (to_yaml and from_yaml)
+=item B<YAML> (C<to_yaml> and C<from_yaml>)
 
 =back
 
 With these serializers, you can write:
 
     get '/user/:id' => sub {
-        my $user = $schema->resultset('Users')->find(params->{id});
+        my $user = $schema->resultset('Users')->find( params->{id} );
         content_type 'application/json';
         return to_json { id => params->{id}, name => $user->name };
     };
@@ -52,18 +53,29 @@ You can configure your application to have a default serializer:
 Now, you can define a route like this:
 
      get '/user/:id' => sub {
-         my $id = params->{id};
+         my $id   = params->{id};
          my $user = $schema->resultset('Users')->find($id);
          return { id => $id, name => $user->name };
      };
 
-As you can see, we no longer need to call the B<content_type> and B<to_json> functions. When you set a default serializer and your route returns an arrayref or hashref, Dancer will check if you have a default serializer defined. If that is the case,  it will serialize the response to the appropriate format and set the correct content type.
+As you can see, we no longer need to call the C<content_type> and C<to_json>
+functions. When you set a default serializer and your route returns an arrayref
+or hashref, Dancer will check if you have a default serializer defined. If that
+is the case, it will serialize the response to the appropriate format and set
+the correct content type.
 
 =head3 Let the user select the format.
 
-If you have installed the required dependencies for using all the supported serializers by Dancer (XML::Simple, YAML and JSON), you can even let the user choose in which format he prefers to have the content of the request. For this, you'll need to set the serializer to B<mutable>. From now on, you can select your format by defining the correct value in the HTTP header of your request (Content-Type when doing a POST or PUT operation, and Accept-Type for GET and DELETE).
+If you have installed the required dependencies for using all the supported
+serializers by Dancer (L<XML::Simple>, L<YAML> and L<JSON>), you can even let
+the user choose in which format he prefers to have the content of the request.
+For this, you'll need to set the serializer to B<mutable>
+(L<Dancer::Serializer::Mutable>. From now on, you can select your format by
+defining the correct value in the HTTP header of your request (B<Content-Type>
+when doing a POST or PUT operation, and B<Accept-Type> for GET and DELETE).
 
-So, if we take our previous example, by setting the serializer to B<mutable>, we can do the following:
+So, if we take our previous example, by setting the serializer to B<mutable>,
+we can do the following:
 
     $ curl http://localhost:5000/1
     {"name":"franck","id":"1"}
@@ -78,11 +90,16 @@ So, if we take our previous example, by setting the serializer to B<mutable>, we
      
 =head2 Dancer::Plugin::REST
 
-There is an excellent plugin available to help you to write a ReST application: Dancer::Plugin::REST. With this one, you'll be able to declare route to access to resources, but also declare how you want to handle the format.
+There is an excellent plugin available to help you to write a REST application:
+L<Dancer::Plugin::REST>. With this one, you'll be able to declare routes to
+access resources, but also declare how you want to handle the format.
 
 =head3 Format
 
-As we have seen, you can already define the format by setting the B<serializer> option to a certain value (JSON, YAML, mutable, ...). The plugin add another way: by appending the format to your request. This mean you can declare this kind of route:
+As we have seen, you can already define the format by setting the B<serializer>
+option to a certain value (JSON, YAML, mutable, etc.). The plugin add another
+way: by appending the format to your request. This mean you can declare this
+kind of route:
 
     prepare_serializer_for_format;
 
@@ -99,40 +116,43 @@ As we have seen, you can already define the format by setting the B<serializer> 
 
 =head3 Resources
 
-As stated at the beginning of the article, with ReST you defined routes to access resources. So let's do this:
+As stated at the beginning of the article, with REST you defined routes to
+access resources. So let's do this:
 
     resource user => 
-        'get' => \&on_get_user,
+        'get'    => \&on_get_user,
         'create' => \&on_create_user,
         'delete' => \&on_delete_user,
         'update' => \&on_update_user;
 
     sub on_get_user {
         ...
-        status_ok({ user => $users->id });
+        status_ok( { user => $users->id } );
     }
 
     sub on_create_user {
         ...
-        status_created({user => $user->id});
+        status_created( { user => $user->id } );
     }
 
     ...
 
 =head3 Helpers
 
-The plugin add also some helpers to return an appropriate HTTP status to your request.
+The plugin add also some helpers to return an appropriate HTTP status to your
+request.
 
     post '/user/' => sub {
         my $user = $schema->resultset('Users')->create(...);
-        status_created({ id => $user->id, name => $user->name });
+        status_created( { id => $user->id, name => $user->name } );
     };
 
-This will return a new HTTP response with a status to 201.
+This will return a new HTTP response with a status of 201.
     
 =head2 Credits
 
-Most of the work done on the serializers have been inspired by the excellent plugin Catalyst::Action::REST. Thanks to all the authors of this module.
+Most of the work done on the serializers have been inspired by the excellent
+plugin L<Catalyst::Action::REST>. Thanks to all of the authors of this module.
 
 =head2 Author
 
