@@ -67,7 +67,7 @@ through the L<Sys::Syslog> module.
 =head3 Dancer::Logger::PSGI
 
 This class is an interface between your Dancer's application and
-B<psgix.logger>. Message will be logged in whatever logger you decided to use
+C<psgix.logger>. Message will be logged in whatever logger you decided to use
 in your L<Plack> handler. If no logger is defined, nothing will be logged.
 
 (on CPAN/ L<http://search.cpan.org/perldoc?Dancer::Logger::PSGI>)
@@ -86,8 +86,8 @@ spinner will run slowly.
 
 =head3 Dancer::Plugin::REST
 
-This plugin helps you write a RESTful webservice with Dancer. This plugin will
-be detailed in another article about B<ReST>.
+This plugin helps you write a RESTful web service with Dancer. This plugin will
+be detailed in another article about B<REST>.
 
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::REST>)
 
@@ -102,8 +102,8 @@ complex and precise normalization upon configuration.
 =head3 Dancer::Plugin::Mongo
 
 L<Dancer::Plugin::Mongo> provides a wrapper around B<MongoDB>. Add the
-appropriate configuration options to your config.yml and then you can access a
-MongoDB database using the 'mongo' keyword.
+appropriate configuration options to your F<config.yml> and then you can access
+a MongoDB database using the C<mongo> keyword.
 
     use Dancer;
     use Dancer::Plugin::Mongo;
@@ -134,7 +134,7 @@ calling the database keyword within your Dancer application.
 
 This plugin provides an easy way to obtain L<DBIx::Class::ResultSet> instances
 via the the function schema(), which it automatically imports. You just need
-to point to a dsn in your Dancer configuration file. So you no longer have to
+to point to a DSN in your Dancer configuration file. So you no longer have to
 write boilerplate DBIC setup code.
 
     use Dancer;

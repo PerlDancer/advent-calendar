@@ -41,7 +41,7 @@ with, for each articles, if it should be visible:
     }
 
 And of course, we need to build each article from POD, set the date of the
-publication, the title, the permalink, ...
+publication, the title, the permalink, etc.
 
    sub _article {
         my ( $year, $day ) = @_;
@@ -119,9 +119,9 @@ L<XML::Feed>
 
 =head2 Author
 
-This article has been written by franck cuny for the Perl Dancer Advent Calendar
+This article has been written by Franck Cuny for the Perl Dancer Advent Calendar
 2010.
 
 =head2 Copyright
 
-Copyright (C) 2010 by franck cuny C<< <franck@lumberjaph.net> >>
+Copyright (C) 2010 by Franck Cuny C<< <franck@lumberjaph.net> >>

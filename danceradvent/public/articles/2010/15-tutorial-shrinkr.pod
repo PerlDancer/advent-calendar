@@ -1,4 +1,4 @@
-=head1 Tutorial: shrinkr, an URL shortener
+=head1 Tutorial: Shrinkr, an URL shortener
 
 This article will guide you through the writing of working URL shortener
 written with Dancer.
@@ -36,7 +36,7 @@ so it should work "out of the box" for you. If not, patches are welcome!
 
 For this tutorial, I've decided to put all of the configuration settings
 into the main application file.  For a more complex application it would
-be a better idea to use a seperate YAML file to hold the configuration
+be a better idea to use a separate YAML file to hold the configuration
 directives.  (This technique is well documented in the primary Dancer docs.)
 
 The first line is not specific to Dancer, only to this application. It
@@ -55,7 +55,7 @@ the fourth line.
 
 In the last setting line, we tell Dancer to output errors directly to the 
 web client. This is a fantastic option for development as it gives you 
-a great stacktrace and loads of context around the error, but its probably 
+a great stack trace and loads of context around the error, but its probably 
 not a great option for production sites.
 
 There is also a C<layout> directive which tells Dancer to look in 
@@ -303,7 +303,7 @@ bounded links to do that.
 And here we call the C<template> method, and hand off the database query
 results, and the navigation links as appropriate.  The F<stats.tt> template
 will check to see if C<nextl> or C<prevl> have values before rendering them
-so it's ok to pass in a value which isn't defined.
+so it's OK to pass in a value which isn't defined.
 
 =head2 Showing all link stats
 

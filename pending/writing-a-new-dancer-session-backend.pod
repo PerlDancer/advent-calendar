@@ -209,8 +209,8 @@ ID.
 
 =item * destroy
 
-This method deletes the session object completely. Again, using Kioku, it's just
-too easy.
+This method deletes the session object completely. Again, using KiokuDB, it's
+just too easy.
 
     sub destroy {
         my $self  = shift;
