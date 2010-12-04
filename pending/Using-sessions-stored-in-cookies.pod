@@ -73,10 +73,10 @@ on.
 Little can be added to this. This method is not new and is in
 production use on some of the most loaded websites in the world for
 years. It is a kind of well-kept secret of doing secure stateful HTTP
-under heavy load.  Personally, I tend to use it everywhere I can
+under heavy load. Personally, I tend to use it everywhere I can
 because it is also simpler than creating a server-side session store.
 
-The reason it is not used more widely I think lies in the frameworks
+The reason it is not used more widely, I think, lies in the frameworks
 which power a large percentage of all new websites and do not
 implement this mechanism. Fortunately, Dancer is not one of them.
 
@@ -120,11 +120,13 @@ do not fit this is probably a sign of something strange happening.
 See L<Dancer::Session> for details about session usage in route handlers.
 
 See L<Plack::Middleware::Session::Cookie>,
-L<Catalyst::Plugin::CookiedSession>, L<Mojolicious::Controller/session> for alternative implementation of this mechanism.
+L<Catalyst::Plugin::CookiedSession>, L<Mojolicious::Controller/session> for
+alternative implementation of this mechanism.
 
 =head2 Author
 
-This article has been written by Alex Kapranoff for the Perl Dancer Advent Calendar 2010.
+This article has been written by Alex Kapranoff for the Perl Dancer Advent
+Calendar 2010.
 
 =head2 Copyright
 
