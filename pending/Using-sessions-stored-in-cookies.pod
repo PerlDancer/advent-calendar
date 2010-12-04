@@ -45,7 +45,7 @@ Modern websites try to work around session storage problems by using
 special storages like I<Memcached> and there's a
 L<Dancer::Session::Memcached> plugin to implement such a scheme in a
 Dancer application. That usually means replacing the database problems
-with memcached problems, like memcached not being persistent between
+with Memcached problems, like Memcached not being persistent between
 reboots or not guaranteeing storage for any long period of time due to
 being a cache and not a general purpose database.
 
@@ -101,7 +101,7 @@ After installation, add these lines to your F<config.yml>:
 You should initialize your B<session_cookie_key> with a random string of 16
 or more characters right away to ensure the uniqueness of your
 encryption. You should also implement protection for F<config.yml> by
-setting some permissions and not pushing it to github :) Compromised
+setting some permissions and not pushing it to GitHub :) Compromised
 encryption key may potentially lead to all sorts of bad things.
 
 Session expiration may be implemented on both sides. First, by using a
