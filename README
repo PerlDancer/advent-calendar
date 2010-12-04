@@ -11,19 +11,19 @@ Flags:
 
 ==== PUBLISHING ORDER:
 
-01. [P] Dancer 1.2 is released! article based on the changelog with a word or
+01. [D] Dancer 1.2 is released! article based on the changelog with a word or
         two about upcoming change planed for 1.4
 
-02. [P] Why routes? How does route-based web works and why is it more fun?
+02. [D] Why routes? How does route-based web works and why is it more fun?
 
 03. [D] dancr (tutorial)
 
 04. [D] Dancer::Plugin::Database (bigpresh)
 
-05. [D] Writing a Dancer plugin (need to think of one) (what about a
-        Dancer::Plugin::MobilePhone that detects if the user agent is a mobile phone
-        and sets some templates variables, or change the base url to m.domain...)
-        [ sukria ]
+05. [D] Writing a Dancer plugin (Dancer::Plugin::MobilePhone that detects if the
+        user agent is a mobile phone and sets some templates variables,
+        or changes the base url to m.domain...)
+        [ Sukria ]
 
 06. [D] Writing Dancer specific tests. (already covered in my article about
         writing a plugin, maybe I should split them in two parts? sukria)
