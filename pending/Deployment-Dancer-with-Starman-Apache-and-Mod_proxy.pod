@@ -1,4 +1,4 @@
-=head1 Deployment of Dancer application with Starman, Apache and Mod_proxy
+=head1 Deployment of Dancer applications with Starman, Apache and mod_proxy
 
 =head2 Introduction
 
@@ -21,8 +21,6 @@ applications, which is why mod_perl was created.
 
 I appreciate simple applications that do one thing and do it well. This is why I
 prefer to use Starman which is very good at what it does.
-
-This is the good reasons to use Starman which is doing just one thing and deserve correctly its application. It lets to server the reverse of management. It makes simple the configuration because Starman does not have configuration.
 
 =head2 Configure
 
