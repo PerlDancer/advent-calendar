@@ -26,7 +26,7 @@ The following synopsis shows just how strong and yet simple Dancer really is:
 
 This shows off an HTTP B<GET> request route with a variable in it which is
 attached to an anonymous subroutine which gets the ID, performs a simple
-database query (using L<Dancer::Plugin::Database> and passes the data to a
+database query (using L<Dancer::Plugin::Database>) and passes the data to a
 template to render the resulting page.
 
 It really is that simple!
