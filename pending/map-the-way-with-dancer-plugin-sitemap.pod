@@ -3,9 +3,7 @@
 I was sitting staring at yet another XML site map document when it came
 to me; It should be easier than this!
 
-Enter 
-L<Dancer::Plugin::SiteMap|http://search.cpan.org/~jamesr/Dancer-Plugin-SiteMap-0.05/lib/Dancer/Plugin/SiteMap.pm> 
-- The easy way to map.
+Enter L<Dancer::Plugin::SiteMap> - The easy way to map.
 
 =head2 So How Does It Work?
 
