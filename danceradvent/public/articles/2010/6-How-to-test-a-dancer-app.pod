@@ -1,12 +1,12 @@
 =head1 Testing a Dancer application
 
 In L<the previous article|http://advent.perldancer.org/2010/5>, we saw how to
-develop a plugin. We have written in our example a plugin named
-L<Dancer::Plugin::MobileDevice>, we'll see in this one how to test it.
+develop a plugin. We have written our example as a plugin named
+L<Dancer::Plugin::MobileDevice>. In this article We'll see how to test it.
 
-As testing a plugin is pretty much the same thing as testing a complete application,
-you will learn in this article how to use the L<Dancer::Test> module for
-building a good test suite for a Dancer application.
+As testing a plugin is pretty much the same thing as testing a complete
+application, you will learn in this article how to use the L<Dancer::Test>
+module for building a good test suite for a Dancer application.
 
 =head2 Why testing?
 
@@ -30,8 +30,8 @@ L<Dancer::Test> this is easy to do:
     use warnings;
     use Test::More import => ['!pass'];
 
-First, note that we ask not to import L<Test::More>'s C<pass> keyword,
-it's already exported by Dancer and we don't want our test script to
+Note that we ask not to import L<Test::More>'s C<pass> keyword.
+It's already exported by Dancer and we don't want our test script to
 produce a warning.
 
 First of all, we need a basic app that uses our plugin, we'll define
@@ -90,7 +90,7 @@ start!
 We now want to make sure all of our template calls got the
 C<is_mobile_device> token. To do that, our test application will now
 only provide a route handler that calls C<template>. Obviously, for
-this to work we need ... a template to process. Dancer::Test takes
+this to work we need... a template to process. Dancer::Test takes
 care for us to initialize the views directory to F<t/views>, so we can
 provide our test script with some views without polluting the root
 directory of our distribution.
@@ -108,14 +108,14 @@ C<is_mobile_device> token. Let's use it in our test script.
         use Dancer::Plugin::MobileDevice;
 
         get '/' => sub {
-            template 'index', {}, { layout => 0 };
+            template 'index', {}, { layout => undef };
         };
     }
 
 Same as previously, we define a route handler that does just what we
 need. You'll see that we've given some extra options to the
 C<template> keyword in order to disable the layout. Indeed, our plugin
-automatically sets a layout for mobile clients, and we don't want to
+automatically sets a layout for mobile clients and we don't want to
 see that for the moment.
 
 The second argument given to C<template> is an empty hash which is
@@ -215,7 +215,7 @@ Great, everything works as expected!
 =head2 Conclusion
 
 Our plugin is now covered by the test suite we've written, and we can
-publish it to the CPAN. To go a step further, we could run coverage
+publish it to the CPAN. Taking a step further, we could run coverage
 test with L<Devel::Cover> in order to make sure our test suite goes
 through all the possible paths but that's beyond the scope of this
 article.
