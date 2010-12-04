@@ -7,6 +7,7 @@ Flags:
 [P] : "Pending", someone started writing that article
 [R] : "Review", ready for review (needs typos fixes and proofreading)
 [D] : "Done", ready for publication
+[L] : "Last Review", reviewed but still some things left undone
 
 ==== PUBLISHING ORDER:
 
@@ -30,18 +31,22 @@ Flags:
 08. [D] How to work with sessions in cookies (Dancer::Session::Cookie,
         kappa@{github,cpan})
 
+09. [D] REST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+        Dancer::Plugin::REST)
+
 15. [D] shrinkr (tutorial)
 
 ==== NEED TO BE REVIEWED
 
-07. [R] Deploying Dancer (nmani)
+07. [L] Deploying Dancer (nmani)
+        (Could someone with Nginx experience check the article?)
 
-09. [R] ReST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
-        Dancer::Plugin::REST)
+10. [L] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
+        (The plugin mentioned in the article is not the same as the existing
+        plugin. Why is that?)
 
-10. [R] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
-
-11. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
+11. [L] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
+        (Too short. We can add an explanation of how it works.)
 
 12. [R] Authentication with Twitter OAuth (sukria)        
 
