@@ -40,6 +40,7 @@ Cuny
 dancr
 Dancr
 Danijel
+datastore
 DBI
 DBIC
 de
@@ -116,8 +117,10 @@ PSGI
 PSGI's
 Puneet
 Rafa
+RBAC
 RESTful
 RFC
+Ronan
 RSS
 RT
 sandboxing
@@ -142,6 +145,7 @@ Sukrieh
 Szabo
 Tasov
 TIMTOWTDI
+TIMTOWTDIBSCINABTE
 TT
 Twitter's
 UK
