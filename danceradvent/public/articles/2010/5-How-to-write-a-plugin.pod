@@ -1,8 +1,8 @@
 =head1 How to write a plugin
 
 Dancer is a L<DSL|http://en.wikipedia.org/wiki/Domain-specific_language> for
-writing web applications. It's focused on providing the obvious and the feature
-set is limited on purpose.
+writing web applications. It's focused on providing the obvious which makes the
+feature set limited on purpose.
 
 For advanced or particular needs, Dancer's DSL can be extended by plugins.
 
@@ -12,7 +12,7 @@ C<Dancer::Plugin::MobileDevice>.
 
 =head2 The Basics
 
-Before starting to write our own plugin, let's explain what a plugin can do,
+Before starting to write our own plugin, let's explain what a plugin can do
 and how.
 
 A plugin is a package that declares (with the C<register> keyword) a set of
@@ -45,7 +45,7 @@ The idea is to provide the following features:
 
 =item * dynamic layout
 
-We want to serve a light HTML content when accessed by a mobile
+We want to serve light HTML content when accessed by a mobile
 device, so we'll basically set a specific layout whenever a mobile
 client requests a page. That way, we can forget about the layout and
 focus on our route handlers, and the plugin will handle that for us.
@@ -92,7 +92,7 @@ care of the exporting magic for us, we only have to declare new
 keywords with C<register> and register the plugin itself when done with
 C<register_plugin>).
 
-The sub bound to our C<is_mobile_device> keyword should do one simple
+The subroutine bound to our C<is_mobile_device> keyword should do one simple
 thing: test the user agent string of the incoming request against a
 pattern of known mobile devices. This is as easy as the following:
 
@@ -164,7 +164,7 @@ That's it, we can now do this kind of conditions in our views:
 
 =head2 Conclusion
 
-Well, here we are, we now have a Dancer plugin that does what we
+Well, here we are. We now have a Dancer plugin that does what we
 wanted, writing a mobile-aware Dancer app will now be much easier.
 
 As you can imagine, I've written L<Dancer::Plugin::MobileDevice> and
@@ -172,11 +172,10 @@ uploaded it to CPAN, so if you want to study it a bit more, feel free
 to grab the tarball. You can also check out the source code from
 L<GitHub|https://github.com/sukria/Dancer-Plugin-MobileDevice>.
 
-Furthermore, if you want to see this plugin in action, just use your smartphone to
-access the advent calendar. Indeed, our advent calendar is powered by
+Furthermore, if you want to see this plugin in action, just use your smartphone
+to access the advent calendar. Indeed, our advent calendar is powered by
 L<Dancer|http://perldancer.org> and uses C<Dancer::Plugin::MobileDevice> to
 change the layout dynamically, just as explained in this article.
-
 
 =head2 Author
 
