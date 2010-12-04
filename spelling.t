@@ -6,10 +6,18 @@ use Test::Spelling;
 
 add_stopwords(<DATA>);
 
-all_pod_files_spelling_ok(
-    qw/ proofread pending /,
-    File::Spec->catfile( qw/ danceradvent public articles 2010 / ),
-);
+if ( my @articles = @ARGV ) {
+    foreach my $article (@articles) {
+        -e $article or die "Article $article doesn't exist\n";
+
+        pod_file_spelling_ok($article);
+    }
+} else {
+    all_pod_files_spelling_ok(
+        qw/ proofread pending /,
+        File::Spec->catfile( qw/ danceradvent public articles 2010 / ),
+    );
+}
 
 __DATA__
 ACL
