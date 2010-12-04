@@ -48,7 +48,7 @@ presents a culmination of the communal work of a very large number of people,
 all from the community, in a wide variety of areas from documentation, bug
 tracing, bug fixes, features and even design.
 
-Therefor this release is dedicated to the Dancer community itself!
+Therefore this release is dedicated to the Dancer community itself!
 
 =head3 UTF-8 FTW!
 
