@@ -124,7 +124,7 @@ any effort. It even uses the jQuery JavaScript library! OMG jQuery!
 While we hope you enjoy version 1.2, we're not about to rest on our laurels.
 We're still working on improving the core, the documentation, the code testing
 coverage, provide new features, expand and flex other features and provide a
-stable set of community plugins to remove more and more clutter to your work.
+stable set of community plugins to remove more and more clutter from your work.
 
 =head2 Advent calendar? You too? Really?
 
