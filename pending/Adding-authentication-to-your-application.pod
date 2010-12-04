@@ -7,16 +7,16 @@ attributed to the TIMTOWTDI (there is more than one way to do it) nature of secu
 in web applications. Most developers have no real understanding of what application
 security models exist, what models are popular, what models are recommended or why.
 This means that most developers, beyond the coding of the login screen, are mainly
-winging-it (making assumptions) as they go.
+winging it (making assumptions) as they go.
 
 L<Dancer::Plugin::Auth::RBAC> takes the TIMTOWTDIBSCINABTE (there is more than one
 way to do it, but sometimes consistency isn't a bad thing either) approach towards
 web application system security by providing a standard, reusable RBAC (role-based
 access control) framework for your Dancer applications. Compared to other system
-security models (e.g. ACL, etc), Dancer::Plugin::Auth::RBAC provides flexible and
+security models (such as ACL), Dancer::Plugin::Auth::RBAC provides flexible and
 granular access control through the use of roles, operations (tasks), and actions.
 In this article I will first explain why RBAC is the best security model choice, how
-RBAC works, and finally, show you a few examples on how Dancer::Plugin::Auth::RBAC
+RBAC works and finally, show you a few examples on how Dancer::Plugin::Auth::RBAC
 approaches RBAC.
 
 =head2 Why Role-Based Access Control
@@ -36,15 +36,15 @@ following is an attempt to illustrate this:
 Like other ACL systems (access control lists), RBAC subjects (users) can have
 multiple roles. The difference between ACL and RBAC is the added granularity of the
 permissions (tasks) and actions. Using the example above, user access can be
-validated at 4-points (the existence of the user, the role(s) of the user, the
-permission(s) of the user, and the action(s) of the user). The following is an
+validated at 4-points (the existence of the user, the role - or roles - of the
+user, the permissions of the user, and the actions of the user). The following is an
 attempt to illustrate this:
 
     if ($user) {
-        if ($user->roles) {
-            if ($user->role($role)) {
-                if ($user->role($role)->task($task)) {
-                    if ($user->role($role)->task($task)->action) {
+        if ( $user->roles ) {
+            if ( $user->role($role) ) {
+                if ( $user->role($role)->task($task) ) {
+                    if ( $user->role($role)->task($task)->action ) {
                         # this is not actual code and is not executable
                         # this illustrates the granularity of RBAC
                     }
@@ -65,7 +65,7 @@ authenticate them, and L<Dancer::Plugin::Auth::RBAC::Permissions>, which specifi
 the system access control roles, operations and actions.
 
 Dancer::Plugin::Auth::RBAC ships with 4 authentication modules out-of-the-box which
-are Config.pm, MySQL.pm, SQLite.pm, and PostgreSQL.pm. Currently
+are F<Config.pm>, F<MySQL.pm>, F<SQLite.pm>, and F<PostgreSQL.pm>. Currently
 Dancer::Plugin::Auth::RBAC only ships with one access control module which is
 Dancer::Plugin::Auth::RBAC::Permissions::Config, which should be sufficient for most
 use cases.
@@ -83,7 +83,7 @@ storing user accounts. For demonstration purposes we will use our application
 configuration file as our datastore for user accounts etc. This means for
 authentication we need to load Dancer::Plugin::Auth::RBAC::Credentials::Config and
 Dancer::Plugin::Auth::RBAC::Permissions::Config, since there is only one access
-control class. Our config.yml file should look as follows:
+control class. Our F<config.yml> file should look as follows:
 
     plugins:
       # loads the Dancer::Plugin::Auth::RBAC plugin
@@ -144,27 +144,27 @@ control class. Our config.yml file should look as follows:
 
 Now that we have specified our plugin options in our application configuration
 file, we need to design our Dancer application to restrict access using the methods
-provided by Dancer::Plugin::Auth::RBAC. Dancer::Plugin::Auth::RBAC provides the auth()
+provided by Dancer::Plugin::Auth::RBAC. Dancer::Plugin::Auth::RBAC provides the C<auth()>
 function to Dancer which returns a new instance of Dancer::Plugin::Auth::RBAC which
-provides asa(), can(), roles(), errors() and revoke().
+provides C<asa()>, C<can()>, C<roles()>, C<errors()> and C<revoke()>.
 
     use Dancer;
     use Dancer::Plugin::Auth::RBAC;
 
     # get new Dancer::Plugin::Auth::RBAC instance and check credentials
-    my $user = auth(params->{'login'}, params->{'password'});
+    my $user = auth( params->{'login'}, params->{'password'} );
 
     # check if authentication passed
-    if ($user->errors) {
+    if ( $user->errors ) {
         return 'failed';
     }
 
     # check if authenticated user has an admin role
-    if ($user->asa('admin')) {
+    if ( $user->asa('admin') ) {
         return 'im an admin';
     }
 
-Typical usage would be to put user checking in a before filter and authentication
+Typical usage would be to put user checking in a I<before> filter and authentication
 login on the login page, e.g.
 
     use Dancer;
@@ -185,13 +185,13 @@ login on the login page, e.g.
     };
 
     any '/login' => sub {
-        my $user = auth(params->{'login'}, params->{'password'});
+        my $user = auth( params->{'login'}, params->{'password'} );
         return redirect '/dashboard' unless $user->errors;
     };
 
 Once your basic user authentication and application security is in place you can
 move on to doing more advanced and sophisticated role-based access control using
-asa(), can(), and revoke().
+C<asa()>, C<can()>, and C<revoke()>.
 
     use Dancer;
     use Dancer::Plugin::Auth::RBAC;
@@ -202,16 +202,16 @@ asa(), can(), and revoke().
     my $user = auth;
 
     # check if the user has the specified role
-    if ($user->asa('admin')) {
+    if ( $user->asa('admin') ) {
         return 'im an admin';
     }
 
     # check if any of the users roles can perform the specified operation
     my $operation = 'manage accounts';
-    if ($user->can($opertion)) {
+    if ( $user->can($opertion) ) {
 
         # user can manage accounts but can they ..
-        if ($user->can($opertion, 'create')) {
+        if ( $user->can($opertion, 'create') ) {
 
             # user can manage accounts and create them :}
 
@@ -219,7 +219,7 @@ asa(), can(), and revoke().
 
     }
 
-Even better, use RBAC in your TT (Template-Toolkit) templates as follows:
+Even better, use RBAC in your TT (L<Template::Toolkit>) templates as follows:
 
     use Dancer;
     use Dancer::Plugin::Auth::RBAC;
