@@ -72,6 +72,7 @@ INSERTs
 JavaScript
 jQuery
 JSON
+Kapranoff
 KiokuDB
 Kishor
 Krotkine
@@ -132,6 +133,7 @@ smartphone
 snearch
 SQL
 SQLite
+stateful
 STDERR
 STDOUT
 Storable
