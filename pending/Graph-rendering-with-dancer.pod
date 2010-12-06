@@ -1,0 +1,113 @@
+=head1 Use cool stuff to render a graph
+
+Earlier this year I presented one of my project: L<github explorer|http://lumberjaph.net/graph/2010/03/25/github-explorer.html>. The idea was to graph the various communities on github, and show how peoples work together, by country and langages. I've started to work on a new version, and this time and want to let people generate their own graph.
+
+In this article I'll present a simple version of what I'm working on. Everything will be published as open source software in a few weeksn.
+
+=head2 First, the conclusion
+
+Let's see a graph first.
+
+=for html <iframe scrolling="no" style="border:solid 4px #ccc;height:450px;width:500px;" src="/demo/graph/github-graph.html"></iframe>
+
+=head2 The data
+
+I'm collecting data using the GitHub API, and storing most of them in L<mongodb|http://www.mongodb.net/>. I've got two collections:
+
+=over 4
+
+=item profiles
+
+=item relations
+
+=back
+
+For each profile that follow another profile, a relation is created. Each time someone has worked with someone else, another relation is created. So, if you follow sukria on github, and you've already contributed to Dancer, there is a relation of weight 2 between you and him.
+
+=head2 Generate the graph server side
+
+I've build a simple Dancer website that will be used to display various statistics and informations about the graphs I will create.
+
+Let's create a route that render a simple HTML page with some javascript:
+
+ get '/view/graph/:name' => sub {
+     template 'graph', {name => params->{name}}, {layout => undef};
+ };
+
+The content for our template is mostly some javascript that will fetch the content of your graph from an API. The important lines are:
+
+ var dataURL = "/api/graph/<% name %>";
+ var JSONdata = $.ajax({ type: "GET", url: dataURL, async: false }).responseText;
+ var graph = JSON.parse(JSONdata);
+
+Now, let's see our API:
+
+ set serializer => 'JSON';
+
+ get '/api/graph/:profile' => sub {
+     my $profile = params->{profile};
+
+     my $graph = GitHub::Explorer::Graph->new();
+
+     $graph->add_node( { nodeName => $profile, id => 0, group => 1 } );
+    
+     _add_nodes($graph, ...);
+     _add_links($graph);
+
+     my @nodes = $graph->all_nodes;
+     my @links = $graph->all_links;
+    
+     return {
+         nodes => \@nodes,
+         links => \@links,
+     };
+ };
+
+Let's study this route. This API will only render JSON, since it's what the javascript expect. The route match for a given profile. The first thing it does is to create a B<Graph> object, that implement a simple interface (B<add_node>, B<add_edge>, B<all_nodes>, B<all_edges>, ...). We create a first node with the profile asked for. Now, foreach relation, we ask fetch from mongo the name of the profile.
+
+The B<_add_nodes> method will look something like:
+
+ sub _add_nodes {
+     ...
+     my $rs = mongo->github->relations->find($query);
+
+     while ( my $r = $rs->next ) {
+         # add node to existing graph
+     }
+ }
+
+Here I use B<Dancer::Plugin::Mongo>. It import the B<mongo> keyword, github is the name of my database, and relations the name of the collection in the database. To finish, I call the find method with my query, to fetch the informations I need.
+
+The B<_add_links> method is similar. Now that we have all our informations, we can ask for a list of nodes and edges, and return them to the javascript.
+
+For the graph rendering, I use the amazingly great L<protovis library|http://vis.stanford.edu/protovis/>.
+
+=head2 Caching
+
+Fetching the informations from mongo and rendering them can be really slow, depending on the size of the graph. A good idea is to cache the result before sending it back to the client. For this, we can use B<Dancer::Plugin::Memcached>.
+
+All I have to do is to modify the route to something like:
+
+ get '/api/graph/:profile' => sub {
+     my $profile = params->{profile};
+
+     my $key = "gh_graph_".$profile;
+     if (my $cached_graph = memcached_get($key)) {
+         return $cached_graph;
+     }
+
+     my $graph = GitHub::Explorer::Graph->new();
+
+     ...
+
+     my $finalized_graph = {
+         nodes => \@nodes,
+         links => \@links,
+     };
+
+     memcached_set($key, $finalized_graph);
+     return $finalized_graph;
+ };
+
+=head2
+
