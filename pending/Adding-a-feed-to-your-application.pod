@@ -10,11 +10,11 @@ application.
 
 =head2 Adding a simple feed
 
-In the advent calendar application, each article is stored in a POD file on
-disk. Each day, one new article will be visible, and should be added to the
+In the advent calendar application, each article is stored in a POD file stored 
+on disk. Each day, a new article will be visible, and should be added to the
 feed. We will see how to do that.
 
-First, we add our plugin.
+First, we load the plugin in the application.
 
     use Dancer;
     use Dancer::Plugin::Feed;
@@ -113,9 +113,9 @@ B<create_atom_feed>. Those method set the B<format> argument for you.
         create_rss_feed(...);
     };
 
-=head2 SEE ALSO
+=head2 See also
 
-L<XML::Feed>
+Under the hood, L<Dancer::Plugin::Feed> uses L<XML::Feed>.
 
 =head2 Author
 
