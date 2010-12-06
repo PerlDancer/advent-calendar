@@ -10,7 +10,7 @@ Let's see a graph first.
 
 =for html <iframe scrolling="no" style="border:solid 4px #ccc;height:450px;width:600px;" src="/demo/graph/github-graph.html"></iframe>
 
-(This is not the kind of graph I want to end up with, but it gives you a good idea of what I want to achieve).
+This is not the kind of graph I want to end up with (this one is buggy, some profiles are twice on the graph etc), but it gives you a good idea of what I want to achieve. Check the content of the iframe to see the html and javascript code.
 
 =head2 The data
 
@@ -36,11 +36,15 @@ Let's create a route that render a simple HTML page with some javascript:
      template 'graph', {name => params->{name}}, {layout => undef};
  };
 
+I set the layout to undef since I only want only the graph and nothing else. 
+ 
 The content for our template is mostly some javascript that will fetch the content of your graph from an API. The important lines are:
 
  var dataURL = "/api/graph/<% name %>";
  var JSONdata = $.ajax({ type: "GET", url: dataURL, async: false }).responseText;
  var graph = JSON.parse(JSONdata);
+
+This will query our JSON API to get a graph.
 
 Now, let's see our API:
 
@@ -54,10 +58,10 @@ Now, let's see our API:
      $graph->add_node( { nodeName => $profile, id => 0, group => 1 } );
     
      _add_nodes($graph, ...);
-     _add_links($graph);
+     _add_links($graph, ...);
 
-     my @nodes = $graph->all_nodes;
-     my @links = $graph->all_links;
+     my @nodes = $graph->all_nodes();
+     my @links = $graph->all_links();
     
      return {
          nodes => \@nodes,
@@ -78,15 +82,15 @@ The B<_add_nodes> method will look something like:
      }
  }
 
-Here I use B<Dancer::Plugin::Mongo>. It import the B<mongo> keyword, github is the name of my database, and relations the name of the collection in the database. To finish, I call the find method with my query, to fetch the informations I need.
+Here I use B<Dancer::Plugin::Mongo>. It imports the B<mongo> keyword; B<github> is the name of my database; B<relations> is the name of the collection in the database. To finish, I call the B<find> method with my query, to fetch the informations I need.
 
-The B<_add_links> method is similar. Now that we have all our informations, we can ask for a list of nodes and edges, and return them to the javascript.
+The B<_add_links> function is similar. Now that we have all our informations, we can ask for a list of nodes and edges, and return them to the javascript.
 
 For the graph rendering, I use the amazingly great L<protovis library|http://vis.stanford.edu/protovis/>.
 
 =head2 Caching
 
-Fetching the informations from mongo and rendering them can be really slow, depending on the size of the graph. A good idea is to cache the result before sending it back to the client. For this, we can use B<Dancer::Plugin::Memcached>.
+Fetching the informations from mongo and rendering them can be really slow, depending on the size of the requestd graph. A good idea is to cache the result before sending it back to the client. For this, we can use B<Dancer::Plugin::Memcached>.
 
 All I have to do is to modify the route to something like:
 
@@ -111,5 +115,18 @@ All I have to do is to modify the route to something like:
      return $finalized_graph;
  };
 
-=head2
+=head2 Conclusion (bis)
+
+In this article I've show two new plugins: B<Dancer::Plugin::Mongo> (by Adam Taylor) and B<Dancer::Plugin::Memcached> (by squeeks), and a nice javascript library : protovis.
+
+blablabla
+
+=head2 Author
+
+This article has been written by franck cuny for the Perl Dancer Advent Calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 by franck cuny C<< <franck@lumberjaph.net> >>
+
 
