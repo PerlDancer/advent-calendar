@@ -8,7 +8,9 @@ In this article I'll present a simple version of what I'm working on. Everything
 
 Let's see a graph first.
 
-=for html <iframe scrolling="no" style="border:solid 4px #ccc;height:450px;width:500px;" src="/demo/graph/github-graph.html"></iframe>
+=for html <iframe scrolling="no" style="border:solid 4px #ccc;height:450px;width:600px;" src="/demo/graph/github-graph.html"></iframe>
+
+(This is not the kind of graph I want to end up with, but it gives you a good idea of what I want to achieve).
 
 =head2 The data
 
