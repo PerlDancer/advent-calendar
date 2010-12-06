@@ -27,10 +27,12 @@ var vis = new pv.Panel()
  
 var force = vis.add(pv.Layout.Force)
     .nodes(graph.nodes)
-    .links(graph.links);
+    .links(graph.links).springLength(50);
  
-force.link.add(pv.Line);
- 
+force.link.add(pv.Line).anchor('center');
+
+force.label.add(pv.Label).text(function(d) d.nodeName);
+
 force.node.add(pv.Dot)
     .size(function(d) (d.linkDegree + 4) * Math.pow(this.scale, -1.5))
     .fillStyle(function(d) d.fix ? "brown" : colors(d.group))
