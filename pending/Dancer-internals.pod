@@ -4,8 +4,8 @@ This article is intended to describe how major parts of Dancer are designed, in
 order to help developers understand better the way it works.
 
 We'll see that we can basically split Dancer into three distinct scopes: the
-core, engines and plugins. We'll see what are the differences between those
-three parts and what are the concepts behind them.
+B<core>, B<engines> and B<plugins>. We'll see what are the differences between
+those three parts and what are the concepts behind them.
 
 If you intend to contribute to Dancer, this article should be a good start to
 clarify how things fit together.
@@ -17,11 +17,12 @@ L<Sinatra|http://www.sintrarb.com>. It quickly evolved towards a complete
 micro-framework with its own personality and taste.
 
 The idea that remained our major guideline though is the I<micro> concept: we
-want Dancer to remain lightweight, avoiding as much as possible to confuse the
-user with lots of things to configure and a huge amount of concepts to master.
+want Dancer to remain lightweight. We want the user to be able to configure as
+little as possible and get things working with as little concepts to master as
+possible, avoiding unnecessary confusion.
 
-This quest of expressiveness and simplicity leads to a particular design I'll try
-to explain here.
+This quest of expressiveness and simplicity leads to a particular design I'll
+try to explain here.
 
 =head2 The DSL
 
@@ -31,21 +32,23 @@ the application that I<use>s L<Dancer>.
 Those keywords let the user build their application. C<get>, C<redirect>,
 C<params> or C<request> are some of them. The main goal of Dancer is to provide
 the user with a new tiny language that is web-application-oriented, this is what
-we call a DSL (I<Domain Specific Language>).
+we call a DSL (I<Domain Specific Language>), a language that pertains to a
+specific concept, goal or domain.
 
-Dancer took an original path regarding the Perl culture: the framework does not
-provide a direct Object-Oriented layer to the user. In a route handler, you
-don't unroll the C<@_> variable. In a Dancer application, everything is
-declarative. Doing it this way allows for very expressive instructions and this
-is the reason why so many people liked Dancer in the first place. With Dancer
-every bit you write is necessary.
+Dancer took an original path regarding the common Perl culture practices: the
+framework does not provide a direct Object-Oriented layer to the user. In a
+route handler, you don't unroll the C<@_> variable. In a Dancer application,
+everything is declarative. Doing it this way allows for very expressive
+instructions and this is the reason why so many people liked Dancer in the first
+place. With Dancer every bit you write is necessary and it helps you
+tremendously avoid repetitive code.
 
 As this set of keywords is the very first thing a user will have to use to build
 a web application with Dancer, it's very important for it to be succinct,
 expressive and powerful. On the other hand, it should not become a huge bag of
 keywords as time goes. We don't want this set to be oversized, as the saying
 goes: I<Less is more>. That's why I'm very picky when someone suggests to add a
-new keyword the core's DSL. 
+new keyword to the core DSL.
 
 Those keywords are intended to be the basic rock upon which your application is
 built. But of course, this set should be extendable, that is where plugins come
@@ -105,7 +108,7 @@ to do is to I<implement> the right abstract class.
 
 L<Ovid|http://blogs.perl.org/user/Ovid/> explained on his blog
 L<the concept of the abstract-class pattern|http://blogs.perl.org/users/ovid/2010/11/perl101-encapsulation-via-protected-abstract-methods.html>,
-the article is part of his Perl 101 series and explained very well the concept.
+the article is part of his Perl 101 series and explained the concept very well.
 
 In Dancer you'll find four kinds of engine:
 
@@ -144,9 +147,9 @@ For instance, writing a new template engine would be that simple:
 The same idea goes for session, logger and serializer. 
 
 Thanks to this design, Dancer has already many template, session and logger
-backends available on the CPAN. This shows well, I think, one of the idea
-behind Dancer's philosophy: being as open as possible for the developer and for
-the Perl community.
+backends available on the CPAN. This showscases one of the ideas behind Dancer's
+philosophy: being as open as possible for the developer and for the Perl
+community.
 
 The developer has the freedom to choose virtually any template or logger engine
 she likes, the community can contribute easily to the project, thanks to a
@@ -156,7 +159,7 @@ portable design.
 
 Finally, we have plugins. As explained in a previous article, plugins are the
 most simple way to extend Dancer on a particular need. If you plan to
-contribute code to Dancer, your probably want to consider writing a plugin.
+contribute code to Dancer, you probably want to consider writing a plugin.
 
 A plugin can do anything that a regular Dancer application can; but on top of
 that, it can alias actions under a name which will be added to the DSL.
@@ -184,5 +187,5 @@ Writing a plugin for Dancer is a piece of cake:
 =head2 Author
 
 This article has been written by Alexis Sukrieh for the Perl Dancer advent
-calendar 2010>.
+calendar 2010.
 
