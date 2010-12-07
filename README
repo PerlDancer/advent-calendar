@@ -45,8 +45,9 @@ Flags:
         (The plugin mentioned in the article is not the same as the existing
         plugin. Why is that?)
 
-11. [L] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
-        (Too short. We can add an explanation of how it works.)
+11. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
+        (Added a description of how it works, to give the article a little more
+        content)
 
 12. [R] Authentication with Twitter OAuth (sukria)        
 

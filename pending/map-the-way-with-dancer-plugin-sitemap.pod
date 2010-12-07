@@ -5,7 +5,7 @@ to me; It should be easier than this!
 
 Enter L<Dancer::Plugin::SiteMap> - The easy way to map.
 
-=head2 So How Does It Work?
+=head2 So How Do I Use It?
 
 Simplicity itself:
 
@@ -15,10 +15,28 @@ Simplicity itself:
 That's it! Your Dancer App now has C</sitemap> and C</sitemap.xml>
 routes.
 
+=head2 So How Does It Work?
+
+Basically, this plugin predefines a pair of routes for you saving you the
+work in your Dancer application.
+
+The two routes that are defined when called, obtain a list of routes 
+that are in your Dancer application within Dancer's registry.  This list 
+is then simply formated appropriately for each route.
+
+For HTML an unordered list containing anchor tags is output within your
+applicataions main layout. This can then be styled with CSS to suit.
+
+For the XML site map, it outputs... Yep you guessed it! An XML site map.
+
+As these routes work on a on-demand principle, there is no need to 
+continually update your site map, L<Dancer::Plugin::SiteMap> keeps it 
+up-to-date for you :-)
+
 =head2 What's In Store For The Future?
 
 Eventually I'd like to add support for optional custom template of
-the HTML SiteMap. 
+the HTML SiteMap, and additional tags within the XML version.
 
 =head2 Author
 
