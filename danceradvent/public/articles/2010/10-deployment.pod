@@ -418,10 +418,12 @@ front of Nginx such as Varnish or Squid. The request flow should be:
 
 Intertubes -> Varnish -> Nginx -> Starman backends
 
-=head1 SEE ALSO
+=head2 See also
 
 L<Dancer::Deployment>
 
-=head1 AUTHOR
+=head2 Author
 
-nmani (Naveen Manivannan C<< <nmani@nashresearch.com> >>)
+This article has been written by nmani (Naveen Manivannan C<<
+<nmani@nashresearch.com> >>) for the Perl Dancer Advent Calendar 2010.
+
