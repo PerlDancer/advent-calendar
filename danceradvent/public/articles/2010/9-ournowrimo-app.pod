@@ -111,7 +111,9 @@ to do the real data munging:
             chomp;
             my ( $date, $who, $count ) = split '\s*,\s*';
 
-            $contestant{$who}{ 1000 * DateTime::Format::Flexible->parse_datetime($date)->epoch } = $count;
+            my $epoch = DateTime::Format::Flexible->parse_datetime($date)->epoch;
+            my $time = 1000 * $epoch;
+            $contestant{$who}{$time} = $count;
         }
 
         my @json;  # data structure that is going to be JSONified
@@ -132,9 +134,13 @@ to do the real data munging:
         push @json, {
             label => 'de par',
             data => [
-                [ $beginning * 1000, 0],
-                [ DateTime->now->epoch * 1_000, 50_000 * ( DateTime->now->epoch - $beginning ) / ( $end - $beginning ) ]
-            ],
+                [$beginning * 1000, 0],
+                [   DateTime->now->epoch * 1_000,
+                    50_000 
+                      * (DateTime->now->epoch - $beginning)
+                      / ($end - $beginning)
+                ]
+              ],
 
         };
 
@@ -199,9 +205,7 @@ and everything should nicely begin to work together.
 
 =head2 The Result
 
-<div align="center">
-<img src="http://babyl.dyndns.org/techblog/entry/ournowrimo/files/ournowrimo.png" alt="screenshot" />
-</div>
+=for html <img src="http://babyl.dyndns.org/techblog/entry/ournowrimo/files/ournowrimo.png" />
 
 =head2 Peek at the Code on Github
 
