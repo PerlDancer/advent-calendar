@@ -65,11 +65,11 @@ Flags:
 
 20. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
-21. [R] Writing a new logger backend  (xsawyerx)
+21. [D] Writing a new logger backend  (xsawyerx)
 
-22. [R] Writing a new serializer backend (xsawyerx)
+22. [D] Writing a new serializer backend (xsawyerx)
 
-23. [R] Writing a new session backend (xsawyerx)
+23. [D] Writing a new session backend (xsawyerx)
 
 ==== NOT YET FINISHED
 
