@@ -128,9 +128,10 @@ Now we need to implement the C<advance_spinner> subroutine:
         print STDERR $chars[$count];
 
         # if we reached over the array end, let's get back to the start
+        # let's also increment the counter before doing the check
         ++$count > $#chars and $count = 0;
 
-        # increment the counter and update the hash
+        # update the hash
         $self->{'spinner_count'} = $count;
     }
 
@@ -156,9 +157,13 @@ POD! :)
 
 =head1 SEE ALSO
 
-I<Writing a new Dancer serializer>
+=over 4
 
-I<Writing a new Dancer session backend>
+=item * The previous article on I<Writing a new Dancer serializer>
+
+=item * The following article on I<Writing a new Dancer session backend>
+
+=back
 
 =head1 AUTHOR
 

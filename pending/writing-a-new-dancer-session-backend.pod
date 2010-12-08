@@ -34,7 +34,7 @@ A pretty common way of saving user information, inside the browser's cookies.
 
 Usually this is what you would use with your applications.
 
-L<Dancer::Session::Cookie> has a plus side of being encrypted also.
+L<Dancer::Session::Cookie> has a plus side of also being encrypted.
 
 =item * Memcache
 
@@ -108,8 +108,7 @@ This variable will contain the KiokuDB database object.
 =item * C<$warned>
 
 We're going to depend on the user being able to specify any KiokuDB backend they
-want, but we also want the user not to have to do it so we're going to allow a
-default value.
+want, but we also want the user to have a default backend.
 
 In case the user does not provide one, we're going to warn him before using our
 default backend. However, we don't want to alert them B<every> time they try to
@@ -167,14 +166,14 @@ We'll use this method to lazily load any additional modules.
 We're loading a dynamic backend, creating a new KiokuDB instance with the
 backend we loaded and options the user can give us. You'll notice we create
 by default. This is valid for backends that support creating files (BDB, DBI,
-etc.) and we've allows basic recursive folding of our object using
+etc.) and we've allowed basic recursive folding of our object using
 I<allow_classes>.
 
-B<Important:> you should know that we've being very naive here by not providing
+B<Important:> you should know that we're being very naive here by not providing
 any special L<KiokuDB::TypeMap> for our class. This means that if someone will
 use our KiokuDB session backend and try to store something KiokuDB does not know
 how to cleanly fold (such as more complex objects), it might fail. Not to worry,
-we'll document this behavior. :)
+we'll document this behavior in the POD. :)
 
 =item * create
 
@@ -193,8 +192,8 @@ new session. We'll also flush new data to the KiokuDB backend using our
 
 =item * retrieve
 
-This method retrieves the session data. We're getting an ID to fetch and using
-KiokuDB this method can't be any easier:
+This method retrieves the session data. We're getting an ID to fetch and, using
+KiokuDB, this method can't be easier:
 
     sub retrieve {
         my ( $self, $id ) = @_;
@@ -246,9 +245,15 @@ POD! :)
 
 =head1 SEE ALSO
 
-I<Writing a new Dancer serializer>
+Previous articles
 
-I<Writing a new Dancer session backend>
+=over 4
+
+=item * I<Writing a new Dancer serializer>
+
+=item * I<Writing a new Dancer logger backend>
+
+=back
 
 =head1 AUTHOR
 

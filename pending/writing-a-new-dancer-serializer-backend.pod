@@ -192,9 +192,13 @@ POD! :)
 
 =head1 SEE ALSO
 
-I<Writing a new Dancer logger backend>
+=over 4
 
-I<Writing a new Dancer session backend>
+=item * The following article on I<Writing a new Dancer logger backend>
+
+=item * The article after that on I<Writing a new Dancer session backend>
+
+=back
 
 =head1 AUTHOR
 
