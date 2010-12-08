@@ -27,6 +27,14 @@ The default for most production environments, saving all the information in a
 chosen specific log file. This is also the default behavior with many web
 servers such as Apache.
 
+=item * Syslog
+
+This logger sends your message to the system logger, allowing for collection,
+storage and indexing your information along with the system information. This
+is used in heavy production environments to centralized all the logging data
+from machines to a major location which then uses it to monitor the servers and
+provide statistic information.
+
 =back
 
 There are a few more loggers available on CPAN that you can download and
