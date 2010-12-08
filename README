@@ -34,42 +34,44 @@ Flags:
 08. [D] REST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
         Dancer::Plugin::REST)
 
+09. [D] ournowrimo app (yanick champoux)
+
+10. [R] Deploying Dancer (nmani)
+        (Could someone with Nginx experience check the article?)
+
+11. [R] Dancer::Plugin::DBIC (dams)
+
 15. [D] shrinkr (tutorial)
 
 ==== NEED TO BE REVIEWED
 
-07. [L] Deploying Dancer (nmani)
-        (Could someone with Nginx experience check the article?)
-
-10. [L] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
+XX. [L] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
         (The plugin mentioned in the article is not the same as the existing
         plugin. Why is that?)
 
-11. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
+XX. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
         (Added a description of how it works, to give the article a little more
         content)
 
-12. [R] Authentication with Twitter OAuth (sukria)        
+XX. [R] Authentication with Twitter OAuth (sukria)        
 
-13. [R] using dancer with middlewares
+XX. [R] using dancer with middlewares
 
-14. [R] Dancer::Plugin::DBIC (dams)
+XX. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
 
-16. [R] Dancer::Plugin::Feed (franck)
+XX. [R] Dancer::Plugin::Feed (franck)
 
-17. [R] ournowrimo app (yanick champoux)
+XX. [R] Dancer Internals (sukria)
 
-18. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
+XX. [R] Dancer's ecosystem
 
-19. [R] Dancer's ecosystem
+XX. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
-20. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
+XX. [D] Writing a new logger backend  (xsawyerx)
 
-21. [D] Writing a new logger backend  (xsawyerx)
+XX. [D] Writing a new serializer backend (xsawyerx)
 
-22. [D] Writing a new serializer backend (xsawyerx)
-
-23. [D] Writing a new session backend (xsawyerx)
+XX. [D] Writing a new session backend (xsawyerx)
 
 ==== NOT YET FINISHED
 
@@ -78,10 +80,6 @@ xx. [P] Dancer for static websites (BooK)
 xx. [P] Cool stuff with graph / mongodb / memcached (franck)
 
 ==== NOT YET STARTED
-
-xx. [A] The concept of engines in Dancer's core (followed the 3 next items)
-        I've already covered that topic in a blog-entry, I can refresh it for the
-        advent calendar (sukria)
 
 xx. [ ] Using the before (KiokuDB context) (xsawyerx)
 
