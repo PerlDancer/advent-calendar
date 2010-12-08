@@ -28,10 +28,10 @@ Flags:
 06. [D] Writing Dancer specific tests. (already covered in my article about
         writing a plugin, maybe I should split them in two parts? sukria)
 
-08. [D] How to work with sessions in cookies (Dancer::Session::Cookie,
+07. [D] How to work with sessions in cookies (Dancer::Session::Cookie,
         kappa@{github,cpan})
 
-09. [D] REST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
+08. [D] REST webservices (with Dancer::Plugin::REST and Serializers). API (dams for
         Dancer::Plugin::REST)
 
 15. [D] shrinkr (tutorial)
