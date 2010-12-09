@@ -45,9 +45,7 @@ Flags:
 
 ==== NEED TO BE REVIEWED
 
-XX. [L] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
-        (The plugin mentioned in the article is not the same as the existing
-        plugin. Why is that?)
+XX. [D] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
 
 XX. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
         (Added a description of how it works, to give the article a little more
@@ -63,15 +61,15 @@ XX. [R] Dancer::Plugin::Feed (franck)
 
 XX. [R] Dancer Internals (sukria)
 
-XX. [R] Dancer's ecosystem
-
-XX. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
-
 XX. [D] Writing a new logger backend  (xsawyerx)
 
 XX. [D] Writing a new serializer backend (xsawyerx)
 
 XX. [D] Writing a new session backend (xsawyerx)
+
+XX. [R] Dancer's ecosystem
+
+XX. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
 
 ==== NOT YET FINISHED
 
