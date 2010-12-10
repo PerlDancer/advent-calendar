@@ -155,9 +155,11 @@ L<Dancer::Logger::Spinner>. Nice, isn't it?
 Feel free to send me your names so I could add you to the CREDITS section in the
 POD! :)
 
-=head1 SEE ALSO
+=head2 See also
 
 =over 4
+
+=item * The previous article on I<Dancer Internals>
 
 =item * The previous article on I<Writing a new Dancer serializer>
 
@@ -165,7 +167,9 @@ POD! :)
 
 =back
 
-=head1 AUTHOR
+=head2 Author
 
-Sawyer X <xsawyerx@cpan.org>
+This article has been written by Sawyer X C<< <xsawyerx@cpan.org> >> for the
+Perl Dancer Advent Calendar 2010.
+
 
