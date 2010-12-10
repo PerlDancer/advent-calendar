@@ -1,0 +1,208 @@
+=head1 Dive into Dancer's internals
+
+This article is intended to describe how major parts of Dancer are designed, in
+order to help developers understand better the way it works.
+
+We'll see that we can basically split Dancer into four distinct scopes: the
+B<DSL>, the B<core>, B<engines> and B<plugins>. We'll see what are the differences between
+those parts and what are the concepts behind them.
+
+If you intend to contribute to Dancer, this article should be a good start to
+clarify how things fit together.
+
+=head2 a word about the concept behind Dancer
+
+As you may have read already, Dancer was first inspired by
+L<Sinatra|http://www.sintrarb.com>. It quickly evolved towards a complete
+micro-framework with its own personality and taste.
+
+The idea that remained our major guideline though is the I<micro> concept: we
+want Dancer to remain lightweight. We want the user to be able to configure as
+little as possible and get things working with as little concepts to master as
+possible, avoiding unnecessary confusion.
+
+This quest of expressiveness and simplicity leads to a particular design I'll
+try to explain here.
+
+=head2 The DSL
+
+The first visible layer of Dancer is the set of keywords that are exported to
+the application that I<use>s L<Dancer>. 
+
+Those keywords let the user build their application. C<get>, C<redirect>,
+C<params> or C<request> are some of them. The main goal of Dancer is to provide
+the user with a new tiny language that is web-application-oriented, this is what
+we call a DSL (I<Domain Specific Language>), a language that pertains to a
+specific concept, goal or domain.
+
+Dancer took an original path regarding the common Perl culture practices: the
+framework does not provide a direct Object-Oriented layer to the user. In a
+route handler, you don't unroll the C<@_> variable. In a Dancer application,
+everything is declarative. Doing it this way allows for very expressive
+instructions and this is the reason why so many people liked Dancer in the first
+place. With Dancer every bit you write is necessary and it helps you
+tremendously avoid repetitive code.
+
+As this set of keywords is the very first thing a user will have to use to build
+a web application with Dancer, it's very important for it to be succinct,
+expressive and powerful. On the other hand, it should not become a huge bag of
+keywords as time goes. We don't want this set to be oversized, as the saying
+goes: I<Less is more>. That's why I'm very picky when someone suggests to add a
+new keyword to the core DSL.
+
+Those keywords are intended to be the basic rock upon which your application is
+built. But of course, this set should be extendable, that is where plugins come
+into play.
+
+=head2 The Core
+
+The core is all that Dancer needs to register route handlers and dispatch any
+request to one of them.
+
+The core also contains classes that represent logical entities like
+L<requests|Dancer::Request> or L<route handlers|Dancer::Route>.
+
+In Dancer's implementation, anything is contained in a L<Dancer::App> object
+(yes, you can have multiple applications within the same application). An
+application object provides a route registry, where we can find L<Dancer::Route>
+objects, that represents the route handlers.
+
+The application itself is powered by a L<Dancer::Handler> that takes a
+L<Dancer::Request> and tries to match it against all route handlers of the
+current application. When a route handler is found, its code is executed, and
+the handler renders the result as a L<PSGI> response.
+
+This is the scope of the core: powering an application, registering route
+handlers and providing the tools for finding the appropriate handler for a given
+request.
+
+Anything outside of this scope should be handled either by an engine or a
+plugin.
+
+So what is the core actually, if all the important parts are handled by engines
+and if most of the specific needs should be addressed by plugins?
+Well, the core is what you see when you look at Dancer's soul: it's a
+dispatcher provided as a DSL.
+
+A dead-simple dispatcher whose only real internal job is to register route
+handlers with a powerful syntactic sugar.
+
+
+=head2 Engines
+
+We also introduced another layer, between the core and plugins, that we call
+engines. Indeed, there are some very common use-cases we wanted to address
+within Dancer without touching the core, and with more standardization than
+simple plugins can provide. Those fields are: loggers, template engines,
+serializers and session engines. 
+
+Engines were introduced quickly in Dancer's development. The main idea behind
+this concept was to allow Dancer to be as extensible as possible.
+
+For instance, the engine design allows Dancer to handle different template or
+session engines transparently. You can change the backend you use with a simple
+configuration update.
+
+Basically, any engine in Dancer is built upon the Abstract Class design
+pattern: if you want to write your own engine for Dancer, all you have
+to do is to I<implement> the right abstract class.
+
+L<Ovid|http://blogs.perl.org/user/Ovid/> explained on his blog
+L<the concept of the abstract-class pattern|http://blogs.perl.org/users/ovid/2010/11/perl101-encapsulation-via-protected-abstract-methods.html>,
+the article is part of his Perl 101 series and explained the concept very well.
+
+In Dancer you'll find four kinds of engine:
+
+=over 4 
+
+=item * L<Dancer::Logger::Abstract>
+
+=item * L<Dancer::Session::Abstract>
+
+=item * L<Dancer::Template::Abstract>
+
+=item * L<Dancer::Serializer::Abstract>
+
+=back
+
+For instance, writing a new template engine would be that simple:
+
+    package Dancer::Template::MyGreatEngine;
+
+    # we implement the 'Template' interface
+    use base 'Dancer::Template::Abstract';
+
+    sub init {
+        # we can do init stuff here
+        # like creating our template renderer object 
+    }
+
+    sub render {
+        my ($self, $template, $tokens) = @_;
+        # we just need to process $template with $tokens and return 
+        # the expanded string
+    }
+
+    1;
+
+The same idea goes for session, logger and serializer. 
+
+Thanks to this design, Dancer has already many template, session and logger
+backends available on the CPAN. This showscases one of the ideas behind Dancer's
+philosophy: being as open as possible for the developer and for the Perl
+community.
+
+The developer has the freedom to choose virtually any template or logger engine
+she likes, the community can contribute easily to the project, thanks to a
+portable design.
+
+=head2 Plugins
+
+Finally, we have plugins. As explained in a previous article, plugins are the
+most simple way to extend Dancer on a particular need. If you plan to
+contribute code to Dancer, you probably want to consider writing a plugin.
+
+A plugin can do anything that a regular Dancer application can; but on top of
+that, it can alias actions under a name which will be added to the DSL.
+
+A good plugin example is L<Dancer::Plugin::Database>: a keyword C<database> is
+added to the DSL, providing a valid L<DBI> handle over the database specified
+via Dancer's configuration.
+
+Writing a plugin for Dancer is a piece of cake:
+
+    package Dancer::Plguin::MyGreatPlugin;
+    
+    # we want to import Dancer's DSL
+    use Dancer ':syntax';
+
+    # we want tools to build our plugin
+    use Dancer::Plugin;
+
+    register 'some_word' => sub {
+        # so something
+    };
+
+    register_plugin;
+
+=head2 Conclusion
+
+That's it, you know all the main ideas behind Dancer's design, you should now
+better understand I<where> your contribution should fo, if you want to provide
+some.
+
+The next step for us is now to design a whole new layer, whose main job will be
+to provide a unified access to the internals. We'll probably call that layer
+C<Dancer::Internal>. The idea will be to provide a full access to all the
+meta-information of a Dancer application, this will allows for more power and
+possibilties for plugins and engines.
+
+This will be done through a process of refactoring that will occur in the
+Dancer 1.3xx releases. When finalized, it will be released as a 1.4 version.
+This is our major target for this release.
+
+=head2 Author
+
+This article has been written by Alexis Sukrieh for the Perl Dancer advent
+calendar 2010.
+
