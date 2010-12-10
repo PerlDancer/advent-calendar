@@ -153,6 +153,9 @@ For more details about the plugin used in this article, you can check the
 example application that is shipped with L<Dancer::Plugin::Auth::Twitter> in
 the C<example/> directory. It should be working out of the box.
 
+The plugin described in this article is a port of
+L<Catalyst::Authentication::Credential::Twitter>, huge kudos go to its authors.
+
 =head2 Author
 
 This article has been written by Alexis Sukrieh for the Perl Dancer advent
