@@ -36,54 +36,40 @@ Flags:
 
 09. [D] ournowrimo app (yanick champoux)
 
-10. [R] Deploying Dancer (nmani)
+10. [D] Deploying Dancer (nmani)
         (Could someone with Nginx experience check the article?)
 
-11. [R] Dancer::Plugin::DBIC (dams)
+11. [D] Dancer::Plugin::DBIC (dams)
+
+12. [D] Feed
+
+13. [D] Jukebox
+
+14. [D] Starman
 
 15. [D] shrinkr (tutorial)
 
-==== NEED TO BE REVIEWED
+16. [P] Graph
 
-XX. [D] Adding authentication to your application (Dancer::Plugin::Authorize) (alnewkirk)
+17. [P] Auth
 
-XX. [R] Dancer::Plugin::SiteMap: "map-the-way-with-dancer-plugin-sitemap" (jamesronan)
-        (Added a description of how it works, to give the article a little more
-        content)
+18. [D] Auth Twitter OAuth
 
-XX. [R] Authentication with Twitter OAuth (sukria)        
+19. [D] Dancer Internals
 
-XX. [R] using dancer with middlewares
+20. [D] Dancer Session Backend
 
-XX. [R] Deployment of Dancer application with Starman, Apache and Mod_proxy (hobbestigrou)
+21. [D] Dancer Logger Backend
 
-XX. [R] Dancer::Plugin::Feed (franck)
+22. [D] Dancer Template Backend
 
-XX. [R] Dancer Internals (sukria)
+23. [P] Plack middlewares
 
-XX. [D] Writing a new logger backend  (xsawyerx)
+24. [P] Merge of Ecosystem + Sitemap
 
-XX. [D] Writing a new serializer backend (xsawyerx)
+25. [P] How to contribute to Dancer
 
-XX. [D] Writing a new session backend (xsawyerx)
-
-XX. [R] Dancer's ecosystem
-
-XX. [R] How to contribute to Dancer core (covered in Franck's lastest blog post)
-
-==== NOT YET FINISHED
-
-xx. [P] Dancer for static websites (BooK)
-
-xx. [P] Cool stuff with graph / mongodb / memcached (franck)
-
-==== NOT YET STARTED
-
-xx. [ ] Using the before (KiokuDB context) (xsawyerx)
-
-xx. [ ] Replacing old CGI code with Dancer (xsawyerx)
-
-==== LOOKING FOR AN AUTHOR
+==== LOOKING FOR AN AUTHOR (BUT WE HAVE FUCKING TOO MANY ARTICLES! MAYBE CATALYST WANT THEM?)
 
 xx. [ ] Common practiced with Dancer apps (move to template_toolkit or your favorite
         template system, etc.)
