@@ -243,11 +243,13 @@ L<Dancer::Session::KiokuDB>. Nice, isn't it?
 Feel free to send me your names so I could add you to the CREDITS section in the
 POD! :)
 
-=head1 SEE ALSO
+=head2 See also
 
 Previous articles
 
 =over 4
+
+=item * I<Dancer Internals>
 
 =item * I<Writing a new Dancer serializer>
 
@@ -255,7 +257,8 @@ Previous articles
 
 =back
 
-=head1 AUTHOR
+=head2 Author
 
-Sawyer X <xsawyerx@cpan.org>
+This article has been writen by Sawyer X C<< <xsawyerx@cpan.org> >> for the
+Perl Dancer Advent Calendar 2010.
 
