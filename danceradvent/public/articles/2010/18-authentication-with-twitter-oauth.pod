@@ -113,7 +113,7 @@ straight-forward:
     before sub {
         return if request->path =~ m{/auth/twitter/callback};
         if (not session('twitter_user')) {
-            redirect twitter->auth_twitter_authenticate_url;
+            redirect auth_twitter_authenticate_url;
         }
     };
 
@@ -130,7 +130,7 @@ for a subset of your routes, but that is left as an exercise for the reader.
 
 Well, at this point, we're done. Yes, it's that simple. The only work that is
 left to the developer is to provide a before filter that redirects
-unauthenticated users to C<< twitter->auth_twitter_authenticate_url >> when
+unauthenticated users to C<< auth_twitter_authenticate_url >> when
 appropriate. All the dirty work of communicating with Twitter is handled under
 the hood by L<Dancer::Plugin::Auth::Twitter>.
 
