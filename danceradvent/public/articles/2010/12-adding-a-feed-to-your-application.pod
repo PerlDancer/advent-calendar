@@ -80,7 +80,7 @@ format they prefer. We only need to update our previous route for this:
     my $format = params->{format};
     my $articles = _articles(params->{year});
     create_feed(
-      format => params->{feed},
+      format => $format,
       ...
     );
   };
