@@ -22,8 +22,8 @@ code.
 
 =head2 The data
 
-I'm collecting data using the GitHub API, and storing most of them in
-L<mongodb|http://www.mongodb.net/>, using the
+I'm collecting data using the GitHub API, and use 
+L<mongodb|http://www.mongodb.net/> for stroage, using the
 L<Dancer::Plugin::Mongo|http://search.cpan.org/perldoc?Dancer::Plugin::Mongo>
 plugin. I've got two collections:
 
@@ -37,7 +37,7 @@ plugin. I've got two collections:
 
 For each profile that follows another profile, a relation is created. Each time
 someone has worked with someone else, another relation is created. So, if you
-follow L<sukria|http:/github.com/sukria> on GitHub, and you've already contributed to Dancer, 
+follow L<sukria|http://github.com/sukria> on GitHub, and you've already contributed to Dancer, 
 there is a relation of weight 2 between you and him.
 
 =head2 Generate the graph server side
