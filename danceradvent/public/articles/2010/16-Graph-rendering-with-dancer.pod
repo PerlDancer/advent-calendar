@@ -140,12 +140,12 @@ All I have to do is to change the route to something like:
          links => \@links,
      };
 
-     memcached_set($key, $finalized_graph);
+     memcached_store($key, $finalized_graph);
      return $finalized_graph;
  };
 
 You can see the introduction of two new keywords: B<memcached_get> and
-B<memcached_set>. 
+B<memcached_store>. 
 
 =head2 Conclusion (bis)
 
