@@ -14,7 +14,7 @@ This is not the kind of graph I want to end up with (this one is buggy, some pro
 
 =head2 The data
 
-I'm collecting data using the GitHub API, and storing most of them in L<mongodb|http://www.mongodb.net/>. I've got two collections:
+I'm collecting data using the GitHub API, and storing most of them in L<mongodb|http://www.mongodb.net/> and using the L<Dancer::Plugin::Mongo|http://search.cpan.org/perldoc?Dancer::Plugin::Mongo> plugin. I've got two collections:
 
 =over 4
 
@@ -90,7 +90,7 @@ For the graph rendering, I use the amazingly great L<protovis library|http://vis
 
 =head2 Caching
 
-Fetching the informations from mongo and rendering them can be really slow, depending on the size of the requestd graph. A good idea is to cache the result before sending it back to the client. For this, we can use B<Dancer::Plugin::Memcached>.
+Fetching the informations from MongoDB and generating the graph object can be really slow, depending on the size of the requestd graph. A good idea is to cache the result before sending it back to the client. For this, we can use L<Dancer::Plugin::Memcached|http://search.cpan.org/perldoc?Dancer::Plugin::Memcached>.
 
 All I have to do is to modify the route to something like:
 
@@ -115,11 +115,13 @@ All I have to do is to modify the route to something like:
      return $finalized_graph;
  };
 
+You can see the introduction of two new keywords: B<memcached_get> and B<memcached_set>. 
+
 =head2 Conclusion (bis)
 
 In this article I've show two new plugins: B<Dancer::Plugin::Mongo> (by Adam Taylor) and B<Dancer::Plugin::Memcached> (by squeeks), and a nice javascript library : protovis.
 
-blablabla
+I'll continue to work on this app in the following month, and you can expect to see the code (and use the application) soon.
 
 =head2 Author
 
