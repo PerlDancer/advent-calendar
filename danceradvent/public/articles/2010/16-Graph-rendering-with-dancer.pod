@@ -1,0 +1,168 @@
+=head1 Use cool stuff to render a graph
+
+Earlier this year I presented one of my project: 
+L<Github Explorer|http://lumberjaph.net/graph/2010/03/25/github-explorer.html>.
+The idea was to graph the various communities on github, and show how peoples
+work together, by country and langages. I've started to work on a new version,
+and this time I want to let people generate their own graph.
+
+In this article I'll present a simple version of what I'm working on.
+Everything will be published as open source software in a few weeks.
+
+=head2 First, the conclusion
+
+Let's see a graph first (and sorry if you're reading this with a smartphone!).
+
+=for html <iframe scrolling="no" style="border:solid 4px #ccc;height:450px;width:600px;" src="/demo/graph/github-graph.html"></iframe>
+
+This is not the kind of graph I want to end up with (this one is buggy, some
+profiles are displayed twice for instance), but it gives you a good idea of what I
+want to achieve. Check the content of the iframe to see the html and javascript
+code.
+
+=head2 The data
+
+I'm collecting data using the GitHub API, and storing most of them in
+L<mongodb|http://www.mongodb.net/>, using the
+L<Dancer::Plugin::Mongo|http://search.cpan.org/perldoc?Dancer::Plugin::Mongo>
+plugin. I've got two collections:
+
+=over 4
+
+=item profiles
+
+=item relations
+
+=back
+
+For each profile that follows another profile, a relation is created. Each time
+someone has worked with someone else, another relation is created. So, if you
+follow L<sukria|http:/github.com/sukria> on GitHub, and you've already contributed to Dancer, 
+there is a relation of weight 2 between you and him.
+
+=head2 Generate the graph server side
+
+I've built a simple Dancer website that will be used to display various
+statistics and informations about the graphs I'm going to create.
+
+Let's create a route that renders a simple HTML page with some javascript:
+
+ get '/view/graph/:name' => sub {
+     template 'graph', {name => params->{name}}, {layout => undef};
+ };
+
+I set the layout to C<undef> since I only want the graph and nothing else. 
+ 
+The content for our template is mostly some javascript that will fetch the
+content of your graph from an API. The important lines are:
+
+ var dataURL = "/api/graph/<% name %>";
+ var JSONdata = $.ajax({ type: "GET", url: dataURL, async: false }).responseText;
+ var graph = JSON.parse(JSONdata);
+
+This will query our JSON API to get a graph.
+
+Now, let's see our API:
+
+ set serializer => 'JSON';
+
+ get '/api/graph/:profile' => sub {
+     my $profile = params->{profile};
+
+     my $graph = GitHub::Explorer::Graph->new();
+
+     $graph->add_node( { nodeName => $profile, id => 0, group => 1 } );
+    
+     _add_nodes($graph, ...);
+     _add_links($graph, ...);
+
+     my @nodes = $graph->all_nodes();
+     my @links = $graph->all_links();
+    
+     return {
+         nodes => \@nodes,
+         links => \@links,
+     };
+ };
+
+Let's look at this route. This API will only render JSON, since it's what the
+javascript expects. The route matches for a given profile. The first thing it does
+is to create a B<Graph> object, that implements a simple interface (B<add_node>,
+B<add_edge>, B<all_nodes>, B<all_edges>, ...). We create a first node with the
+requested profile. Now, for each relation, we fetch from mongo the name of
+the profile.
+
+The B<_add_nodes> method looks something like the following:
+
+ sub _add_nodes {
+     ...
+     my $rs = mongo->github->relations->find($query);
+
+     while ( my $r = $rs->next ) {
+         # add node to existing graph
+     }
+ }
+
+Here I use B<Dancer::Plugin::Mongo>. It imports the B<mongo> keyword; B<github>
+is the name of my database; B<relations> is the name of the collection in the
+database. To finish, I call the B<find> method with my query, to fetch the
+informations I need.
+
+The B<_add_links> function is similar. Now that we have all our informations,
+we can ask for a list of nodes and edges, and return them to the javascript.
+
+For the graph rendering, I use the amazingly great 
+L<Protovis library|http://vis.stanford.edu/protovis/>.
+
+=head2 Caching
+
+Fetching the informations from MongoDB and generating the graph object can be
+really slow, depending on the size of the requestd graph. A good idea is to
+cache the result before sending it back to the client. For this, we can use
+L<Dancer::Plugin::Memcached|http://search.cpan.org/perldoc?Dancer::Plugin::Memcached>.
+
+All I have to do is to change the route to something like:
+
+ get '/api/graph/:profile' => sub {
+     my $profile = params->{profile};
+
+     my $key = "gh_graph_".$profile;
+     if (my $cached_graph = memcached_get($key)) {
+         return $cached_graph;
+     }
+
+     my $graph = GitHub::Explorer::Graph->new();
+
+     ...
+
+     my $finalized_graph = {
+         nodes => \@nodes,
+         links => \@links,
+     };
+
+     memcached_set($key, $finalized_graph);
+     return $finalized_graph;
+ };
+
+You can see the introduction of two new keywords: B<memcached_get> and
+B<memcached_set>. 
+
+=head2 Conclusion (bis)
+
+In this article I've shown two new plugins: B<Dancer::Plugin::Mongo> (by Adam
+Taylor) and B<Dancer::Plugin::Memcached> (by squeeks), and a nice javascript
+library : B<Protovis>.
+
+I'll continue to work on this app in the following months, and you can expect to
+see the code (and use the application) hopefully very soon.
+
+=head2 Author
+
+This article has been written by Franck Cuny for the Perl Dancer Advent
+Calendar 2010.
+
+=head2 Copyright
+
+Copyright (C) 2010 by franck cuny C<< <franck@lumberjaph.net> >>
+
+
