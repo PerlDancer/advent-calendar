@@ -23,7 +23,7 @@ code.
 =head2 The data
 
 I'm collecting data using the GitHub API, and use 
-L<mongodb|http://www.mongodb.net/> for stroage, using the
+L<mongodb|http://www.mongodb.net/> for storage, using the
 L<Dancer::Plugin::Mongo|http://search.cpan.org/perldoc?Dancer::Plugin::Mongo>
 plugin. I've got two collections:
 
