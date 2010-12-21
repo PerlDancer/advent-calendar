@@ -58,7 +58,7 @@ is a checksum of the page content returned to the client. The client will
 then store this value, and next time it requests the same page, it will request
 the content only if the checksum has changed. 
 
-In your config.yml, add the following two lines:
+In your config.yml, add the following:
 
     plack_middlewares:
       -
