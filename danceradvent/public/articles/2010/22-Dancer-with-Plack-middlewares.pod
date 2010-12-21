@@ -1,7 +1,7 @@
-=head1 How to use Dancer with Plack's middlewares
+=head1 How to use Dancer with Plack middlewares
 
-Plack is an awesome addition to the Perl ecosystem. One of it's key feature is
-the middlewares.
+Plack is an awesome addition to the Perl ecosystem. One of its key features is
+support for middlewares.
 
 You can see a middleware as a
 L<Role|http://search.cpan.org/perldoc?Moose::Role>: a reusable component
@@ -37,7 +37,8 @@ your project, you can choose between a standalone server, or using Plack:
     == Entering the development dance floor ...
 
 Doing this starts my application using Dancer's standalone server on port
-B<3000>.
+B<3000> (by default; you can use the C<--port> command-line argument to change
+this).
 
 Now, let's use Plack to start this application:
 
@@ -45,14 +46,15 @@ Now, let's use Plack to start this application:
     HTTP::Server::PSGI: Accepting connections at http://0:5000/
 
 This time, it's the PSGI's standalone server that serves our application, and
-it listen on port B<5000>.
+it is listening on port B<5000> (this is the default chosen by Plackup; again,
+you can use the C<--port> argument to change this).
 
 =head2 Adding a first Middleware
 
 For this example, we will add a basic middleware: L<Plack::Middleware::ETag>.
 This one will append to all our responses a new header: B<ETag>. The ETag is a
 mechanism to control cache validation. Most of the time, the value of the ETag
-is a checksum of the page's content returned to the client. The client will
+is a checksum of the page content returned to the client. The client will
 then store this value, and next time it requests the same page, it will request
 the content only if the checksum has changed. 
 
@@ -103,7 +105,7 @@ header is the same, so we don't have any content returned for that request.
 
 Another common use case is the need to send content from the server to the
 client in a compressed format. For this, you can use
-L<Plack::Middleware::Deflater> that will compress the content on-the-fly with
+L<Plack::Middleware::Deflater> which will compress the content on-the-fly with
 gzip if the client supports this feature.
 
 A simple:
