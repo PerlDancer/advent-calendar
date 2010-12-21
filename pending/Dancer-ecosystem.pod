@@ -39,10 +39,6 @@ engine abstraction layer and the L<HTML::Mason> templating system.
 
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::Mason>)
 
-=head3 Dancer::Template::HtmlTemplate
-
-(On CPAN: L<http://search.cpan.org/perldoc?Dancer::Template::HtmlTemplate>)
-
 =head3 Dancer::Template::Xslate
 
 L<Text::Xslate> is a template engine, tuned for persistent applications, safe
@@ -147,6 +143,30 @@ write boilerplate DBIC setup code.
 
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::DBIC>)
 
+=head3 Dancer::Plugin::SiteMap
+
+Basically, this plugin predefines a pair of routes for you saving you the
+work in your Dancer application.
+
+The two routes that are defined when called, obtain a list of routes 
+that are in your Dancer application within Dancer's registry.  This list 
+is then simply formated appropriately for each route.
+
+For HTML an unordered list containing anchor tags is output within your
+applicataions main layout. This can then be styled with CSS to suit.
+
+For the XML site map, it outputs... Yep you guessed it! An XML site map.
+
+As these routes work on a on-demand principle, there is no need to 
+continually update your site map, L<Dancer::Plugin::SiteMap> keeps it 
+up-to-date for you :-)
+
+    use Dancer;
+    use Dancer::Plugin::SiteMap;
+
+That's it! Your Dancer App now has C</sitemap> and C</sitemap.xml>
+routes.
+
 =head2 Author
 
 This article has been written by Franck Cuny for the Perl Dancer Advent
@@ -154,4 +174,5 @@ Calendar 2010.
 
 =head2 Copyright
 
-Copyright (C) 2010 by Franck Cuny C<< <franck@lumberjaph.net> >>.
+Copyright (C) 2010 by Franck Cuny C<< <franck@lumberjaph.net> >>,
+James Ronan C<< <james@ronanweb.co.uk> >>
