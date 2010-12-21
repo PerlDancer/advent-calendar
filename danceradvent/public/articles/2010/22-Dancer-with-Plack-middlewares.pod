@@ -1,6 +1,6 @@
 =head1 How to use Dancer with Plack's middlewares
 
-Plack is an awesome addition to the Perl ecosystem. One of it's key feature are
+Plack is an awesome addition to the Perl ecosystem. One of it's key feature is
 the middlewares.
 
 You can see a middleware as a
