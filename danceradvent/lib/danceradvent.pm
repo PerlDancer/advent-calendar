@@ -67,13 +67,13 @@ get '/:year' => sub {
     # If it's not the current year, also fetch the titles of all the posts so
     # the template can provide a list of named posts
     my @all_entries;
-    if (vars->{current_year} > params->{year}) {
+    if (params->{year} < (localtime)[5] + 1900) {
         @all_entries = _get_entries(params->{year});
     }
 
     # Assemble a list of other years which have viewable articles for links:
     my @other_years;;
-    for my $year (config->{start_year} .. vars->{current_year}) {
+    for my $year (config->{start_year} .. (localtime)[5] + 1900) {
         push @other_years, $year 
             if $year != params->{year} && 
                 grep { $_->{viewable} } @{ _articles_viewable($year) };
