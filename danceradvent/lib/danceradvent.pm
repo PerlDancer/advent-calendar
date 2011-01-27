@@ -76,7 +76,9 @@ get '/:year' => sub {
 };
 
 get '/feed/:year' => sub {
-    my @entries = _get_entries(params->{year});
+    my @entries = map { $_->[0] }
+        sort { $b->[1] <=> $a->[1] }
+        map { [ $_, $_->{issued}->ymd('') ] } _get_entries(params->{year});
   
     create_feed(
         format  => 'rss',
