@@ -23,7 +23,7 @@ Advent Calendar affairs!)
 </div>
 
 
-[% IF all_entries %]
+[% IF all_entries.size %]
     <h2>Full article list</h2>
     <p>
     Since it's not [% year %] anymore, here's a full list of the posts with their
