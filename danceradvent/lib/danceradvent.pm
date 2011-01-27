@@ -167,7 +167,6 @@ sub _article_viewable {
         $today = sprintf "%04d12%02d", $year, 24;
     }
 
-    debug("Deciding whether $date is viewable on $today");
     if($date <= $today) {
         return defined _article_exists($year, $day);
     }
