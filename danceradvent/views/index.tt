@@ -6,6 +6,14 @@ Happy Christmas, and welcome to the Dancer team's advent calendar for
 [% year %]!
 </p>
 
+[% IF other_years.size %]
+    <p>Other years:
+    [% FOR year IN other_years %]
+    <a href="/[% year %]">[% year %]</a>
+    [% END %]
+    </p>
+[% END %]
+
 <p>
 We've assembled a set of articles about getting to grips with Dancer, one for
 each day in December up to Christmas Eve.  (As is pretty much traditional with

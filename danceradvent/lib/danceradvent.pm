@@ -71,10 +71,19 @@ get '/:year' => sub {
         @all_entries = _get_entries(params->{year});
     }
 
+    # Assemble a list of other years which have viewable articles for links:
+    my @other_years;;
+    for my $year (config->{start_year} .. vars->{current_year}) {
+        push @other_years, $year 
+            if $year != params->{year} && 
+                grep { $_->{viewable} } @{ _articles_viewable($year) };
+    }
+
     return template 'index' => { 
         year => params->{year}, 
         articles => $articles, 
-        all_entries => \@all_entries 
+        all_entries => \@all_entries,
+        other_years => \@other_years,
     };
 };
 
