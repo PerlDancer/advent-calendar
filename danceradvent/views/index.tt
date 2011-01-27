@@ -21,3 +21,18 @@ Advent Calendar affairs!)
     [%- END %]
 [% END %]
 </div>
+
+
+[% IF all_entries %]
+    <h2>Full article list</h2>
+    <p>
+    Since it's not [% year %] anymore, here's a full list of the posts with their
+    titles:
+    </p>
+    <ol>
+    [% FOR a IN all_entries %]
+        <li><a href="[% year %]/[% a.issued.day %]">[% a.title %]</a></li>
+    [% END %]
+    </ol>
+[% END %]
+

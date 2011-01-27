@@ -60,38 +60,28 @@ get '/:year' => sub {
       unless _control_date( params->{year} );
 
     my $articles = _articles_viewable(params->{year});
+    
+    # If it's not the current year, also fetch the titles of all the posts so
+    # the template can provide a list of named posts
+    my @all_entries;
+    if (vars->{current_year} > params->{year}) {
+        debug "Fetching all entries";
+        @all_entries = _get_entries(params->{year});
+    } else {
+        debug "Not previous year (" . vars->{current_year} . " vs "
+            . params->{year} . "), not fetching  all entries";
+    }
 
-    return template 'index' =>
-      { year => params->{year}, articles => $articles };
+    return template 'index' => { 
+        year => params->{year}, 
+        articles => $articles, 
+        all_entries => \@all_entries 
+    };
 };
 
 get '/feed/:year' => sub {
-    my $articles = _articles_viewable( params->{year} );
-
-    my @entries;
-
-    $articles = [sort {$a->{day} <=> $b->{day}} @$articles];
-    
-    foreach my $article ( reverse @$articles ) {
-        next unless $article->{viewable};
-        my ($pod_file) = _article_exists( params->{year}, $article->{day} );
-        my ( $title, $html ) = _pod_to_html($pod_file);
-        my $permalink = URI->new( request->base );
-        $permalink->path( params->{year} . '/' . $article->{day} );
-        push @entries,
-          {
-            title    => $title,
-            content  => $html,
-            link     => $permalink,
-            category => 'perl',
-            issued   => DateTime->new(
-                year  => params->{year},
-                month => 12,
-                day   => $article->{day}
-            ),
-          };
-    }
-   
+    my @entries = _get_entries(params->{year});
+  
     create_feed(
         format  => 'rss',
         title   => 'Dancer Advent Calendar ' . params->{year},
@@ -206,4 +196,31 @@ sub _article_exists {
     return undef;
 }
 
+sub _get_entries {
+    my $year = shift;
+    my @entries;
+    my $articles = _articles_viewable($year);
+    $articles = [sort {$a->{day} <=> $b->{day}} @$articles];
+    
+    foreach my $article (@$articles ) {
+        next unless $article->{viewable};
+        my ($pod_file) = _article_exists( params->{year}, $article->{day} );
+        my ( $title, $html ) = _pod_to_html($pod_file);
+        my $permalink = URI->new( request->base );
+        $permalink->path( params->{year} . '/' . $article->{day} );
+        push @entries,
+          {
+            title    => $title,
+            content  => $html,
+            link     => $permalink,
+            category => 'perl',
+            issued   => DateTime->new(
+                year  => params->{year},
+                month => 12,
+                day   => $article->{day}
+            ),
+          };
+    }
+    return @entries;
+ }
 true;
