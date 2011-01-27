@@ -46,9 +46,12 @@ before sub {
 };
 
 get '/' => sub {
-    my $current_year = vars->{current_year};
-    debug "going to $current_year";
-    redirect("/$current_year");
+    my $redirect_year = vars->{current_year};
+    while (! grep { $_->{viewable} } @{  _articles_viewable($redirect_year) }) {
+        $redirect_year--;
+    }
+    debug "going to $redirect_year";
+    redirect("/$redirect_year");
 };
 
 get '/notyet' => sub {
