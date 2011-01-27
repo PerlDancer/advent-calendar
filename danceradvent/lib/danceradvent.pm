@@ -6,7 +6,7 @@ use Pod::POM;
 use Pod::POM::View::InlineHTML;
 
 use Dancer::Plugin::Feed;
-use Dancer::Plugin::MobileDevice;
+#use Dancer::Plugin::MobileDevice;
 
 use URI;
 use POSIX qw/strftime/;
@@ -65,11 +65,7 @@ get '/:year' => sub {
     # the template can provide a list of named posts
     my @all_entries;
     if (vars->{current_year} > params->{year}) {
-        debug "Fetching all entries";
         @all_entries = _get_entries(params->{year});
-    } else {
-        debug "Not previous year (" . vars->{current_year} . " vs "
-            . params->{year} . "), not fetching  all entries";
     }
 
     return template 'index' => { 
