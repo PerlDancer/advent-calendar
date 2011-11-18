@@ -58,3 +58,7 @@ Flags:
 [A] - Writing Unicode-safe Dancer apps (Penfold)
       Correct Unicode usage in Dancer apps, from an expert :)
 
+[A] - Safe password storage (LoonyPandora)
+      Safe password storage in Dancer apps, focussing on D::P::Passphrase
+
+
