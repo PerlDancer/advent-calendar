@@ -55,5 +55,6 @@ Flags:
       a writeup of D::P::SimpleCRUD, describing the features it offers, probably
       with some screenshots of it in action etc.
 
-
+[A] - Writing Unicode-safe Dancer apps (Penfold)
+      Correct Unicode usage in Dancer apps, from an expert :)
 
