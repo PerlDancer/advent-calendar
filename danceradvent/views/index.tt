@@ -8,8 +8,8 @@ Happy Christmas, and welcome to the Dancer team's advent calendar for
 
 [% IF other_years.size %]
     <p>Other years:
-    [% FOR year IN other_years %]
-    <a href="/[% year %]">[% year %]</a>
+    [% FOR otheryear IN other_years %]
+    <a href="/[% otheryear %]">[% otheryear %]</a>
     [% END %]
     </p>
 [% END %]
