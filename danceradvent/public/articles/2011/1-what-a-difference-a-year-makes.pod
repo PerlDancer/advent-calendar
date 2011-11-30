@@ -63,10 +63,9 @@ Dancer now supports PATCH requests.
 One caveat is that it won't work in standalone mode until
 L<HTTP::Server::Simple>
 has been updated to recognise PATCH requests.  A pull request addressing this
-has been submitted, but, at the time of writing, has not been accepted or
-responded to:
+has been submitted, but, at the time of writing, has not been merged:
 
-L<https://github.com/bestpractical/http-server-simple/pull/1>
+L<https://github.com/bestpractical/http-server-simple/pull/2>
 
 =head2 Get hooked!
 
@@ -99,7 +98,8 @@ to provide much more powerful error handling.
 =head2 behind_proxy setting
 
 The behind_proxy setting tells Dancer that it is deployed behind a proxy,
-causing it to honour the X_FORWARDED_PROTOCOL, X_FORWARDED_HOST etc env vars.
+causing it to honour the C<X_FORWARDED_PROTOCOL>, C<X_FORWARDED_HOST> etc 
+env vars.
 
 
 And, of course, many more improvements and bug fixes - thanks to the awesome
