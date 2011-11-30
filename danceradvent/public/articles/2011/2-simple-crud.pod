@@ -1,0 +1,58 @@
+=head1 Simple CRUD with Dancer::Plugin::SimpleCRUD
+
+It's a common requirement to provide CRUD (create, read, update, delete)
+functionality from within webapps, and this can often lead to repeating tedious
+code, which is no good.
+
+L<Dancer::Plugin::SimpleCRUD> has been designed to let you very easily put up a
+basic interface to allow data in a database table to be viewed, searched, added,
+edited and deleted.
+
+Once you've loaded the plugin, you can get a basic CRUD interface up and running
+with code as simple as:
+
+    simple_crud(
+        record_title => 'Widget',
+        prefix => '/widgets',
+        db_table => 'widgets',
+    );
+
+The above example states that we want an interface at </widgets> to edit stuff
+in the database table named C<widgets>, and sets the display name of a record in
+the table to C<Widget> (used for user-facing titles like "Edit Widget", "Delete
+Widget" etc).
+
+For a ready-to-try example, L<Dancer::Plugin::SimpleCRUD> ships with an
+L<https://github.com/bigpresh/Dancer-Plugin-SimpleCRUD/tree/master/example|example app> 
+complete with a ready-to-use SQLite database with some sample records.
+
+If you launch the example app and go to e.g. L<http://localhost:3000/people>
+(tweak URL to suit if it's not on your local machine, or you start it on a
+different port, etc), you'll see a list of records already present:
+
+=for html <img src="/images/2011/simplecrud-people-list.png">
+
+The example app enables pagination, searching and downloading of the results as
+CSV/TSV/JSON/XML, to illustrate the easy options which are available.
+
+From the record listing page, Clicking the edit link to edit one of the records 
+will bring up a form to edit the record:
+
+=for html <img src="/images/2011/simplecrud-people-edit.png">
+
+DWIMmery is used to look at the database table definition and work out sensible
+form control types etc (although of course there are configuration options to 
+allow you to override various parts, control which fields are editable, define 
+validation rules etc).  The idea though is that the default settings should be
+sensible, so you should be able to get something usable up and running with the
+minimum of fuss.
+
+As examples, an C<ENUM()> column will result in radio buttons/a dropdown of
+the specified choices, a C<TEXT> column will result in a C<TEXTAREA>
+input, and a column named e.g. C<password> or C<passwd> will result in a
+C<PASSWORD> text entry field automatically.
+
+When adding a new record, of course the form is the same one as the edit form,
+but not pre-populated with the existing contents of the record being edited.
+
+
