@@ -27,6 +27,14 @@ Flags:
       the new features (if this becomes a bit long, it could be split over
       multiple days)
 
+[D] - D::P::SimpleCRUD - bigpresh
+      a writeup of D::P::SimpleCRUD, describing the features it offers, probably
+      with some screenshots of it in action etc.
+
+[D] - Self-contained Dancer apps - agordon
+      Examples of what can be done in a single file in Dancer
+
+
 [ ] - Dancer2 progress, design choices etc - I think we can expand this one out
       into multiple posts about the upcoing Dancer2's design etc.
 
@@ -50,10 +58,6 @@ Flags:
 
 [A] - Profiling Dancer apps - bigpresh
       A quick writeup of using Dancer::Plugin::NYTProf to profile apps.
-
-[D] - D::P::SimpleCRUD - bigpresh
-      a writeup of D::P::SimpleCRUD, describing the features it offers, probably
-      with some screenshots of it in action etc.
 
 [A] - Writing Unicode-safe Dancer apps (Penfold)
       Correct Unicode usage in Dancer apps, from an expert :)
