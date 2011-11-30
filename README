@@ -22,7 +22,7 @@ Flags:
 
 ==== ARTICLE IDEAS:
 
-[ ] - What a difference a year makes
+[D] - What a difference a year makes (bigpresh)
       progress since last year - reading through CHANGES and writing about all
       the new features (if this becomes a bit long, it could be split over
       multiple days)
@@ -51,7 +51,7 @@ Flags:
 [A] - Profiling Dancer apps - bigpresh
       A quick writeup of using Dancer::Plugin::NYTProf to profile apps.
 
-[A] - D::P::SimpleCRUD - bigpresh
+[D] - D::P::SimpleCRUD - bigpresh
       a writeup of D::P::SimpleCRUD, describing the features it offers, probably
       with some screenshots of it in action etc.
 
