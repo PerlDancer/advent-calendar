@@ -1,0 +1,663 @@
+=head1 Self-Contained Dancer Application
+
+Sometimes you just need a quick-and-dirty way to setup a simple (but powerful,
+feature-rich, perl-based) web-application, perhaps for personal use, or testing
+purposes, or any other reason. While creating stub B<Dancer> application is easy
+enough, B<Dancer> can work its magic even with a single file.
+
+=head4 Note about examples.
+
+All the examples shown in this page are full-fludged, self-contained B<Dancer>
+applications. No external files are needed. To try them out, save the code in a
+file (e.g. C<example1.pl>), then run:
+
+     $ perl example1.pl
+     >> Dancer 1.3080 server 20729 listening on http://0.0.0.0:3000
+     == Entering the development dance floor ...
+
+Then visit L<http://localhost:3000> to see the application in action. For better
+deployment alternatives, see L<Deployment> below.
+
+=head2 A Simple Example
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+
+
+	get '/' => sub {
+		return<<EOF;
+	<html>
+	<body>
+	<H1>Dance Dance Revolution!</h1>
+	This is a self-contained Dancer application.
+	<body>
+	</html>
+	EOF
+	};
+
+
+	dance;
+
+Try it: L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/basic.pl>.
+
+Source:  L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/basic.txt>.
+
+Nothing much to see here. The B<Dancer> keywords (e.g. C<get>, C<dance>) are
+well documented in L<Dancer::Introduction> and L<Dancer::tutorial> pages.
+
+=head2 Custom Settings
+
+By default, B<Dancer> uses C<config.yml> for the application's settings. But we
+can easily change them from our script, and not use C<config.yml> at all:
+
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+
+	set log => "core";
+	set logger => "console";
+	set warnings => 1;
+
+	get '/' => sub {
+		return<<EOF;
+	<html>
+	<body>
+	<H1>Dance Dance Revolution!</h1>
+	This is a self-contained Dancer application.
+	<body>
+	</html>
+	EOF
+	};
+
+	dance;
+
+
+The C<set> keyword can be used to set any configuration key, just like the
+C<config.yml> file. Common configuration keys are detailed in
+L<Dancer::Tutorial>. The above code is equivalent to using the following
+C<config.yml> values in a normal B<Dancer> application:
+
+	log: "core"
+	logger: "console"
+	warnings: 1
+
+
+=head2 Using Templates
+
+B<Dancer>'s template engine can be easily used in self-contained application:
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+
+	set log => "core";
+	set logger => "console";
+	set warnings => 1;
+	set template => "template_toolkit";
+
+	my $index_template=<<EOF;
+	<html>
+	<body>
+
+	<h1>Hello From Self-Contained Dancer Application</h1>
+
+	The answer to life the universe and everything is <% answer %>.
+	<br/>
+
+	Our URL is <a href="<% url %>"><% url %></a>.
+	<br/>
+
+	Thanks for using Dancer!
+	</body>
+	</html>
+
+	EOF
+
+	get '/' => sub {
+		my $t =  engine 'template';
+		return $t->render(\$index_template, {
+			url => request->uri_base,
+			answer => 42 } );
+	};
+
+	dance;
+
+Try it: L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/template.pl>.
+
+Source:  L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/template.txt>.
+
+B<Notes and Limitations>
+
+=over 4
+
+=item *
+
+Templates are stored in a simple perl variables (we're trying to be
+self-contained, so no external files). The C<$index_template> variable contains
+the template code.
+
+=item *
+
+Using C<< set template => "template_toolkit" >>, we're instructing B<Dancer> to
+use the L<Template::Toolkit> instead of the default L<Dancer::Template::Simple>.
+
+=item *
+
+B<Dancer>'s powerful template features (e.g. C<before_template>,
+C<after_template>) are not available.
+
+=item *
+
+We can't use B<Dancer>'s C<template> keyword (as it always expectes template
+files stored in the C</views/> folder). Instead, we find the template engine
+(C<$t> in the above code) and call C<render> directly.
+
+=item *
+
+Normal B<Dancer> applications automatically gain access to some useful variables
+(e.g. C<settings>, C<request>, C<params>, C<vars>, C<session>) - these B<are
+not> available here. You must explicitly specify each variable you want to pass
+to the template engine.
+
+=back
+
+=head2 More Templates (and forms)
+
+Here's a slightly more elaborate example of using templates, asking the user for
+his/her name:
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+
+	set log => "core";
+	set logger => "console";
+	set warnings => 1;
+	set template => "template_toolkit";
+
+	my $index_template=<<EOF;
+	<html>
+	<body>
+
+	<h1>Hello From Self-Contained Dancer Application</h1>
+
+	<% IF missing_name %>
+	<h2>please enter your name!</h2>
+	<% END %>
+	<form action="<% request.uri_for("/hello") %>" method="post">
+	What's your name ? <input type="text" name="name" size="40" />
+	<input type="submit" name="submit" value="That's my name!" />
+	</form>
+
+	</body>
+	</html>
+
+	EOF
+
+	get '/' => sub {
+		my $t = engine 'template';
+		my $r = request ;
+		return $t->render(\$index_template, { request => $r } );
+	};
+
+
+	my $hello_template=<<EOF;
+	<html>
+	<body>
+	<h1>Hello <% name %>!</h1>
+
+	Thanks for using Dancer!
+	<br/>
+	<br/>
+	If that's not your name, <a href="<% request.uri_base %>">change it.</a>
+	</body>
+	</html>
+	EOF
+
+	post '/hello' => sub {
+		my $t = engine 'template';
+		my $r = request ;
+		my $name = param 'name';
+
+		return $t->render(\$index_template, { request => $r, missing_name => 1} )
+			unless $name;
+
+		return $t->render(\$hello_template, { request => $r, name => $name} );
+
+	};
+
+	dance;
+
+Try it: L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/more_templates.pl>.
+
+Source:  L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/more_templates.txt>.
+
+
+B<Notables>:
+
+=over 4
+
+=item *
+
+In the template variables (C<$index_template> and C<$hello_template>) we use the
+C<< request->uri_for >> and C<< request->uri_base >> methods to construct a
+valid URL, but we have to pass the C<request> object explicity to the template
+engine.
+
+=item *
+
+In the C<post> handler, we can access CGI parameters using C<param>, just like
+in a normal B<Dancer> application.
+
+=back
+
+=head2 Using Plugins
+
+Using plugins is straight-forward, just like in a normal B<Dancer> application.
+The following example creates a SQLite database of shapes, and allows the user
+to modify and examine it:
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+	use Dancer::Plugin::Database;
+	use Dancer::Plugin::SimpleCRUD;
+
+	set template => 'template_toolkit';
+	set log => "debug";
+	set logger => "console";
+	set warnings => 1;
+	set plugins => { Database => { driver => 'SQLite', database => "foo.sqlite" } } ;
+
+	my $index_template=<<EOF;
+	<html>
+	<head>
+	</head>
+	<body>
+
+	<h1>Hello From Self-Contained Dancer Application</h1>
+	<h2>(With Database plugin support)</h2>
+
+	<h3>Add a new shape to database</h3>
+	<form action="add" method="post">
+		Shape: <select name="shape">
+			<option value="square">square</option>
+			<option value="circle">circle</option>
+			<option value="triangle">triangle</option>
+			</select>
+
+		Color: <select name="color">
+			<option value="red">red</option>
+			<option value="green">green</option>
+			<option value="blue">blue</option>
+			</select>
+
+		<input type="submit" name="submit" value="Add Shape" />
+	</form>
+
+	Direct Database Access: <a href="shapes">click here</a><br/>
+
+	<h3>Current Shapes in database:</h3>
+	<% IF shapes.size == 0 %>
+	  Database is empty. Please add some shapes.
+	<% ELSE %>
+	  <% FOREACH s IN shapes %>
+	    <% s.count %> <% s.color %> <% s.shape %><% s.count>1 ? 's' : '' %>
+	    <br/>
+	  <% END %>
+	<% END %>
+
+	</body>
+	</html>
+	EOF
+
+	get '/' => sub {
+		my $t = engine 'template';
+		my $sql="SELECT shape,color,count(id) AS count FROM shapes GROUP BY shape,color";
+		my $s = database->prepare($sql);
+		$s->execute();
+		my $shapes = $s->fetchall_arrayref({}) ;
+		return $t->render(\$index_template, { shapes => $shapes } );
+	};
+
+	post '/add' => sub {
+		my $shape = params->{shape} or die "missing shape parameter";
+		my $color = params->{color} or die "missing color parameter";
+		$shape =~ s/[^\w]//g; # minimal input sanitization
+		$color =~ s/[^\w]//g;
+		database->quick_insert( 'shapes', { shape=>$shape, color=>$color } );
+
+		## The shape was added to the DB, send to user back to the main page.
+		redirect '/';
+	};
+
+	simple_crud (
+		record_title => 'Shape',
+		prefix => '/shapes',
+		db_table => 'shapes',
+		editable => 1,
+		deletable => 1,
+		sortable => 1
+	);
+
+	##
+	## On-time application initialization: create the database
+	##
+	sub init_db
+	{
+		## Create a SHAPE table if it doesn't exist
+		my $sql=<<EOF;
+		CREATE TABLE IF NOT EXISTS shapes (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			shape TEXT,
+			color TEXT,
+			time TIMESTAMP default CURRENT_TIMESTAMP )
+	EOF
+		database->do($sql);
+	}
+
+	init_db;
+	dance;
+
+Source:  L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/plugins.txt>.
+
+B<Notables>:
+
+=over 4
+
+=item *
+
+This example requires the following perl modules: L<DBD::SQLite>,
+L<Dancer::Plugin::Database>, L<Dancer::Plugin::SimpleCRUD>.
+
+=item *
+
+The C<< set plugins => ... >> statement is equivalent to the following
+C<config.yml> stanza:
+
+	plugins:
+	   Database:
+	      driver: 'SQLite'
+	      database: 'foo.sqlite'
+
+=item *
+
+The C<get> and C<post> handlers use the C<database> keyword just like normal
+B<Dancer> applications. No special code required.
+
+=item *
+
+C<init_db> creates a new SQLite table, if it doesn't exist. This is not Dancer
+specific at all, just makes the example completely self-contained.
+
+=back
+
+
+=head2 Embedding images and files
+
+You can even embed images and files in a self-contained B<Dancer> application
+(although, if you've reached the point you do need external files, a
+self-contained application is probably not what you want. Still - it's quite
+possible):
+
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+	use MIME::Base64;
+
+	set log => "core";
+	set logger => "console";
+	set warnings => 1;
+	set template => "template_toolkit";
+
+	my $index_html=<<EOF;
+	<html>
+	<body>
+
+	<h1>Hello From Self-Contained Dancer</h1>
+	<h2>With embedded files</h2>
+
+	A PNG Star: <img src="<% request.uri_for("/files/star.png") %>"/>
+	<br/>
+	A PDF Star: <a href="<% request.uri_for("/files/red_star.pdf") %>" />Download me!</a>
+
+	</body>
+	</html>
+
+	EOF
+
+	get '/' => sub {
+		my $t = engine 'template';
+		my $r = request ;
+		return $t->render(\$index_html, { request => $r } );
+	};
+
+
+	# The stock-star image was made with OpenClipArt's stock-star png file:
+	#  $ base64 < /usr/share/openclipart/png/computer/icons/stock-star.png
+	my $openclipart_stock_star=<<EOF;
+	iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+	AAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAVdEVY
+	dFRpdGxlAEV0aXF1ZXR0ZSBJY29uc3n31Q4AAAAVdEVYdEF1dGhvcgBBbmR5IEZpdHpzaW1vbta6
+	3GQAAASmSURBVEiJvZd/aFVlGMe/z/u859xt587t7rqpMxu6NkW9/ri7czlUEqEQpEKy/IFRUEEF
+	RggOy8SEyMqwkjLIQAqhIOxPUaPSP/zLgoogRebmfk/Nue3u3nPvOefpj52r99p2Ngf6wpdzzvu+
+	5/s5z/O873u5JCKYStvbUr4IQHz/BwPfTuV9NSUqAGa1U2ves293OT0w8P63IjOVwnYir15r2vDA
+	wKyxo7x8mrdk6TI3ZPI7DwR84N1I2DR5R3PzGrO5eQ0TeY0H36tYdd/BmunlopAOLV4cQ7Qignm1
+	tVnT0HvuK/jQ+xU6FNK7lscbNLMHz7ORSDQZSrlPfP5xNHbfwFrTc8xSFYvFIGJDxMasWVWYOXNG
+	xtBq9714UdA+PvxRlIkwmwg1RHiYmffVPVI/b9Xqxwo++Gr7FZw9d9oDZCcRtRLQQYSrL7x67UYg
+	+LMPoyVE2EKEuUSo0cx1INSISCUgTARoZtcKh721a9cZZWVlBSYignPnfnIHbv7rZjJpAxAiAkiR
+	zYp7iNDmee5lInQA+G7zi/2Xbkd85ND0HQR8YpgG1dfXIhy2YFkWwlYYVtiCaZqTSqGIIJ1OYWQk
+	iVQqiXRqBF3dVzE0eBMAviSi15/Z3ucVpPqrw9O3KkXfzK+vVfH4simdSHe37u4O/PXnb55ADmzc
+	1vd2rv9/NT52pHK9UvTjnDnVOtG4nInG4U/ijO/oaMeli38LCLue2tx3MH9szMV1/GhVs1J0qrIy
+	WpRILNXM937AtbddQVtbqwfCKxs29X599/i4q/r7Y1UxZvq5bFppWUNDzNCaJw1tbW2Vnt4eF5At
+	6zf2/jDWnMDtdOL4jLms6NfikqJZicRiQ6mJI29va5e+/v4MBE8+/nTP6fHmBTpt3NZ3RSnsyWZt
+	BclAPHtCuW4GmulUEBQA9EQRsMaSsBXyIFkOXk+jg5Zl0vAwNU3kO2HuDK1WlpaGDE9sBCsDTzIo
+	Lmawkhnnz1RXBvlOGLHWWGaVKIiXKegfHk7Bth1EIhaUurPlQiagNQkICQAnpwQ+e7J6HitYRUWA
+	eDYAwM64uH496aTTWSZCamg4qSsiJWZpOAQAIAChIs66jtsYBA5MtWY0sIZnGC6yThr91wa97u5b
+	4jjOBda0gjXNJsinAwPJbG/fQCaVHoEnNoqLlGkY9Gigd9Aga4obBjmDg2lzaMh1iNCtNd5sWNN1
+	Im/arj/OP/QFIAdu3bKfDZnkMkMzY0WQd2DEhkYTRMxk0h1mphbFVHcXFACwtLmzbcnKzs1aU5Mn
+	uOC4gGaKXvx9TvU9g4mImGkBgCNnfkkvjK/uOhpf1VVCRBEiqiCiqK8Kv6980YrOfxY2dq6zbdnE
+	GpeVosZx/fNPLiLSAEwAxqIFRsnzW8O1LXtvtmO0JBoA+yJfwOgGFgCuLweAM7/OwGsvTZv+RsuN
+	VgBZABkRcQrANPoTFAJg+GBznHsjT7n14frGWQAZX/n3Bc8iYiP3sogIEXkAcnL9MuQiyEUo/riT
+	VyYvb16+chnw8q7emKn2081+dBqFKdY+LKf8lv/BBSn3I3VExC3gTOZPm1+KsQTcqfFtySRM/wP7
+	TwAUiu6U1QAAAABJRU5ErkJggg==
+	EOF
+
+	## Cache the binary form of the PNG image, no need to re-decode on every HTTP request.
+	my $stock_star_bin = decode_base64($openclipart_stock_star);
+
+
+	# I made this red star using InkScape, then used:
+	#   $ base64 < red_star.pdf
+	my $red_star_pdf=<<EOF;
+	JVBERi0xLjUKJbXtrvsKMyAwIG9iago8PCAvTGVuZ3RoIDQgMCBSCiAgIC9GaWx0ZXIgL0ZsYXRl
+	RGVjb2RlCj4+CnN0cmVhbQp4nG2OTUoDQAyF93OKdwHTTP4mOYEguGhdSheioIhdlC56fTP7MoSE
+	Ny/fy3VMMLm41e425wqcnnH4YHzfhpDhPhgvXb/j/dwextcwvOKK3uz3tFvapMxaa+LzMtSKqoEW
+	RWqJC6QnV4dWEc/AH2YEMRtMnDS1FeEktgWVRTOylTGdqaEQDUr3bfJFuhxiQVbSijYgVBtopLw9
+	O37HSiRZbzfILCn6U3lR1c5Xb2QoNISW7rSfB3e/4TiO4x/aODrYCmVuZHN0cmVhbQplbmRvYmoK
+	NCAwIG9iagogICAxOTMKZW5kb2JqCjIgMCBvYmoKPDwKICAgL0V4dEdTdGF0ZSA8PAogICAgICAv
+	YTAgPDwgL0NBIDEgL2NhIDEgPj4KICAgPj4KPj4KZW5kb2JqCjUgMCBvYmoKPDwgL1R5cGUgL1Bh
+	Z2UKICAgL1BhcmVudCAxIDAgUgogICAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTU3NCA4NDEuODg5
+	NzcxIF0KICAgL0NvbnRlbnRzIDMgMCBSCiAgIC9Hcm91cCA8PAogICAgICAvVHlwZSAvR3JvdXAK
+	ICAgICAgL1MgL1RyYW5zcGFyZW5jeQogICAgICAvQ1MgL0RldmljZVJHQgogICA+PgogICAvUmVz
+	b3VyY2VzIDIgMCBSCj4+CmVuZG9iagoxIDAgb2JqCjw8IC9UeXBlIC9QYWdlcwogICAvS2lkcyBb
+	IDUgMCBSIF0KICAgL0NvdW50IDEKPj4KZW5kb2JqCjYgMCBvYmoKPDwgL0NyZWF0b3IgKGNhaXJv
+	IDEuMTAuMiAoaHR0cDovL2NhaXJvZ3JhcGhpY3Mub3JnKSkKICAgL1Byb2R1Y2VyIChjYWlybyAx
+	LjEwLjIgKGh0dHA6Ly9jYWlyb2dyYXBoaWNzLm9yZykpCj4+CmVuZG9iago3IDAgb2JqCjw8IC9U
+	eXBlIC9DYXRhbG9nCiAgIC9QYWdlcyAxIDAgUgo+PgplbmRvYmoKeHJlZgowIDgKMDAwMDAwMDAw
+	MCA2NTUzNSBmIAowMDAwMDAwNTkzIDAwMDAwIG4gCjAwMDAwMDAzMDcgMDAwMDAgbiAKMDAwMDAw
+	MDAxNSAwMDAwMCBuIAowMDAwMDAwMjg1IDAwMDAwIG4gCjAwMDAwMDAzNzkgMDAwMDAgbiAKMDAw
+	MDAwMDY1OCAwMDAwMCBuIAowMDAwMDAwNzg1IDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOAog
+	ICAvUm9vdCA3IDAgUgogICAvSW5mbyA2IDAgUgo+PgpzdGFydHhyZWYKODM3CiUlRU9GCg==
+	EOF
+	my $red_star_pdf_bin = decode_base64($red_star_pdf);
+
+	get '/files/:file' => sub {
+		my $file = params->{file};
+
+		if ( $file eq "star.png" ) {
+			header('Content-Type' => 'image/png');
+			return $stock_star_bin;
+		}
+		if ( $file eq "red_star.pdf" ) {
+			header('Content-Type' => 'application/pdf');
+			header('Content-Disposition' => "attachment; $file" );
+			return $red_star_pdf_bin;
+		}
+
+		status 'not_found';
+		return "File not found";
+	};
+
+	dance;
+
+Try it: L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/embed.pl>.
+
+Source:  L<http://cancan.cshl.edu/labmembers/gordon/dancer_advent_calendar_2011/embed.txt>.
+
+=head2 Deployment with Plackup/Starman, etc.
+
+All the above examples will work as-is with L<plackup> and L<Starman>.
+Just run:
+
+  $ plackup -s Starman example1.pl
+  [19688]  core @0.000759> loading Dancer::Handler::PSGI handler in /usr/local/share/perl/5.12.4/Dancer/Handler.pm l. 41
+  [19688]  core @0.004706> loading handler 'Dancer::Handler::PSGI' in /usr/local/share/perl/5.12.4/Dancer.pm l. 436
+  2011/11/29-16:19:45 Starman::Server (type Net::Server::PreFork) starting! pid(19688)
+  Binding to TCP port 5000 on host *
+  Setting gid to "1000 1000 20 24 25 27 29 33 44 46 110 115 123 124 1000 1001 1002 1008"
+
+Then visit L<http://localhost:5000> or setup an Apache/nginx/lighttpd proxy to
+your B<Dancer> daemon. See <Dancer::Deployment> for more details and examples.
+
+
+=head2 Deployment as CGI script
+
+Not very efficient, but easy to deploy. In a self-contained B<Dancer>
+application, simply change the last C<dance;> statement to the following:
+
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+	use Plack::Runner;
+
+	get '/' => sub {
+		return<<EOF;
+	<html>
+	<body>
+	<H1>Dance Dance Revolution!</h1>
+	This is a self-contained Dancer application, served as a CGI script.
+	<body>
+	</html>
+	EOF
+	};
+
+
+	my $app = sub {
+		my $env = shift ;
+		my $request = Dancer::Request->new ( env => $env ) ;
+		Dancer->dance($request);
+	};
+	Plack::Runner->run($app);
+
+
+
+B<Notables>:
+
+=over 4
+
+=item *
+
+This example requires the L<Plack::Runner> perl module.
+
+=item *
+
+The B<apache> configuration to run this CGI script will be something like:
+
+	Alias /selfdance/ "/home/gordon/projects/perl_dancer_test/self_contained/"
+	<Directory "/home/gordon/projects/perl_dancer_test/self_contained/">
+		AddHandler cgi-script .cgi
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		DirectoryIndex self2.cgi
+	</Directory>
+	ReWriteEngine On
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^/selfdance/(.*)$ /home/gordon/projects/perl_dancer_test/self_contained/self2.cgi/$1 [QSA,L]
+
+=item *
+
+See L<Dancer::Deployment> for more details.
+
+=back
+
+=head2 Deployment as Fast-CGI script
+
+	#!/usr/bin/env perl
+	use strict;
+	use warnings;
+	use Dancer;
+	use Plack::Handler::FCGI;
+
+	get '/' => sub {
+		return<<EOF;
+	<html>
+	<body>
+	<H1>Dance Dance Revolution!</h1>
+	This is a self-contained Dancer application, served as a CGI script.
+	<body>
+	</html>
+	EOF
+	};
+
+	my $app = sub {
+		Dancer->dance($request);
+	};
+	my $server = Plack::Handler::FCGI->new(nproc => 5, detach => 1);
+	$server->run($app);
+
+B<Notables>:
+
+=over 4
+
+=item *
+
+This example requires the L<Plack::Handler::FCGI> perl module.
+
+=item *
+
+The B<apache> configuration to run this CGI script will be something like:
+
+      Alias /selfdancefast/ "/home/gordon/projects/perl_dancer_test/self_contained/"
+      <Directory "/home/gordon/projects/perl_dancer_test/self_contained/">
+               AddHandler fcgid-script .fcgi
+               AllowOverride None
+               Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+               DirectoryIndex self3.fcgi
+      </Directory>
+      ReWriteEngine On
+      RewriteCond %{REQUEST_FILENAME} !-f
+      RewriteRule ^/selfdancefast/(.*)$ /home/gordon/projects/perl_dancer_test/self_contained/self3.fcgi/$1 [QSA,L]
+
+=item *
+
+See L<Dancer::Deployment> for more details.
+
+=back
+
+
+=head1 AUTHOR
+
+This article was kindly written by Assaf Gordon - thanks!
+
