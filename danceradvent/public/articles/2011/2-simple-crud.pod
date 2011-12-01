@@ -23,7 +23,7 @@ the table to C<Widget> (used for user-facing titles like "Edit Widget", "Delete
 Widget" etc).
 
 For a ready-to-try example, L<Dancer::Plugin::SimpleCRUD> ships with an
-L<https://github.com/bigpresh/Dancer-Plugin-SimpleCRUD/tree/master/example|example app> 
+L<example app|https://github.com/bigpresh/Dancer-Plugin-SimpleCRUD/tree/master/example> 
 complete with a ready-to-use SQLite database with some sample records.
 
 If you launch the example app and go to e.g. L<http://localhost:3000/people>

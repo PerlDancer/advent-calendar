@@ -24,18 +24,18 @@ Currently, the Dancer repository on GitHub has 378 watchers and has been forked
 
 The number of individual contributors according to GitHub is 70 - great to see
 such a vibrant and helpful community springing up around Dancer.  Speaking of
-the community, our L<http://www.perldancer.org/irc|IRC chanel> has 87 people
+the community, our L<IRC channel|http://www.perldancer.org/irc> has 87 people
 present at the time of writing, with many helpful volunteers providing valuable
 assistance.
 
 More and more Dancer-powered sites are being added to the
-L<http://www.perldancer.org/dancefloor|Dancefloor (Websites using Dancer)> page.
+L<Dancefloor (Websites using Dancer)|http://www.perldancer.org/dancefloor> page.
 
 
 =head2 Many more plugins to make life easy
 
 Many more valuable and useful plugins have been released - a search on MetaCPAN
-for L<https://metacpan.org/search?q=Dancer%3A%3APlugin|Dancer::Plugin::> gives
+for L<Dancer::Plugin::|https://metacpan.org/search?q=Dancer%3A%3APlugin> gives
 73 results.
 
 Later advent calendar posts will showcase some of the useful plugins which can
@@ -54,7 +54,7 @@ fetched from the database should need no special handling.
 =head2 Support for HTTP PATCH
 
 The HTTP 'PATCH' verb is defined in
-L<http://tools.ietf.org/html/rfc5789|RFC 5789>, allowing clients to perform a
+L<RFC 5789|http://tools.ietf.org/html/rfc5789>, allowing clients to perform a
 partial resource modification, and is slowly being adopted by RESTful APIs etc -
 GitHub's V3 API being one such example.
 
@@ -80,7 +80,7 @@ Options can now be passed to control serialisation to XML via  L<XML::Simple>.
 
 =head2 send_file can send data from a scalar and set filename
 
-The L<http://p3rl.org/Dancer#send_file|send_file> keyword can now be used to
+The L<send_file|http://p3rl.org/Dancer#send_file> keyword can now be used to
 send data from a scalar and set the Content-Disposition header to suggest a
 filename, for example:
 
@@ -88,13 +88,13 @@ filename, for example:
 
 =head2 send_file supports streaming
 
-The L<http://p3rl.org/Dancer#send_file|send_file> keyword now supports PSGI
+The L<send_file|http://p3rl.org/Dancer#send_file> keyword now supports PSGI
 streaming, with callbacks to control what happens.
 
 =head2 Exceptions
 
-The exceptional Damien Krotkine has added a continuations-style exceptions system 
-to provide much more powerful error handling.  
+The exceptional Damien Krotkine has added a continuations-style exceptions system
+to provide much more powerful error handling.
 
 =head2 behind_proxy setting
 
