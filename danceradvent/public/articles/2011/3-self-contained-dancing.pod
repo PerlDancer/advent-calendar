@@ -7,7 +7,7 @@ enough, B<Dancer> can work its magic even with a single file.
 
 =head4 Note about examples.
 
-All the examples shown in this page are full-fludged, self-contained B<Dancer>
+All the examples shown in this page are fully-fledged, self-contained B<Dancer>
 applications. No external files are needed. To try them out, save the code in a
 file (e.g. C<example1.pl>), then run:
 
@@ -88,7 +88,7 @@ C<config.yml> values in a normal B<Dancer> application:
 
 =head2 Using Templates
 
-B<Dancer>'s template engine can be easily used in self-contained application:
+B<Dancer>'s template engine can be easily used in self-contained applications:
 
 	#!/usr/bin/env perl
 	use strict;
@@ -137,7 +137,7 @@ B<Notes and Limitations>
 
 =item *
 
-Templates are stored in a simple perl variables (we're trying to be
+Templates are stored in simple perl variables (we're trying to be
 self-contained, so no external files). The C<$index_template> variable contains
 the template code.
 
@@ -155,7 +155,9 @@ C<after_template>) are not available.
 
 We can't use B<Dancer>'s C<template> keyword (as it always expectes template
 files stored in the C</views/> folder). Instead, we find the template engine
-(C<$t> in the above code) and call C<render> directly.
+(C<$t> in the above code) and call C<render> directly.  (Future versions of
+Dancer will likely allow scalar references to be passed to the C<template>
+keyword in order to make this easier.)
 
 =item *
 
