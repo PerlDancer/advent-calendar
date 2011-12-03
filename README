@@ -35,8 +35,13 @@ Flags:
       Examples of what can be done in a single file in Dancer
 
 
-[ ] - Dancer2 progress, design choices etc - I think we can expand this one out
+[A] - Dancer2 progress, design choices etc (sukria)
+      I think we can expand this one out
       into multiple posts about the upcoing Dancer2's design etc.
+
+      * Dancer 2 or why did I rewrote everything
+      * Dancer 2, the Core API
+      * Dancer 2, how far from the first release, how to help?
 
 [ ] - State of the ecosystem
       a writeup of various Dancer plugins, especially ones which are new since
