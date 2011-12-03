@@ -55,4 +55,6 @@ C<PASSWORD> text entry field automatically.
 When adding a new record, of course the form is the same one as the edit form,
 but not pre-populated with the existing contents of the record being edited.
 
+=head1 AUTHOR
 
+David Precious C<< <davidp@preshweb.co.uk> >>
