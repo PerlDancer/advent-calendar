@@ -68,6 +68,18 @@ taken by L<Dancer::Plugin::Database> to always use placeholders (parameters)
 rather than interpolation, to avoid you falling victim to SQL injection attacks
 (obligatory L<bobby-tables.com|http://bobby-tables.com/> link).
 
+=item It doesn't get in your way
+
+You don't have to use the convenience methods; naturally, there will be many
+cases where any attempt at SQL abstraction will get in your way, and you just
+want to write a query yourself.  You get a (subclassed) DBI database handle
+which you can use in whatever way you want.
+
+=back
+
+Of course, there are other options; if you're a L<DBIx::Class> fan, look at
+L<Dancer::Plugin::DBIC> instead.
+
 
 =head1 AUTHOR
 
