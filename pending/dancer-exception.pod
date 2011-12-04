@@ -1,0 +1,222 @@
+=head1 Flexible exceptions handling with Dance::Exception
+
+Among the new features added in Dancer, here is an important albeit not very
+visible one.
+
+When running a Dancer application, sometimes things get wrong, and an exception
+is raised. In earlier versions, Dancer was using C<croak>. That's not bad, but
+when trying to catch an exception, it's not trivial to programatically know if
+it was raised by Dancer's code, or the web application's code, or some other
+module used.
+
+Now, all exceptions raised in Dancer's code are L<Dancer::Exception>s. It's
+also possible for the developer of the web application to create and raise
+their own Dancer::Exception.
+
+Technically, a Dancer's exception is an object inheriting from
+L<Dancer::Exception::Base>, but may be composed from different roles, enabling
+different I<flavours> of exceptions. There is one special flavour, called
+'Core'. All exceptions raised by Dancer's core code are of this flavour, or one
+of its derivate. Dancer users are able to create new flavours, and new
+exceptions of these flavours.
+
+=head1 Catch Dancer's core exceptions
+
+First things first, exceptions means that there is a way to catch them. For
+that, Dancer technically relies on the very good L<Try::Tiny>, but provides
+itself a slightly modified version of C<try> and C<catch>. Just use
+L<Dancer::Exception> and you're set.
+
+=head2 Try and catch exceptions
+
+    use Dancer;
+    use Dancer::Exception qw(:all);
+
+    get '/' => sub {
+        try {
+            do_some_stuff();
+        } catch {
+            # ah, something bad happened
+        };
+    };
+
+B<Beware>, the C<try> and C<catch> syntax requires to append a semi-colon C<;>
+at the end.
+
+=head2 Core or non core exceptions ?
+
+When catching an exception, one of the first thing to do is testing if it's a
+core exception (coming from Dancer's code). To do that, use the C<does>
+keyword:
+
+    use Dancer;
+    use Dancer::Exception qw(:all);
+
+    get '/' => sub {
+        try {
+            do_some_stuff();
+        } catch {
+            my ($exception) = @_;
+            if ($exception->does('Core')) {
+              # issues appeared in Dancer's code
+              say "got a core exception: " . $exception->message;
+              $exception->rethrow;
+            } else 
+              # handle the issue
+            }
+        };
+    };
+
+This example shows the usage of:
+
+=over
+
+=item does
+
+used to test the flavour of an exception
+
+=item rethrow
+
+if you just caught an exception, but you actually don't want to handle it, just
+C<rethrow> it! It'll still come from the point it was originally emited from.
+
+=item message
+
+exceptions contain a message, and the <message()> method returns it as a
+string. However, Dancer's exception objects overload stringification and string
+comparison just fine. so you can jus C<print $exception>
+
+=back
+
+=head1 Create your own exceptions
+
+L<Dancer::Exception> would be of limited use if it were just there to properly
+raise core exceptions. It is also possible for Dancer web developer to register
+new exceptions flavours, raise these exceptions, and catch and test them.
+
+=head2 Register your custom exception
+
+before being able to raise a home made exception, you need to register it.
+Every exceptions has a message, but Dancer exceptions actually have a message
+pattern. Let's see what that means in an example:
+
+  use Dancer::Exception qw(:all);
+  register_exception('NoPermission',
+                      message_pattern => "no enough permission: %s"
+                    );
+
+This will register a new kind of exception, that can be raised if the user
+tries to access a part of a website he doesn't have permission to.
+
+It's also possible to register new exceptions that are composed from other
+exceptions. We can consider that the 'NoPermission' exception is too vague, and
+we need two sub exceptions to specify if the login or the password was wrong:
+
+  register_exception('InvalidLogin',
+                      message_pattern => "invalid login '%s'"
+                      composed_from => [ 'NoPermission' ]
+                    );
+
+  register_exception('InvalidPassword',
+                      message_pattern => "invalid password"
+                      composed_from => [ 'NoPermission' ]
+                    );
+
+See how we set the message pattern ? we want to display the wrong login, but
+not the wrong password.
+
+Now, take a look at this piece of code:
+
+  use Dancer;
+  use Dancer::Exception qw(:all);
+
+  any ['get', 'post'] => '/login' => sub {
+    try {
+        _login(params->{'login'}, params->{'password'});
+    } catch {
+        my ($exception) = @_;
+        if ($exception->does('NoPermission')) {
+            # deal with it
+            template 'no permission',
+            { message => $exception->message }
+        } else {
+            # we can't handle this
+            $exception->rethrow;
+        }
+    };
+  }
+
+What's great is that if the exception was an C<InvalidLogin>, the message
+returnd by C<<$exception->message>> will be:
+
+  "not enough permission: invalid login 'foo'"
+
+That's because message pattern are called one by one bottom up. But to fully
+understand the effect, one must see the functino C<_login>, which show how to
+B<raise> an exception.
+
+=head2 Raise a custom exception
+
+Now that we have registered some exceptions, and seen how to catch it, let's
+see how to raise them. It's simple, it's done using the C<raise> keyword:
+
+  sub _login {
+      my ($login, $password) = @_;
+      _check($login)
+        or raise InvalidLogin => $login;
+      _check_credential($login,$password)
+        or raise 'InvalidPassword';
+  }
+
+C<raise> takes one or two parameters: the name of the exception's flavour, and
+the parameter to its message pattern. Here we pass the login to the C<InvalidLogin>.
+
+=head1 Dancer exceptions are not Dancer errors
+
+On common mistake is to think that Dancer exceptions are the same than Dancer
+errors. They are not. Dancer::Exceptions are thrown when something goes wrong,
+either in core code, or the application code. They can be used to signify some
+malfunction, but can be properly handled by the application, or not.
+
+A L<Dancer::Error> can be roughly seen as an object representation of an HTTP
+error. So it's what you want your application to send to your end users. When a
+L<Dancer::Error> object is generated, Dancer's workflow is almost at its end.
+It's possible to add hooks to execute some code before or after a
+L<Dancer::Error> generation, but it's not handy for exception handling.
+
+You should however note that when a Dancer::Exception is not caught by the
+application, it'll eventually be caught by Dancer's code internally, and a
+Dancer::Error will be generated, and sent to the end user.
+
+=head1 Conclusion
+
+I think that's a good first demonstration of what L<Dancer::Exception> can do
+for you. As a bonus, here is the list of core exceptions that Dancer's core
+code uses, along with their message patterns:
+
+  Core  'core - %s'
+  Core::App  'app - %s'
+  Core::Config  'config - %s'
+  Core::Deprecation  'deprecation - %s'
+  Core::Engine  'engine - %s'
+  Core::Factory  'factory - %s'
+  Core::Factory::Hook  'hook - %s'
+  Core::Hook  'hook - %s'
+  Core::Fileutils  'file utils - %s'
+  Core::Handler  'handler - %s'
+  Core::Handler::PSGI  'handler - %s'
+  Core::Plugin  'plugin - %s'
+  Core::Renderer  'renderer - %s'
+  Core::Route  'route - %s'
+  Core::Serializer  'serializer - %s'
+  Core::Template  'template - %s'
+  Core::Session  'session - %s'
+
+So, when a core exception happens in a renderer, you'll see a message like:
+
+  core - renderer - the frobnicator didn't frob properly
+
+=head1 AUTHOR
+
+Damien Krotkine, C<< <dams@zarb.org> >>
+
