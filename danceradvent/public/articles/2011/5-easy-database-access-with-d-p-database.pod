@@ -1,0 +1,75 @@
+=head1 Easy Database Access with Dancer::Plugin::Database
+
+In last year's calendar, I wrote a basic post on
+L<Database Connections with Dancer::Plugin::Database|http://advent.perldancer.org/2010/4>.
+
+The article covered how to connect to databases using
+L<Dancer::Plugin::Database>, but not how to make use of any of the extra
+convenience methods (which hadn't been added at that time).
+
+
+=head1 Why would I use Dancer::Plugin::Database
+
+So - why use L<Dancer::Plugin::Database> at all?  Why not just use DBI directly?
+
+=over 4
+
+=item It manages database connections for you
+
+When you call the C<database()> keyword, Dancer::Plugin::Database will return a
+database handle, connecting first if needed, or if an existing connection is
+available, checking it's still usable then giving you that handle.  It takes
+care to ensure that database handles are not shared between different processes
+or threads, which would often lead to Bad Things happening.
+
+=item It's easily configurable
+
+You can define your database connection details in your application config,
+where they belong, and simply use the C<database()> keyword where you need a
+database handle to use.  If you need connections to multiple databases, it's
+easy to declare multiple connections in your configuration, then pass a name to
+the C<database> keyword when you call it - e.g. C<database('foo')>.
+
+=item It makes the common stuff very easy
+
+In many web apps, you'll find yourself doing certain basic queries very often,
+and writing the SQL for them each time gets very tedious.  What you get when you
+call C<database()> isn't actually a vanilla L<DBI> C<DBI::db> database handle -
+it's actually a L<Dancer::Plugin::Database::Handle> object, which subclasses
+C<DBI::db> and provides additional convenience methods.  This means you can use
+it exactly as you would a normal DBI database handle, but also have extra
+convenience methods available, letting you do the simple stuff easily without
+writing SQL:
+
+C<quick_select> lets you quickly find a record, for example:
+
+    # Fetch the user whose ID is 42 (scalar context means we'll only get one
+    # record).
+    # Roughly equivalent to SELECT * FROM users WHERE id = 42 (but using
+    # placeholders for safety)
+    my $user = database->quick_select('users', { id => 42 });
+
+    # In list context, get multiple results:
+    my @admins = database->quick_select('users', { is_admin => 1 });
+
+C<quick_update> lets you quickly update records, for example:
+
+    # Update the email address for the user whose ID is 42:
+    database->quick_update('users', { id => 42 }, { email => 'new@email.com'});
+
+C<quick_lookup> lets you quickly get a specific field from a record:
+
+    # Get just the email address of a user:
+    my $email = database->quick_lookup('users', { id => 42 }, 'email');
+
+
+Using the convenience methods mentioned above helps make life easy, and care is
+taken by L<Dancer::Plugin::Database> to always use placeholders (parameters)
+rather than interpolation, to avoid you falling victim to SQL injection attacks
+(obligatory L<bobby-tables.com|http://bobby-tables.com/> link).
+
+
+=head1 AUTHOR
+
+David Precious, C<< <davidp@preshweb.co.uk> >>
+
