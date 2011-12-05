@@ -1,4 +1,4 @@
-=head1 Flexible exceptions handling with Dance::Exception
+=head1 Flexible exceptions handling with Dancer::Exception
 
 Among the new features added in Dancer, here is an important albeit not very
 visible one.
@@ -16,8 +16,8 @@ their own Dancer::Exception.
 Technically, a Dancer's exception is an object inheriting from
 L<Dancer::Exception::Base>, but may be composed from different roles, enabling
 different I<flavours> of exceptions. There is one special flavour, called
-'Core'. All exceptions raised by Dancer's core code are of this flavour, or one
-of its derivate. Dancer users are able to create new flavours, and new
+'Core'. All exceptions raised by Dancer's core code are of this flavour, or
+derive from it. Dancer users are able to create new flavours, and new
 exceptions of these flavours.
 
 =head1 Catch Dancer's core exceptions
@@ -84,25 +84,25 @@ C<rethrow> it! It'll still come from the point it was originally emited from.
 
 exceptions contain a message, and the <message()> method returns it as a
 string. However, Dancer's exception objects overload stringification and string
-comparison just fine. so you can jus C<print $exception>
+comparison just fine, so you can just C<print $exception>
 
 =back
 
 =head1 Create your own exceptions
 
 L<Dancer::Exception> would be of limited use if it were just there to properly
-raise core exceptions. It is also possible for Dancer web developer to register
-new exceptions flavours, raise these exceptions, and catch and test them.
+raise core exceptions. It is also possible for Dancer web developers to register
+new exception flavours, raise these exceptions, and catch and test them.
 
 =head2 Register your custom exception
 
-before being able to raise a home made exception, you need to register it.
-Every exceptions has a message, but Dancer exceptions actually have a message
+Before being able to raise a home made exception, you need to register it.
+Every exception has a message, but Dancer exceptions actually have a message
 pattern. Let's see what that means in an example:
 
   use Dancer::Exception qw(:all);
   register_exception('NoPermission',
-                      message_pattern => "no enough permission: %s"
+                      message_pattern => "not enough permission: %s"
                     );
 
 This will register a new kind of exception, that can be raised if the user
@@ -122,7 +122,7 @@ we need two sub exceptions to specify if the login or the password was wrong:
                       composed_from => [ 'NoPermission' ]
                     );
 
-See how we set the message pattern ? we want to display the wrong login, but
+See how we set the message pattern?  We want to display the wrong login, but
 not the wrong password.
 
 Now, take a look at this piece of code:
@@ -151,13 +151,13 @@ returnd by C<<$exception->message>> will be:
 
   "not enough permission: invalid login 'foo'"
 
-That's because message pattern are called one by one bottom up. But to fully
-understand the effect, one must see the functino C<_login>, which show how to
+That's because message patterns are called one by one bottom up. But to fully
+understand the effect, one must see the function C<_login>, which shows how to
 B<raise> an exception.
 
 =head2 Raise a custom exception
 
-Now that we have registered some exceptions, and seen how to catch it, let's
+Now that we have registered some exceptions, and seen how to catch them, let's
 see how to raise them. It's simple, it's done using the C<raise> keyword:
 
   sub _login {
