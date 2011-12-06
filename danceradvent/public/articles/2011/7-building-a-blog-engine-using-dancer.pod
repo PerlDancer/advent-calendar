@@ -1,4 +1,3 @@
-
 =head1 Building a blog engine using Perl Dancer
 
 In this L<screencast|http://www.youtube.com/watch?v=NGX5pgKWVoc> we 
@@ -8,10 +7,7 @@ If you are on MS Windows start by downloading L<Padre on Strawberry Perl|http://
 which already has everything we need. On other systems you'll have to install 
 L<Dancer>, L<File::Slurp> and L<Template::Toolkit>.
 
-=for html
-
-<iframe width="640" height="390" 
-src="http://www.youtube.com/embed/NGX5pgKWVoc" frameborder="0" allowfullscreen></iframe>
+=for html <iframe width="500" height="390" src="http://www.youtube.com/embed/NGX5pgKWVoc" frameborder="0" allowfullscreen></iframe>
 
 =back
 
@@ -24,55 +20,55 @@ typing in
 This will create a directory called Dwimmer and all the files necessary to 
 build a Dancer application.
 
-The bin/app.pl file is just a simple launcher for a web server on port 3000
+The C<bin/app.pl> file is just a simple launcher for a web server on port 3000
 
-The real code is in lib/Dwimmer.pm
+The real code is in C<lib/Dwimmer.pm>
 
-The templates are in the view/  directory.
+The templates are in the C<views/>  directory.
 
 This is the full code:
 
-package Dwimmer;
-use Dancer ':syntax';
+    package Dwimmer;
+    use Dancer ':syntax';
 
-use File::Slurp qw(read_file write_file);
+    use File::Slurp qw(read_file write_file);
 
-our $VERSION = '0.01';
+    our $VERSION = '0.01';
 
-  get '/' => sub {
-    my $filename = config->{dwimmer}{json};
-    my $json = -e $filename ? read_file $filename : '{}';
-    my $data = from_json $json;
-    template 'index', {data => $data};
-  };
-
-
-  get '/page' => sub {
-    template 'page';
-  };
-
-  post '/page' =>  sub {
-    my $filename = config->{dwimmer}{json};
-    my $json = -e $filename ? read_file $filename : '{}';
-    my $data = from_json $json;
-    my $now   = time;
-    $data->{$now} = {
-      title => params->{title},
-      text  => params->{text},
+    get '/' => sub {
+        my $filename = config->{dwimmer}{json};
+        my $json = -e $filename ? read_file $filename : '{}';
+        my $data = from_json $json;
+        template 'index', {data => $data};
     };
 
-    write_file $filename, to_json($data);
-    redirect '/';
-  };
 
-  true;
+    get '/page' => sub {
+        template 'page';
+    };
+
+    post '/page' =>  sub {
+        my $filename = config->{dwimmer}{json};
+        my $json = -e $filename ? read_file $filename : '{}';
+        my $data = from_json $json;
+        my $now   = time;
+        $data->{$now} = {
+            title => params->{title},
+            text  => params->{text},
+        };
+
+        write_file $filename, to_json($data);
+        redirect '/';
+    };
+
+    true;
 
 The module L<File::Slurp> provides two functions for reading and writing files
 in a simple way.
 
 Dancer is route based so you for each page out there you need to define a route. 
-You can even differentiate between the HTTP METHOD types such as <b>GET</b> 
-and <b>POST</b> though they are written in lower case in Dancer.
+You can even differentiate between the HTTP METHOD types such as C<GET> 
+and C<POST> though they are written in lower case in Dancer.
 
 We changed the config.yml file in the root of the application. Commented out the 
 
@@ -92,8 +88,8 @@ Later we also added the following
 
 to set where the json "database" is located. (Our home made NoSQL database.)
 
-We edited the view/index.tt file replacing all of its content with a simple HTML
-linking to the <b>page</b>.
+We edited the file C<views/index.tt> file replacing all of its content with
+simple HTML linking to the I<page>.
 
    Hi
    <a href="/page">add a new entry</a>
@@ -105,7 +101,7 @@ serve the request:
     template 'page';
   };
 
-The page template is simple form.
+The page template is a simple form:
 
   <form method="POST">
   <input name="title" size="80"/><br />
@@ -174,7 +170,7 @@ The C<index.tt> template itself had to be changed as well to include this:
 
 Which will display all the results from the data hash.
 
-That's it. L<Dwimmer>http://dwimmer.org/> is ready.
+That's it. L<Dwimmer|http://dwimmer.org/> is ready.
 
 Well, sort of.
 
