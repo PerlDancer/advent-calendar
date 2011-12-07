@@ -59,6 +59,7 @@ CPAN
 crujones
 crypto
 cryptographically
+CSV
 cuny
 Cuny
 daemonize
