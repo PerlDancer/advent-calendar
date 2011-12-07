@@ -18,7 +18,7 @@ restore the state and serve the request in a particular context.
 
 Early uses of cookies included shopping carts that stored a list of
 selected goods right in the cookie until the purchase was completed.
-Then personalized web came and lots of websites introduced "my"
+Then personalised web came and lots of websites introduced "my"
 sections (e.g. My Yahoo) which required users to sign up/sign in to
 their accounts. Storing login credentials in cookies is
 inherently insecure both for users who risk losing them to
@@ -98,7 +98,7 @@ After installation, add these lines to your F<config.yml>:
     session: "cookie"
     session_cookie_key: "random encryption key"
 
-You should initialize your B<session_cookie_key> with a random string of 16
+You should initialise your B<session_cookie_key> with a random string of 16
 or more characters right away to ensure the uniqueness of your
 encryption. You should also implement protection for F<config.yml> by
 setting some permissions and not pushing it to GitHub :) Compromised
