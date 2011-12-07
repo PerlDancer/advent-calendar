@@ -15,7 +15,7 @@ if ( my @articles = @ARGV ) {
 } else {
     all_pod_files_spelling_ok(
         qw/ proofread pending /,
-        File::Spec->catfile( qw/ danceradvent public articles 2010 / ),
+        File::Spec->catfile( qw/ danceradvent public articles / ),
     );
 }
 
