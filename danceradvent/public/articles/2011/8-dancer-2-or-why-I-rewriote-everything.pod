@@ -86,9 +86,25 @@ apps collisions, support for multiple engines per app, per-apps settings, etc).
 All this was in my mind for quite a long time and I was wondering how I could
 do these changes while maintaining Dancer's evolutions.
 
-I decided to create a new repo and experiment these design ideas on a complete
+I should also mention that among the contributors of Dancer, there were a
+couple of guys very productive and motivated, and I granted them a commit bit
+quite quickly. Soon enough, we created what we called the I<Core Team>, a group
+of developers who knows Dancer well and who are able to process pull requests. 
+
+Thanks to them (SawyerX, Franck Cuny, David Precious, Damien Krotkine and
+Alberto Simões) Dancer had a strong team to take care of daily maintenance
+duties. I also made SawyerX a co-maintainer on CPAN so that he could become our
+I<Release Manager>.
+
+All this setup was perfect for the Dancer 2 project: I had all in place to step
+aside, let the maintenance in the Core Team hands and focus entirely on the
+rewrite.
+
+Then, I decided to create a new repo and experiment these design ideas on a complete
 new prototype, to see where I could end up. At that time, I went to discuss
 with Matt S Trout (mst) on IRC, in order to brainstorm the new design.
+Matt also happened to become my I<design architect mentor>, giving me ideas,
+tips and suggestions when I faced subtle design issues to solve. 
 
 Matt sounded encouraging and provided lots of useful and enlightened
 suggestions to help me start.
@@ -97,8 +113,60 @@ One of his suggestions was to use Moo to get a complete Moose-ish object system
 for the core yet fast and lightweight.  That happened to be one of the more
 helpful choices to enforce a better design.
 
-One of the benefits being the goodness of roles.
+My strategy was to start a new project, with one target in mind: 
+support the DSL of Dancer, but make it a true DSL: a layer over a complete,
+consistent and object-oriented core.
 
+Mainly the idea was that I could write a Dancer app with raw objects if I
+wanted to. This would open new doors and allow strong flexibility.
 
+=head2 Where are we?
 
+I won't give you more details on the Core API in this article, neither will I
+give a roadmap for Dancer 2, because these topics will be covered in other
+articles, but I'll just give you a quick overview of Dancer 2 as of today.
+
+The repository is public on L<Github|http://github.com/sukria/dancer2>, you're
+welcome to clone it if you want to test your app with Dancer 2. If you do so,
+please send me an email with your feedback, that will help a lot!
+
+Let's give it a try:
+
+    $ echo "use Dancer; get '/' => sub { 2 }; start" > test.pl
+    $ perl -Ilib ./test.pl &
+    HTTP::Server::Simple::PSGI: You can connect to your server at http://localhost:3000/ 
+    $ curl http://0:3000/
+    2
+
+Nothing special here, we have our hello world app powered by Dancer2. If you
+look more precisely, you'll see that nearly all the DSL of Dancer 1 is already
+supported un Dancer 2.
+
+To get a wuick teaser about the interal changes we have, let's enable he core
+debug messages:
+
+    $ DANCER_DEBUG_CORE=1 perl -Ilib ./test.pl &
+    core: binding app to main
+    core: [main] -> get(/, CODE(0x172a1b0))
+    core: [main] -> start()
+    HTTP::Server::Simple::PSGI: You can connect to your server at http://localhost:3000/
+    $ 
+
+As you can see, with 2, for each package that uses Dancer, we have a
+C<Dancer::Core::App> object (here for I<main>). The DSL is just a syntactic
+sugar over method calls to that object.
+
+That means we have now a proper encapsulation, and clean scope.
+
+that's all for this introduction, again, you're welcome if you like to test
+Dancer 2, please feel free! If you have a real-life application, clone the
+repo and power your app with Dancer 2 and email me a report of how it went.
+
+In the next article, I'll go over all the Core API design, explaining all the
+entities we have and how it fits with the DSL.
+
+=head2 Author
+
+This article was written by Alexis Sukrieh and reviewed by David Precious, for
+the Perl Dancer Advent Calendar 2011.
 
