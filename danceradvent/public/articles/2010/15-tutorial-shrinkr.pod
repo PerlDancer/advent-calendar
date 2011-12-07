@@ -10,7 +10,7 @@ L<Math::Base36>, L<File::Slurp>.  You can install these using your CPAN client.
  
  cpan Dancer Template DBD::SQLite Math::Base36 File::Slurp
 
-Because I'm using a regular expression named capture (one of my favorite Python
+Because I'm using a regular expression named capture (one of my favourite Python
 regex features) in this demo, you B<must> use Perl 5.10 or later to run this
 example.
 
@@ -115,7 +115,7 @@ Notice how the C<database> setting is consumed here.
  }
 
 We define a global variable called C<$id> and then execute our initial 
-table set up and initialize the C<$id> variable as the largest ID value
+table set up and initialise the C<$id> variable as the largest ID value
 from the database.
 
  sub get_next_id {
