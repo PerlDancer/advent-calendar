@@ -1,3 +1,5 @@
+=encoding UTF-8
+
 =head1 Dancer 2, or Why I Rewrote Everything
 
 If you've been following developments in the Perl Dancer ecosystem
@@ -142,7 +144,7 @@ Nothing special here, we have our hello world app powered by Dancer2. If you
 look more precisely, you'll see that nearly all the DSL of Dancer 1 is already
 supported in Dancer 2.
 
-To get a wuick teaser about the interal changes we have, let's enable the core
+To get a quick teaser about the internal changes we have, let's enable the core
 debug messages:
 
     $ DANCER_DEBUG_CORE=1 perl -Ilib ./test.pl &
