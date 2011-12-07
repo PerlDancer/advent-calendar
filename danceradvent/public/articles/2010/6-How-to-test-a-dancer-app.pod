@@ -157,7 +157,7 @@ with the layouts:
     $ echo -e "mobile:\n<% content %>" > t/views/layout/mobile.tt
     $ echo -e "main:\n<% content %>" > t/views/layout/main.tt
 
-I<(or use your favorite editor to create our layout files)>
+I<(or use your favourite editor to create our layout files)>
 
 We now have our layouts waiting to be used in the C<t/views/layouts>
 directory, let's use it.
@@ -174,7 +174,7 @@ directory, let's use it.
 Just a basic route handler, like before, but this time if a layout is
 set, we'll use it.
 
-We want first to test the behavior of the app when no layout is set:
+First, we want to test the behaviour of the app when no layout is set:
 
     use Dancer::Test;
 
