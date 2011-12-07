@@ -1,34 +1,39 @@
 =head1 Dancer 2, or Why I Rewrote Everything
 
-If you've been following a bit what happened in the Perl Dancer ecosystem
+If you've been following developments in the Perl Dancer ecosystem
 recently, you might be aware that a complete rewrite of the core is on the way.
 
-I haven't advertised what I did, what happened and what is the plan, this
+I haven't advertised what I did, what happened and what is the plan, so this
 Advent calendar is a perfect opportunity to do it.
 
 In this article, I'll explain the reasons behind this decision and what were
 the most important targets of this rewrite.
 
+Firstly, though, it should be made clear that there's no need to panic - Dancer
+2 will strive for backwards compatibility, providing the same user-friendly DSL
+as Dancer, so your existing Dancer apps should work with Dancer 2 with only 
+minimal changes.
+
 
 =head2 A bit of history
 
 Maybe I should start with how the development of Dancer started in the first
-place. It was in summer 2009, I was working at Yoolink at that time and we did
-use a lot the Ruby language.
+place. It was in summer 2009, I was working at Yoolink at that time and we were
+making a lot of use of the Ruby language.
 
-I discovered the Sinatra micro-framework at that time and found it really
-exciting. After a quick glance, it appeared that there was nothing similar in
-the Perl ecosystem at that time, so I decided it would be an interesting 
-challenge to port it to Perl.
+I discovered the L<Sinatra|http://sinatrarb.com/> micro-framework at that time 
+and found it really exciting. After a quick glance, it appeared that there was 
+nothing similar in the Perl ecosystem at that time, so I decided it would be 
+an interesting challenge to port it to Perl.
 
-First Dancer prototype was born.
+Thus, the first Dancer prototype was born.
 
-The prototype evolved quickly and afetr a couple of months, the project was up
+The prototype evolved quickly and after a couple of months, the project was up
 available on CPAN and the source code hosted was pushed on GitHub.
 
 A community of motivated users emerged and after a year, Dancer was well-known
-and had quite a good reputation of being very easy to use and making web development
-fun with Perl.
+and had quite a good reputation of being very easy to use and making web
+development fun with Perl.
 
 Needless to say that when you are powered by your ciommunity's energy, it's
 very hard to stop the flow for changing major design decisions.
@@ -39,14 +44,16 @@ with Perl.
 
 From that perspective, I'm very proud of Dancer, because from an end-user point
 of view, it's really kicking asses: it is intuitive as hell, it stays out of
-the way and gives you all the freedom to think at one thing: your application.
+the way and gives you all the freedom to think of the one thing which matters
+most: your application.
 
 But, you know the drill, perfect software does not exist, there is always
-somethign we can do better. In the case of Dancer, there was a couple of design
-decisions that needed to be taken care of.
+something we can do better. In the case of Dancer, there were a couple of 
+design decisions which needed to be taken care of.
 
 Actually, when I took the time to think about it, I realized there were two
-major drawbacks in the design that prevented Dancer from continuing its growth.
+major drawbacks in the design that would make it difficult for Dancer to
+continue its epic growth:
 
 =over
 
@@ -67,11 +74,12 @@ I wanted Dancer to be a clean DSL over a complete object-oriented API.
 =back
 
 As a side-effect of these tow main decisions, I also wanted the core to follow
-the Law of Demeter, in order to ensure sane classes/methods hierarchy.
+the L<Law of Demeter|http://en.wikipedia.org/wiki/Law_of_Demeter>, in order to 
+ensure a sane class/method hierarchy.
 
 I also wanted a strong concept of scope to be implemented in the rewrite, so
 that everything that happens within a caller would be scoped there (no more
-apps collisions, multiple engines per app, per-apps settings, etc).
+apps collisions, support for multiple engines per app, per-apps settings, etc).
 
 =head2 Dancer2, the origins
 
@@ -79,17 +87,15 @@ All this was in my mind for quite a long time and I was wondering how I could
 do these changes while maintaining Dancer's evolutions.
 
 I decided to create a new repo and experiment these design ideas on a complete
-new prototype. To see where I could end up. At that time, I went to discuss
-with Matt Trout on IRC, in order to do a brainstorming about that new "design
-experiment".
+new prototype, to see where I could end up. At that time, I went to discuss
+with Matt S Trout (mst) on IRC, in order to brainstorm the new design.
 
 Matt sounded encouraging and provided lots of useful and enlightened
 suggestions to help me start.
 
-One of his suggestion was to use Moo to get a complete Moose-ish object system
-for the core yet fast and lightweight. 
-That happened to be one of the more helpful choice to enforce a
-better design.
+One of his suggestions was to use Moo to get a complete Moose-ish object system
+for the core yet fast and lightweight.  That happened to be one of the more
+helpful choices to enforce a better design.
 
 One of the benefits being the goodness of roles.
 
