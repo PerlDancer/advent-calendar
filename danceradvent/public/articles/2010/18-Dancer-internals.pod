@@ -92,7 +92,7 @@ handlers with a powerful syntactic sugar.
 
 We also introduced another layer, between the core and plugins, that we call
 engines. Indeed, there are some very common use-cases we wanted to address
-within Dancer without touching the core, and with more standardization than
+within Dancer without touching the core, and with more standardisation than
 simple plugins can provide. Those fields are: loggers, template engines,
 serializers and session engines. 
 
@@ -148,7 +148,7 @@ For instance, writing a new template engine would be that simple:
 The same idea goes for session, logger and serializer. 
 
 Thanks to this design, Dancer has already many template, session and logger
-backends available on the CPAN. This showscases one of the ideas behind Dancer's
+backends available on the CPAN. This showcases one of the ideas behind Dancer's
 philosophy: being as open as possible for the developer and for the Perl
 community.
 
@@ -188,17 +188,17 @@ Writing a plugin for Dancer is a piece of cake:
 =head2 Conclusion
 
 That's it, you know all the main ideas behind Dancer's design, you should now
-better understand I<where> your contribution should fo, if you want to provide
+better understand I<where> your contribution should go, if you want to provide
 some.
 
 The next step for us is now to design a whole new layer, whose main job will be
 to provide a unified access to the internals. We'll probably call that layer
 C<Dancer::Internal>. The idea will be to provide a full access to all the
 meta-information of a Dancer application, this will allows for more power and
-possibilties for plugins and engines.
+possibilities for plugins and engines.
 
 This will be done through a process of refactoring that will occur in the
-Dancer 1.3xx releases. When finalized, it will be released as a 1.4 version.
+Dancer 1.3xx releases. When finalised, it will be released as a 1.4 version.
 This is our major target for this release.
 
 =head2 Author
