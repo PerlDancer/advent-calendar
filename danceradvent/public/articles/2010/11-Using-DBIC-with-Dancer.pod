@@ -1,7 +1,7 @@
 =head1 Using DBIx::Class within a Dancer application
 
 C<DBIx::Class>, also known as C<DBIC>, is one of the many Perl ORM 
-(I<Object Relational Mapper>), but it's commonly recognized as the best 
+(I<Object Relational Mapper>), but it's commonly recognised as the best 
 and most widely used.
 
 This is a nice presentation from Leo :
@@ -17,8 +17,8 @@ From a Dancer web application, it is very easy to use DBIC, thanks to
 C<Dancer::Plugin::DBIC>. This article will implement a simple web application to
 demonstrate the use of C<Dancer::Plugin::DBIC>.
 
-B<Note> : Although this article only skimms the surface of C<DBIX::Class>, it
-won't explain how to use it. We recommand you to have a look at
+B<Note> : Although this article only skims the surface of C<DBIX::Class>, it
+won't explain how to use it. We recommend you to have a look at
 C<DBIx::Class::Manual::Intro> or C<DBIx::Class::Manual::Example> if needed.
 
 =head2 The bookstore example
@@ -205,7 +205,7 @@ And that's our database populated !
 
 Let's go back to our Dancer application now. Instead of interacting with the
 database using SQL, let's configure C<DBIX::Class>. DBIC needs to understand how
-your data is organized in your database. There are two ways of letting DBIC
+your data is organised in your database. There are two ways of letting DBIC
 know:
 
 =over
@@ -340,7 +340,7 @@ Now if we search for C<The>, here is what we get :
 
 As you can see, the page presents 4 results. The first one is an author's
 match, I<Richard MaB<the>son>. The next 2 ones are 2 of his books. The last one
-is I<B<The> Player of Games> (a great book btw...).
+is I<B<The> Player of Games> (a great book by the way...).
 
 =head2 Conclusion 
 
