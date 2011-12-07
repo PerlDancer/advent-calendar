@@ -129,7 +129,7 @@ I won't give you more details on the Core API in this article, neither will I
 give a roadmap for Dancer 2, because these topics will be covered in other
 articles, but I'll just give you a quick overview of Dancer 2 as of today.
 
-The repository is public on L<Github|http://github.com/sukria/dancer2>, you're
+The repository is public on L<Github|http://github.com/PerlDancer/Dancer2>, you're
 welcome to clone it if you want to test your app with Dancer 2. If you do so,
 please send me an email with your feedback, that will help a lot!
 
@@ -145,7 +145,7 @@ Nothing special here, we have our hello world app powered by Dancer2. If you
 look more precisely, you'll see that nearly all the DSL of Dancer 1 is already
 supported in Dancer 2.
 
-To get a wuick teaser about the interal changes we have, let's enable the core
+To get a quick teaser about the interal changes we have, let's enable the core
 debug messages:
 
     $ DANCER_DEBUG_CORE=1 perl -Ilib ./test.pl &
@@ -155,17 +155,15 @@ debug messages:
     HTTP::Server::Simple::PSGI: You can connect to your server at http://localhost:3000/
     $ 
 
-As you can see, with 2, for each package that uses Dancer, we have a
+As you can guess, with 2, for each package that uses Dancer, we have a
 C<Dancer::Core::App> object (here for I<main>). The DSL is just syntactic
 sugar over method calls to that object.
 
-That means we now have a proper encapsulation, and clean scope.
+Well, that's all for this introduction, again, you're welcome to test
+Dancer 2, just clone the repo and run your app with it, just don't forget to
+mail me or the list about how it went, that would be helpful.
 
-That's all for this introduction, again, you're welcome if you like to test
-Dancer 2, please feel free! If you have a real-life application, clone the
-repo and power your app with Dancer 2 and email me a report of how it went.
-
-In the next article, I'll go over all the Core API design, explaining all the
+In the next article, I'll go over all the core API design, explaining all the
 entities we have and how it fits with the DSL.
 
 =head2 AUTHOR
