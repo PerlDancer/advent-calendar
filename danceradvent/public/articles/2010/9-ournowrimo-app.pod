@@ -3,7 +3,7 @@
 Just as December is the month of the Wreath, November is the month of the
 Write.  For the last twelve years, writers of all calibers, aspirations and
 genres participate in a writing marathon named the L<National Novel
-Writing Month|http://www.nanowrimo.org/> (also referenced to as I<NanoWrimo>).
+Writing Month|http://www.nanowrimo.org/> (also referenced to as I<NaNoWriMo>).
 The challenge is simple: starting on November 1st, write fifty thousand words
 before the end of the month.
 
