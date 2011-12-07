@@ -7,7 +7,7 @@ amp and one to my headphones transmitter, and also Shoutcast streaming so I can
 listen from work), and can be controlled by a variety of clients, which need
 only speak a simple text-based protocol.
 
-Some time ago I wrote a jukebox-style music queuing webapp using
+Some time ago I wrote a jukebox-style music queueing webapp using
 L<Catalyst|http://www.catalystframework.org/>, which worked pretty well, but I
 did not enjoy coding or maintaining it.
 
@@ -32,7 +32,7 @@ re-writing it using Dancer was actually fun.
 
 I also added a very basic "admin" section to be used from my Android phone,
 allowing me to skip the playing song and remove requests from the queue in case
-anyone requests anything silly that I don’t want played, but didn’t actually use
+anyone requests anything silly that I don’t want played, but didn't actually use
 it. It only took a couple of minutes to add that feature, though!  At some
 point, I'll tweak that to make use of L<Dancer::Plugin::MobileDevice> (see
 previous advent calendar post on this) to automatically go to a basic layout,
