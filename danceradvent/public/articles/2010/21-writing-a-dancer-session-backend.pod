@@ -127,7 +127,7 @@ Next, for our session backend, we'll need to implement the following methods:
 
 =item * init
 
-This method initializes the session backend.
+This method initialises the session backend.
 
 We'll use this method to lazily load any additional modules.
 
@@ -173,7 +173,7 @@ B<Important:> you should know that we're being very naive here by not providing
 any special L<KiokuDB::TypeMap> for our class. This means that if someone will
 use our KiokuDB session backend and try to store something KiokuDB does not know
 how to cleanly fold (such as more complex objects), it might fail. Not to worry,
-we'll document this behavior in the POD. :)
+we'll document this behaviour in the POD. :)
 
 =item * create
 
@@ -259,6 +259,6 @@ Previous articles
 
 =head2 Author
 
-This article has been writen by Sawyer X C<< <xsawyerx@cpan.org> >> for the
+This article has been written by Sawyer X C<< <xsawyerx@cpan.org> >> for the
 Perl Dancer Advent Calendar 2010.
 
