@@ -46,7 +46,7 @@ field is the primary key and will automatically get an ID assigned by the
 database engine when a row is inserted. 
 
 We want our application to initialize the database automatically for us when we
-start it, so open your favorite L<text editor|http://www.vim.org> and create a
+start it, so open your favourite L<text editor|http://www.vim.org> and create a
 file called 'dancr.pl'.  We're going to put the following subroutines in that
 file:
 
@@ -188,7 +188,7 @@ database.
 The first check in the subroutine is the make sure the user sending the data is
 logged in. If not, the application sends back an error and stops processing.
 Otherwise, we have standard DBI stuff. Let me insert (heh, heh) a blatant plug
-here for always, always using parameterized INSERTs in your application's SQL
+here for always, always using parameterised INSERTs in your application's SQL
 statements.  It's the only way to be sure your application won't be vulnerable
 to SQL injection. (See L<http://www.bobby-tables.com> for correct INSERT
 examples in multiple languages.) Here we're using the C<params> convenience
