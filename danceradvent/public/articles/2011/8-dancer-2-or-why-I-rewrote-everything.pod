@@ -86,6 +86,9 @@ apps collisions, support for multiple engines per app, per-apps settings, etc).
 All this was in my mind for quite a long time and I was wondering how I could
 do these changes while maintaining Dancer's evolutions.
 
+=for html <img src="http://farm4.staticflickr.com/3137/3067741605_83b86dda64.jpg" title="Dancer 2 is to Dancer 1 what Wolverine is to a human being: same shape, better skeleton." />
+
+
 I should also mention that among the contributors of Dancer, there were a
 couple of guys very productive and motivated, and I granted them a commit bit
 quite quickly. Soon enough, we created what we called the I<Core Team>, a group
