@@ -35,7 +35,7 @@ A community of motivated users emerged and after a year, Dancer was well-known
 and had quite a good reputation of being very easy to use and making web
 development fun with Perl.
 
-Needless to say that when you are powered by your ciommunity's energy, it's
+Needless to say that when you are powered by your community's energy, it's
 very hard to stop the flow for changing major design decisions.
 
 When I look back at what happened exactly, I'd say that Dancer was a very
@@ -60,7 +60,7 @@ continue its epic growth:
 =item * Globals and singletons
 
 The major source of issues with edge-cases, scalability and maintenance in
-Dancer is the use of globals. Many developers who happend to hack around the
+Dancer is the use of globals. Many developers who happened to hack around the
 core know that.
 
 I wanted Dancer to get rid of that design flaw.
@@ -140,9 +140,9 @@ Let's give it a try:
 
 Nothing special here, we have our hello world app powered by Dancer2. If you
 look more precisely, you'll see that nearly all the DSL of Dancer 1 is already
-supported un Dancer 2.
+supported in Dancer 2.
 
-To get a wuick teaser about the interal changes we have, let's enable he core
+To get a wuick teaser about the interal changes we have, let's enable the core
 debug messages:
 
     $ DANCER_DEBUG_CORE=1 perl -Ilib ./test.pl &
@@ -153,19 +153,19 @@ debug messages:
     $ 
 
 As you can see, with 2, for each package that uses Dancer, we have a
-C<Dancer::Core::App> object (here for I<main>). The DSL is just a syntactic
+C<Dancer::Core::App> object (here for I<main>). The DSL is just syntactic
 sugar over method calls to that object.
 
-That means we have now a proper encapsulation, and clean scope.
+That means we now have a proper encapsulation, and clean scope.
 
-that's all for this introduction, again, you're welcome if you like to test
+That's all for this introduction, again, you're welcome if you like to test
 Dancer 2, please feel free! If you have a real-life application, clone the
 repo and power your app with Dancer 2 and email me a report of how it went.
 
 In the next article, I'll go over all the Core API design, explaining all the
 entities we have and how it fits with the DSL.
 
-=head2 Author
+=head2 AUTHOR
 
 This article was written by Alexis Sukrieh and reviewed by David Precious, for
 the Perl Dancer Advent Calendar 2011.
