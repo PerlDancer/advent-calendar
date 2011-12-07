@@ -194,7 +194,7 @@ POD! :)
 
 =over 4
 
-=item * The previous artile on I<Dancer Internals>
+=item * The previous article on I<Dancer Internals>
 
 =item * The following article on I<Writing a new Dancer logger backend>
 
