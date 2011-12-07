@@ -353,11 +353,11 @@ when not available.
 
 L<Plack::Middleware::ReverseProxy> solves a problem associated with reverse
 proxy. When the request is sent from the intertubes to your frontend server,
-that request is forwared to a backend server. That backend server believes that
+that request is forwarded to a backend server. That backend server believes that
 the request originated from the frontend server and not the intertubes. Thus the
 IP address and other environment variables are associated with the frontend
 server. When your logs/debug says that 100% of your users came from 192.168.1.10
-or similiar then there's a problem.
+or similar then there's a problem.
 
 L<Plack::Middleware::ReverseProxy> reads these special headers sent from the
 frontend server that include the correct information. It takes that information
@@ -374,7 +374,7 @@ performance. Set the number of workers based on your server specs.
 
     plackup -D -E deployment -s Starman --workers=10 -a app.pl -p 5000 
 
-Dancer unoffically supports Websockets and other streaming processes via
+Dancer unofficially supports Websockets and other streaming processes via
 L<Web::Hippie> in which case you would need to use a non-blocking, async server
 such as L<Twiggy>.
 
@@ -406,7 +406,7 @@ way to force a process to daemonize is to use C<nohup plackup ... &>.
 =item Note #3: 
 
 It's probably a good idea to create a start up script that launches your servers
-and initializes the environment in the background.
+and initialises the environment in the background.
 
 =back 
 
@@ -424,6 +424,6 @@ L<Dancer::Deployment>
 
 =head2 Author
 
-This article has been written by nmani (Naveen Manivannan C<<
-<nmani@nashresearch.com> >>) for the Perl Dancer Advent Calendar 2010.
+This article has been written by nmani (Naveen Manivannan 
+C<< <nmani@nashresearch.com> >>) for the Perl Dancer Advent Calendar 2010.
 
