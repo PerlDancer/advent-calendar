@@ -103,6 +103,8 @@ rewrite.
 Then, I decided to create a new repo and experiment these design ideas on a complete
 new prototype, to see where I could end up. At that time, I went to discuss
 with Matt S Trout (mst) on IRC, in order to brainstorm the new design.
+Matt also happened to become my I<design architect mentor>, giving me ideas,
+tips and suggestions when I faced subtle design issues to solve. 
 
 Matt sounded encouraging and provided lots of useful and enlightened
 suggestions to help me start.
