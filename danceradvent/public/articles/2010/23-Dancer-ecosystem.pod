@@ -91,7 +91,7 @@ be detailed in another article about B<REST>.
 
 This plugin helps you make automatic transformations on requests' parameters,
 for instance, make them all lowercase. It has easy-to-use defaults, but can do
-complex and precise normalization upon configuration.
+complex and precise normalisation upon configuration.
 
 (On CPAN: L<http://search.cpan.org/perldoc?Dancer::Plugin::Params::Normalization>)
 
@@ -153,7 +153,7 @@ that are in your Dancer application within Dancer's registry.  This list
 is then simply formated appropriately for each route.
 
 For HTML an unordered list containing anchor tags is output within your
-applicataions main layout. This can then be styled with CSS to suit.
+applications main layout. This can then be styled with CSS to suit.
 
 For the XML site map, it outputs... Yep you guessed it! An XML site map.
 
