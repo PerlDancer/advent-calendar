@@ -3,7 +3,7 @@
 Earlier this year I presented one of my project: 
 L<Github Explorer|http://lumberjaph.net/graph/2010/03/25/github-explorer.html>.
 The idea was to graph the various communities on github, and show how peoples
-work together, by country and langages. I've started to work on a new version,
+work together, by country and languages. I've started to work on a new version,
 and this time I want to let people generate their own graph.
 
 In this article I'll present a simple version of what I'm working on.
@@ -117,7 +117,7 @@ L<Protovis library|http://vis.stanford.edu/protovis/>.
 =head2 Caching
 
 Fetching the informations from MongoDB and generating the graph object can be
-really slow, depending on the size of the requestd graph. A good idea is to
+really slow, depending on the size of the requested graph. A good idea is to
 cache the result before sending it back to the client. For this, we can use
 L<Dancer::Plugin::Memcached|http://search.cpan.org/perldoc?Dancer::Plugin::Memcached>.
 
@@ -150,7 +150,7 @@ B<memcached_store>.
 =head2 Conclusion (bis)
 
 In this article I've shown two new plugins: B<Dancer::Plugin::Mongo> (by Adam
-Taylor) and B<Dancer::Plugin::Memcached> (by squeeks), and a nice javascript
+Taylor) and B<Dancer::Plugin::Memcached> (by squeeks), and a nice Javascript
 library : B<Protovis>.
 
 I'll continue to work on this app in the following months, and you can expect to
