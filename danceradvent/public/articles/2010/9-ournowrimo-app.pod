@@ -21,7 +21,7 @@ running, shall we?
 =head2 The Specs
 
 The graph is only going to be used for one month, so there's no need to get
-terribly fancy.  We'll use a csv format looking like
+terribly fancy.  We'll use a CSV format looking like
 
 
     2010-11-01,Andy,0
@@ -43,7 +43,7 @@ The application we need around that is very simple. Basically, we need:
 
 =back
 
-Got it? Now, let's get crackin'.
+Got it? Now, let's get cracking.
 
 =head2 Creating the App
 
