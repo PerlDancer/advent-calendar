@@ -1,4 +1,3 @@
-=encoding UTF-8
 
 =head1 Dancer 2, or Why I Rewrote Everything
 
@@ -157,17 +156,15 @@ debug messages:
     HTTP::Server::Simple::PSGI: You can connect to your server at http://localhost:3000/
     $ 
 
-As you can see, with 2, for each package that uses Dancer, we have a
+As you can guess, with 2, for each package that uses Dancer, we have a
 C<Dancer::Core::App> object (here for I<main>). The DSL is just syntactic
 sugar over method calls to that object.
 
-That means we now have a proper encapsulation, and clean scope.
+Well, that's all for this introduction, again, you're welcome to test
+Dancer 2, just clone the repo and run your app with it, just don't forget to
+mail me or the list about how it went, that would be helpful.
 
-That's all for this introduction, again, you're welcome if you like to test
-Dancer 2, please feel free! If you have a real-life application, clone the
-repo and power your app with Dancer 2 and email me a report of how it went.
-
-In the next article, I'll go over all the Core API design, explaining all the
+In the next article, I'll go over all the core API design, explaining all the
 entities we have and how it fits with the DSL.
 
 =head2 AUTHOR
