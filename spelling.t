@@ -54,6 +54,7 @@ Champoux
 chgrp
 chunked
 CNAME
+co
 colors
 CPAN
 crujones
@@ -213,11 +214,14 @@ RESTful
 resultset
 rethrow
 RFC
+roadmap
 Ronan
 RSA
 RSS
 RT
 sandboxing
+sawyer
+SawyerX
 scaffolded
 screencast
 serialization
