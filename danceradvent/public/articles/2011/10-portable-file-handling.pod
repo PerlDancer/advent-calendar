@@ -1,0 +1,57 @@
+=head1 Portable file handling in Dancer apps
+
+If you want your app to be easily portable between different systems and
+different platforms, it's important not to write file-handling code in a
+platform-specific way.
+
+Dancer provides some utility functions in L<Dancer::FileUtils> which help you to
+deal with files in a portable manner.
+
+=head2 Portable file paths
+
+Depending on the platform, directory separators may vary.
+
+To get round this, L<Dancer::FileUtils/path> allows you to assemble paths easily:
+
+    my $views_dir = Dancer::FileUtils::path(setting('appdir'), 'views');
+
+C<path()> uses L<File::Spec> internally.
+
+
+=head2 Reading file contents
+
+L<Dancer::FileUtils/read_file_content> provides a way to quickly retrieve the
+content of a file, and behaves sensibly depending on the context it was called
+in:
+
+    # Read entire file contents into $content:
+    my $content = Dancer::FileUtils::read_file_content($filename);
+
+    # Read each line of file into @lines:
+    my @lines = Dancer::FileUtils::read_file_content($filename);
+
+The application's C<charset> setting will be taken into account when opening the
+file, and will default to UTF-8 if no charset setting is present, so UTF-8 data
+should Just Work.
+
+L<Dancer::FileUtils/read_glob_content> works in the same manner, but takes an
+open filehandle, reads the content from it, and I<closes the handle>.
+
+
+=head2 Opening a file
+
+L<Dancer::FileUtils/open_file> provides a way to open a file, taking the app's
+C<charset> setting into account, and returns a filehandle:
+
+    my $fh = open_file('<', $file) or die ...;
+
+=head2 Setting filehandle mode
+
+If you have a filehandle you've opened yourself, you can use
+L<Dancer::FileUtils/set_file_mode> to apply the app's C<charset> setting (or
+default to UTF-8) encoding.
+
+
+=head1 AUTHOR
+
+David Precious
