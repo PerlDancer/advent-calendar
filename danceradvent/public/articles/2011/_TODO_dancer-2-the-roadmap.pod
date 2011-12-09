@@ -1,10 +1,11 @@
-=head1 Dancer 2
+=head1 Dancer 2, a Roadmap
 
-This article won't answer the question everyone has in mind: I<When ?>. But it
-will give a complete overview of what has been done and what remains to be done.
+OK, before we start, let's make it clear: this article won't answer the
+question everyone has in mind: I<When ???!!!??>. 
 
-This should give you a good overview of where we are and will also enlight how
-you can help.
+But it will give a complete overview of what has been done and what remains to
+be done. This should give you a good overview of where we are and will also
+enlight how you can help.
 
 =head2 DSL
 
@@ -15,6 +16,9 @@ All of the keywords we have in Dancer 1 are supported at the time of this
 writing except C<send_error> and C<load_app>. All the other keywords you won't
 find in Dancer 2 that exist in Dancer 1 will be deprecated (like
 C<before_template> or C<load> for instance).
+
+I plan to finish the DSL very soon (it's my top-priority for now) so I suppose
+it's a matter of weekends as that's when I'm able to work on Dancer 2.
 
 =head2 Core Engines
 
@@ -45,21 +49,21 @@ B<Dumper>, B<JSON>, Mutable, B<XML>,  B<YAML>.
 =back
 
 As you can see, there is still some work to do there, but it should not take
-too long as all the roles used to build engines are ready. Also some of these
+too long as all the C<Moo> roles used to build engines are ready. Also some of these
 engines are really... dumb to implement!
 
 =head2 Plugins
 
 The support for plugins is namely the C<Dancer::Plugin> class. In Dancer 2,
-lots of magic happens there because a plugin in Dancer 2 is actually a DSL Role
+lots of magic happens there because a plugin in Dancer 2 is actually a DSL role
 that is consumed into the core DSL (which itself is built via a default DSL
 role).
 
-The interesting part is that all the role composition is hiddent by the
-syntactic sugar of Dancer::Plugin, the very same syntax of Dancer 1 is
-possible, but behind the scene, there are Moo roles consumed, it's insanely
-powerful and elegant! (I can say that because it's not my idea, but one of
-mst's ;).
+The interesting part is that all the role composition is hidden by the
+syntactic sugar of C<Dancer::Plugin>, the very same syntax of Dancer 1 is
+possible, but behind the scene, there are C<Moo> roles consumed, it's insanely
+powerful and elegant! (I can say that without sounding pretentious, because 
+it's not my idea, but one of mst's ;).
 
 So, in Dancer 1, we have one plugin shipped with the core, it's
 C<Dancer::Plugin::Ajax> which provides a handy keyword C<ajax> to define ... Ajax
@@ -70,6 +74,25 @@ box, so not a big deal there.
 
 =head2 Dancer::Test
 
-The C<Dancer::Test> module is a helper to get Dancer tests ... TODO
+The C<Dancer::Test> module is a helper to get Dancer tests, it provides lots of
+handy function to test a Dancer application. The most used one,
+C<dancer_response> is implemented, but all the other remain to be done.
+
+Also, due to design changes, Dancer::Test might not work exactly in the same
+conditions as with Dancer 1. So maybe some work here to do to polish it again.
 
 =head2 Ecosystem
+
+The last part of the job will be quite a big challenge: we'll need to test
+every module on CPAN in the Dancer ecosytem with Dancer 2, see if it works and
+if not, patch it and send the patch to the author. 
+
+This is going to be - I think - a very interesting marathon, and I think the
+best way to do it will be in a hackaton dedicated to the task.
+
+=head2 OK, so ... When ?
+
+Well, not for Christmas! But we can say Dancer 2 will be out in 2012, is that
+precise enough? No? Well, didn't I say at the beginning that I won't answer
+that I<when> question?
+
