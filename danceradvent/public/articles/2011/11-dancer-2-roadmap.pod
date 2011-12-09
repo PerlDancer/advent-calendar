@@ -96,3 +96,8 @@ Well, not for Christmas! But we can say Dancer 2 will be out in 2012, is that
 precise enough? No? Well, didn't I say at the beginning that I won't answer
 that I<when> question?
 
+=head2 Author
+
+This article was written by Alexis Sukrieh and reviewed by David Precious, for
+the Perl Dancer Advent Calendar 2011.
+
