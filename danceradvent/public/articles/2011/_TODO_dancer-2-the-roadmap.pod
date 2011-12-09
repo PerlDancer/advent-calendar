@@ -1,0 +1,75 @@
+=head1 Dancer 2
+
+This article won't answer the question everyone has in mind: I<When ?>. But it
+will give a complete overview of what has been done and what remains to be done.
+
+This should give you a good overview of where we are and will also enlight how
+you can help.
+
+=head2 DSL
+
+Of course the very first milestone is to have a working DSL over the new core.
+It has been my main target and it's almost finished.
+
+All of the keywords we have in Dancer 1 are supported at the time of this
+writing except C<send_error> and C<load_app>. All the other keywords you won't
+find in Dancer 2 that exist in Dancer 1 will be deprecated (like
+C<before_template> or C<load> for instance).
+
+=head2 Core Engines
+
+We can find several I<engines> in the Dancer distribution. Engines are specific
+components dedicated to handle sessions, templates, loggers and serializers.
+
+The lists below show engines we found in Dancer 1, those in bold are the one
+ported in Dancer 2.
+
+=over
+
+=item Logger engines
+
+Capture, B<Console>, Diag, File, Note, Null.
+
+=item Session engines
+
+Simple, B<YAML>.
+
+=item Template engines
+
+Simple, B<TemplateToolkit>.
+
+=item Serializer engines
+
+B<Dumper>, B<JSON>, Mutable, B<XML>,  B<YAML>.
+
+=back
+
+As you can see, there is still some work to do there, but it should not take
+too long as all the roles used to build engines are ready. Also some of these
+engines are really... dumb to implement!
+
+=head2 Plugins
+
+The support for plugins is namely the C<Dancer::Plugin> class. In Dancer 2,
+lots of magic happens there because a plugin in Dancer 2 is actually a DSL Role
+that is consumed into the core DSL (which itself is built via a default DSL
+role).
+
+The interesting part is that all the role composition is hiddent by the
+syntactic sugar of Dancer::Plugin, the very same syntax of Dancer 1 is
+possible, but behind the scene, there are Moo roles consumed, it's insanely
+powerful and elegant! (I can say that because it's not my idea, but one of
+mst's ;).
+
+So, in Dancer 1, we have one plugin shipped with the core, it's
+C<Dancer::Plugin::Ajax> which provides a handy keyword C<ajax> to define ... Ajax
+routes.
+
+That plugin has not been tested with Dancer 2 but should work quite out-of-the
+box, so not a big deal there.
+
+=head2 Dancer::Test
+
+The C<Dancer::Test> module is a helper to get Dancer tests ... TODO
+
+=head2 Ecosystem
