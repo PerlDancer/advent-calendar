@@ -32,7 +32,7 @@ ported in Dancer 2.
 
 =item Logger engines
 
-Capture, B<Console>, Diag, File, Note, Null.
+Capture, B<Console>, Diag, B<File>, Note, Null.
 
 =item Session engines
 
