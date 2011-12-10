@@ -54,7 +54,7 @@ engines are really... dumb to implement!
 
 =head2 Plugins
 
-The support for plugins is namely the C<Dancer::Plugin> class. In Dancer 2,
+The support for plugins is namely the C<Dancer::Plugin> module. In Dancer 2,
 lots of magic happens there because a plugin in Dancer 2 is actually a DSL role
 that is consumed into the core DSL (which itself is built via a default DSL
 role).
@@ -69,17 +69,16 @@ So, in Dancer 1, we have one plugin shipped with the core, it's
 C<Dancer::Plugin::Ajax> which provides a handy keyword C<ajax> to define ... Ajax
 routes.
 
-That plugin has not been tested with Dancer 2 but should work quite out-of-the
-box, so not a big deal there.
+That plugin has been ported to Dancer 2 and works as expected.
 
 =head2 Dancer::Test
 
 The C<Dancer::Test> module is a helper to get Dancer tests, it provides lots of
 handy function to test a Dancer application. The most used one,
-C<dancer_response> is implemented, but all the other remain to be done.
+C<dancer_response> is implemented, but all the other helpers remain to be done.
 
 Also, due to design changes, Dancer::Test might not work exactly in the same
-conditions as with Dancer 1. So maybe some work here to do to polish it again.
+conditions as with Dancer 1. So maybe some work here to polish it a bit more.
 
 =head2 Ecosystem
 
