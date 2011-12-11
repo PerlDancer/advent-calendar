@@ -1,0 +1,42 @@
+=head1 Dancer workshop at London Perl Workshop 2011
+
+Saturday, 12 November 2011 was the 2011 London Perl Workshop, held in the 
+Cavendish Street Campus of Westminster University.
+
+Andrew Solomon ran L<a hands-on training session|http://conferences.yapceurope.org/lpw2011/talk/3888>
+entitled "Web development for beginners using Dancer", to help beginners to
+learn to use Dancer, Template Toolkit, learn the MVC concept, and understand
+structuring code for maintainability and using object orientation.
+
+In all, there were 19 attendees (in a room with only 18 terminals).
+
+Andew said that the students were very engaged, asking (and answering) valid
+questions until the end of the 2.5 hour class, and that almost all of them had a
+working web application up and running by the end of the session.
+
+Many of the students reported that they found it much simpler to get started
+than they'd expected.
+
+A quote from an attendee:
+
+"... if I do ever try to get something up and running in Perl, I feel like I 
+could probably do it with Dancer"
+
+I also asked Andrew himself for his opinion, and he said:
+
+"make sure you say how much I enjoyed presenting Dancer! The way high level
+concepts and the actual code are aligned, I think that Dancer will
+give Perl a place in the 'standard' university IT curriculum before
+too long."
+
+All in all, it seems the workshop was well-received, helping raise the profile
+of Dancer and feedback from attendees confirms that Dancer is doing well at
+being a user-friendly framework which is easy for beginners to start working
+with, with an easy learning curve.
+
+
+=head1 AUTHOR
+
+David Precious
+
+
