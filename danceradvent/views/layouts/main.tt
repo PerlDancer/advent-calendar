@@ -27,11 +27,11 @@
 
 <p>
 The PerlDancer Advent Calendar is a community-driven project that aims 
-to showcase the Dancer micro-framework.
+to showcase the Dancer Perl web framework.
 </p>
 
 <p>
-Each day of December until Christmas, one article about PerlDancer. Stay tuned for new moves!
+Each day of December until Christmas, one article about Dancer. Stay tuned for new moves!
 </p>
 
 <ul id="sidebar-items">
@@ -55,8 +55,9 @@ Each day of December until Christmas, one article about PerlDancer. Stay tuned f
 
 
 <div id="footer">
-Powered by 
-<a href="http://perldancer.org/" title="Perl Dancer web framework">Dancer</a>
+Powered by the  
+<a href="http://perldancer.org/" title="Perl Dancer - Perl web framework">
+Dancer Perl web framework</a>
 </div>
 </div>
 
