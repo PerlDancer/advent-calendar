@@ -1,26 +1,32 @@
-=head1 Sending email in Dancer by Dancer::Plugin::Email
+=head1 Sending email in Dancer using Dancer::Plugin::Email
 
-Some sites uses email-forms like a fast and comfortable feedback method. User just types message and clicks on 'Submit' button. If you want to add this feature to your site, you can use Dancer::Plugin::Email plugin.
+Many sites use email forms to provide a fast and comfortable feedback method. 
+The user just types their details and message and clicks on 'Submit' button, and
+the details are sent to a specified email address.
 
-=head1 It is interesting. What's next?
+If you want to send email from your Dancer application, you can do so easily
+using the L<Dancer::Plugin::Email> plugin.
 
-In fact, in Dancer::Plugin::Email there is only one function email{} which sends imail to specified address. Email{} looks like:
+=head2 How do I use it?
 
+L<Dancer::Plugin::Email> is very simple to use - in fact,  there is only one 
+function, C<email>, which sends email with the options specified.. The C<email> 
+call with all options looks like:
  
     email {
-        to=>'user@example.ru', #destination email address
-        subject=>'I found a bug in your site', #email subject
-        msg=>'BlahBlahBlah', #message body
-        attachment=>['/sbin/rm'], #path to attachment
-        type => 'text', #type of email. Can be 'text', 'html' or 'multi'
-        headers => { #some more email headers
-                "X-Mailer" => 'This fine Dancer application',
-                "X-Accept-Language" => 'en'
-            },
-        encoding => 'base64' #email encoding
+        to         => 'user@example.ru',
+        subject    => 'I found a bug in your site',
+        msg        => 'BlahBlahBlah',
+        attachment => ['/sbin/rm'],
+        type       => 'text',
+        headers    => {
+            "X-Mailer" => 'This fine Dancer application',
+            "X-Accept-Language" => 'en'
+        },
+        encoding   => 'base64',
     };
 
-=head1 Example
+=head2 Simple example
 
 
     use Dancer;
@@ -31,17 +37,16 @@ In fact, in Dancer::Plugin::Email there is only one function email{} which sends
             to => '...',
             subject => '...',
             message => $msg,
-            attach => [ '/path/to/file' ]
         };
     };
 
-=head1 Code recipes
+=head2 Code recipes
 
 Below we give you some code recipes to show how to use Dancer::Plugin::Email
 
-=head2 Errors handling
+=head3 Errors handling
 
- # Handle Email Failures
+    # Handle Email Failures
     
     post '/contact' => sub {
     
@@ -50,7 +55,6 @@ Below we give you some code recipes to show how to use Dancer::Plugin::Email
             subject => '...',
             message => $msg,
             encoding => 'base64',
-            attach => [ '/path/to/file' ]
         };
         
         warn $msg->{string} if $msg->{type} eq 'failure';
@@ -78,13 +82,16 @@ Below we give you some code recipes to show how to use Dancer::Plugin::Email
     email {
         to => '...',
         subject => '...',
-        type => 'multi',
+        type => 'multi',  # must be set to "multi" to send both parts
         message => {
             text => $txt,
             html => $html,
-            #TYPE MUST BE SET TO 'MULTI'!!!
-        }
+        },
     };
 
- 
+=head1 AUTHOR
+
+Kindly authored by  Andrew Inishev, a student participating in the Google
+Code-In, mentored by David Precious - thanks Andrew for your contribution!
+
 
