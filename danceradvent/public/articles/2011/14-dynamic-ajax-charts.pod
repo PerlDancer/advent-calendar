@@ -1,0 +1,84 @@
+=head1 Dynamic AJAX charting with Dancer and Highcharts
+
+Let's build a real simple AJAX-based application using Dancer to feed data to
+L<Highcharts|http://www.highcharts.com/> to display a real-time graph of the
+load average of the webserver the application is running on.
+
+We'll serve up a page with the appropriate Javascript to utilise Highcharts,
+polling via AJAX requests to fetch fresh data from our Dancer app regularly.
+
+First, we'll need to write a simple Dancer app to serve up the HTML, along with
+handling AJAX requests for the current load average.
+
+I scaffolded the app with C<dancer -a ajaxchartingdemo>, then edited
+C<lib/ajaxchartingdemo.pm> to contain the following simple code:
+
+    package ajaxchartingdemo;
+    use Dancer ':syntax';
+    use Dancer::Plugin::Ajax;
+
+    use Unix::Uptime;
+
+    get '/' => sub {
+        template 'index';
+    };
+
+    ajax '/getloadavg' => sub {
+        {
+            timestamp => time,
+            loadavg => ( Unix::Uptime->load )[0]
+        };
+    };
+
+    true;
+
+I want that hashref the C<ajax> handler is returning to be serialised to JSON
+for me, so I edited the C<config.yml> file and added:
+
+    serializer: 'JSON'
+
+With that done, I then had to download L<HighCharts|http://www.highcharts.com/>
+into C<public/javascripts/highcharts>, and edit C<views/index.tt> to contain the
+appropriate HTML and mostly Javascript to display the chart.
+
+I'm not going to repeat the whole of that here, as that part isn't
+Dancer-related, and you can L<see it on GitHub|https://github.com/bigpresh/dancer-ajaxloadavgchart-example/blob/master/views/index.tt>
+anyway, but it was simple stuff; the part which fetched the loadavg using an
+AJAX request (courtesy of jQuery) was as simple as:
+
+    setInterval(function() {
+        $.getJSON('/getloadavg', function(response) {
+            var point = [ 
+                response.timestamp * 1000,
+                response.loadavg - 0
+            ];;
+            series.addPoint(point, true, shiftalong);
+        })
+    }, 2000);
+
+With all this done, we're ready to see what we get!
+
+During the advent calendar period, you can try it out live at:
+
+L<http://advent.perldancer.org:4600/>
+
+(This will likely be discontinued in the near future, but the demo app will
+still be available on GitHub for you to try yourself.)
+
+You should be presented with a pretty graph, which updates automatically:
+
+=for html <img src="/images/2011/14/chart-screenshot.png">
+
+=head2 Getting the example app code
+
+The example application is available on GitHub:
+
+L<https://github.com/bigpresh/dancer-ajaxloadavgchart-example>
+
+
+=head1 AUTHOR
+
+David Precious, with thanks to C<ua> on IRC for the idea and C<odyniec> for help
+whilst I was hurriedly writing this post.
+
+
