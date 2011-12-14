@@ -61,10 +61,8 @@ Below we give you some code recipes to show how to use Dancer::Plugin::Email
         
     };
 
-=head2 Add more email headers
+=head2 Adding additional email headers
 
-# Add More Email Headers
-    
     email {
         to => '...',
         subject => '...',
@@ -75,10 +73,8 @@ Below we give you some code recipes to show how to use Dancer::Plugin::Email
         }
     };
 
-=head2 Send text and html message together
+=head2 Sending text and HTML multi-part messages
 
-# Send Text and HTML Email together
-    
     email {
         to => '...',
         subject => '...',
