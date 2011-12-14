@@ -1,0 +1,90 @@
+=head1 Sending email in Dancer by Dancer::Plugin::Email
+
+Some sites uses email-forms like a fast and comfortable feedback method. User just types message and clicks on 'Submit' button. If you want to add this feature to your site, you can use Dancer::Plugin::Email plugin.
+
+=head1 It is interesting. What's next?
+
+In fact, in Dancer::Plugin::Email there is only one function email{} which sends imail to specified address. Email{} looks like:
+
+ 
+    email {
+        to=>'user@example.ru', #destination email address
+        subject=>'I found a bug in your site', #email subject
+        msg=>'BlahBlahBlah', #message body
+        attachment=>['/sbin/rm'], #path to attachment
+        type => 'text', #type of email. Can be 'text', 'html' or 'multi'
+        headers => { #some more email headers
+                "X-Mailer" => 'This fine Dancer application',
+                "X-Accept-Language" => 'en'
+            },
+        encoding => 'base64' #email encoding
+    };
+
+=head1 Example
+
+
+    use Dancer;
+    use Dancer::Plugin::Email;
+    
+    post '/contact' => sub {
+        email {
+            to => '...',
+            subject => '...',
+            message => $msg,
+            attach => [ '/path/to/file' ]
+        };
+    };
+
+=head1 Code recipes
+
+Below we give you some code recipes to show how to use Dancer::Plugin::Email
+
+=head2 Errors handling
+
+ # Handle Email Failures
+    
+    post '/contact' => sub {
+    
+        my $msg = email {
+            to => '...',
+            subject => '...',
+            message => $msg,
+            encoding => 'base64',
+            attach => [ '/path/to/file' ]
+        };
+        
+        warn $msg->{string} if $msg->{type} eq 'failure';
+        
+    };
+
+=head2 Add more email headers
+
+# Add More Email Headers
+    
+    email {
+        to => '...',
+        subject => '...',
+        message => $msg,
+        headers => {
+            "X-Mailer" => 'This fine Dancer application',
+            "X-Accept-Language" => 'en'
+        }
+    };
+
+=head2 Send text and html message together
+
+# Send Text and HTML Email together
+    
+    email {
+        to => '...',
+        subject => '...',
+        type => 'multi',
+        message => {
+            text => $txt,
+            html => $html,
+            #TYPE MUST BE SET TO 'MULTI'!!!
+        }
+    };
+
+ 
+
