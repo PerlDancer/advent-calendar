@@ -95,6 +95,27 @@ Provides simple SMS text messaging sending, powered by L<SMS::Send>:
         sms to => '++447......', text => '......';
     };
 
+=item L<Dancer::Plugin::EscapeHTML>
+
+Makes it easy to escape HTML to help mitigate against
+L<XSS|http://en.wikipedia.org/wiki/Cross-site_scripting> vulnerabilities.
+
+    my $encoded = escape_html($some_html);
+
+In many cases, you'll be passing data to your templates to render, but will
+never be intentionally passing HTML, only data.  In that case, you can arrange
+for all template params to be escaped before the template receives them by
+adding the following to config.yml:
+
+    plugins:
+        EscapeHTML:
+            automatic_escaping: 1
+            exclude_pattern: '_html$'
+
+The C<exclude_pattern> illustrated means that any template param with a name
+ending in C<_html> will be left untouched.
+
+
 =item L<Dancer::Plugin::SimpleCRUD>
 
 Provides simple L<CRUD|http://en.wikipedia.org/wiki/Create,_read,_update_and_delete>
@@ -131,6 +152,17 @@ Provides easy image thumbnail generation using L<GD>.
 
 Makes it easy to interact with Facebook via L<Facebook::Graph> from your Dancer
 applications.
+
+=item L<Dancer::Plugin::Stomp>
+
+Makes it as easy as possible to interact with a Stomp message broker. 
+It provides one new keyword, C<stomp>, which returns a L<Net::Stomp> object.
+
+    post '/messages' => sub {
+        stomp->send({ destination => '/queue/foo', body => request->body });
+    };
+
+
 
 =back
 
