@@ -170,6 +170,9 @@ The above is just a small sample - there's plenty more on CPAN.
 
 Just L<search for Dancer::Plugin::|https://metacpan.org/search?q=Dancer%3A%3APlugin%3A%3A>
 
+Why not help people find useful plugins by finding the plugins you use on
+L<MetaCPAN|http://metacpan.org/> and clicking the C<++> button?
+
 
 =head1 AUTHOR
 
