@@ -1,4 +1,3 @@
-
 =head1 Dancer 2, or Why I Rewrote Everything
 
 If you've been following developments in the Perl Dancer ecosystem
