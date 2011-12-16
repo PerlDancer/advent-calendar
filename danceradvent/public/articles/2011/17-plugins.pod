@@ -1,0 +1,144 @@
+=head1 Dancer plugins ecosystem
+
+Dancer has been designed to provide the built-in features you need, but to
+remain slim and not force your choice of technologies, so plugins and engines
+are an important feature for easy extensibility.
+
+It's easy to write plugins to extend Dancer's DSL and provide various useful
+extra features.  Today, here is a write-up of a small selection of the wide 
+variety of plugins available.
+
+=over
+
+=item L<Dancer::Plugin::Database>
+
+L<Covered in more detail|http://advent.perldancer.org/2011/5> already, but
+Dancer::Plugin::Database provides easy to use and easy to configure L<DBI> 
+database connection management along with a handful of convenience methods.
+
+It has been designed to make the common stuff as easy as possible.
+
+A quick example - fetching details of a user and passing them to a template to
+render a page with details on that user:
+
+    get '/user/:id' => sub {
+        my $user = database->quick_select('users', { id => params->{id} });
+        return template 'user', $user;
+    };
+
+Calling the C<database> keyword gets you a database handle (which is actually a
+subclassed C<DBI::db> object, which acts just as a normal DBI database handle
+but adds a few convenience methods such as C<quick_select>.
+
+=item L<Dancer::Plugin::DBIC>
+
+If you plan to use L<DBIx::Class> to access your database in an ORM-ish style,
+then this plugin provides a C<schema> keyword which lets you do things like:
+
+    my @authors = schema->resultset('Author')->search({
+        -or => [
+            firstname => { like => "%$query%" },
+            lastname  => { like => "%$query%" },
+        ]
+    });
+
+When configuring the plugin, you can allow DBIC to auto-discover the schema for
+ultimate ease of use, or you can point it at your own schema classes.
+
+L<Covered in more detail|http://advent.perldancer.org/2010/11> in last year's
+Dancer advent calendar.
+
+
+=item L<Dancer::Plugin::Redis>
+
+Provides an easy way to obtain a connected Redis database handle by simply
+calling the redis keyword within your Dancer application.
+
+    get '/widget/view/:id' => sub {
+        template 'display_widget', { widget => redis->get('hash_key'); };
+    };
+
+
+=item L<Dancer::Plugin::Mongo>
+
+Provides a wrapper around L<MongoDB>. Add the appropriate configuraton options 
+to your config.yml and then you can access a MongoDB database using the 'mongo'
+keyword:
+
+    get '/widget/view/:id' => sub {
+        my $widget = mongo->database->collection->find_one({ id => params->{id} });
+    };
+
+
+=item L<Dancer::Plugin::Email>
+
+Provides simple email sending for your Dancer applications, powered by
+L<Email::Send> via an C<email> keyword:
+
+    post '/contact' => sub {
+        email {
+            to => '...',
+            subject => '...',
+            message => $msg,
+            attach => [ '/path/to/file' ]
+        };
+    };
+
+L<Covered in more detail|http://advent.perldancer.org/2011/15> previously in
+this year's calendar.
+
+=item L<Dancer::Plugin::SMS>
+
+Provides simple SMS text messaging sending, powered by L<SMS::Send>:
+
+    post '/sendsms' => sub {
+        sms to => '++447......', text => '......';
+    };
+
+=item L<Dancer::Plugin::SimpleCRUD>
+
+Provides simple L<CRUD|http://en.wikipedia.org/wiki/Create,_read,_update_and_delete>
+support for database tables, with automatic record display, searching, creating,
+editing, deletion, exporting, etc.
+
+L<Covered in more detail|http://advent.perldancer.org/2011/2> previously in this
+year's calendar.
+
+=item L<Dancer::Plugin::Ajax>
+
+Provides an C<ajax> keyword to match only requests submitted via AJAX:
+
+    ajax '/check_for_update' => sub {
+        # ... some Ajax code
+    };
+
+=item L<Dancer::Plugin::Passphrase>
+
+Makes it easy to securely handle passwords in your Dancer apps, storing and
+using secure salted hashed passwords with minimal effort.
+
+=item L<Dancer::Plugin::Cache::CHI>
+
+Provides easy caching using the L<CHI> module, which supports a wide variety of
+caching backends including C<memcached> and various others.  Can cache arbitrary
+bits of information or entire page responses.
+
+=item L<Dancer::Plugin::Thumbnail>
+
+Provides easy image thumbnail generation using L<GD>.
+
+=item L<Dancer::Plugin::Facebook>
+
+Makes it easy to interact with Facebook via L<Facebook::Graph> from your Dancer
+applications.
+
+=back
+
+The above is just a small sample - there's plenty more on CPAN.
+
+Just L<search for Dancer::Plugin::|https://metacpan.org/search?q=Dancer%3A%3APlugin%3A%3A>
+
+
+=head1 AUTHOR
+
+David Precious
