@@ -47,21 +47,21 @@ Flags:
       a writeup of various Dancer plugins, especially ones which are new since
       last year; this could be a series of posts over multiple days
 
-[ ] - Thanking contributors
+[D] - Thanking contributors
       We could do a post thanking all the people who've contributed over the
       last year, with a short description of each thing they contributed
 
 [ ] - Dancing on the big screen
       Summarise talks mentioning Dancer at various Perl events
 
-[ ] - Dancer workshop at LPW2011
+[D] - Dancer workshop at LPW2011
       I think it would be nice to speak to Andrew Solomon who did a Dancer
       training session at LPW2011 and get some feedback on how the session went,
       how many attended, the general reaction of the attendees etc.  We could
       perhaps also contact some of the attendees and ask for feedback on what
       they thought of Dancer and the workshop.
 
-[A] - Profiling Dancer apps - bigpresh
+[D] - Profiling Dancer apps - bigpresh
       A quick writeup of using Dancer::Plugin::NYTProf to profile apps.
 
 [A] - Writing Unicode-safe Dancer apps (Penfold)
