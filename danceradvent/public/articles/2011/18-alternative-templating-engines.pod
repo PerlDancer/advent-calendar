@@ -1,0 +1,135 @@
+=head1 Alternative Dancer Templating Engines
+
+Dancer uses a simple model of interfacing with templating engines (based on
+L<Dancer::Template::Abstract>) and makes it very easy to add support for new
+engines. Thanks to this, if you're not happy with the default C<simple> engine
+or with L<Template Toolkit|http://template-toolkit.org/index.html>, there is now
+a dozen different alternatives to choose from. Let's take a look at some of
+them.
+
+
+=head2 Dancer::Template::Tiny
+
+L<Template::Tiny> is a lightweight engine which reimplements a subset of
+Template Toolkit features. As the name implies, it aims to accomplish this with
+as little code as possible. If you're using just the basic functionality of
+Template Toolkit, you should be able to switch to Template::Tiny without any
+modifications to template files (and you can easily go back at any moment).
+
+L<Dancer::Template::Tiny> is going to replace L<Dancer::Template::Simple> as the
+default templating engine in Dancer2.
+
+Example template:
+
+    <html>
+      <head>
+        <title>Tiny Example</title>
+        <link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
+      </head>
+      <body>
+        <h1>Hello, World! This is Dancer [% dancer_version %]!</h1>
+        <p>
+          [% IF morning %]
+            Good morning!
+          [% ELSE %]
+            Good afternoon!
+          [% END %] 
+        </p>
+      </body>
+    </html>
+
+Route handler:
+
+    use DateTime;
+    
+    get '/hello' => sub {
+        template 'hello', { morning => (localtime)[2] < 12, now => DateTime->now };
+    };
+
+
+=head2 Dancer::Template::Tenjin
+
+L<Tenjin|http://www.kuwata-lab.com/tenjin/> is a very fast templating engine
+with implementations for many languages -- including, of course, Perl. Its great
+performance comes from the fact that it uses the underlying language's
+constructs to process templates, instead of defining its own templating language
+and having to parse it. Support for this engine in Dancer is provided by 
+L<Dancer::Template::Tenjin>.
+
+Example template:
+
+    <html>
+      <head>
+        <title>Tenjin Example</title>
+        <link rel="stylesheet" href="[== $request->uri_base =]/css/style.css" />
+      </head>
+      <body>
+        <h1>Hello, World! This is Dancer [= $dancer_version =]!</h1>
+        <p>
+          <?pl if ((localtime)[2] < 12) { ?>
+            Good morning!
+          <?pl } else { ?>
+            Good afternoon!
+          <?pl } ?>
+        </p>
+        <p>
+          Current time is: [== DateTime->now->hms =]
+        </p>
+      </body>
+    </html>
+
+Route handler:
+
+    use DateTime;
+    
+    get '/hello' => sub {
+        template 'hello';
+    };
+
+
+=head2 Dancer::Template::Haml
+
+L<Haml|http://haml-lang.com/>, which stands for "HTML Abstraction Markup
+Language", brings a fresh, different approach to templating. It aims at making
+templates short, clean, and as easy to read as well-formatted source code.
+L<Dancer::Template::Haml> is a wrapper around L<Text::Haml> and lets you use
+Haml templates in Dancer applications.
+
+Example template:
+
+    %html
+      %head
+        %title Haml Example
+        %link(rel="stylesheet" href="#{$request->uri_base}/css/style.css")
+      %body
+        %h1 Hello, World! This is Dancer #{$dancer_version}!
+        %p
+          - if ((localtime)[2] < 12) {
+            Good morning!
+          - } else {
+            Good afternoon!
+          - } 
+        %p Current time is: #{DateTime->now->hms}
+
+Route handler:
+
+    use DateTime;
+    
+    get '/hello' => sub {
+        template 'hello';
+    };
+
+
+=head2 More
+
+There are many more interesting templating engines ready to be used with Dancer,
+such as L<Mason|http://www.masonhq.com/> (provided by
+L<Dancer::Template::Mason>) or L<Xslate|http://xslate.org/>. Do a
+L<CPAN|http://search.cpan.org/> or L<MetaCPAN|https://metacpan.org/> search for
+"dancer template" to get a list of all the available engines, and choose the one
+that suits you best. In the true spirit of Perl, there's more than one way to
+write a template!
+
+=head1 Author
+
+L<Michal Wojciechowski|http://odyniec.net/>, C<< <odyniec@odyniec.net> >>
