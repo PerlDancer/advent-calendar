@@ -124,11 +124,11 @@ Route handler:
 
 There are many more interesting templating engines ready to be used with Dancer,
 such as L<Mason|http://www.masonhq.com/> (provided by
-L<Dancer::Template::Mason>) or L<Xslate|http://xslate.org/>. Do a
-L<CPAN|http://search.cpan.org/> or L<MetaCPAN|https://metacpan.org/> search for
-"dancer template" to get a list of all the available engines, and choose the one
-that suits you best. In the true spirit of Perl, there's more than one way to
-write a template!
+L<Dancer::Template::Mason>) or L<Xslate|http://xslate.org/>
+(L<Dancer::Template::Xslate>). Do a L<CPAN|http://search.cpan.org/> or
+L<MetaCPAN|https://metacpan.org/> search for "dancer template" to get a list of
+all the available engines, and choose the one that suits you best. In the true
+spirit of Perl, there's more than one way to write a template!
 
 =head1 Author
 
