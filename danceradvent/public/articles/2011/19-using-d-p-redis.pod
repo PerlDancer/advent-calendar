@@ -7,6 +7,7 @@ Dancer::Plugin::Redis is a plugin created to make an easy way to use Redis datab
 Redis is key-value, networking, in-memory data store with optional durability. It is very useful technology because it simple and fast. It supports many data types (integers, strings, sets, etc).
  
 =head1 Synopsis
+
 	use Dancer;
 	use Dancer::Plugin::Redis;
 	
