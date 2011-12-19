@@ -1,0 +1,52 @@
+=head1 How to use Dancer::Plugin::Redis
+
+Dancer::Plugin::Redis is a plugin created to make an easy way to use Redis database in Dancer apps. In fact, Dancer::Plugin::Redis is an abstraction from Redis plugin. It has only one function C<redis>, which returns a database handle. See Redis module documentation for the list of controlling functions.
+
+=head1 Introduction to Redis
+
+Redis is key-value, networking, in-memory data store with optional durability. It is very useful technology because it simple and fast. It supports many data types (integers, strings, sets, etc).
+ 
+=head1 Synopsis
+	use Dancer;
+	use Dancer::Plugin::Redis;
+	
+	get '/404.html' => sub{
+		my $data = redis->get('hash_key');
+	}
+
+	dance;
+
+When you use C<redis> keyword it gives you a connected database handle or (if already connected) checks connection.
+
+=head1 Simple examples
+
+=head2 Getting a value
+
+	 use Dancer;
+	 use Dancer::Plugin::Redis;
+
+	 get '/widget/view/:id' => sub {
+	 template 'display_widget', { widget => redis->get('time_applet'); };
+         };
+
+         dance;
+
+=head2 Incrementing count of views in Redis database
+
+	use Dancer;
+	use Dancer::Plugin::Redis;
+
+	get '/index' => sub{
+	redis->incr('count_of_views');
+	};
+	dance;
+
+=head1 Author
+
+This article was written by Andrew Inishev, Google Code-in student, mentored by David Precious.
+
+
+	
+	
+	
+
