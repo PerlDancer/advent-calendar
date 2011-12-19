@@ -12,7 +12,7 @@ Redis is key-value, networking, in-memory data store with optional durability. I
 	
 	get '/404.html' => sub{
 		my $data = redis->get('hash_key');
-	}
+	};
 
 	dance;
 
