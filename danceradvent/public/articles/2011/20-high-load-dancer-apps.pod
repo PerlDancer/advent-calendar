@@ -1,0 +1,99 @@
+=head1 High-performance Dancer apps
+
+Using or considering using Dancer in a high-traffic environment?  There are some
+techniques you can use to help ensure good performance, which will be documented
+here.
+
+In a couple of months it's answered over 40 million requests for several hundred
+thousand individual domain names, so it's battle-proven.
+
+=head2 Handle static files via the webserver
+
+For performance, you want your application's static files (images, Javascript,
+CSS etc) to be served up by your webserver, e.g. Nginx, rather than being passed
+to your Dancer app to serve.
+
+A short example Nginx configuration:
+
+    server {
+        listen 80;
+        server_name foo.example.com;
+
+        location / {
+            # Serve static files directly:
+            if (-f $request_filename) {
+                expires 30d;
+                break;
+            }
+
+            # Pass on other requests to Dancer app
+            proxy_pass_header Server;
+            proxy_pass http://localhost:3000/;
+        }
+    }
+
+Similiar configuration methods should work with other deployment methods.
+
+
+=head2 Run under a suitable backend
+
+For high-load situations, you'll want to be running under a suitable Plack
+back-end.  L<Starman> is a very high performance backend, and is recommended.
+
+A simple "hello world" benchmark test in the Starman documentation shows it
+capable of handling over 6800 requests per second.  Naturally, with a real-world
+more complex app, you're not going to achieve quite that level of performance.
+
+
+=head2 Pre-load your application
+
+When running with Starman, you can pre-load your application before forking 
+worker processes, to increase performance and provide memory savings with
+copy-on-write memory management.
+
+Use Starman's C<--preload-app> option to enable this (but be aware that this can
+cause Bad Things to happen if resources like database connections or other
+sockets are opened by your app at compile time, as they will be unintentionally
+shared amongst child processes.  L<Dancer::Plugin::Database> contains code to
+ensure fork/thread safety, so you should be safe if using that plugin to manage
+your database connections.
+
+You can also pre-load individual modules using C<plackup>'s C<-M> for similar
+effect:
+
+    starman -MDancer -MMoose -MFoo myapp.psgi
+
+
+
+=head2 Caching
+
+Using L<Dancer::Plugin::Cache::CHI> to cache data and responses as much as
+possible (using a backend like Memcached) can save a lot of execution time, and
+help your application to handle more requests, faster.
+
+A simple example to cache a whole page response:
+
+    # Arrange for the cache to be consulted for a matching response before route
+    # handlers are invoked:
+    check_page_cache();
+
+    get '/foo' => sub {
+        my $data = some_expensive_slow_function();
+        my $content = template 'foo', $data;
+        cache_page $content;
+        return $content;
+    };
+
+
+=head2 Profile your app to find bottlenecks
+
+As L<covered previously|http://advent.perldancer.org/2011/9>,
+L<Dancer::Plugin::NYTProf> can be useful to profile your Dancer applications and
+see where time is spent to identify bottlenecks where a little optimisation can
+pay off.
+
+
+=head1 AUTHOR
+
+David Precious, C<< <davidp@preshweb.co.uk> >>
+
