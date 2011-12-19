@@ -4,8 +4,10 @@ Using or considering using Dancer in a high-traffic environment?  There are some
 techniques you can use to help ensure good performance, which will be documented
 here.
 
-In a couple of months it's answered over 40 million requests for several hundred
+Some of these tips are based on a Dancer application in production at work -
+in a couple of months it's answered over 40 million requests for several hundred
 thousand individual domain names, so it's battle-proven.
+
 
 =head2 Handle static files via the webserver
 
