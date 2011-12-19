@@ -9,10 +9,19 @@ Redis is key-value, networking, in-memory data store with optional durability. I
 =head1 Synopsis
 
 	use Dancer;
+	use Dancer::Plugin::Email;
 	use Dancer::Plugin::Redis;
 	
-	get '/404.html' => sub{
-		my $data = redis->get('hash_key');
+	post '/write_us' => sub{
+		email{
+		to => redis->get('support_email'), #gets destination email from database
+		subject => $subject,
+		encoding => redis->get('email_encoding'), #get email encoding from database
+		message => $msg
+		};
+		redis->incr ('count_of_messages'); #increments count of all emails sent by users
+                };
+		
 	};
 
 	dance;
