@@ -51,7 +51,7 @@ This method calls create_feed by setting the format to Atom.
 
 =head2 create_rss_feed
 
-This method call create_feed by setting the format to RSS.
+This method calls create_feed by setting the format to RSS.
 
 =head1 Simple example
 
