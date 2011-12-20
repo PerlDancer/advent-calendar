@@ -1,0 +1,69 @@
+=head1 Making RSS feeds using Dancer::Plugin::Feed
+
+RSS is a very popular way to see updates of any site. Most of sites use
+it and you, probably, want to add RSS support to your site.  You can
+easily do it with Dancer using Dancer::Plugin::Feed.
+
+=head1 Description of common functions
+
+=head2 create_feed
+
+This function returns a XML feed. All parameters can be define in the
+configuration
+
+Accepted parameters are:
+
+C<format> (required)
+
+
+The Content-Type header will be set to the appropriate value
+
+C<entries>
+
+An arrayref containing a list of entries. Each item will be transformed
+to an XML::Feed::Entry object. Each entry is an hashref. Some common
+attributes for these hashrefs are title, link, summary, content, author,
+issued and modified. Check XML::Feed::Entry for more details.
+
+C<title>
+
+C<base>
+
+C<link>
+
+C<tagline>
+
+C<description>
+
+C<author>
+
+C<language>
+
+C<copyright>
+
+C<self_link>
+
+C<modified>
+
+=head2 create_atom_feed
+
+This method calls create_feed by setting the format to Atom.
+
+=head2 create_rss_feed
+
+This method call create_feed by setting the format to RSS.
+
+=head1 Simple example
+
+	use Dancer; 
+	use Dancer::Plugin::Feed;
+
+	get '/feed/:format' => sub {
+	  my $feed = create_feed( 
+	    format => params->{format}, #Feed format (RSS or Atom) 
+	    title => 'my great feed', 
+	    entries => [ map { title => "entry $_" }, 1 .. 10 ], #makes collection of feed entries
+	  );
+	  return $feed;
+	};
+	 dance;
