@@ -1,20 +1,35 @@
-=head1 Generating captcha using Dancer::Plugin::Captcha::SecurityImage
+=head1 Generating CAPTCHAs using Dancer::Plugin::Captcha::SecurityImage
 
-Many sites uses captcha to prevent bots using comments for spam. If you want to add this feature to your site, you can do it using Dancer::Plugin::SecurityImage.
+Many sites uses a L<CAPTCHA|http://en.wikipedia.org/wiki/CAPTCHA> to prevent 
+bots using comments for spam. If you want to add this feature to your site, 
+you can do it using Dancer::Plugin::SecurityImage.
+
+For a CAPTCHA test to work, you need to generate an image with slightly
+obsfucated text which computer OCR (Optical Character Recognition) software will
+not be able to read, and store the text contained in the image in the user's
+session.  Once they submit the form, you compare the text they entered with the
+text stored in the session, and you know if they entered the right text or not.
+
+L<Dancer::Plugin::Captcha::SecurityImage> makes this easy.
+
 
 =head1 Description of common functions
 
 C<create_captcha>
 
-This function expects argument which will be passed to GD::SecurityImage constructor and methods. 
+This function expects argument which will be passed to the L<GD::SecurityImage> 
+constructor and methods. 
 
 C<validate_captcha>
 
-This function expects the value user entered in the form. It will check it against the code stored in the Dancer session and return C<true> if they match.
+This function expects the value user entered in the form. It will check it 
+against the code stored in the Dancer session and return C<true> if they match.
 
 C<clear_captcha>
 
-This function will remove the captcha from your session data so that it won't match again
+This function will remove the CAPTCHA value from your session data so that it 
+won't match again.
+
 
 =head1 Simple example
 
@@ -34,7 +49,7 @@ This function will remove the captcha from your session data so that it won't ma
             create    => [ normal => 'rect' ],
             particle  => [ 100 ],
             out       => { force => 'jpeg' }, #format of picture ('jpeg', 'png')
-            random    => $random_string = rand_pass(6), #random string will be presented on captchav(6 symbols)
+            random    => $random_string = rand_pass(6), #random string for CAPTCHA
         };
     };
     
@@ -47,14 +62,16 @@ This function will remove the captcha from your session data so that it won't ma
         clear_captcha;
     };
 
-    sub rand_pass
-    {
+    sub rand_pass {
         my $len = shift;
         my $pass;
         for (1..$len) {$pass .= chr(rand(94)+33)}
         return $pass;
     } 
 
-=head1 Author
 
-This article was written by Andrew Inishev, Google Code-in student, mentored by David Precious.
+=head1 AUTHOR
+
+This article was written by Andrew Inishev, Google Code-in student, 
+mentored by David Precious.
+
