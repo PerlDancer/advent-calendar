@@ -1,8 +1,8 @@
 =head1 Making RSS feeds using Dancer::Plugin::Feed
 
-RSS is a very popular way to see updates of any site. Most of sites use
-it and you, probably, want to add RSS support to your site.  You can
-easily do it with Dancer using Dancer::Plugin::Feed.
+RSS is a very popular way to see updates of any site. Many sites use
+it, and you may well want to add RSS support to your site.  You can
+easily do it with Dancer using L<Dancer::Plugin::Feed>.
 
 =head1 Description of common functions
 
@@ -47,11 +47,11 @@ C<modified>
 
 =head2 create_atom_feed
 
-This method calls create_feed by setting the format to Atom.
+This method calls create_feed, setting the format to Atom.
 
 =head2 create_rss_feed
 
-This method calls create_feed by setting the format to RSS.
+This method calls create_feed, setting the format to RSS.
 
 =head1 Simple example
 
@@ -67,3 +67,8 @@ This method calls create_feed by setting the format to RSS.
 	  return $feed;
 	};
 	 dance;
+
+=head1 AUTHOR
+
+This article was written by Andrew Inishev, Google Code-In student, mentored by
+David Precious.
