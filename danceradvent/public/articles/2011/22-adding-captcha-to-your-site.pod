@@ -1,0 +1,60 @@
+=head1 Generating captcha using Dancer::Plugin::Captcha::SecurityImage
+
+Many sites uses captcha to prevent bots using comments for spam. If you want to add this feature to your site, you can do it using Dancer::Plugin::SecurityImage.
+
+=head1 Description of common functions
+
+C<create_captcha>
+
+This function expects argument which will be passed to GD::SecurityImage constructor and methods. 
+
+C<validate_captcha>
+
+This function expects the value user entered in the form. It will check it against the code stored in the Dancer session and return C<true> if they match.
+
+C<clear_captcha>
+
+This function will remove the captcha from your session data so that it won't match again
+
+=head1 Simple example
+
+    use Dancer;
+    use Dancer::Plugin::Captcha::SecurityImage;
+    
+    session 'simple';
+    
+    get '/captcha' => sub {
+        create_captcha {
+            new => {
+                width    => 80,
+                height   => 30,
+                lines    => 10,
+                gd_font  => 'giant',
+            },
+            create     => [ normal => 'rect' ],
+            particle   => [ 100 ],
+            out        => { force => 'jpeg' }, #format of picture ('jpeg', 'png')
+            random     => $your_random_string = rand_pass(6), #random string which will be presented on captcha (6 symbols)
+        };
+    };
+    
+    post '/verify' => sub { #captcha validation
+        my $p = request->params;
+        
+        if (!validate_captcha $p->{captcha}) {
+            return "wrong code";
+        }
+        clear_captcha;
+    };
+
+    sub rand_pass
+    {
+	my $len = shift;
+	my $pass;
+	for (1..$len) {$pass .= chr(rand(94)+33)}
+	return $pass;
+    } 
+
+=head1 Author
+
+This article was written by Andrew Inishev, Google Code-in student, mentored by David Precious.
