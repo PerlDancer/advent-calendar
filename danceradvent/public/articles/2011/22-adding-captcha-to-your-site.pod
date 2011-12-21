@@ -31,10 +31,10 @@ This function will remove the captcha from your session data so that it won't ma
                 lines    => 10,
                 gd_font  => 'giant',
             },
-            create     => [ normal => 'rect' ],
-            particle   => [ 100 ],
-            out        => { force => 'jpeg' }, #format of picture ('jpeg', 'png')
-            random     => $your_random_string = rand_pass(6), #random string which will be presented on captcha (6 symbols)
+            create    => [ normal => 'rect' ],
+            particle  => [ 100 ],
+            out       => { force => 'jpeg' }, #format of picture ('jpeg', 'png')
+            random    => $random_string = rand_pass(6), #random string will be presented on captchav(6 symbols)
         };
     };
     
@@ -49,10 +49,10 @@ This function will remove the captcha from your session data so that it won't ma
 
     sub rand_pass
     {
-	my $len = shift;
-	my $pass;
-	for (1..$len) {$pass .= chr(rand(94)+33)}
-	return $pass;
+        my $len = shift;
+        my $pass;
+        for (1..$len) {$pass .= chr(rand(94)+33)}
+        return $pass;
     } 
 
 =head1 Author
