@@ -1,17 +1,18 @@
 =head1 Meet the core team
 
-Dancer has evolved quickly from a port prototype to a fully featured
-micro-framework. This has been possible thanks to a vast community of users who
-contributed ideas, bug reports and patches.
+Dancer has evolved quickly from a prototype based on the idea of porting Ruby's
+L<Sinatra|http://sinatrarb.com/> to a fully featured and popular micro-framework. 
+This has been possible thanks to a vast community of users who contributed ideas,
+bug reports and patches.
 
 Time after time, some of these users appeared to be very motivated and
-productive and it's quite naturally that a I<Core Team> emerged.
+productive and it's quite natural that a I<Core Team> emerged.
 
-In this article we'll present each member of the team, so you could put some
+In this article we'll present each member of the team, so you can put some
 faces behind the Git history and IRC users.
 
 The core team is probably the best feature of Dancer, so please, let me
-introduce you the men who make Perl dance!
+introduce you to the men who make Perl dance!
 
 =head2 Sawyer X (sawyer)
 
