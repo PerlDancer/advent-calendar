@@ -15,7 +15,7 @@ introduce you the men who make Perl dance!
 
 =head2 Sawyer X (sawyer)
 
-First commit on Jan 13th, 2010 (<code>b7cc27b</code>)
+581 commits so far, first one on Jan 13th, 2010 (L<b7cc27b|https://github.com/sukria/Dancer/commit/b7cc27b>)
 
 Sawyer X has been using Perl for almost 10 years now. Organizer of TelAviv.pm
 meetings, doubles as a Perl developer and systems administrator. Picked up
@@ -28,7 +28,7 @@ He is currently the maintainer and release manager of the 1.x branch.
 
 =head2 David Precious (bigpresh)
 
-First Commit on Feb 11th, 2010 (<code>b92d612</code>)
+284 commits so far, first one on Feb 11th, 2010 (L<b92d612|https://github.com/sukria/Dancer/commit/b92d612>)
 
 David Precious (bigpresh) is a professional Perl developer from London,
 with 11 years of commercial experience working in the ISP and hosting
@@ -43,7 +43,7 @@ squash, and enjoys drinking beer.
 
 =head2 Alberto Simões (ambs)
 
-First commit Dec 19th, 2010 (<code>537c5aa</code>).
+426 commits so far, first commit onDec 19th, 2010 (L<537c5aa|https://github.com/sukria/Dancer/commit/537c5aa>).
 
 Alberto started using Perl in 1999. He uses Perl mostly for natural language
 processing. Was a old school CGI programmer until heard about Dancer in 2010's
@@ -57,7 +57,7 @@ Users Group, and secretary of The Perl Foundation (TPF) grants committee.
 
 =head2 Damien Krotkine (dams)
  
-First commit Sep 26th, 2010 (<code>16ad3a9</code>)
+172 commits so far, first commit on Sep 26th, 2010 (L<16ad3a9|https://github.com/sukria/Dancer/commit/16ad3a9>)
 
 Damien is using Perl since 1999. Went on using Dancer
 in late 2010 for a small project, done in 2 days. Amazed by the ease
@@ -71,25 +71,29 @@ mainly doing rock climbing.
 
 =head2 Franck Cuny (franck)
 
-First commit Jan 14th, 2010 (<code>dff82bf</code>)
+First commit Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/dff82bf>)
 
 =head2 Alexis Sukrieh (sukria)
 
-First commit Jul 17th 2009 (<code>da6c198</code>)
+1442 commits so far, first commit on Jul 17th 2009 (L<da6c198|https://github.com/sukria/Dancer/commit/da6c198>)
 
-Alexis has been working in the Internet industry for more than ten
-years now. He's always been passionated about computer programming and
+Alexis has been working in the Internet industry for more than ten years. 
+He's always been passionated about computer programming and
 free software. Perl has always been the language Alexis enjoys the most, and
 luckily he always managed to find a paid-job with Perl throughout his carreer.
 
 Before creating Dancer, Alexis used to be a Debian developer and wrote a
-popular backup tool called Backup Manager.
+popular backup tool called L<Backup Manager|http://www.backup-manager.org>.
 
-In summer 2009 he started experimenting a port of the Ruby project I<Sinatra> in
-Perl, that's how Perl Dancer was born.
+In summer 2009 he started experimenting a port of the Ruby project L<Sinatra|http://sinatrarb.com> in
+Perl, that's how Perl Dancer was born. Alexis tried hard to build a friendly
+and responsive community around Dancer, he's very happy to see the project
+evolving by itself.
+Alexis now dedicates all his free time on L<Dancer 2|http://advent.perldancer.org/2011/8>, 
+a complete rewrite of the project.
 
-Today, Alexis manages the R&D team at Weborama, a company that works in the
-Internet advertisement industry.
+Alexis works at L<Weborama|http://www.weborama.com>, 
+a company that works in the Internet advertisement industry.
 
 =head2 Authors
 
