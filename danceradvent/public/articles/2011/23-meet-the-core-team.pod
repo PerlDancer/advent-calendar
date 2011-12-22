@@ -39,6 +39,7 @@ a complete rewrite of the project.
 Alexis works at L<Weborama|http://www.weborama.com>, 
 a company that works in the Internet advertisement industry.
 
+Alexis runs a L<blog|http://www.sukria.net/fr/> and has a L<Twitter|http://twitter.com/sukria>.
 
 =head2 Sawyer X (sawyer)
 
