@@ -15,7 +15,19 @@ introduce you the men that make Perl dance!
 
 =head2 SawyerX (sawyer)
 
+First commit on Jan 13th, 2010 (<code>b7cc27b</code>)
+
+Sawyer X has been using Perl for almost 10 years now. Organizer of TelAviv.pm
+meetings, doubles as a Perl developer and systems administrator. Picked up
+Dancer after checking out several small web frameworks on CPAN. The
+responsiveness and kindness in the community opted him to suggest and develop
+his first contribution to Dancer - a route caching system. Since then he has
+become a core developer, project mentor and lecturer world-wide. He is
+currently the maintainer and release manager of the 1.x branch.
+
 =head2 David Precious (bigpresh)
+
+First Commit on Feb 11th, 2010 (<code>b92d612</code>)
 
 David Precious (bigpresh) is a professional Perl developer from London,
 with 11 years of commercial experience working in the ISP and hosting
