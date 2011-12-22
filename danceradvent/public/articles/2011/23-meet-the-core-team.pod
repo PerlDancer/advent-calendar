@@ -50,13 +50,13 @@ squash, and enjoys drinking beer.  Quite a lot of beer.
 
 =head2 Alberto Simões (ambs)
 
-426 commits so far, first commit onDec 19th, 2010 (L<537c5aa|https://github.com/sukria/Dancer/commit/537c5aa>).
+426 commits so far, first commit on Dec 19th, 2010 (L<537c5aa|https://github.com/sukria/Dancer/commit/537c5aa>).
 
 Alberto started using Perl in 1999. He uses Perl mostly for natural language
-processing. Was a old school CGI programmer until heard about Dancer in 2010's
-Dancer Advent Calendar. Since then he started using and patching and annoying
-Dancer core developers. He poke so much that he was promoted to a Dancer core
-developer.
+processing. He was a old school CGI programmer until he heard about Dancer in 
+2010's Dancer Advent Calendar. Since then he started using and patching Dancer 
+and annoying Dancer core developers. He poked so much that he was promoted to 
+a Dancer core developer.
 
 Alberto is also the organizer of YAPC::EU::2005 in Braga, Portugal and
 YAPC::EU::2009 in Lisbon, Portugal. He is the co-founder of the Portuguese Perl
