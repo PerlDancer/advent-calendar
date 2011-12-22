@@ -57,7 +57,7 @@ He is currently the maintainer and release manager of the 1.x branch.
 
 =head2 Franck Cuny (franck)
 
-First commit Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/dff82bf>)
+781 commits so far, first one on Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/dff82bf>)
 
 
 =head2 David Precious (bigpresh)
