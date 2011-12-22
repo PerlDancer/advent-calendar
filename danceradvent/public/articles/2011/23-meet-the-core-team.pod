@@ -8,7 +8,7 @@ Time after time, some of these users appeared to be very motivated and
 productive and it's quite naturally that a I<Core Team> emerged.
 
 In this article we'll present each member of the team, so you could put some
-faces behind the Git history and the IRC users.
+faces behind the Git history and IRC users.
 
 The core team is probably the best feature of Dancer, so please, let me
 introduce you the men who make Perl dance!
