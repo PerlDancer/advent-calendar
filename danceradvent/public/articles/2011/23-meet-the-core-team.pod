@@ -87,17 +87,17 @@ First commit Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/d
 1442 commits so far, first commit on Jul 17th 2009 (L<da6c198|https://github.com/sukria/Dancer/commit/da6c198>)
 
 Alexis has been working in the Internet industry for more than ten years. 
-He's always been passionated about computer programming and
+He's always been passionate about computer programming and
 free software. Perl has always been the language Alexis enjoys the most, and
-luckily he always managed to find a paid-job with Perl throughout his carreer.
+luckily he always managed to find a paid job with Perl throughout his career.
 
 Before creating Dancer, Alexis used to be a Debian developer and wrote a
 popular backup tool called L<Backup Manager|http://www.backup-manager.org>.
 
-In summer 2009 he started experimenting a port of the Ruby project L<Sinatra|http://sinatrarb.com> in
-Perl, that's how Perl Dancer was born. Alexis tried hard to build a friendly
-and responsive community around Dancer, he's very happy to see the project
-evolving by itself.
+In summer 2009 he started experimenting with a port of the Ruby project 
+L<Sinatra|http://sinatrarb.com> in Perl, and that's how Perl Dancer was born. 
+Alexis tried hard to build a friendly and responsive community around Dancer, 
+he's very happy to see the project evolving by itself.
 Alexis now dedicates all his free time on L<Dancer 2|http://advent.perldancer.org/2011/8>, 
 a complete rewrite of the project.
 
