@@ -69,12 +69,11 @@ L<The Perl Foundation|www.perlfoundation.org/> (TPF) grants committee.
  
 172 commits so far, first commit on Sep 26th, 2010 (L<16ad3a9|https://github.com/sukria/Dancer/commit/16ad3a9>)
 
-Damien is using Perl since 1999. Went on using Dancer
-in late 2010 for a small project, done in 2 days. Amazed by the ease
-of use, he started contributing, and got the commit bit soon after. He
-has worked at Mandrakesoft, Mandriva, IDM, Venda, and now Weborama. He
-organises the tech meeting of the Paris Perl Mongers since september
-2011.
+Damien has been using Perl since 1999. He started using Dancer in late 2010 for 
+a small project, done in 2 days. Amazed by the ease of use, he started 
+contributing, and got the commit bit soon after. He has worked at Mandrakesoft, 
+Mandriva, IDM, Venda, and now Weborama. He organises the tech meeting of the 
+L<Paris Perl Mongers|http://paris.pm.org/> since September 2011.
 
 When not coding Perl, he enjoys life with his lovely wife,
 mainly doing rock climbing.
