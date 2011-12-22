@@ -1,0 +1,76 @@
+=head1 Meet the core team
+
+Dancer has evolved quickly to a port prototype to a fully featured
+micro-framework. This has been possible thanks to a vast community of users who
+contributed ideas, bug reports and patches.
+
+Time after time, some of these users appeared to be very motivated and
+productive and it's quite naturally that a I<Core Team> emerged.
+
+In this article we'll present each member of the team in order to let you know
+put some faces behind the Git history. 
+
+The core team is probably the best feature of Dancer, so please, let me
+introduce you the men that make Perl dance!
+
+=head2 SawyerX (sawyer)
+
+=head2 David Precious (bigpresh)
+
+David Precious (bigpresh) is a professional Perl developer from London,
+with 11 years of commercial experience working in the ISP and hosting
+market.
+
+He discovered Dancer in February 2010 whilst looking for a framework
+which was nice to use and didn't feel awkward, contributed a few
+improvements and fixes, and eventually ended up with a commit bit.
+
+When not in front of a keyboard, he is a keen motorcyclist, plays
+squash, and enjoys drinking beer.
+
+=head2 Alberto Simões (ambs)
+
+First commit Dec 19th, 2010 (<code>537c5aa</code>).
+
+Alberto started using Perl in 1999. He uses Perl mostly for natural language
+processing. Was a old school CGI programmer until heard about Dancer in 2010's
+Dancer Advent Calendar. Since then he started using and patching and annoying
+Dancer core developers. He poke so much that he was promoted to a Dancer core
+developer.
+
+=head2 Damien Krotkine (dams)
+ 
+First commit Sep 26th, 2010 (<code>16ad3a9</code>)
+
+Damien is using Perl since 1999. Went on using Dancer
+in late 2010 for a small project, done in 2 days. Amazed by the ease
+of use, he started contributing, and got the commit bit soon after. He
+has worked at Mandrakesoft, Mandriva, IDM, Venda, and now Weborama. He
+organises the tech meeting of the Paris Perl Mongers since september
+2011. When not coding Perl, he enjoys life with his lovely wife,
+mainly doing rock climbing.
+
+=head2 Franck Cuny (franck)
+
+First commit Jan 14th, 2010 (<code>dff82bf</code>)
+
+=head2 Alexis Sukrieh (sukria)
+
+First commit Jul 17th 2009 (<code>da6c198</code>)
+
+Alexis has been working in the Internet industry for more than ten
+years now. He's always been passionated about computer programming and
+free software. Perl has always been the language Alexis enjoys the most, and
+luckily he managed to find paid-job with Perl during his whole career.
+
+Before creating Dancer, Alexis used to be a Debian developer and wrote a
+popular backup tool called Backup Manager.
+
+In summer 2009 he started experimenting a port of the ruby project Sinatra in
+Perl, that's how Perl Dancer was born.  Today, Alexis manages the R&D team at
+Weborama, a company that works in the Internet advertisement industry.
+
+=head2 Authors
+
+This article has been written by written by the core team 
+for the Dancer Advent Calendar 2011.
