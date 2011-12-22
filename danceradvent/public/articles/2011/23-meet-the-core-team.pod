@@ -58,9 +58,12 @@ processing. He was a old school CGI programmer until he heard about Dancer in
 and annoying Dancer core developers. He poked so much that he was promoted to 
 a Dancer core developer.
 
-Alberto is also the organizer of YAPC::EU::2005 in Braga, Portugal and
-YAPC::EU::2009 in Lisbon, Portugal. He is the co-founder of the Portuguese Perl
-Users Group, and secretary of The Perl Foundation (TPF) grants committee.
+Alberto was also the organizer of
+L<YAPC::EU::2005|http://conferences.yapceurope.org/ye2005/> in Braga, Portugal 
+and L<YAPC::EU::2009|http://conferences.yapceurope.org/ye2009/> in Lisbon, 
+Portugal. He is the co-founder of the 
+Portuguese Perl Users Group, and secretary of 
+L<The Perl Foundation|www.perlfoundation.org/> (TPF) grants committee.
 
 =head2 Damien Krotkine (dams)
  
