@@ -37,7 +37,9 @@ Alexis now dedicates all his free time on L<Dancer 2|http://advent.perldancer.or
 a complete rewrite of the project.
 
 Alexis works at L<Weborama|http://www.weborama.com>, 
-a company that works in the Internet advertisement industry.
+a company that works in the Internet advertisement industry. When not writing
+Perl code or terrorizing Weborama's R&D Team, he listens to insane and loud
+music.
 
 Alexis runs a L<blog|http://www.sukria.net/fr/> and has a L<Twitter|http://twitter.com/sukria>.
 
