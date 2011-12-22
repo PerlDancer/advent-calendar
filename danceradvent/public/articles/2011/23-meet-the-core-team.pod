@@ -68,12 +68,10 @@ Franck is passionate about
 L<graphs|http://lumberjaph.net/graph/2010/03/25/github-explorer.html>, code, 
 and web technologies. 
 
-He is a software engineer working at L<Linkfluence|http://linkfluence.net/>, 
-where most of his time is spent working on a feed aggregator, collecting data 
-from various web services, and handling the scalability of the architecture.
+He is a software engineer working at L<SAY: Media|http://saymedia.com/>, 
+where most of his time is spent working on the platform, building services, tools, and help designing the architecture.
 
-He is also a member of L<Paris.pm|http://paris.mongueurs.net/>, where he 
-organises the technical meetings for the group.
+He is also a member of L<SF.pm|http://sf.mongueurs.net/>, and was the previous organizer of Paris' technical meetings, before letting dams bringing the whole thing down.
 
 
 =head2 David Precious (bigpresh)
