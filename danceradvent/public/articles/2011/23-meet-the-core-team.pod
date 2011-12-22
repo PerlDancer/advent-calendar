@@ -30,6 +30,8 @@ He is currently the maintainer and release manager of the 1.x branch.
 
 =head2 David Precious (bigpresh)
 
+=for html <img src="/images/2011/23/bigpresh.jpg">
+
 284 commits so far, first one on Feb 11th, 2010 (L<b92d612|https://github.com/sukria/Dancer/commit/b92d612>)
 
 David Precious (bigpresh) is a professional Perl developer from London,
@@ -50,6 +52,8 @@ squash, and enjoys drinking beer.  Quite a lot of beer.
 
 =head2 Alberto Simões (ambs)
 
+=for html <img src="/images/2011/23/ambs.jpg">
+
 426 commits so far, first commit on Dec 19th, 2010 (L<537c5aa|https://github.com/sukria/Dancer/commit/537c5aa>).
 
 Alberto started using Perl in 1999. He uses Perl mostly for natural language
@@ -65,8 +69,11 @@ Portugal. He is the co-founder of the
 Portuguese Perl Users Group, and secretary of 
 L<The Perl Foundation|www.perlfoundation.org/> (TPF) grants committee.
 
+
 =head2 Damien Krotkine (dams)
- 
+
+=for html <img src="/images/2011/23/dams.jpg">
+
 172 commits so far, first commit on Sep 26th, 2010 (L<16ad3a9|https://github.com/sukria/Dancer/commit/16ad3a9>)
 
 Damien has been using Perl since 1999. He started using Dancer in late 2010 for 
@@ -78,11 +85,15 @@ L<Paris Perl Mongers|http://paris.pm.org/> since September 2011.
 When not coding Perl, he enjoys life with his lovely wife,
 mainly doing rock climbing.
 
+
 =head2 Franck Cuny (franck)
 
 First commit Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/dff82bf>)
 
+
 =head2 Alexis Sukrieh (sukria)
+
+=for html <img src="/images/2011/23/sukria.jpg">
 
 1442 commits so far, first commit on Jul 17th 2009 (L<da6c198|https://github.com/sukria/Dancer/commit/da6c198>)
 
