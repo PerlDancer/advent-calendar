@@ -18,10 +18,11 @@ introduce you to the men who make Perl dance!
 
 581 commits so far, first one on Jan 13th, 2010 (L<b7cc27b|https://github.com/sukria/Dancer/commit/b7cc27b>)
 
-Sawyer X has been using Perl for almost 10 years now. Organizer of TelAviv.pm
-meetings, doubles as a Perl developer and systems administrator. Picked up
-Dancer after checking out several small web frameworks on CPAN. The
-responsiveness and kindness in the community opted him to suggest and develop
+Sawyer X has been using Perl for almost 10 years now.  We works as a Perl
+developer and systems administrator.  He is responsible for Organising 
+L<TelAviv.pm|http://telaviv.pm.org> meetings.  Sawyer picked up Dancer after 
+checking out several small web frameworks on CPAN. The
+responsiveness and kindness in the community prompted him to suggest and develop
 his first contribution to Dancer - a route caching system. Since then he has
 become a core developer, project mentor and lecturer world-wide.
 
@@ -39,8 +40,13 @@ He discovered Dancer in February 2010 whilst looking for a framework
 which was nice to use and didn't feel awkward, contributed a few
 improvements and fixes, and eventually ended up with a commit bit.
 
+Since then he's promoted the project in the Perl community, maintains the
+website and advent calendar, and helps improve the documentation as well as
+fixing bugs and adding features.
+
 When not in front of a keyboard, he is a keen motorcyclist, plays
-squash, and enjoys drinking beer.
+squash, and enjoys drinking beer.  Quite a lot of beer.
+
 
 =head2 Alberto Simões (ambs)
 
