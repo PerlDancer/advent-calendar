@@ -42,6 +42,8 @@ a company that works in the Internet advertisement industry.
 
 =head2 Sawyer X (sawyer)
 
+=for html <img src="/images/2011/23/sawyer.jpg">
+
 581 commits so far, first one on Jan 13th, 2010 (L<b7cc27b|https://github.com/sukria/Dancer/commit/b7cc27b>)
 
 Sawyer X has been using Perl for almost 10 years now.  We works as a Perl
