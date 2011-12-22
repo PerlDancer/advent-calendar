@@ -51,6 +51,10 @@ Dancer Advent Calendar. Since then he started using and patching and annoying
 Dancer core developers. He poke so much that he was promoted to a Dancer core
 developer.
 
+Alberto is also the organizer of YAPC::EU::2005 in Braga, Portugal and
+YAPC::EU::2009 in Lisbon, Portugal. He is the co-founder of the Portuguese Perl
+Users Group, and secretary of The Perl Foundation (TPF) grants committee.
+
 =head2 Damien Krotkine (dams)
  
 First commit Sep 26th, 2010 (<code>16ad3a9</code>)
