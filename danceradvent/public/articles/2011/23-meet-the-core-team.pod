@@ -14,82 +14,6 @@ faces behind the Git history and IRC users.
 The core team is probably the best feature of Dancer, so please, let me
 introduce you to the men who make Perl dance!
 
-=head2 Sawyer X (sawyer)
-
-581 commits so far, first one on Jan 13th, 2010 (L<b7cc27b|https://github.com/sukria/Dancer/commit/b7cc27b>)
-
-Sawyer X has been using Perl for almost 10 years now.  We works as a Perl
-developer and systems administrator.  He is responsible for Organising 
-L<TelAviv.pm|http://telaviv.pm.org> meetings.  Sawyer picked up Dancer after 
-checking out several small web frameworks on CPAN. The
-responsiveness and kindness in the community prompted him to suggest and develop
-his first contribution to Dancer - a route caching system. Since then he has
-become a core developer, project mentor and lecturer world-wide.
-
-He is currently the maintainer and release manager of the 1.x branch.
-
-=head2 David Precious (bigpresh)
-
-=for html <img src="/images/2011/23/bigpresh.jpg">
-
-284 commits so far, first one on Feb 11th, 2010 (L<b92d612|https://github.com/sukria/Dancer/commit/b92d612>)
-
-David Precious (bigpresh) is a professional Perl developer from London,
-with 11 years of commercial experience working in the ISP and hosting
-market.
-
-He discovered Dancer in February 2010 whilst looking for a framework
-which was nice to use and didn't feel awkward, contributed a few
-improvements and fixes, and eventually ended up with a commit bit.
-
-Since then he's promoted the project in the Perl community, maintains the
-website and advent calendar, and helps improve the documentation as well as
-fixing bugs and adding features.
-
-When not in front of a keyboard, he is a keen motorcyclist, plays
-squash, and enjoys drinking beer.  Quite a lot of beer.
-
-
-=head2 Alberto Simões (ambs)
-
-=for html <img src="/images/2011/23/ambs.jpg">
-
-426 commits so far, first commit on Dec 19th, 2010 (L<537c5aa|https://github.com/sukria/Dancer/commit/537c5aa>).
-
-Alberto started using Perl in 1999. He uses Perl mostly for natural language
-processing. He was a old school CGI programmer until he heard about Dancer in 
-2010's Dancer Advent Calendar. Since then he started using and patching Dancer 
-and annoying Dancer core developers. He poked so much that he was promoted to 
-a Dancer core developer.
-
-Alberto was also the organizer of
-L<YAPC::EU::2005|http://conferences.yapceurope.org/ye2005/> in Braga, Portugal 
-and L<YAPC::EU::2009|http://conferences.yapceurope.org/ye2009/> in Lisbon, 
-Portugal. He is the co-founder of the 
-Portuguese Perl Users Group, and secretary of 
-L<The Perl Foundation|www.perlfoundation.org/> (TPF) grants committee.
-
-
-=head2 Damien Krotkine (dams)
-
-=for html <img src="/images/2011/23/dams.jpg">
-
-172 commits so far, first commit on Sep 26th, 2010 (L<16ad3a9|https://github.com/sukria/Dancer/commit/16ad3a9>)
-
-Damien has been using Perl since 1999. He started using Dancer in late 2010 for 
-a small project, done in 2 days. Amazed by the ease of use, he started 
-contributing, and got the commit bit soon after. He has worked at Mandrakesoft, 
-Mandriva, IDM, Venda, and now Weborama. He organises the tech meeting of the 
-L<Paris Perl Mongers|http://paris.pm.org/> since September 2011.
-
-When not coding Perl, he enjoys life with his lovely wife,
-mainly doing rock climbing.
-
-
-=head2 Franck Cuny (franck)
-
-First commit Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/dff82bf>)
-
 
 =head2 Alexis Sukrieh (sukria)
 
@@ -114,6 +38,86 @@ a complete rewrite of the project.
 
 Alexis works at L<Weborama|http://www.weborama.com>, 
 a company that works in the Internet advertisement industry.
+
+
+=head2 Sawyer X (sawyer)
+
+581 commits so far, first one on Jan 13th, 2010 (L<b7cc27b|https://github.com/sukria/Dancer/commit/b7cc27b>)
+
+Sawyer X has been using Perl for almost 10 years now.  We works as a Perl
+developer and systems administrator.  He is responsible for Organising 
+L<TelAviv.pm|http://telaviv.pm.org> meetings.  Sawyer picked up Dancer after 
+checking out several small web frameworks on CPAN. The
+responsiveness and kindness in the community prompted him to suggest and develop
+his first contribution to Dancer - a route caching system. Since then he has
+become a core developer, project mentor and lecturer world-wide.
+
+He is currently the maintainer and release manager of the 1.x branch.
+
+
+=head2 Franck Cuny (franck)
+
+First commit Jan 14th, 2010 (L<dff82bf|https://github.com/sukria/Dancer/commit/dff82bf>)
+
+
+=head2 David Precious (bigpresh)
+
+=for html <img src="/images/2011/23/bigpresh.jpg">
+
+284 commits so far, first one on Feb 11th, 2010 (L<b92d612|https://github.com/sukria/Dancer/commit/b92d612>)
+
+David Precious (bigpresh) is a professional Perl developer from London,
+with 11 years of commercial experience working in the ISP and hosting
+market.
+
+He discovered Dancer in February 2010 whilst looking for a framework
+which was nice to use and didn't feel awkward, contributed a few
+improvements and fixes, and eventually ended up with a commit bit.
+
+Since then he's promoted the project in the Perl community, maintains the
+website and advent calendar, and helps improve the documentation as well as
+fixing bugs and adding features.
+
+When not in front of a keyboard, he is a keen motorcyclist, plays
+squash, and enjoys drinking beer.  Quite a lot of beer.
+
+
+=head2 Damien Krotkine (dams)
+
+=for html <img src="/images/2011/23/dams.jpg">
+
+172 commits so far, first commit on Sep 26th, 2010 (L<16ad3a9|https://github.com/sukria/Dancer/commit/16ad3a9>)
+
+Damien has been using Perl since 1999. He started using Dancer in late 2010 for 
+a small project, done in 2 days. Amazed by the ease of use, he started 
+contributing, and got the commit bit soon after. He has worked at Mandrakesoft, 
+Mandriva, IDM, Venda, and now Weborama. He organises the tech meeting of the 
+L<Paris Perl Mongers|http://paris.pm.org/> since September 2011.
+
+When not coding Perl, he enjoys life with his lovely wife,
+mainly doing rock climbing.
+
+
+=head2 Alberto Simões (ambs)
+
+=for html <img src="/images/2011/23/ambs.jpg">
+
+426 commits so far, first commit on Dec 19th, 2010 (L<537c5aa|https://github.com/sukria/Dancer/commit/537c5aa>).
+
+Alberto started using Perl in 1999. He uses Perl mostly for natural language
+processing. He was a old school CGI programmer until he heard about Dancer in 
+2010's Dancer Advent Calendar. Since then he started using and patching Dancer 
+and annoying Dancer core developers. He poked so much that he was promoted to 
+a Dancer core developer.
+
+Alberto was also the organizer of
+L<YAPC::EU::2005|http://conferences.yapceurope.org/ye2005/> in Braga, Portugal 
+and L<YAPC::EU::2009|http://conferences.yapceurope.org/ye2009/> in Lisbon, 
+Portugal. He is the co-founder of the 
+Portuguese Perl Users Group, and secretary of 
+L<The Perl Foundation|www.perlfoundation.org/> (TPF) grants committee.
+
+
 
 =head2 Authors
 
