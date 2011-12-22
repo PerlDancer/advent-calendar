@@ -1,19 +1,19 @@
 =head1 Meet the core team
 
-Dancer has evolved quickly to a port prototype to a fully featured
+Dancer has evolved quickly from a port prototype to a fully featured
 micro-framework. This has been possible thanks to a vast community of users who
 contributed ideas, bug reports and patches.
 
 Time after time, some of these users appeared to be very motivated and
 productive and it's quite naturally that a I<Core Team> emerged.
 
-In this article we'll present each member of the team in order to let you know
-put some faces behind the Git history. 
+In this article we'll present each member of the team, so you could put some
+faces behind the Git history and the IRC users.
 
 The core team is probably the best feature of Dancer, so please, let me
-introduce you the men that make Perl dance!
+introduce you the men who make Perl dance!
 
-=head2 SawyerX (sawyer)
+=head2 Sawyer X (sawyer)
 
 First commit on Jan 13th, 2010 (<code>b7cc27b</code>)
 
@@ -22,8 +22,9 @@ meetings, doubles as a Perl developer and systems administrator. Picked up
 Dancer after checking out several small web frameworks on CPAN. The
 responsiveness and kindness in the community opted him to suggest and develop
 his first contribution to Dancer - a route caching system. Since then he has
-become a core developer, project mentor and lecturer world-wide. He is
-currently the maintainer and release manager of the 1.x branch.
+become a core developer, project mentor and lecturer world-wide.
+
+He is currently the maintainer and release manager of the 1.x branch.
 
 =head2 David Precious (bigpresh)
 
@@ -59,7 +60,9 @@ in late 2010 for a small project, done in 2 days. Amazed by the ease
 of use, he started contributing, and got the commit bit soon after. He
 has worked at Mandrakesoft, Mandriva, IDM, Venda, and now Weborama. He
 organises the tech meeting of the Paris Perl Mongers since september
-2011. When not coding Perl, he enjoys life with his lovely wife,
+2011.
+
+When not coding Perl, he enjoys life with his lovely wife,
 mainly doing rock climbing.
 
 =head2 Franck Cuny (franck)
@@ -73,16 +76,18 @@ First commit Jul 17th 2009 (<code>da6c198</code>)
 Alexis has been working in the Internet industry for more than ten
 years now. He's always been passionated about computer programming and
 free software. Perl has always been the language Alexis enjoys the most, and
-luckily he managed to find paid-job with Perl during his whole career.
+luckily he always managed to find a paid-job with Perl throughout his carreer.
 
 Before creating Dancer, Alexis used to be a Debian developer and wrote a
 popular backup tool called Backup Manager.
 
-In summer 2009 he started experimenting a port of the ruby project Sinatra in
-Perl, that's how Perl Dancer was born.  Today, Alexis manages the R&D team at
-Weborama, a company that works in the Internet advertisement industry.
+In summer 2009 he started experimenting a port of the Ruby project I<Sinatra> in
+Perl, that's how Perl Dancer was born.
+
+Today, Alexis manages the R&D team at Weborama, a company that works in the
+Internet advertisement industry.
 
 =head2 Authors
 
-This article has been written by written by the core team 
-for the Dancer Advent Calendar 2011.
+This article has been written by the core team for the Dancer Advent Calendar
+2011.
