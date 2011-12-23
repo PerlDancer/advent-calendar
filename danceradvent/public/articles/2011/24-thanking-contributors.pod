@@ -1,0 +1,551 @@
+=head1 Thanking the contributors
+
+Dancer's success and growth so far would not have been possible without
+contributions from a growing community of helpful contributors.
+
+GitHub reports a current total of 70 individual contributors, but this of course
+does not count people who reported bugs / requested features / offered feedback.
+
+This article has been written to offer thanks to the developers who have
+contributed directly through GitHub, a brief summary of which is below, and to
+everyone who has contributed in any way, whether through helping out in the
+Dancer IRC channel, answering questions on the mailing list, presenting Dancer
+at various Perl events, generally promoting Dancer, and of course using Dancer
+to build fun stuff! :)
+
+So, a big thank you to everyone, and best wishes from the Dancer team for a very
+merry Christmas and a happy and prosperous New Year!
+
+=head2 2010's contributors according to GitHub
+
+In no particular order, thanks go to:
+
+=over
+
+
+=item Alexis Sukrieh
+
+=over
+
+=item * Cleanup session tests folder 
+
+=item * Cleanup on Dancer::FileUtils
+
+=item * Documenting the plack_middlewares_map
+
+=back
+
+
+=item Sawyer X
+
+=over
+
+=item * GH #391: Dancer::Logger::Note now exists.
+
+=item * Porting documentation on WRAPPER to Dancer::Template::TemplateToolkit.
+
+=item * GH #297: All logging options can automatically serialize references.
+
+=item * GH#303: Generated Makefile.PL's clean is done correctly now.
+
+=back
+
+
+
+
+=item Alberto Simões
+
+=over
+
+=item * Detected errors in scaffolded dispatchers
+
+=item * Support XML::Simple configuration for serializing/deserializing
+
+=item * Remove hard-coded version from 404.html and 500.html
+
+=item * Fix a bunch of cpan testers reports 
+
+=back
+
+
+
+
+=item David Precious
+
+=over
+
+=item * Make template work outside of requests (Issue 592)
+
+=item * Major rewrite/reorganization on Dancer::Config documentation
+
+=item * Added Dancer::Cookbook to provide lots of concrete examples for
+newcomers.
+
+=item * Added session backend Dancer::Session::Simple
+
+=back
+
+
+
+=item Damien Krotkine
+
+=over
+
+=item * Created continuations-style exception system!
+
+=item * Implement session directory testing cache for Session::YAML
+
+=item * Improve Serializers documentation
+
+=back
+
+
+=item Michael G. Schwern
+
+=over
+
+=item * Improve Dancer::Test so failures report the correct line numbers.
+
+=item * Tested that Dancer::Session::Cookie isn't broken
+
+=item * Fixed the plack_middlewares example in the cookbook
+
+=back
+
+
+=item Philippe Bruhat (BooK)
+
+=over
+
+=item * Added script/wallflower, helper to turn a Dancer application into a static
+web site.
+
+=item * better behaviour for plugin_setting (better search, more user-friendly)
+
+=back
+
+
+=item Naveed Massjouni
+
+=over
+
+=item * default layout uses <% request.base %> in order to support mounted apps
+
+=item * FIX for issues #111 and #108
+
+=back
+
+=item Maurice
+
+=over
+
+=item * Provided documentation for Dancing on command line.
+
+=item * Improve Dancer::Cookbook.
+
+
+=back
+
+
+=item Roman Galeev
+
+=over
+
+=item * YAML Session UTF-8 Fix
+
+=item * Introduce new timestamp format in logger (%T)
+
+=back
+
+
+=item Stefan Hornburg (Racke)
+
+=over
+
+=item * POD fix.
+
+=back
+
+
+=item Yanick Champoux
+
+=over
+
+=item * Changed Dancer::Test tests to assume 'GET' if their first argument is scalar.
+
+=item * Recognize absolute redirects
+
+=item * Fix before_serializer POD fix 
+
+=back
+
+
+
+=item Anirvan Chatterjee
+
+=over
+
+=item * Provided various documentation typo fixes
+
+=back
+
+
+=item James Aitken
+
+=over
+
+=item * Fixed issues GH #84 #86 and #87
+
+=back
+
+
+=item Rowan Thorpe
+
+=over
+
+=item * Fixed anti UNC substitution under Cygwin
+
+=item * GH#220: fix for path issues under MacOS X and Windows platforms.
+
+=item * Better detection of the application layout under non-UNIX platforms.
+
+=item * Set binmode in write_data_to_file() to fix image corruption in
+      Windows
+      
+=back
+
+
+=item Geistteufel
+
+=over
+
+=item * Fixed cookies disappearing when more than one is set.
+      Complete refactoring of the cookie handling.
+
+=item * Documented a complete working example of deployment under Nginx/Starman in
+      Deployment.pod
+
+=back
+
+
+=item Paul Driver
+
+=over
+
+=item * Provided support for virtual location.
+
+=back
+
+
+=item Gabor Szabo
+
+=over
+
+=item * Eliminated test warnings on Windows.
+
+=item * Adding test for multi-leveled scaffolding.
+
+=back
+
+
+=item Alex Kalderimis
+
+=over
+
+=item * Documentation and tests on how to use many Dancer application
+      inside one PSGI file (PR 564)
+
+=item * Documentation and tests on how to use many Dancer application
+      inside one PSGI file (PR 564)
+
+=back
+
+
+=item felixdo
+
+=over
+
+=item * Fixed a bug that made system() fail with -1 under Dancer
+
+=back
+
+
+=item chromatic
+
+=over
+
+=item * Cleaned up PSGI handler code 
+
+=item * Improved warning localizations
+
+=back
+
+
+=item minty
+
+=over
+
+=item * Bump HTTP::Body dependency to 1.07
+
+=item * Updated Introduction pod with a dancer opt
+
+=back
+
+
+=item Squeeks
+
+=over
+
+=item * The ability for dancer_response to send file contents for file uploads
+      as a scalar, instead of reading from file on disk
+
+=item * Providing a report about Query string params
+
+=back
+
+
+=item Mark Stosberg
+
+=over
+
+=item * Provided a report on CRLF injection in response headers
+
+=item * Provided a report on multi-valued params in GET/POST data
+
+=back
+
+
+=item Nate Jones
+
+=over
+
+=item * More HTTP codes supported for a better REST compat
+
+=item * Thing 2
+
+=back
+
+
+=item niko
+
+=over
+
+=item * Cookie accessor to manipulate cookies directly.
+
+=back
+
+
+=item Pedro Melo
+
+=over
+
+=item * Tweak tests regular expression to be more flexible
+
+=item * Fix hooks implementation that failed when user messes $_
+
+=back
+
+
+=item Ask Bjørn Hansen
+
+=over
+
+=item * In development, pretty-print JSON serializations for easier development 
+
+=back
+
+
+=item Sebastian de Castelberg
+
+=over
+
+=item * Allowed the dancer helper to download files via a transparent proxy
+
+=item * Support for path_info() in Dancer::Request so it's possible to
+mount an application under a directory.
+
+=item * Fixed priority in D::S::Mutable.
+
+=back
+
+
+=item Alessandro Ranellucci
+
+=over
+
+=item * Fix prefix behavior with load_app
+
+=back
+
+
+=item Emmanuel Rodriguez
+
+=over
+
+=item Support for 'content_type' option on send_file when sending a
+      system wide file
+
+=back
+
+
+=item Adam J. Foxson
+
+=over
+
+=item * FIX for issue GH#136:
+"readline() on closed filehandle DATA" error that appears when running
+the app with Starman
+
+
+=item * Addresses issue #136: "readline() on closed filehandle DATA"
+
+=back
+
+
+=item Mark Allen
+
+=over
+
+=item * Added a tutorial (Dancer::Tutorial)
+
+=item * Provided an example application 'Dancr', provided in example/
+
+=back
+
+
+=item Joshua Barratt
+
+=over
+
+=item * Dancer::Serializer::JSON supports 'allow_blessed' and 'convert_blessed'
+options.
+
+=back
+
+
+=item Ivan Paponov
+
+=over
+
+=item * Support HTTP_X_FORWARDED_HOST in behing proxy
+
+
+
+=back
+
+
+
+=item Juan J. Martínez
+
+=over
+
+=item * Provided a report about a bug which returned a voice context after redirecting a route.
+
+=back
+
+
+=item Hagen Fuchs
+
+=over
+
+=item * Request.pm Decode HTTP::Request's uploads
+
+=back
+
+
+
+=item François Charlier
+
+=over
+
+=item * Provided a fix for GH#76 and GH#88
+
+=back
+
+
+
+=item JT Smith
+
+=over
+
+=item * Error Hook (PR 563)
+
+=back
+
+
+=item Olof Johansson
+
+=over
+
+=item * Fixed Dancer::Plugins typos in the documentation
+
+
+=back
+
+
+=item Al Newkirk
+
+=over
+
+=item * fixed redirect to redirect immediately
+
+
+=back
+
+
+
+=item Ivan Bessarabov
+
+=over
+
+=item * Worked on fixing TT example config.
+
+
+=back
+
+
+=item Sam Kington
+
+=over
+
+=item * Deserialize PATCH requests
+
+=back
+
+
+
+=item Dave Doyle
+
+=over
+
+=item * Working on clarifying Pod as to how before_template works
+
+=back
+
+
+=item Flavio Poletti
+
+=over
+
+=item * Added "git fetch upstream" for remote tracking
+
+=item * Turned a tab into the right number of spaces
+
+=back
+
+=head1 AUTHOR
+
+Kindly authored by Viktor C, a student partaking in the Google Code-In, mentored
+by David Precious - thanks Viktor for your contribution too!
+
+=head1 MERRY CHRISTMAS!
+
+That's it for this year's Dancer Advent Calendar - we hope it's been an
+enjoyable read for you, and thank you for your interest in the project.  From
+all of the core development team, we wish you a happy Christmas (or happy
+holidays, if you don't observe Christmas) and a happy and prosperous New Year!
+
+We're all off to raise a glass of our favourite tipple to the success of the
+project, and warmly invite you to join us :)
+
+=cut
