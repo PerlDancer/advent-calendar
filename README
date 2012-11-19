@@ -1,4 +1,4 @@
-Dancer advent calendar 2011
+Dancer advent calendar 2012
 
 Article suggestions / volunteers to write them very much appreciated.
 
@@ -22,52 +22,34 @@ Flags:
 
 ==== ARTICLE IDEAS:
 
-[D] - What a difference a year makes (bigpresh)
+[ ] - What a difference a year makes
       progress since last year - reading through CHANGES and writing about all
-      the new features (if this becomes a bit long, it could be split over
-      multiple days)
+      the new features in Dancer1 (if this becomes a bit long, it could be split
+      over multiple days)
 
-[D] - D::P::SimpleCRUD - bigpresh
-      a writeup of D::P::SimpleCRUD, describing the features it offers, probably
-      with some screenshots of it in action etc.
+# Dancer2 - almost here posts - I think we could split this into a few:
+[ ] - Why Dancer2 (re-use some content from last year?)
+[ ] - What's new?  (Why is Dancer2 better?)
+[ ] - When, dammit? (How far off are we?  Point to dev release hopefully, and
+      mention it's being used in production for dogfooding)
+[ ] - What needs to be done?  Outline remaining tasks, request volunteers?
 
-[D] - Self-contained Dancer apps - agordon
-      Examples of what can be done in a single file in Dancer
-
-
-[A] - Dancer2 progress, design choices etc (sukria)
-      I think we can expand this one out
-      into multiple posts about the upcoing Dancer2's design etc.
-
-      * Dancer 2 or why did I rewrote everything
-      * Dancer 2, the Core API
-      * Dancer 2, how far from the first release, how to help?
+[ ] - Extending colloboration - highlight how many more contributions we've had,
+      and mention the new policy of more liberal commit bit distribution
 
 [ ] - State of the ecosystem
       a writeup of various Dancer plugins, especially ones which are new since
       last year; this could be a series of posts over multiple days
 
-[D] - Thanking contributors
+[ ] - Thanking contributors
       We could do a post thanking all the people who've contributed over the
       last year, with a short description of each thing they contributed
 
 [ ] - Dancing on the big screen
       Summarise talks mentioning Dancer at various Perl events
 
-[D] - Dancer workshop at LPW2011
-      I think it would be nice to speak to Andrew Solomon who did a Dancer
-      training session at LPW2011 and get some feedback on how the session went,
-      how many attended, the general reaction of the attendees etc.  We could
-      perhaps also contact some of the attendees and ask for feedback on what
-      they thought of Dancer and the workshop.
+[ ] - Dancer at LPW2012
+      Summarise Dancer-related stuff at LPW2012
 
-[D] - Profiling Dancer apps - bigpresh
-      A quick writeup of using Dancer::Plugin::NYTProf to profile apps.
-
-[A] - Writing Unicode-safe Dancer apps (Penfold)
-      Correct Unicode usage in Dancer apps, from an expert :)
-
-[A] - Safe password storage (LoonyPandora)
-      Safe password storage in Dancer apps, focussing on D::P::Passphrase
 
 
