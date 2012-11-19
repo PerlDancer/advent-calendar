@@ -67,3 +67,5 @@ Flags:
 [ ] - Dancer deployment & avoiding slowloris type attacks via buffering proxy:
       http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/
       (melmothX - thanks!)
+
+[ ] - Dancer::Error refactoring (yanick)
