@@ -1,0 +1,190 @@
+=head1 Another year of Dancing...
+
+Welcome to the Dancer advent calendar, for the third year running!  Previous
+year's calendars have been well received, let's hope this one can live up to
+them.
+
+=head2 More and more dancers...
+
+More and more people are using Dancer to power their sites - recent additions to
+the L<dancefloor|http://dancer.pm/dancefloor> include
+L<CrowdTilt|http://www.crowdtilt.com/>,
+L<Daystack|http://www.daystack.com/>,
+L<eLibraryUSA|http://elibraryusa.state.gov/> (US Department of State),
+L<Maxi Tip|http://www.maxi-tip.cz/>,
+L<FreeBSD Monitor|http://fbsdmon.org>,
+L<Dancebin|http://danceb.in/>,
+L<The Anarchist Library|http://theanarchistlibrary.org/> and others.  (Using
+Dancer, and happy to have your site featured?  Let us know!)
+
+
+=head2 Dancer2 - almost!
+
+Dancer2 has been coming along well, and is already being used in production.
+We're at the point now it needs polish, documentation improvements and some
+migration guides, and it can hit CPAN!  Dancer2 is a complete rewrite of
+Dancer's core, using much better designs, for better maintainability and
+extendability, whilst maintaining backwards compatibility with Dancer1's API -
+so migrating to Dancer 2 should be quite straightforward.
+
+Expect further articles in the upcoming days with plenty more information on
+Dancer 2!
+
+
+=head2 New features in Dancer
+
+There have been many trivial improvements and bugfixes, but a few more notable
+changes culled from the changelog:
+
+=over
+
+=item Wallflower now shipped separately
+
+BooK's 'wallflower' tool for generating static websites has been removed from
+the Dancer distribution, and is now distributed separately as a more
+general-purpose tool under the name L<App::Wallflower>.
+
+=item dancer_response can take HTTP::Headers
+
+You can now pass a L<HTTP::Headers> object to C<dancer_response>
+
+=item Dancer2 compatibility features in Dancer::Plugin
+
+Some new keywords are added to Dancer::Plugin to make writing plugins which can
+work on both Dancer and Dancer 2 a little easier.  (There are a few minor
+differences in how plugins work in Dancer 2; expect an upcoming post on how to
+make a plugin compatible with both versions.  Some of the more popular Dancer
+plugins have already been updated in readyness.)
+
+=item new test function response_redirect_location_is
+
+Dancer::Test now provides a C<response_redirect_location_is>, which does as the
+name would suggest - tests that the response to a request is a redirect to the
+expected location.
+
+
+=back
+
+
+=head2 New Dancer plugins
+
+The Dancer plugin ecosystem continues to grow, with several new Dancer plugins
+appearing in 2012:
+
+=over
+
+=item L<Dancer::Plugin::Auth::Extensible>
+
+User authentication and authorisation is a common requirement; we had the old
+RBAC plugin, but it was in need of some serious work to make it pleasant to use.
+In the end, I decided to rock up a new authentication framework plugin for
+Dancer, designed to be simple and easy to use, and also easy to extend to
+support various authentication sources.  A full article on this will appear in
+the upcoming days.
+
+=item L<Dancer::Plugin::DictionaryCheck>
+
+A new plugin appearing just before this post went up, it's designed to make it
+easy to check a password to see if it is a dictionary word, to help stop users
+supplying insecure passwords.
+
+=item L<Dancer::Plugin::CDN>
+
+Provides URLs for static files including a content hash so that the URLs will
+change when the content changes, to deal with caching.  Uses L<HTTP::CDN> which
+can be configured to perform automatic minification/compiling of CSS/JS/LESS.
+
+=item L<Dancer::Plugin::Res>
+
+Provides syntactic sugar to easily set the response status and return a response
+in one go, rather than two steps.
+
+=item L<Dancer::Plugin::I18N>
+
+Provides internationalisation support for your Dancer apps, using
+L<Locale::Maketext::Simple>.
+
+=item L<Dancer::Plugin::EmptyGIF>
+
+Allows you to easily respond with an empty GIF image, with the headers set
+appropriately.  This is useful for tracking purposes, if you want to embed an
+C<IMG> tag in your HTML to call a route with certain params; in the route, you
+can then do whatever logging/other actions you need, then simply return an empty
+GIF to the browser.
+
+=back
+
+
+=head2 Dancer at LPW2012
+
+Andrew Solomon ran a free two-hour training course at this year's London Perl 
+Workshop - 13 people were registered to attend, but I haven't yet heard how many
+did attend.  Andrew's course was a hands-on training session to develop a website
+with dynamic content using Dancer, during which the attendees would:
+
+=over
+
+=item * learn to use the Dancer framework
+
+=item * learn to use Template Toolkit
+
+=item * understand the concept of Model-View-Controller
+
+=item * experience structuring code for maintainability
+
+=item * experience using object oriented Perl modules
+
+=back
+
+=head2 Dancer-powered documentation
+
+James Aitken (LoonyPandora) gave a talk at LPW 2012 on 
+L<https://speakerdeck.com/loonypandora/documentation-for-fun-and-profit|Documentation For Fun and Profit>
+highlighting why good high-level documentation is important, and what you can do to make
+it even more useful.  He gave a sneak peak of the REST API documentation and
+test console we use at UK2 - more details on this should be coming in a future
+post.
+
+
+=head2 Dancer IRC channel community grows
+
+The community of helpful users on the Dancer IRC channel continues to grow!  You
+can find us on C<irc.perl.org> in C<#dancer> - or L<irc://irc.perl.org/dancer>
+if your system is configured to support C<irc://> links.
+
+If you do not regularly use IRC but wish to join us, there is also a web IRC
+client available at L<http://dancer.pm/irc> for ease of use.
+
+At the time of writing, there are 98 people present in C<#dancer>!
+
+
+=head2 Dancer repository move
+
+Dancer's GitHub repository has been moved to the PerlDancer organisation on
+GitHub, to make sharing management of the repository and distributing commit
+bits where needed far easier - the repository is now found at:
+
+L<https://github.com/PerlDancer/Dancer>
+
+=head2 Dancer mailing list move
+
+Some users were finding that their posts didn't always reach the old mailing
+list.  The list has been moved to a new list server, with a new list posting
+address: L<mailto:dancer-users@dancer.pm>.  The old address redirects to the new
+list.
+
+=head2 Conclusion
+
+Well, this was a hastily-put-together look back at 2012; the following days will
+have various articles regarding Dancer which I hope will be of interest.  Not
+all days are filled yet, so if you wish to write a post for the advent calendar,
+please contact me - all assistance would be greatly appreciated!
+
+
+
+=head2 AUTHOR
+
+David Precious (BIGPRESH)
+
+
+
