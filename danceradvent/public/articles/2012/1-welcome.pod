@@ -33,7 +33,8 @@ Dancer 2!
 
 =head2 New features in Dancer
 
-There have been many trivial improvements and bugfixes, but a few more notable
+Most of our development effort has been going towards Dancer 2, Dancer 1 however
+has had many minor improvements and bugfixes, but a few more notable
 changes culled from the changelog:
 
 =over
