@@ -40,12 +40,20 @@ sub view_seq_link {
         return make_href($link, $link);
     }
 
+    if ( $link =~ m{\A mailto: [^|]+ \Z}x ) {
+        return make_href($link, $link);
+    }
+
     my $external = "http://search.cpan.org/perldoc?";
 
     my ($title, $target) = split /\|/, $link, 2;
     $target = $title unless ($target);
 
     if ( $target =~ m{\A \w+ :// [^|]+ \Z}x ) {
+        return make_href($target, $title);
+    }
+
+    if ( $target =~ m{\A mailto: [^|]+ \Z}x ) {
         return make_href($target, $title);
     }
 
