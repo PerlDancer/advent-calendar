@@ -63,7 +63,7 @@ C<wheel> group, or whatever other user groups you have defined.
 =item Accounts in a database, via DBIC
 
 An auth provider to authenticate against a database using DBIC via
-C<Dancer::Plugin::DBIC> is coming soon.
+L<Dancer::Plugin::DBIC> is coming soon.
 
 =back
 
