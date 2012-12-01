@@ -140,7 +140,7 @@ with dynamic content using Dancer, during which the attendees would:
 =head2 Dancer-powered documentation
 
 James Aitken (LoonyPandora) gave a talk at LPW 2012 on 
-L<https://speakerdeck.com/loonypandora/documentation-for-fun-and-profit|Documentation For Fun and Profit>
+L<Documentation For Fun and Profit|https://speakerdeck.com/loonypandora/documentation-for-fun-and-profit>
 highlighting why good high-level documentation is important, and what you can do to make
 it even more useful.  He gave a sneak peak of the REST API documentation and
 test console we use at UK2 - more details on this should be coming in a future
