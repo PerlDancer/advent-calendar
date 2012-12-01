@@ -44,7 +44,7 @@ sub view_seq_link {
         return make_href($link, $link);
     }
 
-    my $external = "http://search.cpan.org/perldoc?";
+    my $external = "https://metacpan.org/module/";
 
     my ($title, $target) = split /\|/, $link, 2;
     $target = $title unless ($target);
