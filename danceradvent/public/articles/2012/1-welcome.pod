@@ -171,8 +171,8 @@ L<https://github.com/PerlDancer/Dancer>
 
 Some users were finding that their posts didn't always reach the old mailing
 list.  The list has been moved to a new list server, with a new list posting
-address: L<mailto:dancer-users@dancer.pm>.  The old address redirects to the new
-list.
+address: L<dancer-users@dancer.pm|mailto:dancer-users@dancer.pm>.  The old
+address redirects to the new list.
 
 =head2 Conclusion
 
