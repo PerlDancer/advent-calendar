@@ -1,0 +1,140 @@
+=head1 New user authentication and authorisation framework
+
+L<Dancer::Plugin::Auth::Extensible> was released recently, to offer a simple to
+use yet flexible framework for user authentication and role-based authorisation
+for Dancer-powered webapps.
+
+L<Dancer::Plugin::Auth::RBAC> was already out there and available, but I never
+really got on with it, felt it was a little cumbersome to use, and needed a fair
+amount of work to bring it up to scratch; so, I decided instead to start a new
+project with the aims of making user authentication (and role-based
+authorisation, where needed) simple.
+
+So, what makes L<Dancer::Plugin::Auth::Extensible> different?
+
+=head2 It's simple
+
+Denoting routes for which the user must be logged in is easy - subroutine
+attributes are used to indicate that the user must be logged in, or must have a
+particular role:
+
+    get '/secret' => sub :RequireLogin {
+        return "User must be logged in to see this.";
+    };
+
+    post '/user' => sub :RequireRole(Admin) {
+        # User must be logged in and have the 'Admin' role in order to hit this
+        # route
+    };
+
+Simple, eh?  The auth framework will deal with ensuring the user is logged in
+(and has the appropriate role, if you're using roles and the route requires a
+specific role), and if not, will present them a login page (the framework even
+provides a basic login page so you can get up and running quickly, but you can
+of course override that).
+
+For the most simple cases, you might not need roles, simply the requirement that
+a user be logged in - that's fine, you can disable roles entirely.
+
+=head2 Flexible authentication sources
+
+The auth framework plugin ships with a few "authentication provider" classes to
+authenticate against different sources:
+
+=over
+
+=item Account details in the app's config
+
+The C<Config> auth provider reads usernames, passwords (preferably crypted) and
+optionally lists of roles from the app's config.  This is a simple and easy way
+to get started.
+
+=item Account details in a database via D::P::Database
+
+The C<Database> provider reads usernames, passwords, optionally roles and other 
+details from a database, using L<Dancer::Plugin::Database>.
+
+=item Unix system accounts
+
+The C<Unix> provider authenticates against Linux/Unix system user accounts;
+user groups are used for roles, so you can e.g. require a user be in the
+C<wheel> group, or whatever other user groups you have defined.
+
+=item Accounts in a database, via DBIC
+
+An auth provider to authenticate against a database using DBIC via
+C<Dancer::Plugin::DBIC> is coming soon.
+
+=back
+
+If the authentication source you wish to use isn't already supported, it's
+pretty trivial to write a new authentication provider; they are simply
+subclasses of L<Dancer::Plugin::Auth::Extensible::Provider::Base> which
+implement the required methods.
+
+Further providers are planned for e.g. C<LDAP>, C<IMAP>, C<ActiveDirectory> etc.
+
+
+=head2 It's flexible
+
+Multiple authentication realms are supported, so you can configure the framework
+to, for example, first check a database using the C<Database> provider, then
+check against an LDAP server (when that provider is available).  You can use the
+same provider in multiple realm configurations, too - for instance, if you
+needed to check against multiple databases.
+
+=head2 Secure password handling is easy
+
+L<Crypt::SaltedHash> is used to handle crypted passwords for you, so it's easy
+to handle passwords securely (you wouldn't want to be storing passwords in plain
+text, would you?  (I sincerely hope not.))
+
+=head2 Convenient keywords are provided
+
+Convenient keywords are provided:
+
+=over
+
+=item C<logged_in_user>
+
+If the user is logged in, returns a hashref of details about the currently
+logged-in user.  What you get back will depend on the provider in use, but is
+flexible - for instance, if you're using the C<Database> provider, all columns
+of the user table will be returned, so if you e.g. have columns containing the
+user's name and email address, you'll find them here.
+
+=item C<user_has_role>
+
+Allows you to manually check if the logged-in-user has a role you're interested
+in - for example:
+
+    if (user_has_role('BeerDrinker')) {
+        pour_beer();
+    }
+
+=item C<user_roles>
+
+Returns a list of the currently logged-in user's roles.
+
+=item C<authenticate_user>
+
+Usually you'll want to let the built-in login handling code deal with
+authenticating users, but in case you need to do it yourself, this keyword
+accepts a username and password, and checks whether they are valid.
+
+=back
+
+=head2 Give it a try!
+
+The framework is still new, but is in a state where it's ready to use.  If it is
+of interest to you, have a play with it, and do feel free to submit issues or
+pull requests on GitHub if you find any issues or would like to suggest new
+features:
+
+L<https://github.com/bigpresh/Dancer-Plugin-Auth-Extensible>
+
+=head2 AUTHOR
+
+David Precious (BIGPRESH)
+
+
