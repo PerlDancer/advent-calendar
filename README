@@ -64,7 +64,7 @@ Flags:
       it - basically, flexible, easy user authentication and access control made
       easy for Dancer apps (bigpresh)
 
-[ ] - Dancer deployment & avoiding slowloris type attacks via buffering proxy:
+[R] - Dancer deployment & avoiding slowloris type attacks via buffering proxy:
       http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/
       (melmothX - thanks!)
 
