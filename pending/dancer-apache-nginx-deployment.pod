@@ -118,7 +118,8 @@ limited resources. So, count, how many children Starman can spawn?
 They are usually less then the Apache's workers. When Apache is
 proxying, it binds them until the request is served.
 
-Well, I hope you get the point. You can continue with workarounds or do the right thing: drop Apache as proxy, and use a real one: Nginx
+Well, I hope you get the point. You can continue with workarounds or do the
+right thing: drop Apache as proxy, and use a real one: Nginx
 
 =head2 Nginx as proxy
 
@@ -154,12 +155,17 @@ this:
         }   
     }
 
-Which basically pass I<everything> to Apache. You can optimize it by
-letting nginx to serve the static files, like the images, of course. Read the doc, if you're interested. I found this interesting: L<http://kbeezie.com/view/apache-with-nginx/>
+Which basically pass I<everything> to Apache. You can optimize it by letting
+nginx to serve the static files, like the images, of course. Read the doc, if
+you're interested. I found this interesting:
+L<http://kbeezie.com/view/apache-with-nginx/>
 
 =head2 Author
 
-This article has been written by Marco Pessotto (a.k.a. melmothX) in 2012 as a personal note and reviewed for the Perl Dancer Advent Calendar 2012. The original is located at L<LAltroMondo Wiki|http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/>
+This article has been written by Marco Pessotto (a.k.a. melmothX) in 2012 as a
+personal note and reviewed for the Perl Dancer Advent Calendar 2012. The
+original is located at
+L<LAltroMondo Wiki|http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/>
 
 No copyright, public domain.
 
