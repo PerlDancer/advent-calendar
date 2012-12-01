@@ -1,0 +1,169 @@
+=head1 Dancer deployment: Apache's mod_proxy and Nginx
+
+
+=head2 Notice
+
+I'm not a networking guru. What follows is what I think I've learn
+asking in C<#plack> and C<#dancer> (L<irc://irc.perl.org>, thanks people, you really
+rock) and reading the documentation on the net. I apologize in advance
+if something is not 100% correct.
+
+=head2 Scenario
+
+So, you used the L<Dancer> framework to build your new shiny web
+application. Now it's time to deploy it. You have a server with a very
+common setup: Apache2 with mod_php, which serves other sites. You read
+L<Dancer::Deployment> and think: OK, no problem, just use Apache's
+mod_proxy and L<Starman> and you will be fine.
+
+Wrong! You're not fine. You're indeed in big troubles.
+
+=head2 The problems (first part)
+
+First, mod_proxy and Starman seem not to play well together: from the L<starman>'s documentation:
+
+=over 2
+
+--disable-keepalive
+
+Disable Keep-alive persistent connections. It is an useful
+workaround if you run Starman behind a broken frontend proxy that
+tries to pool connections more than a number of backend workers
+(i.e. Apache mpm_prefork + mod_proxy).
+
+=back
+
+From Apache's
+L<documentation|http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#envsettings>):
+
+=over 2
+
+For circumstances where mod_proxy is sending requests to an origin
+server that doesn't properly implement keepalives or HTTP/1.1, there
+are two environment variables that can force the request to use
+HTTP/1.0 with no keepalive.
+
+=back
+
+Ok, no problem, there are the workarounds, but it doesn't look a
+promising setup.
+
+=head2 The problems (second part)
+
+The prefork servers (like Starman and Apache mpm-prefork) work in a
+straightforward way: they accept a connection, serve the file or the
+output, when the transmission is over they pick up another one. To
+avoid the creation of bottlenecks they spawn more processes.
+
+As you may see, there is a big problem. If you have pages or files
+which are long, say 500kb, or a few Mb, which is not really uncommon,
+and it's I<very> common in my case, if the clients have slow
+connections, the processes will not pick up another connection until
+the page is served. The L<slowloris|http://lwn.net/Articles/338407/>)
+issue is known (well, you'll know it when you encounter the problem)
+is a malicious attack that exploits this problem. There are some
+workarounds (again), but you're forgetting something: the 56k people.
+Maybe they are not so common, but why they should block your server?
+Are you going to ban them? No way!
+
+But, you think, you put a proxy in front of Starman exactly for this
+reason: to avoid binding Starman for too long. It's the whole point of
+the proxy: the backend works fast, transmits the data, and next! It's
+a proxy's matter to work with the crowd out there.
+
+There are 2, big problems with mod_proxy + mpm-prefork:
+
+=over 2
+
+=item it's a I<prefork>
+
+so if the connections are slow, the bottleneck is
+there. You can create a Denial of Service with a one-liner from the
+shell over a 56k. You could increase the number of workers, but
+it's always a finite number.
+
+=item its I<buffering> does not work as expected
+
+it doesn't buffer I<at all> and Starman's workers (which are always
+less than the Apache's workers because they are more memory-hungry)
+are tied until the request is served. This defeats the whole point of
+having a proxy.
+
+=back
+
+
+The workarounds just scale the problem: increase the workers until the
+machine have enough memory for them. Believe me, it's easy to eat all
+the memory with a couple of applications, down this road.
+
+Or, let Starman to serve only little dynamic pages, let Apache do the
+rest (if possible) and hope for the best. The problem is still there, anyway.
+
+To test this problem is trivial:
+
+ for i in `seq 0 100` ; do wget -q --limit-rate 1 -O /dev/null \
+   http://target.tld & 2> /dev/null ; done
+
+Open a browser, and I bet you can't open the page.
+
+This is a malicious attack, but the same problem happens with the 56k
+users or requests for big files. It's all working as expected, but the
+prefork problem and the lack (or just ridiculously low level) of
+buffering are just blocking the web-server.
+
+You think: yes, OK, nothing new, my php applications already have this
+problem, and I can survive. Wrong! Because you usually have a Starman
+server for each application, and a machine without huge memory have
+limited resources. So, count, how many children Starman can spawn?
+They are usually less then the Apache's workers. When Apache is
+proxying, it binds them until the request is served.
+
+Well, I hope you get the point. You can continue with workarounds or do the right thing: drop Apache as proxy, and use a real one: Nginx
+
+=head2 Nginx as proxy
+
+Why Nginx?
+
+Because Nginix doesn't suffer the slowloris problem B<and> does a
+proper buffering, so the 2 problems are gone now. Plack and Nginx play
+very well together, and it's the commonly recommended setup.
+
+The setup is explained in detail in the L<Dancer::Deployment>, so I
+won't repeat it here.
+
+=head2 Legacy php sites
+
+But now you have to manage the old php sites, which can't run on
+nginx. There are various setups, but the B<quickest> is something like
+this:
+
+1) Make Apache to listen to 127.0.0.1:8080
+
+2) For each server add this Nginx configuration:
+
+    server {
+        listen 80;
+        server_name your.hostname.tld
+        root /your/root/
+        location / {
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Host $http_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://127.0.0.1:8080;
+        }   
+    }
+
+Which basically pass I<everything> to Apache. You can optimize it by
+letting nginx to serve the static files, like the images, of course. Read the doc, if you're interested. I found this interesting: L<http://kbeezie.com/view/apache-with-nginx/>
+
+=head2 Author
+
+This article has been written by Marco Pessotto (a.k.a. melmothX) in 2012 as a personal note and reviewed for the Perl Dancer Advent Calendar 2012. The original is located at L<LAltroMondo Wiki|http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/>
+
+No copyright, public domain.
+
+
+
+
+
