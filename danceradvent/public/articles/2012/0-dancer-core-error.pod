@@ -1,0 +1,119 @@
+=head1 The Errors of Our Way
+
+This is a preview of the error throwing mechanism that is coming with 
+I<Dancer 2>. Things have been tidied a little bit, objectified in a classy
+manner (or classified in an objectionable manner? Anyway, turned into nice
+little L<Moo> classes), and made (or so we hope) both easy to use and
+pleasantly versatile.
+
+=head2 At the Core
+
+In I<Dancer 2>, C<Dancer::Core::Error> is the ringleader as far as error
+handling is concerned. Its mission is fairly simple: take in booboos, and 
+report on them in the most sensible way possible.
+
+Within Dancer's code, creating a new error is done by, well, creating a new
+C<Dancer::Core::Error>:
+
+    my $oopsie = Dancer::Core::Error->new(
+        status  => 418,
+        message => "This is the Holidays. Tea not acceptable. We want eggnog.",
+        context => $context,
+    );
+
+If that was not simple enough, all those attributes are actually optional. If
+not given, the
+status code defaults to a good old I<500>, there is no need for
+a message if we feel taciturn, and while the I<$context> (which is a
+C<Dancer::Core::Context> object holding all the pieces of information
+related to the current request) is needed if we want to take advantage of the
+templates, we can also do without.
+
+The important thing to know, however, is that creating an error doesn't mean
+that it's automatically seen by the end-user. For that to happen, you have
+to...
+
+=head2 Throw It Around
+
+Or, put another way, we have to populate the C<Dancer::Core::Response> object
+with the error's data. That is done via
+
+    $oopsie->throw($response);
+
+Or, if we want to use the response object already present in the I<$context>
+(which is usually the case):
+
+    $oopsie->throw;
+
+This populates the status code of the response, sets its content, and throws a
+C<halt()> in the dispatch process. 
+
+=head2 What The Error Going To Look Like? 
+
+Quick answer: whatever you want it to. The error object has quite a few ways
+to generate its content.
+
+First, it can be explicitly given
+
+    my $oopsie = Dancer::Core::Error->new(
+        content => '<html><body><h1>OMG</h1></body></html>',
+    );
+
+but that's boring.
+
+If the I<$context> was given, the error will check if there's a template by
+the name of the status code (so, say you're using Template Toolkit, I<418.tt>)
+and will use it to generate the content, passing it the error's I<$message>,
+I<$status> code and  I<$title> (which, if not specified, will be the standard http 
+error definition for the status code). 
+
+If there is no template, the error will then look for a static page (to
+continue with our example, I<418.html>) in the
+C<public/> directory. 
+
+And finally, if all of that failed, the error object will fall back on an
+internal template.
+
+=head2 Throwing Errors In Routes
+
+Now, how do we use all that stuff in our routes? In the simpliest way:
+
+    get '/xmas/gift/:gift' => sub {
+        die "sorry, we're all out of ponies\n" 
+            if param('gift') eq 'pony';
+    };
+
+The C<die> will be intercepted by Dancer's inner magic, converted into an
+error (status code I<500>, message set to the dying words) and shoved into
+the response.
+
+In the cases where more control is required, C<send_error()> is the way to go:
+
+    get '/glass/eggnog' => sub {
+        send_error "Sorry, no eggnog here", 418;
+    };
+
+And if I<total> control is needed:
+
+    get '/xmas/wishlist' => sub {
+        Dancer::Core::Error->new(
+            response => response(),
+            status   => 406,
+            message  => "nothing but coal for you, I'm afraid",
+            template => 'naughty/index',
+        )->throw unless user_was_nice();
+
+        ...;
+    };
+
+=head2 In Conclusion
+
+At last news, C<Dancer::Core::Error> is in a working state. Some of its
+details are likely to change a little bit, but it's already nicely settling
+into a pattern that should make everyone happy. Well, as happy as anybody can
+be while errors are being thrown, anyway.
+
+
+=head2 AUTHOR
+
+Yanick Champoux (YANICK)
