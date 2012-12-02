@@ -1,4 +1,4 @@
-=head1 Why you should use Dancer2 (and some thoughts, or the other way around)
+=head1 Dancer 2, what about using it? Now!
 
 =head2 A look back
 
@@ -7,8 +7,8 @@ first commits, besides setting up a dist.ini file are about the
 C<Dancer::Core::Route> class.
 
 If you want to refresh your memories about why I decided that rewrite, you can
-jump to L<this article|http://advent.perldancer.org/2011/8> of the previous advent 
-calendar.
+jump to L<this article|http://advent.perldancer.org/2011/8> of the previous
+advent calendar.
 
 Funny to see that when starting this rewrite marathon, I chose to begin with the
 more essential part of the core: the route handler class. It's certainly not a
