@@ -45,7 +45,7 @@ HTTP/1.0 with no keepalive.
 
 =back
 
-Ok, no problem, there are the workarounds, but it doesn't look a
+Ok, no problem, there are the workarounds, but it doesn't look like a
 promising setup.
 
 =head2 The problems (second part)
@@ -61,7 +61,7 @@ and it's I<very> common in my case, if the clients have slow
 connections, the processes will not pick up another connection until
 the page is served. The L<slowloris|http://lwn.net/Articles/338407/>)
 issue is known (well, you'll know it when you encounter the problem)
-is a malicious attack that exploits this problem. There are some
+and there are this kind of malicious attacks. There are some
 workarounds (again), but you're forgetting something: the 56k people.
 Maybe they are not so common, but why they should block your server?
 Are you going to ban them? No way!
@@ -75,16 +75,16 @@ There are 2, big problems with mod_proxy + mpm-prefork:
 
 =over 2
 
-=item it's a I<prefork>
+=item It's a I<prefork>
 
-so if the connections are slow, the bottleneck is
+So if the connections are slow, the bottleneck is
 there. You can create a Denial of Service with a one-liner from the
 shell over a 56k. You could increase the number of workers, but
 it's always a finite number.
 
-=item its I<buffering> does not work as expected
+=item Its I<buffering> does not work as expected
 
-it doesn't buffer I<at all> and Starman's workers (which are always
+It doesn't buffer I<at all> and Starman's workers (which are always
 less than the Apache's workers because they are more memory-hungry)
 are tied until the request is served. This defeats the whole point of
 having a proxy.
@@ -129,7 +129,7 @@ Because Nginix doesn't suffer the slowloris problem B<and> does a
 proper buffering, so the 2 problems are gone now. Plack and Nginx play
 very well together, and it's the commonly recommended setup.
 
-The setup is explained in detail in the L<Dancer::Deployment>, so I
+The setup is explained in detail in L<Dancer::Deployment>, so I
 won't repeat it here.
 
 =head2 Legacy php sites
@@ -138,9 +138,15 @@ But now you have to manage the old php sites, which can't run on
 nginx. There are various setups, but the B<quickest> is something like
 this:
 
-1) Make Apache to listen to 127.0.0.1:8080
+=over 4
 
-2) For each server add this Nginx configuration:
+=item *
+
+Make Apache to listen to 127.0.0.1:8080
+
+=item *
+
+For each server add this Nginx configuration:
 
     server {
         listen 80;
@@ -160,6 +166,8 @@ nginx to serve the static files, like the images, of course. Read the doc, if
 you're interested. I found this interesting:
 L<http://kbeezie.com/view/apache-with-nginx/>
 
+=back
+
 =head2 Author
 
 This article has been written by Marco Pessotto (a.k.a. melmothX) in 2012 as a
@@ -168,8 +176,3 @@ original is located at
 L<LAltroMondo Wiki|http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/>
 
 No copyright, public domain.
-
-
-
-
-

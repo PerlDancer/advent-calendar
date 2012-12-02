@@ -1,4 +1,4 @@
-=head1 Why you should use Dancer2 (and some thoughts, or the other way around)
+=head1 Dancer 2, what about using it? Now!
 
 =head2 A look back
 
@@ -7,8 +7,8 @@ first commits, besides setting up a dist.ini file are about the
 C<Dancer::Core::Route> class.
 
 If you want to refresh your memories about why I decided that rewrite, you can
-jump to L<this article|http://advent.perldancer.org/2011/8> of the previous advent 
-calendar.
+jump to L<this article|http://advent.perldancer.org/2011/8> of the previous
+advent calendar.
 
 Funny to see that when starting this rewrite marathon, I chose to begin with the
 more essential part of the core: the route handler class. It's certainly not a
@@ -47,7 +47,7 @@ Although it's not sitting on CPAN, it's a stable source tree, we have more than
 500 unit tests already and I'm able to say that Dancer2 is also able to run on
 production because, well, that's what I do at work.
 
-The only area where yo ushould be cautious is with plugins or engines,
+The only area where you should be cautious is with plugins or engines,
 everything is in place to port them, but most of them aren't yet. So it's likely
 that one extension of your app will need to be ported a bit to work with Dancer
 2. It's an easy job to do though, thanks to all the work that has been done on
@@ -121,7 +121,7 @@ At the time of this writing, most of the plugins in the ecosystem should be easy
 to port, all we need is volunteers to help us test them, port the code and
 submit pull requests to plugin authors.
 
-On the core side, we habe one thing to do to make the whole ecosystem ready for
+On the core side, we have one thing to do to make the whole ecosystem ready for
 Dancer2: allowing the same kind of transition for engines (template, session,
 etc). In Dancer 1, an engine just needs to "extends" a base "abstract" class. In
 Dancer 2, as we're running with Moo, this has been changed to roles
@@ -133,7 +133,7 @@ It depends on what you want to do. If your application can be written with a
 pure Dancer distribution, without plugins or engines, then yes, you definitely
 can switch today.
 
-It you're using plugins in your app, your help is welcome: test your
+If you're using plugins in your app, your help is welcome: test your
 application, report any plugin you're using that doesn't work and help us port
 them.
 

@@ -1,0 +1,287 @@
+=head1 A first app with Dancer 2
+
+In the previous article we've seen how concrete Dancer 2 is, already. It's not
+something in the air, it's real and is powering the website you're reading right
+now. 
+
+The ecosystem still needs to be fully ported but it doesn't prevent you from
+starting a webapp with Dancer 2. Actually, that's the best way you could help
+Dancer 2 moving forward!
+
+In this article we'll see how to build an application with Dancer2, from
+scratch. We'll try to show off here one of the most important benefit of the
+design change in Dancer's core: its application scoping.
+
+I'm going to harm a little bit Dancer 1 in this demonstration but as we say in
+french: I<Qui aime bien chatie bien> (Well, I don't know how to translate that,
+sorry!). 
+
+Anyway! The main idea behind this article is to show off how the design changes of
+Dancer 2 will make your life easier, as an app developer. So we'll do something
+simple with Dancer 2 and see how Dancer 1 deals with it. That's - I think - a
+good way to understand I<why> the rewrite was necessary.
+
+But first, we need an app!
+
+=head2 Let's start with a single-file app
+
+First, we need to create the structure for the application dir. Of course, we
+can keep it simple, the I<micro-framework> way:
+
+    $ cat > app.pl
+    #!/usr/bin/env perl
+    use Dancer 2.0;
+
+    get '/' => sub { 'hello 2!' };
+
+    start;
+
+It's a valid Dancer 2 app, of course, but that's not very interesting, it's a
+hello world, and as Dancer 2's DSL is fully compatible with Dancer 1, there is
+nothing new here.
+
+Let's create a real appdir structure. We could use the C<dancer> helper provided
+with Dancer 1, but I'd like to show you how to do that by hand, there is clearly
+not much to do.
+
+=head2 A more structured application
+
+First of all, the structure:
+
+    mkdir -p lib bin views/layouts public t
+
+Now, let's create a basic layout and a view.
+
+    cat > views/layouts/main.tt
+    <html>
+    <head><title>DemoApp</title></head>
+    <body>
+      <h1>DemoApp>/h1>
+      [% content %]
+    </body>
+    </html>
+
+If you know Dancer 1, you should have spotted something already. Got it? Yes,
+the L<Template> tags! We're back to TT's default: C<[%> and C<%]>. That was one of
+the most wanted change since Dancer has been out. Dancer 2 is a good opportunity
+to drop that cosmetic change.
+
+Ok, we have a layout, let's create the first view.
+
+    cat > views/index.tt
+    Hello Dancer 2
+
+Now, the main app, to create the first route.
+
+    cat > lib/DemoApp.pm
+    package DemonApp;
+    use Dancer 2.0;
+
+    get '/' => sub {
+        template 'index';
+    };
+
+    1;
+
+And finally, the starter script.
+
+    cat > bin/app.pl
+    #!/usr/bin/env perl
+
+    use Dancer 2.0;
+    use DemoApp;
+
+    start;
+
+Again, here, you cannot tell the difference with Dancer 1. It's just the same.
+So that's not very interesting. Hmm, wait, if we want to see a bit of the guts
+of Dancer 2, we already can.
+
+Let's start the application with the core debug flag:
+
+    $ DANCER_DEBUG_CORE=1 perl -I../Dancer2/lib ./bin/app.pl 
+    core: binding import method to main
+    core: binding app to main
+    core: exporting DSL symbols for main
+    core: binding import method to DemoApp
+    core: binding app to DemoApp
+    core: exporting DSL symbols for DemoApp
+    core: [DemoApp] -> get(/, CODE(0x2170aa0))
+    core: [main] -> start()
+    HTTP::Server::Simple::PSGI: You can connect to your server at http://localhost:3000/
+
+That's interesting because you can see here how everything is scoped properly.
+There are already two "apps" (C<Dancer::Core::App> objects), one for main
+(C<bin/app.pl>) and one for C<DemoApp.pm>.
+
+Any call to a DSL keyword will be logged, with its arguments. Like you can see
+above for C<get> and C<start>. We also see from which app they are called.
+Imagine all the help it can provide when debuging your app. 
+    
+If I hit my app, I should see a call to template, as my C</> route uses it:
+
+    $ curl http://0:3000/
+    core: [DemoApp] -> template(index)
+    ...
+
+We clearly see that everything is scoped, let's try to demonstrate the benefits
+of that.
+
+=head2 Scoped applications
+
+Let's say that I want my application to provide a set of routes which share a
+common set configuration. For instance, I want all the routes here to disable
+the layout and to have a prefix.
+
+Also I want all these routes to be available only under a specific environment.
+
+A simple and straight-forward example is to use a I<debug> namespace: We want a
+set of route for our debugging purposes, so we're going to add
+C<DemoApp::DebugRoutes>:
+
+    mkdir -p lib/DemoApp
+    cat > lib/DemoApp/DebugRoutes.pm
+    package DemoApp::DebugRoutes;
+
+    use Dancer 2.0;
+
+    # First we add a prefix
+    prefix '/debug';
+
+    # Make sure we don't have a layout set here
+    set layout => undef;
+
+    # Filter requestes for developnment env only
+    hook 'before' => sub {
+        if (dancer_app->environment ne 'development') {
+            status 404;
+            return halt;
+        }
+    };
+
+    # a first route
+    get '/env' => sub {
+        to_dumper(request->env);
+    };
+
+    1;
+
+Now, use that new set of routes in the main app.
+
+    # in lib/DemoApp.pm
+    ...
+    use DemoApp::DebugRoutes;
+
+Great, let's test that. We should see the first route as before, and of
+course we should see C<DebugRoutes> in the debug output:
+
+    $ DANCER_DEBUG_CORE=1 perl -I../Dancer2/lib ./bin/app.pl 
+    [...]
+    core: [DemoApp::DebugRoutes] -> prefix(/debug)
+    core: [DemoApp::DebugRoutes] -> set(layout, <undef>)
+    core: [DemoApp::DebugRoutes] -> hook(before, CODE(0x1f54cd8))
+    core: [DemoApp::DebugRoutes] -> get(/env, CODE(0x1f7b588))
+    core: [DemoApp] -> get(/, CODE(0x1f32320))
+    core: [main] -> start()
+    HTTP::Server::Simple...
+
+Looks great, let's test it. The first route should remain unchanged.
+
+    $ curl -i http://0:3000/
+    core: [DemoApp] -> template(index)
+    HTTP/1.0 200 OK
+    Server: Perl Dancer
+    Content-Length: 85
+    Content-Type: text/html; charset=UTF-8
+
+    <html>
+    <head>
+      <title>DemoApp</title>
+    </head>
+    <body>
+    Hello Dancer 2
+
+    </body>
+    </html>
+        
+OK, so far so good. Now, let's try the C</debug/env> route we added. It's under
+the prefix C</debug>, should not provide the layout and should only be available
+under development env (which is the case now):
+
+    $ curl http://0:3000/debug/env
+    core: [DemoApp::DebugRoutes] -> dancer_app()
+    core: [DemoApp::DebugRoutes] -> request()
+    core: [DemoApp::DebugRoutes] -> to_dumper(HASH(0x2148ed0))
+    HTTP/1.0 200 OK
+    [...]    
+    $VAR1 = {
+          'psgi.multiprocess' => 0,
+          'SERVER_NAME' => '0.0.0.0',
+          'SCRIPT_NAME' => '',
+          'PATH_INFO' => '/debug/env',
+    [...]    
+
+Looks to work!
+
+Now, let's restart the app under a different environment, the C<before> hook
+should block the route while not doing it for the main app.
+
+    $ DANCER_ENVIRONMENT=prod \
+    DANCER_DEBUG_CORE=1 \
+    perl -I../Dancer2/lib ./bin/app.pl &
+    [...]
+
+    $ curl -i http://0:3000/debug/env
+    core: [DemoApp::DebugRoutes] -> dancer_app()
+    core: [DemoApp::DebugRoutes] -> status(404)
+    core: [DemoApp::DebugRoutes] -> halt()
+    HTTP/1.0 404 Not Found
+    Server: Perl Dancer
+    Content-Length: 0
+    Content-Type: text/html
+
+And the main route still works (meaning the filter doesn't get into our way
+elsewhere):
+
+    $ curl http://0:3000/ -I
+    core: [DemoApp] -> template(index)
+    HTTP/1.0 200 OK
+
+Yup. It works. But I<it's the same with Dancer 1> you say? Well let's see. I'm
+going to restart the app with Dancer 1 and do the same tests.
+
+Any clue what will mess up?
+
+Well, no need to go very far, the C</> route has disappeared because the C<prefix>
+statement is global (as everything you do in Dancer 1). So if you load
+C<DemoApp::DebugRoutes> I<before> defining the C</> route, the C<prefix> will
+propagate to all the remaining route to define...
+
+So with Dancer 1, the C</> route became... C</debug> (a prefix C</debug> combined
+with a C</> route):
+
+    $ curl -i http://0:3000/debug
+    [...]
+    X-Powered-By: Perl Dancer 1.311
+    
+    Hello Dancer 2
+
+And of course the layout has disappeared as well, as it's disabled in the
+C<DebugRoutes> package.
+
+As you can expect, the C</> is now a C<404>:
+
+    $ curl -I http://0:3000/
+    [...]
+    HTTP/1.0 404 Not Found
+
+Broken!
+
+This kind of loading time sequencing is crucial in a Dancer 1 application. In
+Dancer 2, thanks to the proper scoping of the core, it's not a problem anymore.
+
+=head2 Author
+
+This article has been written by Alexis Sukrieh for the Perl Dancer Advent
+Calendar 2012.
+
