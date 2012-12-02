@@ -2,7 +2,7 @@
 
 =head2 A look back
 
-It's been one year and four months since I did my first commit on Dancer2. The
+It's been one year and four months since I did my first commit on Dancer 2. The
 first commits, besides setting up a dist.ini file are about the
 C<Dancer::Core::Route> class.
 
@@ -14,24 +14,24 @@ Funny to see that when starting this rewrite marathon, I chose to begin with the
 more essential part of the core: the route handler class. It's certainly not a
 random choice, but I'm pretty sure it was not really made on purpose.
 
-Anyway, almost a year and a half has passed and it's now time to sheld some
-light on Dancer2. I remember Franck Cuny telling me in december 2010 - when we
-were starting the first advent calendar iteration - "You'll see, 2011 will be the
-Dancer year". He couldn't have been more right. Many great things happened in
-2011 for Dancer. So I was asking myself: what about 2012 and the upcoming year,
-2013?
+Anyway, almost a year and a half has passed and it's now time to shed some
+light on Dancer 2. I remember Franck Cuny telling me in November 2010 - when we
+were starting the first advent calendar iteration - 
+"I<You'll see, 2011 will be the Dancer year>". 
+He couldn't have been more right. Many great things happened in 2011 for Dancer.
+So I was asking myself: what about 2012 and the upcoming year, 2013?
 
-If I should name it, I'd say that 2012 was "the Dancer 2 development year"
-because most of the brainpower was used to grow Dancer2, to mature it and to
-make it real. Of course Dancer1 continued to evolve a bit, but at some point we
+If I should name it, I'd say that 2012 was "I<the Dancer 2 development year>"
+because most of the brainpower was used to grow Dancer 2, to mature it and to
+make it real. Of course Dancer 1 continued to evolve a bit, but at some point we
 froze it, to make sure we'll release 2.
 
-So what will be 2013? You already know it right? My bet goes on the "Dancer2
-year". Everything is ready, Dancer2 is beautifully designed, efficient and
+So what will be 2013? You already know it right? My bet goes on the "Dancer 2
+year". Everything is ready, Dancer 2 is beautifully designed, efficient and
 extensible yet very compatible with the Dancer 1 ecosystem. You'll love it, and
 you should use it. Now. Here is why, and how.
 
-=head2 What is Dancer2 at the time of this writing?
+=head2 What is Dancer 2 at the time of this writing?
 
 Before we start, let's clarify where we are today, about Dancer 2. Don't look
 for it on CPAN, it's not there already, when we'll have something polished
@@ -39,12 +39,12 @@ enough we'll certainly roll a DEVELOPER release but we're not yet already (even
 though very close).
 
 Dancer 2 is a GitHub project, you can browse the code on its page:
-L<http://github.com/PerlDancer/Dancer2/> and you can grab the source like so:
+L<http://github.com/PerlDancer/Dancer 2/> and you can grab the source like so:
 
-    git clone https://github.com/PerlDancer/Dancer2.git
+    git clone https://github.com/PerlDancer/Dancer 2.git
 
 Although it's not sitting on CPAN, it's a stable source tree, we have more than
-500 unit tests already and I'm able to say that Dancer2 is also able to run on
+500 unit tests already and I'm able to say that Dancer 2 is also able to run on
 production because, well, that's what I do at work.
 
 The only area where you should be cautious is with plugins or engines,
@@ -67,20 +67,20 @@ Why Moo? Well, it's Moose philosophy with efficiency in mind, written in pure
 Perl5. It's fast and right to the point. How could another meta-class layer
 could fit better Dancer?
 
-Thanks to Moo, and more generally to the Moose approach, Dancer2's core gets
-very powerful tools in its backbone like lazyness construction, role composition
+Thanks to Moo, and more generally to the Moose approach, Dancer 2's core gets
+very powerful tools in its backbone like laziness construction, role composition
 and method modifiers. That helped a lot to enhance the way things are
 implemented.
 
-I could alsmost say that Dancer1 is written in Perl5 and Dancer2 is in Moo.
+I could almost say that Dancer 1 is written in Perl5 and Dancer 2 is in Moo.
 
 =head3 No more shared singletons
 
-The most limitating and annoying design choice I wanted to get rid of, when
-starting the Dancer rewrite, was the singletons usage. You know the drill, globals are
-evil. That was a mistake I did in the early stage of development of Dancer1, we
-lived with it, I think pretty well, but Dancer 2 needed to go a step further.
-Without singletons. 
+The most annoying design choice I wanted to get rid of, when
+starting the Dancer rewrite, was the singletons usage. You know the drill,
+globals are evil. That was a mistake I did in the early stage of development of
+Dancer 1, we lived with it, I think pretty well, but Dancer 2 needed to go a
+step further.  Without singletons. 
 
 Without globals, the code is properly decoupled, things know about themselves
 and their direct neighbours, in fact, the code base now respects truthfully the
@@ -95,16 +95,16 @@ the globals limitation mentioned above, was the per-app encapsulation.
 
 I wanted that anything I did in a package was scoped there, for instance being
 able to set a serializer in C<MyApp::API> without setting one C<MyApp::Blog>. In
-Dancer 1 that's impossible, beause the settings registry is global to the
+Dancer 1 that's impossible, because the settings registry is global to the
 process (remember? I<Globals are evil>).
 
-With Dancer2, any pakage that C<use>s Dancer will be scoped into its own
+With Dancer 2, any package that C<use>s Dancer will be scoped into its own
 Dancer::Core::App instance, where the settings registry will leave, and the
 route handlers, and anything you could imagine to do within a Dancer package.
 
-In Dancer2, you can consider each of your packages in your application as a jail
-where everything is nicely isolated from the outside. No more apps collision, no
-more settings leaks from a part of the appliation to the other.
+In Dancer 2, you can consider each of your packages in your application as a
+jail where everything is nicely isolated from the outside. No more apps
+collision, no more settings leaks from a part of the application to the other.
 
 =head2 Where are we with Dancer 2?
 
@@ -122,12 +122,12 @@ to port, all we need is volunteers to help us test them, port the code and
 submit pull requests to plugin authors.
 
 On the core side, we have one thing to do to make the whole ecosystem ready for
-Dancer2: allowing the same kind of transition for engines (template, session,
+Dancer 2: allowing the same kind of transition for engines (template, session,
 etc). In Dancer 1, an engine just needs to "extends" a base "abstract" class. In
 Dancer 2, as we're running with Moo, this has been changed to roles
 composition.
 
-=head2 Shoud you switch from D1 to D2, and how?
+=head2 Should you switch from D1 to D2, and how?
 
 It depends on what you want to do. If your application can be written with a
 pure Dancer distribution, without plugins or engines, then yes, you definitely
@@ -137,13 +137,13 @@ If you're using plugins in your app, your help is welcome: test your
 application, report any plugin you're using that doesn't work and help us port
 them.
 
-To power your app with Dancer2, as it's not released yet, here is what I
+To power your app with Dancer 2, as it's not released yet, here is what I
 suggest:
 
-In your application, create a git submodule in vendor/Dancer2:
+In your application, create a git submodule in vendor/Dancer 2:
 
   $ cd MyProject
-  $ git submodule add https://github.com/PerlDancer/Dancer2.git vendor/Dancer2
+  $ git submodule add https://github.com/PerlDancer/Dancer 2.git vendor/Dancer 2
 
 Then add this little snippet in your bin/app.pl to make sure you load any lib
 from your vendor directory:
@@ -174,11 +174,13 @@ production, it's working great.
 
 Oh, and the page you're reading now has been served by it as well!
 
-And while we're at it, see L<on this commit|https://github.com/PerlDancer/Dancer-Plugin-Feed/commit/1399073ebc192c02c8eddfc83ebf6fc07675191b> 
-how simple it was to port Dancer::Plugin::Feed (which is used by the Advent Calendar app) to Dancer 2.
+And while we're at it, see L<on this
+commit|https://github.com/PerlDancer/Dancer-Plugin-Feed/commit/1399073ebc192c02c8eddfc83ebf6fc07675191b>
+how simple it was to port Dancer::Plugin::Feed (which is used by the Advent
+Calendar app) to Dancer 2.
 
-If the plugin you're using is just playing with the DSL, porting it to Daner2 is
-as easy as using C<plugin_args> in registered subs to unroll C<@_> and as
+If the plugin you're using is just playing with the DSL, porting it to Dancer 2
+is as easy as using C<plugin_args> in registered subs to unroll C<@_> and as
 declaring the supported versions of Dancer when calling C<plugin_register>.
 
 =head2 Will you dance a second time?
