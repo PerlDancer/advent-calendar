@@ -49,7 +49,7 @@ The C<Config> auth provider reads usernames, passwords (preferably crypted) and
 optionally lists of roles from the app's config.  This is a simple and easy way
 to get started.
 
-=item Account details in a database via D::P::Database
+=item Account details in a database via L<Dancer::Plugin::Database>
 
 The C<Database> provider reads usernames, passwords, optionally roles and other 
 details from a database, using L<Dancer::Plugin::Database>.
