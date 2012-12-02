@@ -34,7 +34,7 @@ tries to pool connections more than a number of backend workers
 =back
 
 From Apache's
-L<documentation|http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#envsettings>):
+L<documentation|http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#envsettings>:
 
 =over 2
 
