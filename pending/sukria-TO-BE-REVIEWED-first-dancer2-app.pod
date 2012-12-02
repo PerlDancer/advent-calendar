@@ -116,7 +116,7 @@ There are already two "apps" (C<Dancer::Core::App> objects), one for main
 
 Any call to a DSL keyword will be logged, with its arguments. Like you can see
 above for C<get> and C<start>. We also see from which app they are called.
-Imagine all the help it can provide when debuging your app. 
+Imagine all the help it can provide when debugging your app. 
     
 If I hit my app, I should see a call to template, as my C</> route uses it:
 
