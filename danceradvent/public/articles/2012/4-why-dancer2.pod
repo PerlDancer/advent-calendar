@@ -1,0 +1,181 @@
+=head1 Why you should use Dancer2 (and some thoughts, or the other way around)
+
+=head2 A look back
+
+It's been one year and four months since I did my first commit on Dancer2. The
+first commits, besides setting up a dist.ini file are about the
+C<Dancer::Core::Route> class.
+
+If you want to refresh your memories about why I decided that rewrite, you can
+jump to L<this article|http://advent.perldancer.org/2011/8> of the previous advent 
+calendar.
+
+Funny to see that when starting this rewrite marathon, I chose to begin with the
+more essential part of the core: the route handler class. It's certainly not a
+random choice, but I'm pretty sure it was not really made on purpose.
+
+Anyway, almost a year and a half has passed and it's now time to sheld some
+light on Dancer2. I remember Franck Cuny telling me in december 2010 - when we
+were starting the first advent calendar iteration - "You'll see, 2011 will be the
+Dancer year". He couldn't have been more right. Many great things happened in
+2011 for Dancer. So I was asking myself: what about 2012 and the upcoming year,
+2013?
+
+If I should name it, I'd say that 2012 was "the Dancer 2 development year"
+because most of the brainpower was used to grow Dancer2, to mature it and to
+make it real. Of course Dancer1 continued to evolve a bit, but at some point we
+froze it, to make sure we'll release 2.
+
+So what will be 2013? You already know it right? My bet goes on the "Dancer2
+year". Everything is ready, Dancer2 is beautifully designed, efficient and
+extensible yet very compatible with the Dancer 1 ecosystem. You'll love it, and
+you should use it. Now. Here is why, and how.
+
+=head2 What is Dancer2 at the time of this writing?
+
+Before we start, let's clarify where we are today, about Dancer 2. Don't look
+for it on CPAN, it's not there already, when we'll have something polished
+enough we'll certainly roll a DEVELOPER release but we're not yet already (even
+though very close).
+
+Dancer 2 is a GitHub project, you can browse the code on its page:
+L<http://github.com/PerlDancer/Dancer2/> and you can grab the source like so:
+
+    git clone https://github.com/PerlDancer/Dancer2.git
+
+Although it's not sitting on CPAN, it's a stable source tree, we have more than
+500 unit tests already and I'm able to say that Dancer2 is also able to run on
+production because, well, that's what I do at work.
+
+The only area where yo ushould be cautious is with plugins or engines,
+everything is in place to port them, but most of them aren't yet. So it's likely
+that one extension of your app will need to be ported a bit to work with Dancer
+2. It's an easy job to do though, thanks to all the work that has been done on
+Dancer::Plugin to assure inter-operability.
+
+=head2 Design decisions for D2
+
+=head3 Pure OO code, based on Moo
+
+Before listing all the benefits of using Dancer 2, let's take a look at its
+core, seeing what makes it so different from Dancer 1.
+
+First, Dancer 2 is written in pure object-oriented code, with
+L<https://metacpan.org/module/Moo|Moo> as its meta-class layer.
+
+Why Moo? Well, it's Moose philosophy with efficiency in mind, written in pure
+Perl5. It's fast and right to the point. How could another meta-class layer
+could fit better Dancer?
+
+Thanks to Moo, and more generally to the Moose approach, Dancer2's core gets
+very powerful tools in its backbone like lazyness construction, role composition
+and method modifiers. That helped a lot to enhance the way things are
+implemented.
+
+I could alsmost say that Dancer1 is written in Perl5 and Dancer2 is in Moo.
+
+=head3 No more shared singletons
+
+The most limitating and annoying design choice I wanted to get rid of, when
+starting the Dancer rewrite, was the singletons usage. You know the drill, globals are
+evil. That was a mistake I did in the early stage of development of Dancer1, we
+lived with it, I think pretty well, but Dancer 2 needed to go a step further.
+Without singletons. 
+
+Without globals, the code is properly decoupled, things know about themselves
+and their direct neighbours, in fact, the code base now respects truthfully the
+L<http://en.wikipedia.org/wiki/Law_of_Demeter|Law of Demeter>.
+
+This will for sure be a lot better for future evolution and code maintenance.
+
+=head3 Strict app scoping
+
+Another major change I wanted with Dancer 2, which I couldn't do in 1 because of
+the globals limitation mentioned above, was the per-app encapsulation.
+
+I wanted that anything I did in a package was scoped there, for instance being
+able to set a serializer in C<MyApp::API> without setting one C<MyApp::Blog>. In
+Dancer 1 that's impossible, beause the settings registry is global to the
+process (remember? I<Globals are evil>).
+
+With Dancer2, any pakage that C<use>s Dancer will be scoped into its own
+Dancer::Core::App instance, where the settings registry will leave, and the
+route handlers, and anything you could imagine to do within a Dancer package.
+
+In Dancer2, you can consider each of your packages in your application as a jail
+where everything is nicely isolated from the outside. No more apps collision, no
+more settings leaks from a part of the appliation to the other.
+
+=head2 Where are we with Dancer 2?
+
+First of all, let's make it clear: the whole DSL is supported. It means that
+whatever you do when you use Dancer, you can do it with Dancer 2. It's the same
+syntax, you won't even notice it.
+
+Because of the major design changes explained above, plugins cannot work
+magically with Dancer 2. The change to apply are minimal but still, a plugin
+needs to be adapted slightly. Dancer::Plugin provides everything to make sure a
+plugin can run smoothly with Dancer 1 or 2, transparently. 
+
+At the time of this writing, most of the plugins in the ecosystem should be easy
+to port, all we need is volunteers to help us test them, port the code and
+submit pull requests to plugin authors.
+
+On the core side, we habe one thing to do to make the whole ecosystem ready for
+Dancer2: allowing the same kind of transition for engines (template, session,
+etc). In Dancer 1, an engine just needs to "extends" a base "abstract" class. In
+Dancer 2, as we're running with Moo, this has been changed to roles
+composition.
+
+=head2 Shoud you switch from D1 to D2, and how?
+
+It depends on what you want to do. If your application can be written with a
+pure Dancer distribution, without plugins or engines, then yes, you definitely
+can switch today.
+
+It you're using plugins in your app, your help is welcome: test your
+application, report any plugin you're using that doesn't work and help us port
+them.
+
+To power your app with Dancer2, as it's not released yet, here is what I
+suggest:
+
+In your application, create a git submodule in vendor/Dancer2:
+
+  $ cd MyProject
+  $ git submodule add https://github.com/PerlDancer/Dancer2.git vendor/Dancer2
+
+Then add this little snippet in your bin/app.pl to make sure you load any lib
+from your vendor directory:
+
+    BEGIN {
+        use FindBin;
+
+        while ( my $libdir = glob("${FindBin::Bin}/../vendor/*/lib") ) {
+            unshift @INC, $libdir;
+        }
+    }
+
+    use Dancer 2.0;
+
+This way, when the app worker will start, it will push all C<lib> directory it
+an find in C<./vendor/*> as possible location for modules. Hence Dancer 2 will
+be found there.
+
+Works like a charm, and can be used as well for plugins you want to patch for
+Dancer 2.
+
+Also, if you want to make sure your Dancer 2 copy in vendor is up to date:
+
+    $ git submodule update
+
+I'm using this technique at work for a Dancer 2 app we've deployed to
+production, it's working great.
+
+
+=head2 Author
+
+This article has been written by Alexis Sukrieh for the Perl Dancer Advent
+Calendar 2012. 
+
+No copyright, public domain.

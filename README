@@ -28,8 +28,8 @@ Flags:
       over multiple days)
 
 # Dancer2 - almost here posts - I think we could split this into a few:
-[ ] - Why Dancer2 (re-use some content from last year?)
-[ ] - What's new?  (Why is Dancer2 better?)
+[R] - Why Dancer2 (re-use some content from last year?)
+[R] - What's new?  (Why is Dancer2 better?)
 [ ] - When, dammit? (How far off are we?  Point to dev release hopefully, and
       mention it's being used in production for dogfooding)
 [ ] - What needs to be done?  Outline remaining tasks, request volunteers?
