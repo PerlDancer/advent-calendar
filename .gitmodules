@@ -1,6 +1,6 @@
 [submodule "danceradvent/vendor/Dancer2"]
 	path = danceradvent/vendor/Dancer2
-	url = https://github.com/PerlDancer/Dancer2.git
+	url = git://github.com/PerlDancer/Dancer2.git
 [submodule "danceradvent/vendor/Dancer-Plugin-Feed"]
 	path = danceradvent/vendor/Dancer-Plugin-Feed
-	url = https://github.com/PerlDancer/Dancer-Plugin-Feed.git
+	url = git://github.com/PerlDancer/Dancer-Plugin-Feed.git
