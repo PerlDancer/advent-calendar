@@ -1,12 +1,11 @@
 package danceradvent;
 use Dancer ':syntax';
-use Dancer::Plugin::DebugDump;
 use DateTime;
 use Pod::POM;
 use Pod::POM::View::InlineHTML;
 
 use Dancer::Plugin::Feed;
-#use Dancer::Plugin::MobileDevice;
+use Dancer::Plugin::MobileDevice;
 
 use URI;
 use POSIX qw/strftime/;
@@ -23,12 +22,12 @@ get '/:year/:day/' => sub {
     redirect uri_for('/'. params->{year} . '/' . params->{day} )
 };
 
-before_template sub {
+hook 'before_template' => sub {
     my $tokens = shift;
     $tokens->{uri_base} = request->base->path eq '/' ? '' : request->base->path;
 };
 
-before sub {
+hook 'before' => sub {
     my @date = localtime(time);
     my $current_year = $date[5] + 1900;
 
