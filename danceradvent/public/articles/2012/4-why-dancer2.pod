@@ -61,7 +61,7 @@ Before listing all the benefits of using Dancer 2, let's take a look at its
 core, seeing what makes it so different from Dancer 1.
 
 First, Dancer 2 is written in pure object-oriented code, with
-L<https://metacpan.org/module/Moo|Moo> as its meta-class layer.
+L<Moo> as its meta-class layer.
 
 Why Moo? Well, it's Moose philosophy with efficiency in mind, written in pure
 Perl5. It's fast and right to the point. How could another meta-class layer
@@ -84,7 +84,7 @@ Without singletons.
 
 Without globals, the code is properly decoupled, things know about themselves
 and their direct neighbours, in fact, the code base now respects truthfully the
-L<http://en.wikipedia.org/wiki/Law_of_Demeter|Law of Demeter>.
+L<Law of Demeter|http://en.wikipedia.org/wiki/Law_of_Demeter>.
 
 This will for sure be a lot better for future evolution and code maintenance.
 
@@ -172,6 +172,25 @@ Also, if you want to make sure your Dancer 2 copy in vendor is up to date:
 I'm using this technique at work for a Dancer 2 app we've deployed to
 production, it's working great.
 
+Oh, and the page you're reading now has been served by it as well!
+
+And while we're at it, see L<on this commit|https://github.com/PerlDancer/Dancer-Plugin-Feed/commit/1399073ebc192c02c8eddfc83ebf6fc07675191b> 
+how simple it was to port Dancer::Plugin::Feed (which is used by the Advent Calendar app) to Dancer 2.
+
+If the plugin you're using is just playing with the DSL, porting it to Daner2 is
+as easy as using C<plugin_args> in registered subs to unroll C<@_> and as
+declaring the supported versions of Dancer when calling C<plugin_register>.
+
+=head2 Will you dance a second time?
+
+So, will you give it a try? I'm sure you have that little app somewhere that
+would love to make the jump!
+
+And if you happen to use a plugin with complains about not being compatible with
+Dancer 2, fork it, vendorize it and patch it. And then, submit a pull request to
+the author.
+
+That's the way you can help!
 
 =head2 Author
 
