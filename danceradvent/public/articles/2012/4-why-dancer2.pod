@@ -16,8 +16,8 @@ random choice, but I'm pretty sure it was not really made on purpose.
 
 Anyway, almost a year and a half has passed and it's now time to shed some
 light on Dancer 2. I remember Franck Cuny telling me in November 2010 - when we
-were starting the first advent calendar iteration - 
-"I<You'll see, 2011 will be the Dancer year>". 
+were starting the first advent calendar iteration -
+"I<You'll see, 2011 will be the Dancer year>".
 He couldn't have been more right. Many great things happened in 2011 for Dancer.
 So I was asking myself: what about 2012 and the upcoming year, 2013?
 
@@ -39,9 +39,9 @@ enough we'll certainly roll a DEVELOPER release but we're not yet already (even
 though very close).
 
 Dancer 2 is a GitHub project, you can browse the code on its page:
-L<http://github.com/PerlDancer/Dancer 2/> and you can grab the source like so:
+L<http://github.com/PerlDancer/Dancer2/> and you can grab the source like so:
 
-    git clone https://github.com/PerlDancer/Dancer 2.git
+    git clone https://github.com/PerlDancer/Dancer2.git
 
 Although it's not sitting on CPAN, it's a stable source tree, we have more than
 500 unit tests already and I'm able to say that Dancer 2 is also able to run on
@@ -80,7 +80,7 @@ The most annoying design choice I wanted to get rid of, when
 starting the Dancer rewrite, was the singletons usage. You know the drill,
 globals are evil. That was a mistake I did in the early stage of development of
 Dancer 1, we lived with it, I think pretty well, but Dancer 2 needed to go a
-step further.  Without singletons. 
+step further.  Without singletons.
 
 Without globals, the code is properly decoupled, things know about themselves
 and their direct neighbours, in fact, the code base now respects truthfully the
@@ -115,7 +115,7 @@ syntax, you won't even notice it.
 Because of the major design changes explained above, plugins cannot work
 magically with Dancer 2. The change to apply are minimal but still, a plugin
 needs to be adapted slightly. Dancer::Plugin provides everything to make sure a
-plugin can run smoothly with Dancer 1 or 2, transparently. 
+plugin can run smoothly with Dancer 1 or 2, transparently.
 
 At the time of this writing, most of the plugins in the ecosystem should be easy
 to port, all we need is volunteers to help us test them, port the code and
@@ -143,7 +143,7 @@ suggest:
 In your application, create a git submodule in vendor/Dancer 2:
 
   $ cd MyProject
-  $ git submodule add https://github.com/PerlDancer/Dancer 2.git vendor/Dancer 2
+  $ git submodule add https://github.com/PerlDancer/Dancer2.git vendor/Dancer2
 
 Then add this little snippet in your bin/app.pl to make sure you load any lib
 from your vendor directory:
@@ -197,6 +197,6 @@ That's the way you can help!
 =head2 Author
 
 This article has been written by Alexis Sukrieh for the Perl Dancer Advent
-Calendar 2012. 
+Calendar 2012.
 
 No copyright, public domain.
