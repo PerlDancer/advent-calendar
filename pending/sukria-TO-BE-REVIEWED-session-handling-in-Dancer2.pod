@@ -1,0 +1,287 @@
+=head1 Dancer::Session::Redis - Writing a session engine for Dancer2
+
+In order to continue presenting all the good things about Dancer2, I wanted a 
+good reason to show how the session handling is done. On the other hand, I 
+didn't want to explain how the code is designed without something concrete to
+explain. So I came with the idea of writing a new session engine for Dancer2,
+explaining all the steps here.
+
+Moreover, after having searched a bit, it appears that there is no Redis backend
+for storing session so that's a perfect opportunity to write it! Let's go!
+
+=head2 A word about Redis
+
+I suppose you already know Redis, if you don't, well, you should! It's a blazing
+fast NoSQL key/value store. It can reach amazing performances like a rate of
+100,000 requests per second. Using it as a session storage to make sure multiple 
+interface servers can share the same information is very common.
+
+Anything stored in Redis is serialized as a JSON string. 
+
+=head2 Session engines in Dancer2
+
+We've already seen that Dancer 2 is entirely written with L<Moo>. So you won't
+be surprised if I tell you that in Dancer 2, the engines are actually roles. So
+if we want to write a session backend for Dancer 2, we need to consume the
+C<Dancer::Core::Role::SessionFactory> role. Why not C<Session> instead of
+C<SessionFactory> you ask? Well, it's the major design change (which I'm very
+happy with) if you compare to how things are done in Dancer1.
+
+In Dancer 1, we have one object, a Dancer::Session:Something. That object will
+contain the session itself (expiration time, ID, content) and the session
+storage itself (for instance for YAML, you'll find here a C<session_dir>
+attribute).
+
+It's probably not shocking at first sight, I presume because Dancer 1 still
+works like that and I never heard someone complaning about it, after almost 3
+years.
+
+But recently, I was facing an issue with sessions in Dancer 2 and I started
+thinking about how things are done, and I realized the design could be better by
+far. Indeed, it came to my mind that we have actually two very different things
+here: the session itself, and its storage backend.
+
+There are two concepts: a C<Session> class, that contains generic information
+like an expiration time, a content, and ID and that is agnostic of
+how it is stored; and a SessionFactory class, which describes how to create,
+update and delete a C<Session> object.
+
+So in Dancer 2, a session backend consumes the role
+C<Dancer::Core::Role::SessionFactory>.
+
+Let's do that!
+
+=head2 Dancer::Session::Redis
+
+First thing to do is to create the class for our session engine, we'll name it,
+abviously C<Dancer::Session::Redis>:
+
+    package Dancer::Session::Redis;
+    use Moo;
+    with 'Dancer::Core::Role::SessionFactory';
+
+First, we want our backend to have a handle over a Redis connection. To do that,
+we'll create an attribute C<redis> that will do all the boring bits for us,
+lazily.
+
+    use JSON;
+    use Redis;
+    use Dancer::Core::Types; # brings helper for types
+    
+    has redis => (
+        is => 'rw',
+        isa => InstanceOf['Redis'],
+        lazy => 1,
+        builder => '_build_redis',
+    );
+
+The lazy attribute is very interesting, it says to Moo that this attribute will
+be built (initialized) only when called the first time. It means that the
+connection to Redis won't be opened until necessary.
+
+    sub _build_redis {
+        my ($self) = @_;
+        Redis->new(
+            server => $self->server,
+            password => $self->password,
+            encoding => undef,
+        );
+    }
+
+As you can see, we want to create two more attributes: C<server> and
+C<password>. Dancer 2 will pass anything defined in the config to the engine
+creation. So for instance, if we have:
+
+    # config.yml
+    ...
+    engines:
+      session:
+        Redis:
+          server: foo.mydomain.com
+          password: S3Cr3t
+
+The server and password entries will be passed to the constructor of the Redis
+session engine, as expected. That's another sign of the proper design of Dancer
+2, no more settings shared among all the packages, the Redis engine only knows
+about itself, it has absolutely no idea of what a Dancer config is.
+
+    has server => (is => 'ro', required => 1);
+    has password => (is => 'ro');
+
+The role requires that we implement C<_retrieve>, C<_flush>, C<_destroy> and
+C<_sessions>. 
+
+The first one, C<_retrieve> is supposed to return a session object for a session
+ID it's passed. In our case, it's pretty easy, our sessions are going to be
+stored in Redis, the session ID will be the key, the session the value. So
+retrieving is as easy as doing a get and decoding the JSON string returned:
+
+    sub _retrieve {
+        my ($self, $session_id) = @_;
+        my $json = $self->redis->get($session_id);
+        return JSON::decode_json($json);
+    }
+
+Now we should implement the C<_flush> method, which is called by Dancer when the
+session needs to be stored in the backend. That's actually a write to Redis. The
+method receives a C<Dancer::Core::Session> object and is supposed to store it.
+
+    sub _flush {
+        my ($self, $session) = @_;
+        my $json = JSON::encode_json($session);
+        $self->redis->set($session->id, $json);
+    }
+
+Now, the C<_destroy> method that is supposed to remove a session from the
+backend, the session ID is passed. 
+
+Easy one, we should delete the key from Redis.
+
+    sub _destroy {
+        my ($self, $session_id) = @_;
+        $self->redis->del($session_id);
+    }
+
+And finally, the last one, the C<_sessions> method which is supposed to list all
+the session IDs currently stored in the backend. It's in our case as stupid as
+listing all the keys that Redis has.
+
+    sub _sessions {
+        my ($self) = @_;
+        my @keys = $self->redis->keys('*');
+        return \@keys;
+    }
+
+Voilà. The session engine is ready. Let's play with it now.
+
+=head2 Behind the C<session> keyword
+
+It should be clear now that a session storage system is not the same thing as a
+session itself. Let's look at how things work when you use the C<session>
+keyword in Dancer.
+
+First of all, keep in mind that when Dancer 2 executes a route handler to
+process a request, it creates a C<Dancer::Core::Context> object. That object is
+designed to handle all the volatile information of the current request: the
+environment, the request object, the newborn response object, the cookies...
+
+This context is passed to all the components of Dancer that can play with it, to
+build the response. For instance, a before filter will receive that context
+object.
+
+That where we'll find the session handle for the current client, in the context.
+The beauty of it is that it's actually a lazy attribute, and its builder has
+one thing to do: look if the client has a C<dancer.session> cookie, and if so, 
+try to C<retrieve> the session from the storage engine, with the value of the 
+cookie (the session ID).
+
+    has session => (
+        is      => 'rw',
+        isa     => Session,
+        lazy    => 1,
+        builder => '_build_session',
+    );
+
+    sub _build_session {
+        my ($self) = @_;
+        my $session;
+
+        # Find the session engine
+        my $engine = $self->app->setting('session');
+        croak "No session engine defined, cannot use session."
+          if ! defined $engine;
+
+        # find the session cookie if any
+        my $session_id;
+        my $session_cookie = $self->cookie('dancer.session');
+        if (defined $session_cookie) {
+            $session_id = $session_cookie->value;
+        }
+       
+        # if we have a session cookie, try to retrieve the session
+        if (defined $session_id) {
+            eval { $session = $engine->retrieve(id => $session_id) };
+            croak "Fail to retreive session: $@" 
+              if $@ && $@ !~ /Unable to retrieve session/;
+        }
+
+        # create the session if none retrieved
+        return $session ||= $engine->create();
+    }
+
+So the very first time C<session> is called, the object is either retrieved
+from the backend, or a new C<Dancer::Core::Session> is created, and stored in
+the context.
+
+Then, a C<before> filter makes sure a cookie C<dancer.session> is added to the
+headers.
+
+    # Hook to add the session cookie in the headers, if a session is defined
+    $self->add_hook(Dancer::Core::Hook->new(
+        name => 'core.app.before_request',
+        code => sub {
+            my $context = shift;
+
+            # make sure an engine is defined, if not, nothing to do
+            my $engine = $self->setting('session');
+            return if ! defined $engine;
+
+            # push the session in the headers
+            $context->response->push_header('Set-Cookie',
+                $context->session->cookie->to_header);
+        }
+    ));
+
+At this time, the user's code comes into play, using the C<session> keyword,
+which is actually that simple:
+
+    sub session {
+        my ($self, $key, $value) = @_;
+
+        my $session = $self->context->session;
+        croak "No session available, a session engine needs to be set"
+            if ! defined $session;
+
+        # return the session object if no key
+        return $session if @_ == 1;
+
+        # read if a key is provided
+        return $session->read($key) if @_ == 2;
+
+        # write to the session
+        $session->write($key => $value);
+    }
+
+And to conclude, an C<after> filter is set to call the C<flush> method of the
+storage backend. Indeed, the C<write> calls you see above do not change the
+sesssion in the storage system, they only alter the object itself. That's a
+major improvement if you compare to Dancer 1, because as everything is mixed and
+less well decoupled, in Dancer 1, a write to the session is also a flush to the
+backend system.
+
+Here, we now that we flush exactly once per request, when the response is ready.
+
+    # Hook to flush the session at the end of the request, this way, we're sure we
+    # flush only once per request
+    $self->add_hook(
+        Dancer::Core::Hook->new(
+            name => 'core.app.after_request',
+            code => sub {
+                # make sure an engine is defined, if not, nothing to do
+                my $engine = $self->setting('session');
+                return if ! defined $engine;
+                return if ! defined $self->context;
+                $engine->flush(session => $self->context->session);
+            },
+        )
+    );
+
+=head2 Code for this article
+
+TODO : write and release to GitHub/CPAN the Dancer::Session::Redis code.
+
+=head2 Author
+
+This article has been written by Alexis Sukrieh for the Perl Dancer Advent
+Calendar 2012.
+
