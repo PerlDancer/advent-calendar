@@ -1,33 +1,33 @@
-=head1 Dancer::Session::Redis - Writing a session engine for Dancer2
+=head1 Dancer::Session::Redis - Writing a session engine for Dancer 2
 
-In order to continue presenting all the good things about Dancer2, I wanted a 
-good reason to show how the session handling is done. On the other hand, I 
+In order to continue presenting all the good things about Dancer 2, I wanted a
+good reason to show how the session handling is done. On the other hand, I
 didn't want to explain how the code is designed without something concrete to
-explain. So I came with the idea of writing a new session engine for Dancer2,
+explain. So I came with the idea of writing a new session engine for Dancer 2,
 explaining all the steps here.
 
 Moreover, after having searched a bit, it appears that there is no Redis backend
-for storing session so that's a perfect opportunity to write it! Let's go!
+for storing sessions so that's a perfect opportunity to write it! Let's go!
 
 =head2 A word about Redis
 
 I suppose you already know Redis, if you don't, well, you should! It's a blazing
 fast NoSQL key/value store. It can reach amazing performances like a rate of
-100,000 requests per second. Using it as a session storage to make sure multiple 
+100,000 requests per second. Using it as a session storage to make sure multiple
 interface servers can share the same information is very common.
 
-Anything stored in Redis is serialized as a JSON string. 
+Anything stored in Redis is serialized as a JSON string.
 
-=head2 Session engines in Dancer2
+=head2 Session engines in Dancer 2
 
 We've already seen that Dancer 2 is entirely written with L<Moo>. So you won't
 be surprised if I tell you that in Dancer 2, the engines are actually roles. So
 if we want to write a session backend for Dancer 2, we need to consume the
 C<Dancer::Core::Role::SessionFactory> role. Why not C<Session> instead of
 C<SessionFactory> you ask? Well, it's the major design change (which I'm very
-happy with) if you compare to how things are done in Dancer1.
+happy with) if you compare to how things are done in Dancer 1.
 
-In Dancer 1, we have one object, a Dancer::Session:Something. That object will
+In Dancer 1, we have one object, a Dancer::Session::Something. That object will
 contain the session itself (expiration time, ID, content) and the session
 storage itself (for instance for YAML, you'll find here a C<session_dir>
 attribute).
@@ -67,7 +67,7 @@ lazily.
     use JSON;
     use Redis;
     use Dancer::Core::Types; # brings helper for types
-    
+
     has redis => (
         is => 'rw',
         isa => InstanceOf['Redis'],
@@ -109,7 +109,7 @@ about itself, it has absolutely no idea of what a Dancer config is.
     has password => (is => 'ro');
 
 The role requires that we implement C<_retrieve>, C<_flush>, C<_destroy> and
-C<_sessions>. 
+C<_sessions>.
 
 The first one, C<_retrieve> is supposed to return a session object for a session
 ID it's passed. In our case, it's pretty easy, our sessions are going to be
@@ -134,7 +134,7 @@ method receives a C<Dancer::Core::Session> object and is supposed to store it.
     }
 
 Now, the C<_destroy> method that is supposed to remove a session from the
-backend, the session ID is passed. 
+backend, the session ID is passed.
 
 Easy one, we should delete the key from Redis.
 
@@ -172,8 +172,8 @@ object.
 
 That where we'll find the session handle for the current client, in the context.
 The beauty of it is that it's actually a lazy attribute, and its builder has
-one thing to do: look if the client has a C<dancer.session> cookie, and if so, 
-try to C<retrieve> the session from the storage engine, with the value of the 
+one thing to do: look if the client has a C<dancer.session> cookie, and if so,
+try to C<retrieve> the session from the storage engine, with the value of the
 cookie (the session ID).
 
     has session => (
@@ -198,11 +198,11 @@ cookie (the session ID).
         if (defined $session_cookie) {
             $session_id = $session_cookie->value;
         }
-       
+
         # if we have a session cookie, try to retrieve the session
         if (defined $session_id) {
             eval { $session = $engine->retrieve(id => $session_id) };
-            croak "Fail to retreive session: $@" 
+            croak "Fail to retreive session: $@"
               if $@ && $@ !~ /Unable to retrieve session/;
         }
 
@@ -260,7 +260,7 @@ major improvement if you compare to Dancer 1, because as everything is mixed and
 less well decoupled, in Dancer 1, a write to the session is also a flush to the
 backend system.
 
-Here, we now that we flush exactly once per request, when the response is ready.
+Here, we know that we flush exactly once per request, when the response is ready.
 
     # Hook to flush the session at the end of the request, this way, we're sure we
     # flush only once per request
@@ -287,6 +287,5 @@ for obvious reasons.
 
 =head2 Author
 
-This article has been written by L<Alexis Sukrieh|http://twitter.com/sukria> 
+This article has been written by L<Alexis Sukrieh|http://twitter.com/sukria>
 for the Perl Dancer Advent Calendar 2012.
-
