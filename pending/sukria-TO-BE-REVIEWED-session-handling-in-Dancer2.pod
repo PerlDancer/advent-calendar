@@ -119,7 +119,8 @@ retrieving is as easy as doing a get and decoding the JSON string returned:
     sub _retrieve {
         my ($self, $session_id) = @_;
         my $json = $self->redis->get($session_id);
-        return JSON::decode_json($json);
+        my $hash = from_json( $json );
+        return bless $hash, 'Dancer::Core::Session';
     }
 
 Now we should implement the C<_flush> method, which is called by Dancer when the
@@ -128,7 +129,7 @@ method receives a C<Dancer::Core::Session> object and is supposed to store it.
 
     sub _flush {
         my ($self, $session) = @_;
-        my $json = JSON::encode_json($session);
+        my $json = to_json( { %{ $session } } );
         $self->redis->set($session->id, $json);
     }
 
@@ -278,7 +279,11 @@ Here, we now that we flush exactly once per request, when the response is ready.
 
 =head2 Code for this article
 
-TODO : write and release to GitHub/CPAN the Dancer::Session::Redis code.
+The code of the session backend described here has been released on
+L<GitHub|https://github.com/sukria/Dancer-Session-Redis/blob/master/lib/Dancer/Session/Redis.pm>.
+
+It's not released on CPAN yet because we'll wait for Dancer 2 to be there first,
+for obvious reasons.
 
 =head2 Author
 
