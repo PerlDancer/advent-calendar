@@ -282,6 +282,6 @@ Dancer 2, thanks to the proper scoping of the core, it's not a problem anymore.
 
 =head2 Author
 
-This article has been written by Alexis Sukrieh for the Perl Dancer Advent
-Calendar 2012.
+This article has been written by L<Alexis Sukrieh|http://twitter.com/sukria> 
+for the Perl Dancer Advent Calendar 2012.
 
