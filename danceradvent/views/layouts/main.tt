@@ -40,7 +40,8 @@ Each day of December until Christmas, one article about Dancer. Stay tuned for n
     <ul class="links">
         <li><a href="http://www.perldancer.org/">Dancer homepage</a></li>
         <li><a href="http://twitter.com/PerlDancer">Official Twitter</a></li>
-        <li><a href="http://github.com/sukria/Dancer">Dancer on GitHub</a></li>
+        <li><a href="http://github.com/PerlDancer/Dancer">Dancer on GitHub</a></li>
+        <li><a href="http://github.com/PerlDancer/Dancer2">Dancer 2 on GitHub</a></li>
         <li><a class="feed" href="[% uri_base %]/feed/[% year %]">RSS</a></li>
     </ul>
 </li>
