@@ -64,7 +64,7 @@ Before listing all the benefits of using Dancer 2, let's take a look at its
 core, seeing what makes it so different from Dancer 1.
 
 First, Dancer 2 is written in pure object-oriented code, with
-L<Moo> as its meta-class layer.
+L<Moo> as its object system.
 
 Why Moo? Well, it's Moose philosophy with efficiency in mind, written in pure
 Perl5. It's fast and right to the point. How could another meta-class layer
