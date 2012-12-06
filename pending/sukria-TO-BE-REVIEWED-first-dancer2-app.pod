@@ -12,9 +12,9 @@ In this article we'll see how to build an application with Dancer2, from
 scratch. We'll try to show off here one of the most important benefit of the
 design change in Dancer's core: its application scoping.
 
-I'm going to harm a little bit S<Dancer 1> in this demonstration but as we say in
-french: I<Qui aime bien chatie bien> (Well, I don't know how to translate that,
-sorry!).
+I'm going to be a little bit harsh towards  S<Dancer 1> in this demonstration -
+but as we say in French: I<Qui aime bien chatie bien>, which translates roughly
+to tough love, or being cruel to be kind.
 
 Anyway! The main idea behind this article is to show off how the design changes of
 S<Dancer 2> will make your life easier, as an app developer. So we'll do something
@@ -74,7 +74,7 @@ OK, we have a layout, let's create the first view.
 Now, the main app, to create the first route.
 
     cat > lib/DemoApp.pm
-    package DemonApp;
+    package DemoApp;
     use Dancer 2.0;
 
     get '/' => sub {
