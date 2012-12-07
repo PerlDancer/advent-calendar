@@ -65,7 +65,7 @@ get '/:year' => sub {
     
     # Fetch the itles of all the posts so the template can provide a list
     # of named posts. Exclude the today's article, to keep the mistery ;)
-    my $today = strftime "%Y%m%d", gmtime(time);
+    my $today = DateTime->today();
     my @all_entries 
         = grep { $_->{issued} != $today } _get_entries(params->{year});
 
