@@ -63,15 +63,14 @@ get '/:year' => sub {
 
     my $articles = _articles_viewable(params->{year});
     
-    # If it's not the current year, also fetch the titles of all the posts so
-    # the template can provide a list of named posts
-    my @all_entries;
-    if (params->{year} < (localtime)[5] + 1900) {
-        @all_entries = _get_entries(params->{year});
-    }
+    # Fetch the itles of all the posts so the template can provide a list
+    # of named posts. Exclude the today's article, to keep the mistery ;)
+    my $today = strftime "%Y%m%d", gmtime(time);
+    my @all_entries 
+        = grep { $_->{issued} != $today } _get_entries(params->{year});
 
     # Assemble a list of other years which have viewable articles for links:
-    my @other_years;;
+    my @other_years;
     for my $year (config->{start_year} .. (localtime)[5] + 1900) {
         push @other_years, $year 
             if $year != params->{year} && 
