@@ -1,0 +1,281 @@
+=head1 Porting Dancer Template Modules to Dancer 2
+
+As many advent entries have mentioned so far, Dancer is awesome, and Dancer 2
+is awesome squared. But realistically that core -- the framework itself -- is only the huge,
+basted-to-perfection turkey sitting in the middle of the Dancer application
+feast. It wouldn't just be the same without all the condiments (let's call
+them I<plugins>), trimmings (or I<templates systems>) and
+delicious side-dishes (I<session managers> and other things).
+
+Now, it makes perfect sense that authors of smashing appetizers and nibblers for Dancer 1 would 
+love to bring their delicacies to the Dancer 2 table.  But there's a catch:
+the guts of Dancer 1 and Dancer 2 are quite different and the port will
+require a little bit of work (think of it as taking a recipe made for
+the part of family who are into Christmas, and adapting it for the part who are
+celebrating Hanukkah).  The good news, though, is that for most cases there is really 
+only a minimal amount of work involved -- something as easy as putting a little bit of cranberry sauce
+over those nice warm latkes, so to speak. 
+
+Today, we'll cover templates, and I'll show you how I tweaked L<Dancer::Template::Mustache>
+to be compatible with Dancer 2.
+
+=head2 The Ghost Of Christmas Past
+
+Dancer template modules are usually a very thin interface between the Dancer
+framework and the "real" work-horse module implementing the templating system.
+L<Dancer::Template::Mustache> doesn't balk the trend. As per its last release,
+it was looking like so
+
+    package Dancer::Template::Mustache;
+
+    use strict;
+    use warnings;
+
+    use Template::Mustache;
+    use Dancer::Config 'setting';
+
+    use base 'Dancer::Template::Abstract';
+
+    sub default_tmpl_ext { "mustache" };
+
+    my $_mustache;
+    my $_template_path;
+
+    sub init { 
+        my $self = shift;
+        my %config = %{$self->config || {}};
+
+        $_mustache = Template::Mustache->new( %config );
+
+        $_template_path = setting( 'views' ) || $FindBin::Bin . '/views';
+    }
+
+    sub render {
+        my ($self, $template, $tokens) = @_;
+
+        local $Template::Mustache::template_path = $_template_path;
+
+        # remove the views part
+        $template =~ s#^\Q$_template_path\E/?##;
+
+        local $Template::Mustache::template_file = $template;
+        
+        return $_mustache->render($tokens);
+    }
+
+    1;
+
+=head2 The Ghost Of Christmas Present
+
+Before jumping into Dancer 2 conversion, let's tidy up and prepare the code a little bit.
+As Dancer 2 is L<Moo>-based, we could take advantage of it and shed those
+closure variables:
+
+    package Dancer::Template::Mustache;
+
+    use strict;
+    use warnings;
+
+    use Template::Mustache;
+    use Dancer::Config 'setting';
+    use FindBin;
+
+    use Moo;
+
+    extends 'Dancer::Template::Abstract';
+
+    sub default_tmpl_ext { "mustache" };
+
+    has _engine => (
+        is      => 'ro',
+        lazy    => 1,
+        default => sub {
+            Template::Mustache->new( %{ $_[0]->config } );
+        },
+    );
+
+    has _template_path => (
+        is      => 'ro',
+        lazy    => 1,
+        default => sub {
+            setting( 'views' ) || $FindBin::Bin . '/views';
+        },
+    );
+
+    sub render {
+        my ($self, $template, $tokens) = @_;
+
+        my $_template_path = $self->_template_path;
+
+        local $Template::Mustache::template_path = $_template_path;
+
+        # remove the views part
+        $template =~ s#^\Q$_template_path\E/?##;
+
+        local $Template::Mustache::template_file = $template;
+        
+        return $self->_engine->render($tokens);
+    }
+
+    1;
+
+There, already looking better. And thanks to the laziness of the attributes, we were
+even able to do away with the c<init()> method. Sweet.
+
+=head2 The Ghost of Christmases Yet to Come
+
+The big difference for templates between the Dancers is that a template
+was a sub-class of I<Dancer::Template::Abstract> in Dancer 1, and becomes a
+class consuming the role I<Dancer::Core::Role::Template> in Dancer 2. The good
+news? With Moo (and Moose), sub-classing or assigning roles are done at
+run-time, so we'll be able to juggle between the two fairly easily. Just
+watch:
+
+    require Dancer;
+
+    use Moo;
+
+    if ( Dancer->VERSION >= 2 ) {
+        with 'Dancer::Core::Role::Template';
+    }
+    else {
+        require Dancer::Config;
+        Dancer::Config->import( 'setting' );
+
+        extends 'Dancer::Template::Abstract';
+    }
+
+Not too hard, is it? Second difference is the way we access the C<views>
+directory value:
+
+    has api_version => (
+        is => 'ro',
+        lazy => 1,
+        default => sub { int Dancer->VERSION },
+    );
+
+    has _template_path => (
+        is => 'ro',
+        lazy => 1,
+        default => sub {
+            ( $_[0]->api_version == 1 ? setting( 'views' ) :  $_[0]->views )
+            || $FindBin::Bin . '/views';
+        },
+    );
+
+Oh, and I almost forgot: Dancer 2 also wants to know the name of the template
+module:
+
+    sub _build_name { 'Dancer::Template::Mustache' }
+
+(that part will not even be required soon, if I can have my wicked, patchy
+ways).
+
+And that's it. Put those three changes together with the original code, and we
+have our multi-dancing template module done:
+
+    package Dancer::Template::Mustache;
+
+    use strict;
+    use warnings;
+
+    use Template::Mustache;
+    use FindBin;
+
+    require Dancer;
+
+    use Moo;
+
+    if ( Dancer->VERSION >= 2 ) {
+        with 'Dancer::Core::Role::Template';
+    }
+    else {
+        require Dancer::Config;
+        Dancer::Config->import( 'setting' );
+
+        extends 'Dancer::Template::Abstract';
+    }
+
+    sub _build_name { 'Dancer::Template::Mustache' }
+
+    sub default_tmpl_ext { "mustache" };
+
+    has api_version => (
+        is => 'ro',
+        lazy => 1,
+        default => sub { int Dancer->VERSION },
+    );
+
+    has _engine => (
+        is => 'ro',
+        lazy => 1,
+        default => sub {
+            Template::Mustache->new( %{ $_[0]->config } );
+        },
+    );
+
+    has _template_path => (
+        is => 'ro',
+        lazy => 1,
+        default => sub {
+            ( $_[0]->api_version == 1 ? setting( 'views' ) :  $_[0]->views )
+            || $FindBin::Bin . '/views';
+        },
+    );
+
+    sub render {
+        my ($self, $template, $tokens) = @_;
+
+        $self->name;
+
+        my $_template_path = $self->_template_path;
+
+        local $Template::Mustache::template_path = $_template_path;
+
+        # remove the views part
+        $template =~ s#^\Q$_template_path\E/?##;
+
+        local $Template::Mustache::template_file = $template;
+        
+        return $self->_engine->render($tokens);
+    }
+
+    1;
+
+=head2 Boxing Day Events
+
+For the conversion of C<Dancer::Template::Mustache>, two other tweaks had to
+be done to the distribution. The invocations of c<Dancer::Test> had to include
+the name of the test application:
+
+    {
+        package MyApp;
+
+        use Dancer ':syntax';
+
+        ...;
+    }
+
+    use Dancer::Test 'MyApp';
+
+    response_content_like [ GET => '/' ], qr/Welcome manly mustached man/, 
+        "template file found";
+
+And the views had to be moved under C<t/views>, as Dancer 2 seems not to
+understand custom views locations yet (although, in all fairness, that could
+be more a case of yours truly being dense).
+
+
+=head2 Conclusion
+
+Converting template modules to the new Dancer is nowhere as tough as one could
+have dreaded. With a little bit of dedication and elbow grease, we could have
+this part of the eco-system ready to make the jump to Dancer 2 (while keeping
+a solid footing in Dancer 1) real soon. And with the help of eggnogs and a few
+nights by the fireplace, maybe sooner still...
+
+=head2 Author
+
+This article has been written by Yanick Champoux for the Perl
+Dancer Advent Calendar 2012.
+
