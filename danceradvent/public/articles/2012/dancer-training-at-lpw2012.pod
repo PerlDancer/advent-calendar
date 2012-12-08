@@ -1,0 +1,33 @@
+=head1 Dancer training at LPW2012
+
+Andrew Solomon again ran a helpful training session at this year's London Perl
+Workshop, L<Web development using Dancer|http://act.yapc.eu/lpw2012/talk/4425>
+which was a hands-on session to introduce Perl newbies to how easy web
+development can be using Perl and Dancer.
+
+The session covered:
+
+=over
+
+=item * learning to use the Dancer framework
+
+=item * learning to use Template Toolkit
+
+=item * understanding the concept of Model-View-Controller
+
+=item * how to structure code for maintainability
+
+=item * gaining experience using object oriented Perl modules
+
+=back
+
+There were 16 attendees, and feedback on the course was generally very positive.
+
+Dancer also appeared in the content of people's talks at LPW2012 too, which was
+great to see.
+
+=head1 AUTHOR
+
+David Precious (BIGPRESH)
+
+
