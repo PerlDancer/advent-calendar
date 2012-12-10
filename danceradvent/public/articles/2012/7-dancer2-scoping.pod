@@ -1,4 +1,4 @@
-=head1 A first app with S<Dancer 2>
+=head1 A first app with Dancer 2
 
 In the previous article we've seen how concrete S<Dancer 2> is, already. It's not
 something in the air, it's real and is powering the website you're reading right
