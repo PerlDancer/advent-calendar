@@ -1,0 +1,250 @@
+=head1 Dancecard
+
+It has been mentioned before that a web framework is nothing without its
+ecosystem. Let's face it, I<Dancer> just wouldn't be half as nice without all its plugins and interfaces
+to template systems.  Likewise, 
+web development with I<Dancer> (or any other framework) would be much
+more of a chore without all the nifty
+JavaScript libraries out there. This is why I<jQuery> comes pre-packaged with
+I<Dancer>: if the cast majority of projects will use it, it just makes sense
+to have it already there. 
+
+But that about all the other JavaScript librabries that you're using? Wouldn't
+be nice to keep a registry of them, and be able to quickly add them to any new
+project? Yes it would. So let's take a few moments, and see if we can record
+all those potential dance partners on a dance card...
+
+=head2 Building the Registry
+
+First, we want our little utility to store the different projects are where to
+get them. For this first iteration, let's assume that all those projects will
+be plucked from Git repositories.
+
+    use Path::Class;
+    use File::HomeDir;
+    use Config::INI::Reader;
+
+    my $config_file = file( File::HomeDir->my_home, '.dancecard' );
+
+    add_repo(@ARGV);
+
+    sub add_repo {
+        my( $url, $name ) = @_;
+        
+        unless ( $name ) {
+            $name = $1 if $url =~ m#([^/]+?)(?:\.git)?$#;
+        }
+
+        open my $config_fh, '>>', $config_file->stringify;
+
+        print $config_fh <<"END_REMOTE";
+    [$name]
+        url = $url
+
+    END_REMOTE
+
+        say "library '$name' added"
+    }
+
+Primitive, but for the moment it'll do.
+
+=head2 Adding the Libraries to the Current Project
+
+Now, let's add the possibility to add any of those libraries to the current
+project. Let's be fancy and let's do it through an interactive menu. Oh, and
+let's show in green libraries that we can add, and in blue libraries that are
+already present:
+
+    use Term::Prompt;
+    use Term::ANSIColor;
+
+    sub select_libs {
+        $config_file->touch;
+        my $config = Config::INI::Reader->read_file($config_file->stringify);
+
+        die "no library added yet" unless %$config;
+
+        die "no 'public/' directory found, are we in a Dancer project?\n"
+            unless -d 'public';
+
+        while ( 1 ) {
+            my @menu_items = map {
+                colored( $_, -d dir('public', $_ ) ? 'blue' : 'green' );
+            } keys %$config;
+
+            my @results = prompt( 'm', {
+                    prompt  => 'libraries to add',
+                    title   => "\ndev libaries",
+                    items   => \@menu_items,
+                    accept_empty_selection     => 1,
+                    accept_multiple_selections => 1,
+                },
+                'empty to exit',
+                undef
+            );
+
+            last unless @results;
+
+            for( (keys %$config)[@results] ) {
+                copy_lib( $_ => $config->{$_} );
+            }
+        }
+    }
+
+    sub copy_lib {
+        my( $name, $data ) = @_;
+
+        require Git::Repository;
+
+        say "\ncloning '$name'...";
+
+        Git::Repository->run( clone => $data->{url}, "public/".$name );
+
+        say 'done';
+    }
+
+=head2 Putting the C<dancecard> together
+
+And now, we put it all together:
+
+    #!/usr/bin/env perl
+
+    use 5.10.0;
+
+    use strict;
+    use warnings;
+
+    use Path::Class;
+    use Term::Prompt;
+    use Term::ANSIColor;
+    use File::HomeDir;
+    use Config::INI::Reader;
+
+    my $config_file = file( File::HomeDir->my_home, '.dancecard' );
+
+    if ( @ARGV ) {
+        add_repo(@ARGV);
+    }
+    else {
+        select_libs();
+    }
+
+    sub add_repo {
+        my( $url, $name ) = @_;
+        
+        unless ( $name ) {
+            $name = $1 if $url =~ m#([^/]+?)(?:\.git)?$#;
+        }
+
+        open my $config_fh, '>>', $config_file->stringify;
+
+        print $config_fh <<"END_REMOTE";
+    [$name]
+        url = $url
+
+    END_REMOTE
+
+        say "library '$name' added"
+    }
+
+    sub select_libs {
+        $config_file->touch;
+        my $config = Config::INI::Reader->read_file($config_file->stringify);
+
+        die "no library added yet" unless %$config;
+
+        die "no 'public/' directory found, are we in a Dancer project?\n"
+            unless -d 'public';
+
+        while ( 1 ) {
+            my @menu_items = map {
+                colored( $_, -d dir('public', $_ ) ? 'blue' : 'green' );
+            } keys %$config;
+
+            my @results = prompt( 'm', {
+                    prompt                 => 'libraries to add',
+                    title                  => "\ndev libaries",
+                    items                  => \@menu_items,
+                    accept_empty_selection => 1,
+                    accept_multiple_selections => 1,
+                },
+                'empty to exit',
+                undef
+            );
+
+            last unless @results;
+
+            for( (keys %$config)[@results] ) {
+                copy_lib( $_ => $config->{$_} );
+            }
+        }
+    }
+
+    sub copy_lib {
+        my( $name, $data ) = @_;
+
+        require Git::Repository;
+
+        say "\ncloning '$name'...";
+
+        Git::Repository->run( clone => $data->{url}, "public/".$name );
+
+        say 'done';
+    }
+
+The result (without, alas, the full color display):
+
+    $ dancecard git://github.com/Seldaek/slippy.git
+    library 'slippy' added
+
+    $ dancecard git://github.com/twitter/bootstrap.git
+    library 'bootstrap' added
+
+    $ dancecard git://github.com/FortAwesome/Font-Awesome.git
+    library 'Font-Awesome' added
+
+    $ dancer -a myapp && cd myapp
+
+    $ dancecard 
+
+    dev libaries
+    -------------
+    1) Font-Awesome 2) bootstrap    3) slippy       
+
+    libraries to add (empty to exit) 1
+
+    cloning 'Font-Awesome'...
+    done
+
+    dev libaries
+    -------------
+    1) *Font-Awesome* 2) bootstrap    3) slippy       
+
+    libraries to add (empty to exit) 2
+
+    cloning 'bootstrap'...
+    done
+
+    dev libaries
+    -------------
+    1) *Font-Awesome* 2) *bootstrap*    3) slippy       
+
+    libraries to add (empty to exit) 
+
+
+=head2 Conclusion
+
+This little C<dancecard> script is already a handy little thing. But it 
+only scratches the surface of what could be
+done: there could be an option to only download the latest version of a library
+instead of the whole Git history, direct http links instead of git urls, ways
+to group libraries together, a check that would update the current libraries to their latest
+versions, etc. This, however, is feature creep that will have to wait
+for another day...
+
+
+=head2 Author
+
+This article has been written by Yanick Champoux for the Perl
+Dancer Advent Calendar 2012.
+
