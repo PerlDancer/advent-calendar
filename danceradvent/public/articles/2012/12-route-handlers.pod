@@ -1,14 +1,14 @@
 =head1 Pluggable Route Handlers for Dancer 2
 
-With Dancer 2 you can declare route handlers in new manner so that they can be
+With Dancer 2 you can declare route handlers in a new manner so that they can be
 shared among applications easily. It's actually like packaging a route handler
 in its own package. It's called simply I<Handler>, this article will show you
-how it works, how to write your own and how to use them in your app.
+how it works, how to write your own handlers and how to use them in your app.
 
 =head2 The concept
 
 The idea is simple: what about a generic route, a route that would make sense in
-many application, a route that is agnostic of the business logic the app? Plugin
+many applications, a route that is agnostic of the business logic the app? Plugin
 you say? Indeed, a plugin that contains the route would work, but what about
 something lighter, more "in the core" and configurable?
 
