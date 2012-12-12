@@ -1,0 +1,129 @@
+=head1 Pluggable Route Handlers for Dancer 2
+
+With Dancer 2 you can declare route handlers in new manner so that they can be
+shared among applications easily. It's actually like packaging a route handler
+in its own package. It's called simply I<Handler>, this article will show you
+how it works, how to write your own and how to use them in your app.
+
+=head2 The concept
+
+The idea is simple: what about a generic route, a route that would make sense in
+many application, a route that is agnostic of the business logic the app? Plugin
+you say? Indeed, a plugin that contains the route would work, but what about
+something lighter, more "in the core" and configurable?
+
+That's what a handler is. For instance, in Dancer 2, there are two handlers
+shipped with the core. The first one is responsible for serving pages that match
+an existing template (the C<auto_page> setting) and one is here to serve static
+files.
+
+Let's see how this work, you'll see how straight forward it is.
+
+=head2 An example: the AutoPage handler
+
+It's easier to describe what a handler is with a real-life example, let's take
+the C<auto_page> feature. You probably know it already, it's a core feature of
+Dancer 1, the idea is simple: if a view exists with a name that matches the
+requested path, Dancer should process the request by processing the template.
+
+For instance, if I hit C</foo> and C<views/foo.tt> exists, the response should
+be the same as the one provided by the route:
+
+    get '/foo' => sub {
+        template 'foo'
+    };
+
+That's the C<auto_page> feature, in Dancer 1 it's hard-coded in the core, in
+Dancer 2, it's a I<handler> that is set by default.
+
+A route handler is a class that consumes the C<Dancer::Core::Role::Handler>
+role. The class must implement a set of methods: C<methods>, C<regexp> and
+C<code> which will be used to declare the route.
+
+Let's look at C<Dancer::Handler::AutoPage>.
+
+First, the matching methods are C<get> and C<head>, of course:
+
+    sub methods { qw(head get) }
+
+Then, the regexp or the I<path> we want to match:
+
+    sub regexp { '/:page' }
+
+Anything will be matched by this route, yes because we want a chance to look if
+there's a view named with the value of the C<page> token. If not, the route
+needs to C<pass>, letting the dispatching flow to proceed further.
+
+    sub code {
+        sub {
+            my $ctx = shift;
+
+            my $template = $ctx->app->config->{template};
+            if (! defined $template) {
+                $ctx->response->has_passed(1);
+                return;
+            }
+
+            my $page = $ctx->request->params->{'page'};
+            my $view_path = $template->view($page);
+            if (! -f $view_path) {
+                $ctx->response->has_passed(1);
+                return;
+            }
+
+            my $ct = $template->process($page);
+            $ctx->response->header('Content-Length', length($ct));
+            return ($ctx->request->method eq 'GET') ? $ct : '';
+        };
+    }
+
+As you can see, the C<code> method is passed the C<Dancer::Core::Context> object
+which provides access to anything needed to process the request.
+
+A C<register> is then implemented to add the route to the registry, and it's
+done, as you can see, register does nothing if the C<auto_page> setting is off.
+
+So that's even better than in Dancer 1: if the setting is off, the code for
+auto_page does not even exist in the dispatcher tree.
+
+    sub register {
+        my ($self, $app) = @_;
+
+        return unless $app->config->{auto_page};
+
+        $app->add_route(
+            method => $_,
+            regexp => $self->regexp,
+            code   => $self->code,
+        ) for $self->methods;
+    }
+
+And I<voila>, we have a route handler.
+
+=head2 What about shipping your own
+
+I have the feeling that route handlers could become a new kind of plugins, a
+more advanced way of sharing knowledge between applications, maybe more subtle.
+But you may ask at this point what's the best way to I<add> a random handler
+into your app.
+
+Well, the config parser will look for a C<route_handlers> section. Any handler
+defined here will be loaded. For instance, the default config for any Dancer 2
+application is as follows:
+
+    route_handlers:
+      File:
+        public_dir: /path/to/public
+      AutoPage: 1
+
+=head2 Going further
+
+Route handlers are a very new way to share knowledge between applications. It's
+another way of doing things, no DSL here, everything should be done with the
+internal API of the core. I'm sure we've only scratched the surface here, and
+I'd be very interested to see other things done this way.
+
+=head2 Author
+
+This article has been written by Alexis Sukrieh for the Perl Dancer Advent
+Calendar 2012.
