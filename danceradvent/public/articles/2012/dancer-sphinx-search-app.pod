@@ -196,11 +196,11 @@ route handler:
     $sph->SetSortMode(SPH_SORT_RELEVANCE);
     $sph->SetLimits(0, 10);
 
-This creates a new instance of Sphinx::Search (which will be used to do the
-searches), and sets up a few basic options, such as how many results should be
-returned and in what order. Now comes the most interesting part -- actually
-performing a search in our application. We insert this chunk of code at the
-beginning of the C<get '/'> route handler:
+This creates a new instance of Sphinx::Search (which will be used to talk to the
+Sphinx daemon and do the searches), and sets up a few basic options, such as how
+many results should be returned and in what order. Now comes the most
+interesting part -- actually performing a search in our application. We insert
+this chunk of code at the beginning of the C<get '/'> route handler:
 
     if (my $phrase = params('query')->{'phrase'}) {
         # Send the search query to Sphinx
@@ -214,10 +214,12 @@ beginning of the C<get '/'> route handler:
             $retrieved_count = @{$results->{'matches'}};
             # Get the array of document IDs
             my @document_ids = map { $_->{'doc'} } @{$results->{'matches'}};
-            # Join the IDs to use in SQL query
+            # Join the IDs to use in SQL query (the IDs come from Sphinx, so we
+            # can trust them to be safe)
             my $ids_joined = join ',', @document_ids;
 
             # Select documents, in the same order as returned by Sphinx
+            # (the contents of $ids_joined comes from Sphinx)
             my $sth = database->prepare('SELECT id, title FROM documents ' .
                 "WHERE id IN ($ids_joined) ORDER BY FIELD(id, $ids_joined)");
             $sth->execute;
