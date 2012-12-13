@@ -343,7 +343,8 @@ This is the complete C<DancerSearch.pm> file:
                 $retrieved_count = @{$results->{'matches'}};
                 # Get the array of document IDs
                 my @document_ids = map { $_->{'doc'} } @{$results->{'matches'}};
-                # Join the IDs to use in SQL query
+                # Join the IDs to use in SQL query (the IDs come from Sphinx, so we
+                # can trust them to be safe)
                 my $ids_joined = join ',', @document_ids;
 
                 # Select documents, in the same order as returned by Sphinx
