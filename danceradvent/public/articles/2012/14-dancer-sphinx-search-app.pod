@@ -286,7 +286,7 @@ results (or a "no hits" message if there weren't any).
 
 And you know what? We're now ready to actually do a search in the browser:
 
-=for html <img src="/images/2012/FIXME/search-results.png">
+=for html <img src="/images/2012/14/search-results.png">
 
 Neat, we have a working search application! We're just missing one important
 thing, and that is being able to access a document that was found. The results
