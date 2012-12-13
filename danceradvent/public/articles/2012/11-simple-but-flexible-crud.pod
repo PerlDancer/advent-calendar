@@ -1,0 +1,93 @@
+=head1 Simple, but more flexible, CRUD
+
+I've L<wrote last year|http://advent.perldancer.org/2011/2> about my
+L<Dancer::Plugin::SimpleCRUD>, which offers simple and easy automatic CRUD
+operations for Dancer apps.
+
+So, if you don't know about it yet, have a read of that post first; there seems
+no point in duplicating its content here.
+
+=head2 So, what's new?
+
+A quick rundown of some of the useful new features added to the SimpleCRUD
+plugin this year, by myself and contributors:
+
+=over
+
+=item * custom_columns feature
+
+Courtesy of Michael J South (msouth), this new feature allows the record listing
+screen to include custom columns, built up using SQL statements if required or
+simple column names, with transformations to be passed to
+L<HTML::Table::FromDatabase> to transform the contents easily (for instance,
+wrapping email addresses/URLs in anchor tags, formatting, etc).
+
+=item add_edit_row hook
+
+A new feature suggested / requested by Rene on IRC; a hook which fires right
+before a new row is created / an existing row is edited, letting you massage the
+data before it hits the database.
+
+=item basic foreign key support
+
+A new option to let you specify that certain columns are foreign keys, and
+describe which table they refer to, and which columns in the foreign table
+should be used as the key and the label, respectively.
+
+For an example, from the example app shipped with the plugin (some settings
+omitted for brevity, see the
+L<full config on GitHub|https://github.com/bigpresh/Dancer-Plugin-Auth-Extensible/blob/master/example/config.yml>:
+
+    simple_crud(
+        db_table => 'people',
+        ...
+        foreign_keys => {
+            employer_id => {
+                table        => 'employer',
+                key_column   => 'id',
+                label_column => 'name',
+            },
+        },
+        ...
+    );
+
+The above example means that the column C<employer_id> in the C<people> table
+refers to the key column C<id> of the C<employer> table, and that the C<name>
+column of the C<employer> table should be used for the labels when selecting a
+user's employer when adding/editing records.
+
+In a future version, it may be possible for this to be done automatically by
+inspecting the database schema, but I'm not sure how it could decide which
+column(s) of the foreign table is the human-friendly name/description/whatever.
+
+=item new input_types option
+
+Default form field types are selected automatically, and will usually be
+appropriate, but the C<input_types> option lets you override the default choices
+if you wish.
+
+=item auto_pretty_headers
+
+Uses a new feature in L<HTML::Table::FromDatabase>, C<auto_pretty_headers>, to
+automatically make table headers prettier when displaying records - for
+instance, C<first_name> would become C<First Name>.
+
+=item various bugfixes
+
+Various bug fixes, including issues if the prefix changes after the
+C<simple_crud> call, and working properly with named database connections.
+
+=back
+
+Many thanks to the contributors mentioned above for their valued contributions!
+
+=head2 Sorry for lateness...
+
+Unfortunately, work, personal commitments and hangovers conspired against me,
+and I ended up being late writing this post.  Sorry.
+
+=head1 AUTHOR
+
+David Precious (bigpresh)
+
+
