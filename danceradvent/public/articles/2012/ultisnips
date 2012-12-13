@@ -1,0 +1,49 @@
+=head1 The Gift Of Auto-Completion
+
+A good programmer, just like a good North Pole elf, needs good tools to
+perform his craft.  One of the classics is code snippet auto-completion.
+The I<vim> editor has a few of them. Two of the best-known ones are
+I<snipMate>, L<https://github.com/garbas/vim-snipmate>, inspired by the 
+much liked I<TextMate> editor  (L<http://macromates.com>), and the
+newly-emerging I<UltiSnips> (L<https://github.com/SirVer/ultisnips>). 
+
+Up to recently, I only knew (and loved quite dearly) I<snipMate>, but after
+discovering I<UltiSnips>, I must say that I'm quite impressed by it. ... ah 
+well, there is no point to make you kids wait to unwrap your present: you can
+go and get it at L<https://gist.github.com/4273473>.  Yes, it's a snippet file
+for the whole of Dancer's DSL. Not as exciting as a Rocket-Raptor Sky
+Armageddon action figure, granted, but much better than a rainbow-colored pullover.
+
+=head2 Let's Have Some Milk With Those Cookies
+
+With I<UltiSnips> and the snippet file given above, the whole Dancer DSL
+is at your fingertip by just issuing the vi command
+
+    :UltiSnipsAddFiletypes dancer
+
+Which is awesome. But this is Dancer; awesome is our bread and butter. Can we
+somewhat make this ultrawesome? Well, how about have I<UltiSnips> discover all
+by itself if a file is Dancer-related, and active its snippets automatically
+by adding to our I<.vimrc>:
+
+   au BufNewFile,BufRead *.pl,*.pm  call s:detectTypeOfPerl()
+
+   fun! s:detectTypeOfPerl()
+   perl <<EOF
+       for ( 0..$curbuf->Count ) {
+           if ( $curbuf->Get($_) =~ /use Dancer/ ) {
+              VIM::DoCommand(':UltiSnipsAddFiletypes dancer');
+              return;
+           }
+       }
+   EOF
+   endfun
+
+Aaaah yes. Just like a little swig of rum in a mug of eggnog, this is making
+what was already a treat into something truly decadent... Enjoy!
+
+=head2 Author
+
+This article has been written by Yanick Champoux for the Perl
+Dancer Advent Calendar 2012.
+
