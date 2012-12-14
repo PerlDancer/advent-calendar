@@ -1,0 +1,106 @@
+=head1 Dancer As A Persistent Interpreter Node
+
+Dancer is first and foremost a web framework. But lightness and flexibility allows it to be
+much, much more than that. In a way, Dancer is a lot like rum during the Holidays: it can be
+savored for its own goodness, or it can be used to spike the eggnog, or
+saturate the fruitcake with yumminess, or as a tool to get the children to
+sleep, or to bribe the Child Support Representant who comes to inquire about
+those unethical sleep-inducing methods.
+
+For example, let's say that we have scripts that are heavy on the compile-time
+department. To make them more palatable, we would like to have a daemon
+that would stay alive between script runs so that the compile time penalty is
+only hit once. Well, a Dancer app is persistent, and it has this nifty HTTP
+protocol to talk with clients. So let's use it in a little daemon called
+I<santa.pl>:
+
+    package Santa;
+
+    use Path::Class;
+
+    use Dancer 2 ':syntax';
+
+    post '/**' => sub {
+        my $path = dir('/')->subdir( map @$_ => splat )->stringify;
+
+        return send_error( "path '$path' is not an executable file" )
+            unless -x $path;
+
+        local *STDOUT;
+        open STDOUT, '>', \my $output;
+
+        eval { do $path; 1 }
+            or return send_error( $@, 500 );
+
+        return $output;
+    };
+
+    dance;
+
+To interact with that daemon, let's build ourselves an I<elf.pl>:
+
+    #!/usr/bin/env perl 
+
+    use 5.10.0;
+
+    use Path::Class;
+
+    my( $script, @args ) = @ARGV;
+
+    my $santa_url = $ENV{NORTH_POLE} or run_local(@ARGV);
+
+    require LWP::UserAgent;
+    my $agent = LWP::UserAgent->new;
+
+    my $response = $agent->post($santa_url . file($script)->absolute, { @args });
+
+    unless ( $response->is_success ) {
+        warn "Santa failed us, we are on our own\n";
+        run_local(@ARGV);
+    }
+
+    say $response->content;
+
+    sub run_local {
+        warn "running locally\n";
+        exec @_;
+    }
+
+And we are done. If we fire up I<santa.pl> on our machine, we can now harness
+the power of Christmas to run our scripts:
+
+    $ time ./elf.pl /home/yanick/work/perl-modules/Galuga/harvest_entries.pl
+    running locally
+    <html><body>well, hello there</body></html>
+    real    0m1.383s
+    user    0m1.312s
+    sys     0m0.072s
+
+    $ time NORTH_POLE=http://localhost:3000 ./elf.pl /home/yanick/work/perl-modules/Galuga/harvest_entries.pl
+    <html><body>well, hello there</body></html>
+
+    real    0m1.299s
+    user    0m0.108s
+    sys     0m0.016s
+
+    $ time NORTH_POLE=http://localhost:3000 ./elf.pl /home/yanick/work/perl-modules/Galuga/harvest_entries.pl
+    <html><body>well, hello there</body></html>
+
+    real    0m0.159s
+    user    0m0.112s
+    sys     0m0.012s
+
+This extremely scientific sample of three script runs shows that the team of
+the elves and Santa are doing exactly what we want. Without a server
+available, the elf runs the script directly (which in this example takes
+1.3s). If the server is there, the first run has a comparable time (as the
+code is interpreted for the first time), but the subsequent runs see their
+running time dropping from 1.3 seconds to 0.159 seconds. Not too shabby an
+improvement, for a full server/client system taking less than 40 lines of
+code...
+
+=head2 Author
+
+This article has been written by Yanick Champoux for the Perl
+Dancer Advent Calendar 2012.
+
