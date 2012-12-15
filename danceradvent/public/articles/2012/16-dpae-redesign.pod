@@ -1,0 +1,47 @@
+=head1 Redesigning Dancer::Plugin::Auth::Extensible
+
+Earlier in this advent calendar, L<I wrote|http://advent.perldancer.org/2012/2>
+about L<Dancer::Plugin::Auth::Extensible>, a flexible authentication /
+authorisation framework for Dancer apps.
+
+The original design of this plugin used subroutine attributes to denote what is
+required to access specific roles (e.g. "must be logged in", or "must have a
+certain role").  This, I think, was a fairly clean and nice design, but several
+people (whose opinions I trust) pointed out that subroutine attributes can be
+fragile, and present some problems (including thread safety, issues running
+under the debugger / L<Devel::Cover> etc).
+
+So, tonight I have redesigned the API for this plugin, to remove the use of
+subroutine attributes and instead use new keywords - C<require_login>,
+C<require_role>, C<require_any_role> and C<require_all_roles>.
+
+Using the plugin now looks like:
+
+    get '/members' => require_login sub { ... };
+
+    get '/beer' => require_role BeerDrinker => sub { ... };
+
+This approach should be much more solid, and is, I think, as readable as before,
+and perhaps "more Dancerish" too.
+
+=head2 So, how does it work?
+
+The various C<require_*> keywords return a coderef which checks that the
+requirements are met (e.g. the user is logged in, has the appropriate role(s)),
+then executes the coderef given to them - i.e. your route handler.
+
+This is more robust than the previous approach, and should work just fine under
+threads, when debugging, when running Devel::Cover etc.
+
+=head2 Tested?
+
+I have tested it myself, and added some more tests to the plugin's test suite;
+all tests pass correctly.  I would very much value reports from anyone who wants
+to try it out, and would also appreciate any other tests that people think
+should be added to the module's tests.
+
+=head1 AUTHOR
+
+David Precious (BIGPRESH)
+
+
