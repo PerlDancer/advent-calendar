@@ -1,0 +1,164 @@
+=head1 Create your own Dancer 2 DSL
+
+As the previeous artiles explained it, Dancer 2 is a nice and shiny rewrite of
+Dancer 1, with a lot of benefits and strengths. One of them is that it's
+properly object oriented, thanks to L<Moo>.
+
+But the whole being cleanly designed, the Dancer's concepts are now objects,
+roles, or some kind of light factories. That is also true for Dancer DSL, which
+means that it can be extended or replaced altogether by one of your own !
+
+But first, let's step back a bit.
+
+=head2 DSL-what ?
+
+DSL means Domain-Specific Language (L<see
+wikipedia|http://en.wikipedia.org/wiki/Domain-specific_language>). It's
+basically what makes Dancer so easy to use. In our case it's a collection of
+keywords, that allows the developer to specify to Dancer what to do.
+
+Let's look at a bit of code:
+
+    prefix '/debug';
+
+    get '/display_env' => sub {
+        to_dumper(request->env);
+    };
+
+    hook before => sub {
+        dancer_app->environment ne 'development'
+          and halt;
+    }
+
+When you write that, we can count no less than 7 keywords used here! Dancer's
+DSL is everywhere in Dancer's powered application. If you actually wonder what
+the DSL keywords are in this example, they are : C<prefix>, C<get>,
+C<to_dumper>, C<request>, C<hook>, C<dancer_app> and C<halt>.
+
+So the idea is to extend or change Dancer DSL per web application, without
+writing too much code. To be able to do that, let's look at what the default
+Dancer's DSL is.
+
+=head2 DSL-how ?
+
+How's the default DSL implemented ? It very simply lies in the package L<Dancer::Core::DSL>. You can look at the code L<here|https://github.com/PerlDancer/Dancer2/blob/master/lib/Dancer/Core/DSL.pm>.
+
+But basically it's a Moo class, that consumes the L<Dancer::Core::Role::DSL>
+role, and defines a list of keywords, and their implementations. Keywords are
+names, and the implementations are methods of the DSL class. The keywords can
+be of two kinds, the ones that can be called outside or inside a route, and the
+ones that can be called only inside a route. The implementations make heavily
+usage of the other Dancer's concept, like the app, settings, sessions,
+settings, and so on.
+
+=head2 Extend the default DSL
+
+So, what we want to do here is introduce new keywords for some fun. As an
+example, we are going to translate some keywords in french. Namely:
+
+=over
+
+=item * C<get>
+
+will also be availabe as C<prend>
+
+=item * C<post>
+
+will also be availabe as C<envoie>
+
+=item * C<halt>
+
+will also be availabe as C<stop>
+
+=item * C<header>
+
+will also be availabe as C<entete>
+
+=item * C<cookie>
+
+will also be availabe as C<gateau>
+
+=back
+
+Not very useful and not very christmas related, but it'll still do!
+
+=head2 Create a new DSL
+
+We can't just B<extend> the default DSL, we need to create a B<new> DSL module,
+which will itself extend the default one. So, from what we have said and from
+the source code of the core DSL, what we need is to create a new class
+C<FrenchDSL>, that extends C<Dancer::Core::DSL>:
+
+   package MyDancerDSL;
+   
+   use Moo;
+   
+   extends 'Dancer::Core::DSL';
+
+Pretty easy, right ? Now, let's see. We still want to benefit of all the
+default keywords, but we want to add our translated ones. The keywords are
+defined by the dsl_keyword method, that returns them as an Array of Array. We
+can use the C<around> method modifier of Moo to add our keywords at the end:
+
+    around dsl_keywords => sub {
+        my $orig = shift;
+        my $keywords = $orig->(@_);
+    
+        push @$keywords, 
+          [ gateau => 0 ],
+          [ moteur => 1 ],
+          [ stop => 0 ],
+          [ prend =>  1 ],
+          [ envoie =>  1 ],
+          [ entete => 0 ];
+    
+        return $keywords;
+    };
+    
+The 1's and 0's mean that the keyword is global or can on ly be called from
+within a route code.
+
+Third step: let's implement our new keywords. That's very easy because we are
+just aliasing existing keywords:
+
+   sub gateau { goto &Dancer::Core::DSL::cookie };
+   sub moteur { goto &Dancer::Core::DSL::engine };
+   sub stop { goto &Dancer::Core::DSL::halt };
+   sub prend { goto &Dancer::Core::DSL::get };
+   sub envoie { goto &Dancer::Core::DSL::post };
+   sub entete { goto &Dancer::Core::DSL::header };
+
+   1;
+
+Pretty easy. Adding a final true value and save the whole in F<FrenchDSL.pm> in a
+place where it can be C<use>'d.
+
+=head2 use your new DSL
+
+Now that we have a new Dancer DSL that extends the default one, how do we ask
+to Dancer to use this one instead of the default one ? By specifying it at
+C<use> time, in our application script:
+
+    use strict;
+    use warnings;
+    
+    use Dancer dsl => 'FrenchDSL';
+    
+    envoie '/'  => sub {
+        "That's the / route, you GET command!";
+    };
+    
+    prend '/'  => sub {
+        "A POST has been sent to / !";
+    };
+
+    dance;
+
+We are coming to the end of the article. We hope that you have discovered that
+Dancer 2 allows easy and flexible exending, and that its guts are not that
+complicated. The best advice would be: use Dancer 2 in new web developments,
+and look at the code! it's not that big, and it's quite straightforward.
+
+=head1 AUTHOR
+
+Damien "dams" Krotkine
