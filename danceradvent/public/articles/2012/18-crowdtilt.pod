@@ -1,0 +1,177 @@
+=head1 Meet Dancer users - Crowdtilt
+
+=for html <img src="/images/2012/18/crowdtilt_RGB_gradient_medium.png">
+
+Will Wolf of the successful startup L<Crowdtilt|http://www.crowdtilt/> kindly
+agreed to take part in a mini-interview on how Dancer has helped play a part in
+their success.
+
+Crowdtilt was founded back in February, and within six weeks, CrowdTilt users
+had raised over $1 million, and has continued to grow ever since.
+
+Crowdtilt allows users to successfully group-fund projects and activities, with
+nobody paying until the drive "tilts" - reaches the target level.
+
+A couple of fun campaigns include
+L<a spectacular Halloween yacht party|https://www.crowdtilt.com/campaigns/halloween-yacht-party-oct-31st>
+and L<New Years Eve in Las Vegas with a private jet, limos and high-class party|https://www.crowdtilt.com/campaigns/up-all-night-las-vegas-nye-2013>.
+
+There are plenty of more serious campaigns which Crowdtilt has made possible,
+too - including 
+L<a campaign to raise donations for Captain Edward Wesley Klein|https://www.crowdtilt.com/campaigns/donations-for-captain-edward-wesley-klein>,
+a valiant US soldier severely injured by an IED, suffering major injuries -
+he has lost both legs, his right arm, two fingers on his left hand, and has a 
+broken pelvis.  The campaign was to help his family with the medical expenses.
+Amanda, the organiser of the campaign, set the "tilt" amount at $200 USD.  The
+campaign raised a staggering I<$30,142.50> USD.
+
+Crowdtilt now have special arrangements for charitable fundraising, including
+options to automatically send tax-deductible receipts to donors.
+
+In the aftermath of Hurricane Sandy, Crowdtilt waived their fees for fundraisers
+to help with the recovery - the Crowdtilt community collectively raised more
+than $180,000 for those affected by the Hurricane.
+
+Crowdtilt have appeared in the media plenty of times.  Forbes stated that "The 
+network is so strong, and the tools themselves are really easy to use and
+well-designed".
+
+
+=head2 So, CrowdTilt use Dancer?
+
+Yes - Crowdtilt's system is developed by a team of five developers using Perl
+and Dancer.
+
+I asked Will a few quick questions on how Dancer has contributed to Crowdtilt's
+success.
+
+=over
+
+=item What drew you to Dancer originally?
+
+I loved the simplicity and straight-forwardness of Dancer.  It's so
+dead-simple and just gets out of your way.  At a startup, you just want to
+pick tools that let you hit the ground running, and Dancer definitely gave
+us that.
+
+
+=item What benefits has Dancer brought to CrowdTilt?
+
+The Dancer community has always been responsive to us when we've had
+questions, or pull requests, or issues.  That's really important in any
+software project or piece of technology you use.  As I mentioned, Dancer
+does have a pretty awesome plugin ecosystem, giving us things like
+L<Dancer::Plugin::DBIC>, L<Dancer::Plugin::Stomp>, etc.  Not having to 
+reinvent the wheel is always nice.
+
+
+=item What would you like to see changed?
+
+As our Dancer apps have grown bigger, we've had some growing pains with
+Dancer, but the code base is so simple that it's generally fairly trivial
+for us to jump in and figure out what needs to be done.  We're really
+looking forward to Dancer2 and think that its OO/Moose core will help a
+*lot* with some of the stumbling blocks we've run into along the way.
+
+One of the issues we've run into is with the error hooks.  They don't
+provide an elegant way currently to manipulate all of your error responses
+as much as we'd like.  We have some internal workarounds in place, and
+would like to eventually push some of those changes back into Dancer.  I
+think these issues should be addressed pretty nicely by Dancer2 as well.
+
+Another thing I'd like to see is Dancer having support for globally unique
+id's per request.  This is pretty much required in an environment with
+multiple servers, and trying to track down specific requests in the logs,
+etc.  Currently dancer can give you the "hit #" in the log, which is just a
+numeric counter, but this resets whenever you restart the app, and will
+obviously have duplicate entries for different requests across machines and
+different dancer processes.  We currently generate our own guid's per
+request, but would like to see that functionality moved into Dancer itself.
+
+Overall, I think Dancer2 will address a lot of the growing pains we've
+seen, and also that Dancer itself has seen.  It's definitely a step in the
+right direction for the Dancer community, and the work that's been done
+recently to make the transition to Dancer2 as easy as possibly has been
+really exciting to watch.
+
+=item Are there any particular opinions, quotes/soundbites etc expressed by any of your team about Dancer?
+
+Every day I'm a Dancin'.
+
+
+=item How many people are responsible for development at Crowdtilt?  How many of those work on code using Dancer?
+
+We currently have 5 developers who all touch code using Dancer every day.
+
+
+=item How many projects/campaigns have been funded through Crowdtilt to date?
+
+Our founders have asked us not to disclose growth figures or numbers right
+now, but we'll have a big announcement about them coming soon!  I can say
+that we're very happy with our growth and the direction things are headed.
+We're having a big impact by enabling lots of people to do and accomplish
+things they otherwise wouldn't be able to do.
+
+=item What is the average campaign fund?
+
+Again, without going into specifics, I can say that we have campaigns ranging
+from $20 all the way to $50,000+.  Very frequently, a 'small' campaign will
+raise orders of magnitude more than they expect.  In fact, our campaigns on
+average raise 188% of their goal, or 'tilt' amount.
+
+
+=item What is the approximate total funds raised through Crowdtilt to date?
+
+Six weeks after our launch back in February our users had raised over $1
+million, and we've been very happy with our growth and the amount of users
+we've been able to help since then.
+
+
+=item Are there any specific campaigns you think ought to be highlighted?
+
+There are so many great campaigns that flow through Crowdtilt, it's hard to
+pick out specific gems.  Of course the 
+L<Halloween Yacht Party|https://www.crowdtilt.com/campaigns/halloween-yacht-party-oct-31st>
+was a fun one, and if you haven't seen our New Years Eve Party campaign that 
+just tilted on Monday (in a matter of hours, I might add), you can check it out 
+here:
+
+L<https://crowdtilt.com/campaigns/up-all-night-las-vegas-nye-2013>
+
+Those types of campaigns are definitely fun, and a common use case for
+Crowdtilters, but we really love to see the campaigns that truly have a
+meaningful impact on people's lives.  One of the more recent examples that
+I love is this one:
+
+L<https://www.crowdtilt.com/campaigns/donations-for-captain-edward-wesley-klein>
+
+Amanda set out to raise a modest $200 to just get any help she could with
+medical bills for Captain Klein, and was overwhelmed by the amazing support
+she received.  She ended up raising over $30,000, well beyond what she ever
+could have imagined.
+
+Here's another great one put together by the Reddit community, re-uniting a
+Comic Book writer with his collection:
+
+L<https://reddit.crowdtilt.com/campaigns/help-karl-kesel-keep-his-comic-collection>
+
+
+=item Thanks for taking part in this brief interview!
+
+Thanks for taking the time to check out our company, and for being a big
+part of the Dancer community!
+
+=back
+
+
+=head2 Do you use Dancer?  Want to share your story?
+
+If you're interested in taking part in a simple interview in how Dancer has
+helped you for a future advent calendar post, it's not too late, there are still
+slots left - just drop me a mail!
+
+=head1 AUTHOR
+
+David Precious (BIGPRESH)
+
+
