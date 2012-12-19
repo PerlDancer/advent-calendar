@@ -1,0 +1,169 @@
+=head1 Meet Dancer users - The Game Crafter
+
+=for html <img src="/images/2012/19/tgc-250x160.png">
+
+L<The Game Crafter|http://www.thegamecrafter.com/> is the world's first
+web-to-print game publishing company and offers a print on demand game
+publishing service. TGC empowers game designers around the world by allowing
+them to make a board game, card game, and custom playing cards through a
+website. Using the latest web technology, TGC developed a website platform that
+simplifies the design, manufacturing, and retail processes related to tabletop
+games.
+
+The Game Crafter has a community of over 20,000 users, growing at a rate of over
+1,000 users a month, and selling around 2,000 games every month.
+
+With that growth, and praised by TechCrunch, Wired and Mashable among others,
+it's clear to see that The Game Crafter is going places.  The Game Crafter's 
+founder, JT Smith helpfully agreed to a short interview on how Dancer has helped
+The Game Crafter to succeed:
+
+
+=over
+
+=item What drew you to Dancer originally?  
+
+I had just finished writing L<Lacuna Expanse|http://www.lacunaexpanse.com/>,
+which used bare-metal Plack. I figured there were some better tools out there to
+give me routing and a few other things, so I started experimenting.  Catalyst
+was way too big and some of the other micro web frameworks seemed to be not much
+more than bare-metal Plack, so it quickly came down to Dancer and Mojo. I'd like
+to say that there was some cool architectural reason I chose Dancer over Mojo,
+but really it came down to style. Dancer just fit in to my design sense better
+than Mojo. 
+
+=item What benefits has Dancer brought to The Game Crafter?  
+
+Initially it was simply how easy it was to pick up Dancer and just get
+*something* working. When I picked Dancer for TGC I was at the beginning of a
+full rewrite of TGC, so being able to go from blank canvas to anything at all
+in a few minutes was a huge win for productivity. 
+
+The other two big things Dancer gives us are the easy plugin system and the
+hooks system. When I picked Dancer I wasn't looking for a tool that did
+everything for me out of the box. I was looking for something I could grow into
+and build the app the way I wanted to build it. Dancer is easily extensible
+without getting in my way or limiting me, and that's a big win.
+
+
+=item What features of Dancer (or the community or ecosystem) especially stand out to you?  
+
+Right off the bat when I started using Dancer I ran into a design limitation
+with the existing hooks. I posted a quick patch to resolve the problem I was
+having and it was accepted quickly. But that evolved into a larger discussion
+with the core dev team about how to handle hooks in a more generic sense. Having
+a responsive and forward-thinking team means Dancer has a very bright future.
+
+The plug-in ecosystem is really something special about Dancer. If you're just
+looking to whip up a quick app in an afternoon you can almost certainly find a
+plugin that will out-of-the-box do exactly what you need. Likewise, if you want
+to build something bigger, the plug-in system gives you the way to extend
+Dancer.
+
+I believe so much in Dancer that I've given talks about it at local Perl
+Monger's groups, have taught a few people how to use it, and have even built my
+next generation web services framework at Plain Black on top of it. So pretty
+much every new app we build these days, whether at TGC or one of my other
+companies, is being built on top of Dancer.
+
+
+=item What would you like to see changed?  
+
+Honestly the big thing I would change about Dancer is already well underway.
+It's all covered in Dancer 2, which is going to a better and more accessible
+object system. Dancer 2 is looking spectacular to me, and I'm looking forward to
+transitioning my code-base to it early in 2013.
+
+The other thing that I would change is that Dancer::Test currently doesn't have
+a way of posting a file. I've resorted to using Plack::Test to test file
+uploads. I should probably just submit a patch to make it work, but I haven't
+done that yet.
+
+
+=item Are there any particular opinions, quotes/soundbites etc expressed by any of your team about Dancer?  
+
+My team at TGC is very small...just me and one other person. However, everyone
+I've shown the codebase to can't believe how tiny everything is. You need to
+write so little code to do so much.
+
+
+=item How many developers do you have?  How many use Dancer?  
+
+At The Game Crafter we have only two developers and we both use Dancer. 
+
+
+=item How many total employees do you have?  
+
+There are 14 employees at The Game Crafter.
+
+
+=item How many TGC users are there?  
+
+We have 20,000 users.
+
+
+=item How many different games have been produced by TGC users?  
+
+We sell about 2,000 games per month.
+
+
+=item How many copies does each game sell on average?  
+
+Most games aren't publicly available in the shop, and a lot of games that are
+available in the shop don't get any publicity from their designer's, so
+therefore only sell a few copies. Of those games that get promoted by their
+designers, they sell 10 to 50 copies of their game on average. Our best selling
+games usually sell 100 or 200 copies and then get picked up by another
+publisher. 
+
+=item What is the average cost of a game?  
+
+An average card game goes for about $15, while your average board game goes for
+about $25. However, we also have more complicated games that sell well at $40
+per copy.
+
+=item What is the most popular game so far in terms of sales?  
+
+Our current best selling game is called
+L<Plague: The Card Game|https://www.thegamecrafter.com/games/plague-the-card-game>
+
+=item What is your favourite game so far?  
+
+My favorite game is one that I've developed called
+L<MERC|https://www.thegamecrafter.com/games/merc>.
+However, my favorite game not developed by me is called
+L<Scarborough Fair|https://www.thegamecrafter.com/games/scarborough-fair>.
+
+ 
+=item How does the production process work?  
+
+Basically a designer comes up with an idea, uploads their artwork and rules to
+our web site, and about a week later they get a physical copy of their game in
+the mail. 
+
+In more technical terms we use Dancer to generate a publishing interface to the
+user which walks them through the process of uploading and proofing their
+artwork. Then we have a bunch of background processes that turn that artwork
+into the files needed to run through our printing system. We manage those
+processes and a lot of other stuff through a bunch of administrative
+applications written on top of Dancer. The user is able to track every stage of
+this process through our web shop, which is also written in Dancer. Basically
+every aspect of our business from sales to publishing to inventory management to
+historical trends is handled through a series of custom-built Dancer
+applications. 
+
+
+=item When was TGC founded?  
+
+The Game Crafter came into existence in January of 2001. The publishing service
+we offer now was launched in July 2009. The Dancer version of the site went live
+July 2011.
+
+=back
+
+So, thanks JT for your time!
+
+=head1 AUTHOR
+
+David Precious (BIGPRESH)
+
