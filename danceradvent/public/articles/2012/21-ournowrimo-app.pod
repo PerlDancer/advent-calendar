@@ -1,0 +1,230 @@
+=head1 Writing a Quick NaNoWriMo Graphing Web Application with Dancer
+
+Just as December is the month of the Wreath, November is the month of the
+Write.  For the last twelve years, writers of all calibers, aspirations and
+genres participate in a writing marathon named the L<National Novel
+Writing Month|http://www.nanowrimo.org/> (also referenced to as I<NaNoWriMo>).
+The challenge is simple: starting on November 1st, write fifty thousand words
+before the end of the month.
+
+Although the contest is purely personal, many persons find additional
+motivation by pitting their scores against each other. Lagging behind is one
+thing, but lagging behind while your nemesis is 2,000 words ahead of you? 
+Ah! I<unacceptable>!
+
+In this perspective, wouldn't be nice to have a little web application
+that takes in the wordcount of a group of contestants, and displays
+a chart of everybody's progress?  
+Well, let's see how hard it is to get such an application up and
+running, shall we?
+
+=head2 The Specs
+
+The graph is only going to be used for one month, so there's no need to get
+terribly fancy.  We'll use a CSV format looking like
+
+
+    2010-11-01,Andy,0
+    2010-11-01,Bernadette,0
+    2010-11-01,Claude,0
+    2010-11-02,Bernadette,120
+
+That is, each wordcount entry is made of a timestamp, the writer's name and
+his or her entered count. It's simple, and 
+very easy to edit manually if anyone make a boo-boo during the month.
+
+The application we need around that is very simple. Basically, we need:
+
+=over
+
+=item A main page, showing a graph and a form to enter new results.
+
+=item An auxiliary page to process the input of a new word count.
+
+=back
+
+Got it? Now, let's get cracking.
+
+=head2 Creating the App
+
+Creating the skeleton of a new application in Dancer is incredibly
+complicated. First, we have to do
+
+    $ dancer -a ournowrimo
+
+and then, uh, we're done.  Okay, so maybe it's not that complicated after
+all. :-)
+
+For the templating system, we'll use L<Mason>, so we 
+edit the configuration file and change the default templating to
+L<Dancer::Template::Mason>: 
+
+    logger: "file"
+    appname: "ournowrimo"
+    template: mason
+
+=head2 Adding the Actions
+
+By now, we have an application that is already in working order. It won't do
+anything, but if we were to launch it by running
+
+    $ ./ournowrimo.pl
+
+it would do it just fine.
+
+=head3 The Main Page
+
+For the main page, we don't do any heavy processing, we just want to invoke
+a template:
+
+    get '/graph' => sub {
+        template 'index', { wrimoers => get_wrimoers() };
+    };
+
+That's it. For the url C</graph>, Dancer will 
+render the template C<views/index.mason>, passing
+it the argument C<wrimoers> (which is conveniently
+populated by the function C<get_wrimoers()>).
+
+I'll not show the Mason template here, as it's
+a fairly mundane HTML affair, but you can peek
+at it at the application's Github repo (link below).  
+It is, however, using the L<Flot|http://code.google.com/p/flot/>
+jQuery plotting library to generate the graph,
+and it expects to get its data from an AJAX call.
+Which
+means that we need a new AJAX route for our application.
+
+=head3 Feeding graph data via AJAX
+
+For the graph, we need the url C</data> to return 
+a JSON representation of the wordcount data. Nicely enough,
+Dancer has a C<to_json()> function that takes care of the 
+JSON encapsulation. All that is left for us to do, really, is 
+to do the real data munging:
+
+    get '/data' => sub {
+        open my $fh, '<', $count_file;
+
+        my %contestant;
+        while (<$fh>) {
+            chomp;
+            my ( $date, $who, $count ) = split '\s*,\s*';
+
+            my $epoch = DateTime::Format::Flexible->parse_datetime($date)->epoch;
+            my $time = 1000 * $epoch;
+            $contestant{$who}{$time} = $count;
+        }
+
+        my @json;  # data structure that is going to be JSONified
+
+        while ( my ( $peep, $data ) = each %contestant ) {
+            push @json, { 
+                label     => $peep,
+                hoverable => \1,    # so that it becomes JavaScript's 'true'
+                data => [ map  { [ $_, $data->{$_} ] } 
+                        sort { $a <=> $b } 
+                        keys %$data ],
+            };
+        }
+
+        my $beginning = DateTime::Format::Flexible->parse_datetime( "2010-11-01")->epoch;
+        my $end       = DateTime::Format::Flexible->parse_datetime( "2010-12-01")->epoch;
+
+        push @json, {
+            label => 'de par',
+            data => [
+                [$beginning * 1000, 0],
+                [   DateTime->now->epoch * 1_000,
+                    50_000 
+                      * (DateTime->now->epoch - $beginning)
+                      / ($end - $beginning)
+                ]
+              ],
+
+        };
+
+        to_json( \@json );
+    };
+
+For more serious AJAX interaction, there's also 
+L<Dancer::Plugin::Ajax> that adds
+an C<ajax> route handler to the mix, but in our case a simple C<get> 
+is perfectly satisfactory.
+
+=head3 Processing New Entries
+
+For the entry of a new word count, we are taking in a form request with two
+parameters, I<who> and I<count>:
+
+    get '/add' => sub {
+        open my $fh, '>>', $count_file;
+        say $fh join ',', DateTime->now, params->{who}, params->{count};
+        close $fh;
+
+        redirect '/';
+    };
+
+Seriously, could things get any easier?
+
+=head3 Bonus Feature: Throwing in an Atom Feed
+
+Since everything else resulted in a ridiculously small amount of code, 
+I decided to add a feed to the application to let everybody know of 
+wordcount updates.  Surely that will require a lot more coding?
+
+    get '/feed' => sub {
+        content_type 'application/atom+xml';
+
+        # $feed is a XML::Atom::SimpleFeed object
+        my $feed = generate_feed();
+
+        return $feed->as_string;
+    };
+
+... Seemingly not, it won't.
+
+=head2 Deployment
+
+Dancer can be deployed a gazillion different ways. 
+As a standalone server (development heaven), as CGI (likely to be I<sloooow>,
+but nice to it's there if everything else fail), as FastCGI, and as a
+L<Plack> application.  
+
+For example, to deploy is at a fastcgi talking to an Apache server, 
+we can launch the app as a plack-backed fastcgi
+
+    plackup -s FCGI --listen /tmp/ournowrimo.socket ournowrimo.pl
+
+configure Apache to treat it as an external fastcgi server
+
+    Alias /wrimo/ /tmp/ournowrimo.fcgi/
+    FastCgiExternalServer /tmp/ournowrimo.fcgi -socket /tmp/ournowrimo.socket
+
+and everything should nicely begin to work together.
+
+=head2 The Result
+
+=for html <img src="http://babyl.dyndns.org/techblog/entry/ournowrimo/files/ournowrimo.png" />
+
+=head2 Peek at the Code on Github
+
+The full application  is available on
+L<GitHub|http://github.com/yanick/ournowrimo>.
+
+
+
+=head2 Author
+
+This article was originally a 
+L<blog entry|http://babyl.dyndns.org/techblog/entry/ournowrimo> by Yanick Champoux,
+modified for the Perl Dancer Advent Calendar 2010.
+
+=head2 Reviewers
+
+
+=head2 Copyright
+
+Copyright (C) 2010 by Yanick Champoux C<< <yanick@cpan.org> >>
+
+
