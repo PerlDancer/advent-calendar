@@ -11,8 +11,8 @@ In hopes that Sukria's new release soon would be there.
 
 The users were nestled all snug in their beds,
 While visions of sugar-plums danced, blinking like so many LEDs.
-And the sysadmin in her ‘kerchief, and I in my cap,
-Had just settled our brains for a long regression test’s snap.
+And the sysadmin in her 'kerchief, and I in my cap,
+Had just settled our brains for a long regression test's snap.
 
 When out on the network there arose such a clatter,
 I sprang from my chair to see what was the matter.
