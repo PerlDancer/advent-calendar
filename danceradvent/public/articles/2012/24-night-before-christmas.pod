@@ -84,6 +84,25 @@ But I heard him exclaim, ‘ere he traced out of sight,
 
 =for html </pre>
 
+... yes, Christmas is nearly here, and Santa is heading out to visit each and
+every CPAN mirror; he's been told that all the CPAN mirror admins and users have
+been nice, so he's leaving a developer copy of Dancer 2 for each and every one!
+
+Documentation and rough edges are being polished ready for a stable release
+early in 2013, but in the meantime:
+
+L<https://metacpan.org/release/SUKRIA/Dancer-1.9999_02>
+
+... a new, cleaner, more elegant style of Dancing is upon us!
+
+
+The Dancer core development team would like to wish a wonderful Christmas and a
+happy and prosperous 2013 to each and every Dancer user and reader.
+
+David Precious (bigpresh) would also like to apologise for his occasional
+tardiness in preparing posts for this year's calendar; perhaps preparation for
+next year's should start in, say, July :)
+
 =head2 Author
 
 This article has been written by Yanick Champoux for the Perl
