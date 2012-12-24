@@ -9,7 +9,7 @@ The problem: you want to use some perl class in your Dancer app, but there's
 no plugin for it.
  
 The solution: as long as the class needs only static data to construct an
-object, then C<Dancer::Plugin::Adaptor> can do the wrapping for you.  Think
+object, then C<Dancer::Plugin::Adapter> can do the wrapping for you.  Think
 of it as a "just-in-time" plugin (or maybe a poor-man's L<Bread::Board>).
  
 Here's an example: you want to send emails via
