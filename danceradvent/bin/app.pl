@@ -4,6 +4,7 @@ BEGIN {
     use FindBin;
 
     while ( my $libdir = glob("${FindBin::Bin}/../vendor/*/lib") ) {
+        warn "$libdir";
         unshift @INC, $libdir;
     }
 
@@ -13,6 +14,7 @@ BEGIN {
     }
 }
 
-use Dancer 2.0;
+use Dancer2;
+use lib 'lib';
 use danceradvent;
 dance;
