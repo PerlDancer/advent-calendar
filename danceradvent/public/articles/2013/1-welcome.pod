@@ -1,0 +1,106 @@
+=head1 Another year of Dancing...
+
+Welcome to the Dancer advent calendar, for the fourth year running!  Previous
+year's calendars have been well received, let's hope this one can live up to
+them (and see the request for help towards the end if you want to help make sure
+it does!)
+
+
+
+=head2 More and more dancers...
+
+Usage of Dance continues to grow, with more new users added to the
+L<dancefloor|http://dancer.pm/dancefloor> page including 
+L<POSANDRO|http://politicalweb.org.uk/>,
+L<Used Cars Group|http://www.usedcarsgroup.com/>,
+L<The Political Web|http://politicalweb.org.uk/>,
+L<Hannover Perl Mongers|http://hannover.pm/> and others.
+
+(Using Dancer but not listed on the dancefloor page?  Feel free to contact us to
+be featured!)
+
+Dancer has been spotted as a required/desired skill in several job adverts,
+showing the increased uptake of Dancer in corporate web apps - for instance, a
+L<search for Dancer on jobs.perl.org|http://jobs.perl.org/search?q=dancer>
+returns 21 jobs at the time of writing.
+
+
+
+=head2 Dancer2 - a reality
+
+Far more progress has been made with Dancer 2, with it now being a fully usable,
+robust replacement for Dancer 1.  That said, Dancer 1 will continue to be
+supported for some time yet and continues to receive bugfixes, support and minor
+improvements..
+
+
+
+
+=head2 Dancer at LPW2013
+
+Andrew Solomon ran a free two-hour Dancer 2 training course at this year's 
+London Perl  Workshop.  Andrew's course was a hands-on training session to 
+develop a website with dynamic content using Dancer, during which the attendees
+would:
+
+=over
+
+=item * Learn about Dancer2 as a framework and as a language
+
+=item * Implement route handlers using sessions and hooks
+
+=item * Implement views, templates and layouts using Template Toolkit and Bootstrap
+
+=item * Understand the concept of Model-View-Controller
+
+=item * Experience structuring code for maintainability
+
+=item * Experience using object oriented Perl modules
+
+=item * Understand all the crazy jargon above!
+
+=back
+
+See also Andrew's L<Perl Web Development|http://geekuni.com/perl-web-d2> course
+on geekuni.com.
+
+
+=head2 Dancer IRC channel community grows
+
+The community of helpful users on the Dancer IRC channel continues to grow!  You
+can find us on C<irc.perl.org> in C<#dancer> - or L<irc://irc.perl.org/dancer>
+if your system is configured to support C<irc://> links.
+
+If you do not regularly use IRC but wish to join us, there is also a web IRC
+client available at L<http://dancer.pm/irc> for ease of use.
+
+At the time of writing, there are 115 people present in C<#dancer>!
+
+
+=head2 Request for help
+
+David Precious (bigpresh) traditionally manages our advent calendar efforts and
+pulls together most of the content, but is very pushed for time now, with his
+son Scott being born 10 weeks ago - littlepresh takes priority :)  So, if you
+are willing to volunteer to write a post or two, assistance would be very much
+appreciated.  If you are a Dancer user (especially in a commercial environment)
+and would be willing to take part in a mini interview by email, that would be
+very useful too (and provides a small feature on your company as a bonus).  If
+you're interested in helping out, please email davidp@preshweb.co.uk.
+
+
+=head2 Conclusion
+
+Well, this was a hastily-put-together look back at 2013; the following days will
+have various articles regarding Dancer which I hope will be of interest.  Not
+all days are filled yet, so if you wish to write a post for the advent calendar,
+please contact me - all assistance would be greatly appreciated!
+
+
+
+=head2 AUTHOR
+
+David Precious (BIGPRESH)
+
+
+
