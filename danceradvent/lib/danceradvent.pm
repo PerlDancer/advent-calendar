@@ -1,5 +1,5 @@
 package danceradvent;
-use Dancer2 ':syntax';
+use Dancer2;
 use DateTime;
 use Pod::POM;
 use Pod::POM::View::InlineHTML;
