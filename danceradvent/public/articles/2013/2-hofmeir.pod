@@ -1,0 +1,98 @@
+=head1 Meet Dancer users - Hofmeir Media
+
+=for html <img src="/images/2012/../.....>
+
+Jörg Kost of Hofmeir Media GmbH, a German hosting and colocation provider,
+kindly agreed to take part in a mini-interview on how Dancer has helped play a
+part in their success.
+
+I asked Jörg a few quick questions:
+
+=over
+
+=item What drew you to Dancer originally?
+
+My plan was to link our customer relationship tool to our configuration
+management database, so that our colocation  and datacenter customers can
+directly view and manage their contracts. While the CRM is a GUI-driven
+third-party-application, our CMDB is some bunch of old perl cgi.pm-scripts that
+even holds code written by myself over a decade ago.  Keeping my eyes around for
+a bitter-sweet-solution to program a new customer portal,  I had evaluated the
+regular environments like Rails and the perl-based frameworks Mojo & Catalyst.
+
+I wanted to keep the real programming process as tiny as possible and re-use old
+and wise database queries and code. So it was natural  to choose a perl-based
+solution again. I found Dancer in overtime in my evaluation process after I had
+searched "micro framework perl" on Google.  Sometimes you will find the missing
+puzzle pieces very late in the game.
+
+=item What benefits has Dancer brought to Hofmeir Media?
+
+Being a hardcore cgi.pm user before,  it saves me a lot of time writing
+already-invented code. The session and authentication handling works great for
+us. Also giving me the full debug output in development mode makes tracing
+errors more convenient than the usual FatalsToBrowser. Being PSGI-able means, we
+can add more functionality like XSFR-protection anytime. Years ago I wrote my
+own template-functions and used the ClearSilver-package, now I have several
+working choices integrated.
+
+=item What would you like to see changed?
+
+Honestly, I always fail in setting up the YAML config file in the correct 
+tabbing, but this could be  my own personal disorder  and not dancer-specific 
+;-). 
+
+(Dave: this is one of the reasons Dancer2 will support various config file
+formats!)
+
+
+
+=item How many people are responsible for development at Hofmeir? How many of those work on code using Dancer?
+
+We are three guys doing things. I am something like the core maintainer and
+programmer for the functions, because I do have the most depth-in knowledge of
+all the  internal databases and processes that keep things rolling.  However I
+am not touching any layout- or ajax-driven things myself. 
+
+=item You mentioned your customer portal / service portal is powered by Dancer - how did Dancer help you in building it? What made it "the tool for the job"?
+
+It makes me focus on my main problems.  If I want to introduce something new, I
+do not need to think about setting up routines for templates, parameter or
+routing. I basically start writing functions outside of dancer and at some time
+just import them, returning some hashes into the route handler and boom - we are
+ready to go primetime.
+
+=item How many customers use your Dancer-powered control panel?
+
+We do have about 200 customers that access our colocation portal. And here is a
+hint for next years interview: We are also developing a new customer interface
+for our webhosting branch. This will give around five-digit customers a  new
+dancer-driven interface.
+
+=item What can customers do using this control panel / portal?
+
+With our  colocation panel our customers are able to do all major things that
+you expect when you rent into a site. You can check your used traffic volume
+and you can screen the bandwidth. And even more important these times:  You can
+also check the power usage of every connected device. 
+
+Then you have the general things like setting up DNS, opening up trouble
+tickets and download technical support information.  And with our newest
+release you will be able to fire up ready-to-go cloud servers and load
+balancing clusters.  Can it be any better? ;-)
+
+=back
+
+So, thanks to Jörg Kost and all at Hofmeir Media GmbH.
+
+=head2 Do you use Dancer?  Want to share your story?
+
+If you're interested in taking part in a simple interview in how Dancer has 
+helped you for a future advent calendar post, it's not too late, there are still 
+slots left - just drop me a mail - davidp@preshweb.co.uk
+
+
+=head1 AUTHOR
+
+David Precious (BIGPRESH)
+
