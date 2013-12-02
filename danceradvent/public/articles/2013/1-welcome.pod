@@ -9,7 +9,7 @@ it does!)
 
 =head2 More and more dancers...
 
-Usage of Dance continues to grow, with more new users added to the
+Usage of Dancer continues to grow, with more new users added to the
 L<dancefloor|http://dancer.pm/dancefloor> page including 
 L<POSANDRO|http://politicalweb.org.uk/>,
 L<Used Cars Group|http://www.usedcarsgroup.com/>,
