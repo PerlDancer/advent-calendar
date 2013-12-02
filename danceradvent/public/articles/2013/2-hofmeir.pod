@@ -1,6 +1,6 @@
 =head1 Meet Dancer users - Hofmeir Media
 
-=for html <img src="/images/2012/../.....>
+=for html <img src="/images/2013/2/HofmeirMedia.png">
 
 Jörg Kost of Hofmeir Media GmbH, a German hosting and colocation provider,
 kindly agreed to take part in a mini-interview on how Dancer has helped play a
