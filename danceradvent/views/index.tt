@@ -1,6 +1,40 @@
 
 <h1>Perl Dancer Advent Calendar [% year %]</h1>
 
+
+
+[% IF year == 2013 %]
+
+<p>
+Unfortunately there is no Dancer advent calendar this year - David Precious
+(bigpresh) who usually manages it is just snowed under with work and looking
+after his newborn son, and just hasn't had the time to keep up with it.
+</p>
+
+<p>
+David apologises for this, and hopes to have the calendar back in full force
+next year.
+</p>
+
+<p>
+The articles which did get completed are:
+</p>
+
+<ul>
+    [% FOR a IN all_entries %]
+        <li><a href="[% year %]/[% a.issued.day %]">[% a.title %]</a></li>
+    [% END %]
+</ul>
+
+<p>
+In the meantime, feel free to revisit previous years:
+    [% FOR otheryear IN other_years %]
+    <a href="/[% otheryear %]">[% otheryear %]</a>
+    [% END %]
+</p>
+
+[% ELSE %]
+
 <p>
 Happy Christmas, and welcome to the Dancer team's advent calendar for
 [% year %]!
@@ -43,3 +77,5 @@ Advent Calendar affairs!)
     </ol>
 [% END %]
 
+
+[% END %]
