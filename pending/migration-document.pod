@@ -1,0 +1,251 @@
+=head1 Migrating to Dancer2
+
+A question we often get asked when we promote L<Dancer2> is I<"How do I migrate
+my code to Dancer2?">
+
+There had been some changes between the versions - big enough to require an
+entirely new namespace. What were they? How do we migrate?
+
+=head2 Changing the namespace
+
+The reason we changed the namespace wasn't really due much to the change a
+user will necessarily see, but more due to the incredible difference in core
+architecture.
+
+L<Dancer2> is actually a complete rewrite. It had small portions of the code
+moved and some of the documentation was copied over, but mainly it is
+completely restructured.
+
+It no longer relies on reinventing the wheel as much. Users simply didn't care
+about installing another module or two or three or more. Having L<fatpacker>
+allows you to fatpack your entire Dancer2 application in a single file. Having
+L<carton> allows you to package it all nicely. Having L<Pinto> allows you to
+set up an entire personal CPAN for your company. Things are much easier.
+
+(Watch for additional articles that cover L<fatpacker> and L<carton> in this
+advent calendar.)
+
+Additionally, we wanted the ability to make core changes without breaking a lot
+of old applications. This doesn't mean a migration is difficult though. Having
+two different namespaces allows you to keep your current Dancer 1 applications
+running alongside your new Dancer2 applications and make it simple to migrate
+when B<you> are ready.
+
+Following are a few tips for migrating your applications to Dancer2, finishing
+with one great resource for it at the end.
+
+=head2 It's all about the Plack
+
+Dancer originally wasn't built for L<Plack>. When Plack came out, Dancer has
+made the necessary changes to accommodate it. However, it wasn't the leading
+spec for Dancer, as it was simply a port of another framework from Ruby.
+
+Dancer2 took a different approach: Plack leads the way. This led to quite a few
+changes in removing unnecessary code, producing much more correct behavior,
+and providing more deterministic results.
+
+A few examples:
+
+=over 4
+
+=item * HTTP::Server::Simple replaced with HTTP::Server::PSGI
+
+Originally Dancer would use L<HTTP::Server::Simple> which supported PSGI, but
+it was a pain to use, since it had issues we needed to patch and provided a
+dependency we weren't happy about.
+
+As it happens, L<Plack> comes with a great development server called
+L<HTTP::Server::PSGI>. Since we're building on Plack, we might as well make use
+of it. This is why Dancer2 uses it instead.
+
+=item * Removing ':script' import key for plackup
+
+Dancer 1 had the C<:script> import key which would read your command line
+arguments to change how the Dancer server would run.
+
+Since L<Plack> has the L<plackup> command line tool, it already reads your
+command line arguments. Why make a duplicate effort?
+
+=item * Fully object-oriented
+
+Dancer2 has changed its core substantially to be much more object oriented.
+Now the core is implemented in objects. The DSL layer simply provides an
+interface to those objects.
+
+This makes everything much easier to compose and test.
+
+=item * Each class is an entire app
+
+A Dancer App is now every class which consumes L<Dancer2>. This means they
+can each have their own configuration, allowing different engines:
+
+    package Admin {
+        use Dancer2;
+        ...
+    }
+
+    package Public {
+        use Dancer2;
+        ...
+    }
+
+Now C<Admin> and C<Public> are fully independent applications. They
+will not share any resources and will be able to have different engines
+(template, session, serializer, logger) which will not be shared. No more
+worrying about globals.
+
+=back
+
+=head2 Migration in a nutshell
+
+Okay, but putting all of that aside, how do I migrate?
+
+Well, it really depends on what you do with your application, but here are our
+main migration tips:
+
+=over 4
+
+=item * Clean importing
+
+All of the importing keywords are unnecessary now, except for C<appname>,
+explained below.
+
+=item * Separate serialized routes
+
+Routes that require serializers should be separated to their own Dancer2 app,
+since serializers will try to deserialize all input and serialize all output
+in every route in their app scope.
+
+=item * DSL keyword changes
+
+We tried to change very little of the DSL. C<load> and C<param_array> no
+longer exist, and C<session> can also provide the session object, not just
+retrieve and set values for keys.
+
+=item * Mount your applications with Plack::Builder
+
+The biggest change, since now each package is its own application is that they
+need to be mounted using L<Plack::Builder>.
+
+    package MyApp {
+        use Dancer2;
+        get '/' => sub {...};
+        ...
+    }
+
+    package MyApp::User {
+        use Dancer2;
+        get '/view' => sub {...};
+        ...
+    }
+
+    package MyApp::Project {
+        use Dancer2;
+        get '/view' => sub {...};
+        ...
+    }
+
+Then the file C<app.pl> should be:
+
+    use MyApp::User;
+    use MyApp::Project;
+    use Plack::Builder;
+
+    builder {
+        mount '/'        => MyApp->to_app;
+        mount '/user'    => MyApp::User->to_app;
+        mount '/project' => MyApp::Project->to_app;
+    };
+
+The effect of the mounting is that these applications will be completely
+separate and L<Plack::Builder> will assure only the appropriate application
+handles a given request.
+
+Another effect of mounting is that the mounting point (C</user>, for example)
+is stripped from the path the application needs to match. This means that
+C<MyApp::User> doesn't need to define C</user/view>, but just C</view> as the
+example above shows.
+
+=item * But what if they're the same app?
+
+If they are the same app, you can use the C<appname> import keyword to bind
+them together to create a single application across multiple files:
+
+    package MyApp {
+        use MyApp::User;
+        use MyApp::Project;
+        use Dancer2;
+        get '/' => sub {...};
+        ...
+    }
+
+    package MyApp::User {
+        use Dancer2 appname => 'MyApp';
+        get '/user/view' => sub {...};
+        ...
+    }
+
+    package MyApp::Project {
+        use Dancer2 appname => 'MyApp';
+        get '/project/view' => sub {...};
+        ...
+    }
+
+Now C<app.pl> is:
+
+    use MyApp;
+
+    MyApp->to_app;
+
+In this example we bind the user-specific and project-specific applications
+to the main application (thus only creating a single Dancer2 app) so we don't
+need any mounting anymore. The paths are then full.
+
+Note that it no longer matters who calls C<use MyApp::User> or
+C<use MyApp::Project>. It could just the same be called inside C<app.pl> but
+it's easier to put them as C<MyApp> since they are part of it.
+
+=back
+
+=head2 You said something about a great resource?
+
+Oh yes!
+
+Writing down all the migration changes between Dancer 1 and Dancer2 would be
+too much. Plus, who would check this article after a while again to see if it
+was updated? No one, that's who!
+
+Instead, we've compiled a list (with the kind help of Snigdha Dagar) of all
+of these changes under L<Dancer2::Manual::Migration>.
+
+If you're interested in migrating your applications to Dancer2, or would like
+to write a new application and care to know what the differene is, you should
+consult it.
+
+Of course we welcome any changes and improvements to this document as it is a
+living breathing document (which we hope will not attack us during Halloween),
+so feel free to submit pull requests, send comments on the mailing list, or
+stop by the IRC channel.
+
+=head2 Conclusion
+
+Dancer2 has a few changes that promote much more consistent and deterministic
+web application development. It reduces the considerations we have to take
+into account while providing much more correct implementations for various
+pieces.
+
+Our new Migration Document helps new-comers and seasoned developers keep
+up-to-date with the changes we've done and how it might affect their future
+code.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
