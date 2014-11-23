@@ -1,0 +1,129 @@
+=head1 New feature in Dancer2: to_app
+
+L<Dancer2> 0.151000 has made a major change to the dispatching mechanism and
+provided a new method: C<to_app>. What was the change, why was this keyword
+introduced, and why should we use it now?
+
+=head2 The way things were
+
+The original dispatching mechanism in Dancer2 would take all of your Dancer2
+applications and wrap them with a loop that tries to match their routes. Once
+you know that a I<Dancer App> is basically a unit of routes with its own set
+of engines (such as a template, a session storage, a logger, and a serializer -
+not all required), you might begin to see a problem here.
+
+If you have two applications (meaning two packages that have C<use Dancer2> in
+them) called C<MyApp::A> and C<MyApp::B>, and you call the C<psgi_app> keyword
+to create a full fledged PSGI application from them, Dancer will try to match
+a request against each one. It will start with C<MyApp::A> and then C<MyApp::B>.
+
+I<"Is it always in this order?">, you might ask. Actually, it isn't. Since it
+is internally stored in an array (which is at least deterministic, right?), it
+is actually checked in the order in which you loaded them into memory.
+
+If your handler is:
+
+    use MyApp::B;
+    use MyApp::A;
+    use Dancer2;
+
+    psgi_app;
+
+It will now check C<MyApp::B> first and C<MyApp::A> last.
+
+=head2 Why is this bad?
+
+So you might be wondering, I<"Okay, there's an order issue here, but why
+should I care? Eventually it reaches my route and works fine.">
+
+You are absolutely right - in most cases. However, if both applications have
+the same route defined, you won't necessarily know which route was actually
+hit.
+
+If you're preloading applications into memory (which is a good idea in large
+infrastructures), your resulting application might hit someone else's route
+instead.
+
+If you're using the B<AutoPage> feature you might snag on a different app's
+template. If one app has a B<Serializer> defined, you might return serialized
+output. If different apps have a different B<Session> engine, that's even
+worse. That's tantamount to a security risk - although we try to minimize that
+risk internally moving session objects around so you don't hit a mistaken
+session.
+
+=head2 What can we do?
+
+The first change we made, back in Dancer2 0.150000, was to allow calling the
+C<psgi_app> keyword with specific application names, either by class name or
+by a regular expression. This allowed you to create PSGI applications from
+specific Dancer Apps:
+
+    use MyApp::A;
+    use MyApp::B;
+    use MyApp::C;
+
+    use Plack::Builder;
+
+    builder {
+        mount '/'        => psgi_app(['MyApp::A']);
+        mount '/special' => psgi_app([ qr{^MyApp::[B|C]$} ]);
+    };
+
+Now you have created two PSGI applications: one wraps only C<MyApp::A>, while
+the other wraps both C<MyApp::B> and C<MyApp::C>.
+
+This was a major improvement, but it still didn't address the core problem.
+
+=head2 Fine. I'll bite. What was the core problem?
+
+I'm glad you asked!
+
+The code problem was that the dispatching was the duty of the core dispatcher
+object (an instance of L<Dancer2::Core::Dispatcher>) instead of the app object
+itself (L<Dancer2::Core::App>). Since the routing should have been done in the
+app object (the lowest context for sessions and routes), it made sense to move
+it there instead of the dispatcher object.
+
+We've done so in Dancer2 0.151000, a version later.
+
+While retaining the old behavior of the C<psgi_app> keyword, we introduced
+one major addition: the C<to_app> class method.
+
+=head2 to_app or not to_app
+
+While perhaps not the same question Shakespeare asked, it is a noble one
+indeed.
+
+The C<to_app> method creates a PSGI app from a single application. This means
+you can now treat a Dancer2 App has it's own unit that can be composed into
+any path you like.
+
+When you have multiple Dancer2 applications, you can compose them together
+using either L<Plack::App::URLMap> or the wrapper syntax for it available in
+L<Plack::Builder>:
+
+    use MyApp::Main;
+    use MyApp::Admin;
+
+    builder {
+        mount '/'      => MyApp::Main->to_app;
+        mount '/admin' => MyApp::Admin->to_app;
+    };
+
+This assures you that you can compose deterministic Dancer applications.
+
+=head2 Conclusion
+
+Yes, we B<do> want C<to_app>. :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+

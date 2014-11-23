@@ -1,0 +1,139 @@
+=head1 New feature in Dancer2: appname
+
+One change we absolutely love is the C<appname> import option, introduced in
+L<Dancer2> 0.150000.
+
+=head2 What's a Dancer App again?
+
+It's worth repeating the explanation of what a Dancer2 application is, since
+this might confuse a developer with a L<PSGI> application.
+
+A Dancer2 App is simply a package containing routes and engines which receives
+a request and returns a response. The engines are not mandatory, but might be
+a template, a session, a logger, and a serializer.
+
+A PSGI application is a code reference which receives a request as an env
+hash (from a server using a L<Plack> handler.
+
+=head2 Too many apps!
+
+As soon as you import L<Dancer2> (C<use Dancer2>), you have just created a
+Dancer2 App. It will use your package (defined by either the C<package>
+function in Perl or the default in Perl: C<main>) in order to define the App
+name. This is how Dancer2 will recognize your application.
+
+This introduces an interesting situation. If you wish to separate your App
+to multiple files, you're actually creating multiple applications.
+
+=head2 So what?
+
+This means that any engine defined in an application, because the application
+is a complete separate scope, will not be available to a different application:
+
+    package MyApp::User {
+        use Dancer2;
+        set serializer => 'JSON';
+        get '/view' => sub {...};
+    }
+
+    package MyApp::User::Edit {
+        use Dancer2;
+        get '/edit' => sub {...};
+    }
+
+These are two different Dancer2 Apps. They have different scopes, contexts,
+and thus different engines. While C<MyApp::User> has a serializer (the L<JSON>
+one), C<MyApp::User::Edit> does not.
+
+If you want the path C</edit> to have a serializer also, you will need to
+define one for C<MyApp::User::Edit>. This is not just tedious, but when you
+mix this with the C<to_app> method, you have a problem:
+
+    use MyApp::User;
+    use MyApp::User::Edit;
+
+    use Plack::Builder;
+
+    builder {
+        mount '/' => MyApp::User->to_app;
+        # what about MyApp::User::Edit ???
+    };
+
+I<<(There is another article on C<to_app> specifically.)>>
+
+If C</> is taken by C<MyApp::User>, where do we put C<MyApp::User::Edit>?
+
+We don't actually wish C<MyApp::User::Edit> to be another application, we just
+want it to be a comfortable extension to the regular app, providing additional
+routes.
+
+While you might think loading C<MyApp::User::Edit> within C<MyApp::User> will
+help it just extend it, that is not the case. It will still fail.
+
+C<appname> to the rescue!
+
+=head2 appname saves the day
+
+By using the import option C<appname>, we can ask Dancer2 to extend an App
+without creating a new one:
+
+    package MyApp::User {
+        use Dancer2;
+        set serializer => 'JSON';
+        get '/view' => sub {...};
+    }
+
+    package MyApp::User::Edit {
+        use Dancer2 appname => 'MyApp::User'; # extending MyApp::User
+        get '/edit' => sub {...};
+    }
+
+Now, by using C<appname> when importing, we can ask this App to simply extend
+an existing one (or one will be created if it does not exist yet) and add
+the routing there.
+
+The serializer will be available, it will have the same configuration and it
+will even interally just represent these with a single application object.
+
+    # app.pl
+    use MyApp::User;
+    use MyApp::User::Edit;
+
+    MyApp::User->to_app;
+
+Usually we would put extensions such as these inside the class extended, as
+such:
+
+    package MyApp::User {
+        use Dancer2;
+        use MyApp::User::Edit;
+        set serializer => 'JSON';
+        ...
+    }
+
+This way we only need to load one when we create an app:
+
+    # app.pl:
+    use MyApp::User;
+    MyApp::User->to_app;
+
+=head2 Conclusion
+
+The import option C<appname> allows you to seamlessly extend Dancer2 Apps
+without creating unnecessary additional applications or repeat any definitions.
+
+This allows you to spread your application routes on multiple files and allow
+ease of mind when developing it, and accommodate multiple developers working
+on the same codebase.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
