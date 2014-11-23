@@ -1,0 +1,125 @@
+=head1 The Dancer community policy
+
+In October 2014 we have introduced our Dancer core and community policy
+and our Standards of Conduct. You can find them at L<Dancer::Policy>
+or L<Dancer2::Policy> (identical documents).
+
+While the Dancer community has always pride itself of the warm feeling
+members have received, helpfulness and kindness were abundant, we still
+found it necessary to introduce a policy document.
+
+=head2 Why do we need it?
+
+While the policy is not an answer to a situation in the Dancer community,
+it is to behavior we've seen in other communities in and out of the tech
+industry.
+
+There are people who are not only discriminated against, but also
+marginalized daily. There are people who feel pushed out of the way, made
+small and insignificant, and disempowered by others who tend to have a
+more favorable starting point - what is usually referred to as
+"privileged".
+
+We felt it is absolutely crucial to provide a document that makes it
+absolutely clear, without a shadow of a doubt, that the Dancer community
+is maintained and owned by its members - all having a fair and equal
+stance in it. It is essential that everyone in the community feel and
+understand this space belongs to them just as much as it does to anyone
+else.
+
+=head2 Introducing a problem where none exists?
+
+So, are we really just fixing a situation that is not broken? If all is
+fine and well in the Dancer community, why provide such standards of
+conduct? That's a good question.
+
+Standards of conduct have multiple purposes:
+
+=over 4
+
+=item * Set expectations of behavior
+
+It is important that people in the community are aware of both what is
+expected from them (such as "you are expected to not be abusive towards
+anyone") and what they can expect from others (such as "you can expect
+not to be abused by anyone"). Setting these expectations allows people to
+let their guard down, enjoy their time, approach others, and be an active
+member without fearing abuse.
+
+The community, above all, should be a B<safe space> for all of its members.
+
+=item * Provide a stern warning
+
+The document clearly explains that not only do we have expectations, but
+we will take measures against those who violate them. This helps defend the
+expectations we described above.
+
+If you will violate those standards, we will make sure you are held
+accountable. This makes sure these are not empty promises and that they won't
+be perceived as such.
+
+=item * Enforcement transparency
+
+While we provide these standards and a promise to enforce them, it is also
+important to provide transparency. You need to know I<what> will be done
+and I<how> decisions will be made.
+
+=back
+
+=head2 Can I still be me?
+
+Many people worry that with a standards of conduct policy they will not be
+able to be themselves anymore. This is worth addressing.
+
+The standards of conduct clearly stipulate you may not, under any
+circumstance, be abusive to others. If violating that robs you of your
+being, it means you are an abusive person - a person we hope other
+community members will not have to experience or deal with.
+
+This, however, is not the same as "I will need to watch what I say".
+Having to make an effort to be kinder, more composed, or in general more
+respectful, is an understood effort. It is an effort we make every day. We
+make sure we're more respectful towards our friends, colleagues, peers,
+and we make sure we curse much less around our parents.
+
+While it is not always a simple task to work on our behavior, it is far
+different than violating your core principles.
+
+In short, if your core principles are to hurt others, and you feel like
+our standards of conduct negate that, we've done a good job.
+
+=head2 Conclusion
+
+The community is maintained by the community members. Each and every single
+member should be regarded with respect, and we should all feel a sense of
+belonging to and in our community.
+
+The Dancer standards of conduct have been introduced to make sure new members
+understand this and know what we each expect from each other.
+
+We were thrilled with getting such positive results from a community. Members
+have unequivocally said we are happy to make this message clear to all current
+and future members.
+
+=head2 Thanks
+
+Praise should be given to C<#p5p> (The Perl 5 Porters list) which provided the
+base for the policy document, to L<@sungo|http://twitter.com/sungo> for pushing
+to make community standards published clearly and for doing so with the Perl
+IRC servers, and to L<ribasushi|https://metacpan.org/author/RIBASUSHI> for
+helping revise and suggest improvements to the policy as it was being written.
+
+The biggest thanks is, as always, to the wonderful and loving Dancer community
+and all of its members. :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
