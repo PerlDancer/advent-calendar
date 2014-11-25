@@ -1,0 +1,147 @@
+=head1 Static noise - Static file serving in Dancer2
+
+All too often beginners would stumble over the behavior of static file
+serving in Dancer2. The idea made sense on paper but somehow - when you
+put it in practical terms, it wasn't just a hurdle but a real pain to
+constantly headbutt without realizing, I<"damn it, that again!">
+
+The good news is we fixed it. The bad news is you will have to read this
+article to understand what we're talking about. The treat is we will explain
+how it was fixed after we explain what was wrong.
+
+=head2 Ex-static
+
+The logic for request serving in Dancer 1 is simple. It consists of the
+following steps, run in the following order:
+
+=over 4
+
+=item * Try to render a static file from C<public/>
+
+=item * Try to render an action - a user's route
+
+=item * Try to render an AutoPage - a user's template
+
+=item * Give up and render a 404 page
+
+=back
+
+In L<Dancer2> these items were broken down into composable units known as
+handlers. L<Dancer2::Handler::File> was to serve static files (which
+the DSL keyword C<send_file> uses internally) and
+L<Dancer2::Handler::AutoPage> renders template files.
+
+These handlers were, when configured to be used (or according to the
+defaults), merged into an application as regular routes. To make sure they
+don't cause any confusion, they were merged at the very end. Oops. Strike
+one!
+
+The following order was created:
+
+=over 4
+
+=item * Try to match a user route
+
+=item * Try to match a static file route (Handler::File)
+
+=item * Try to match a rendered template (Handler::AutoPage)
+
+=item * Give up and render a 404 page
+
+=back
+
+While it seems reasonable for user-defined routes to trump static resources
+and templates, people were not expecting it to happen, which led to a few
+peculiar situations.
+
+=head2 Problem 1: Greed is NOT good
+
+In order for these routes to accept I<any> input, they used a greedy
+B<megasplat> route, which captures everything:
+
+    get '/**' => sub {
+        # I SEE ALL ROUTES
+        # (as long as they are a GET request)
+    };
+
+Users can define these routes as well, of course.
+
+The first manifestation of the reshuffling in order of execution occurred
+when users defined greedy B<megasplat> routes which accidentally captured
+all static requests as well:
+
+    get '/**' => sub {
+        # handle what I think is a user request
+        # but can also be a static file request
+    };
+
+Now users had to account for static files being asked of them. Ouch. This
+is actually the small problem.
+
+=head2 Problem 2: A hook to kill
+
+Remember hooks? Sure you do. Every route can have hooks. Amongst available
+hooks there are the B<before> and B<after> hooks which control the execution
+sequence of a matched route, allowing you to call code before it is executed
+and after, respectively.
+
+How does that come into play? Since the B<File> and B<AutoPage> handlers
+create regular routes (just like a user might), the B<before> and B<after>
+hook actually apply to them.
+
+What?
+
+Yes! This meant that, for example, your B<before> route hooks were called for
+static files. If they contained a security check (for which many users use
+them), you might accidentally prevent a file from being rendered. Strike two!  
+
+I<"You can't see the picture for lacking access because you lack access!">
+
+=head2 Plack strikes again
+
+Before we hit a I<Strike three> we decided to fix this. Since we're
+depending on Plack and the associated technology to help resolve so many
+issues, we looked there.
+
+One wonderful part of Plack is the middlewares. One specific middleware
+that came to our rescue was L<Plack::Middleware::Static>. It allow us to
+render static files from the C<public/> directory before it actually
+reaches our application and Dancer2 dispatching code at all. Wait, what?
+
+The Plack middleware wraps the Dancer2 code and checks for static files on
+each request before it sends it off to Dancer2. If it can find a file that
+matches the request, it will serve it directly instead of passing it
+onwards.
+
+This means we're back to a proper static file serving behavior. They are
+now served properly before the app and the hooks do not apply to them.
+
+We still kept the B<File> handler to provide C<send_file>, but it
+is no longer in charge of serving static files anymore.
+
+The B<AutoPage> handler is kept as is because hooks make sense in rendering
+templates. You might want to use the B<before_template> hook in order
+to provide default variables that will be available in every template
+rendering (including automatic ones served by B<AutoPage>) - which is
+something you will not have with static content.
+
+=head2 Conclusion
+
+Wonderful work by
+L<Russell @veryrusty Jenkins|https://metacpan.org/author/RUSSELLJ>
+solving this thorn in Dancer2 and providing consistent behavior that
+makes sense.
+
+If you meet him, offer him a drink. He's Australian so he'll take it. :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
