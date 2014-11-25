@@ -1,0 +1,86 @@
+=head1 Meddling with Middleware
+
+L<Plack> provides a useful component called a
+L<Middleware|Plack::Middleware>, which wraps applications with
+functionality.
+
+While much of the existing middlewares provide additional features, there
+are middlewares that can help supplement a web framework or reduce the
+amount of work it does.
+
+In L<Dancer2> we rely heavily on Plack and therefore middlewares provide
+much-appreciated help which plays well with our framework, since it's all
+L<PSGI> at the end of the day.
+
+Here are the current middlewares we use internally in Dancer2:
+
+=head2 Static
+
+First, as described in another article in this 2014 Dancer Advent Calendar,
+Dancer2 now uses L<Plack::Middleware::Static> to provide static files.
+
+This helped provide consistency with both the previous behavior
+(a la Dancer 1) and with how users actually expect static file serving
+to work.
+
+=head2 Head
+
+Using L<Plack::Middleware::Head>, we can provide correct B<HEAD> requests
+much more easily. A B<HEAD> request should not have a body, and the
+middleware simply deletes the body of a response if the request method is
+B<HEAD>.
+
+This allows us to define every B<GET> request as B<HEAD> and have the
+middleware delete the response body to produce an appropriate response.
+
+One less concern!
+
+=head2 ContentLength
+
+Originally Dancer2 would have to set the length of a response content body
+every time it was set. Although this could have been improved by only
+setting it at the very end, we would still have to account for three kinds
+of responses available in PSGI.
+
+Instead, we're using L<Plack::Middleware::ContentLength> to decide and set
+the B<Content-Length> header for us after we've returned a response. Our
+code is thus cleaner and less error-prone.
+
+=head2 FixMissingBodyInRedirect
+
+Having L<Plack::Middleware::FixMissingBodyInRedirect> provides the proper
+response body when a user returns a redirect. You don't have to care about
+it anymore, it's simply there, automagically.
+
+=head2 RemoveRedundantBody
+
+When returning a status of B<204> or B<304> the body needs to be stripped.
+
+L<Plack::Middleware::RemoveRedundantBody> takes care of that for us. Since
+it uses L<Plack::Util>'s C<status_with_no_entity_body>, it also takes care
+of statuses B<100> and B<101>, which were not covered beforehand.
+
+=head2 Conclusion
+
+When writing a web framework, you (or at least we) would
+like to focus on the features and richness of the DSL and syntax, and not
+the small details of HTTP implementations.
+
+Using middlewares reduces the amount of work we do to keep up with all of
+these small bits and does a damn fine job at it.
+
+We will continue to explore new middlewares we can make use of, and perhaps
+even push some of our code into middlewares so it could be decoupled and
+even used by non-Dancer code.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
