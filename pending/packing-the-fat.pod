@@ -1,0 +1,113 @@
+=head1 Packing the Fat
+
+One promise we've made with L<Dancer2> is it will always be I<fatpackable>,
+but only a few people actually know what this means and why it's
+important.
+
+If you keep on reading, you're going to join that group of people.
+
+=head2 FatPacker
+
+One of the reasons people worry about dependencies is not being able to
+install them. Of course you could use L<local::lib> or L<carton> to
+install them locally, but another mechanism available is L<App::FatPacker>.
+
+L<App::FatPacker> (using its command line interface, L<fatpack>) packs
+dependencies into a single file (hence the name), allowing you to carry
+a single file instead of a directory tree.
+
+If you're interested in understanding L<App::FatPacker>, I have written
+L<an article|http://www.perladvent.org/2012/2012-12-14.html> describing
+it, how it works, and how to use it.
+
+=head2 FatPacking Dancer2 applications
+
+By saying L<Dancer2> is fatpackable, we mean that we make sure the
+core can be fatpacked. We do this by having the core require only
+pure-Perl modules and only optionally use XS modules to improve speed.
+
+This means that as long as your application is also pure-Perl, you could
+create a single file with your application and all of Dancer2.
+
+Let's take a look at an example.
+
+Assuming we have an application in F<lib/MyApp.pm>:
+
+    package MyApp;
+    use Dancer2;
+    get '/' => sub {'OK'};
+    1;
+
+And we have a handler in F<bin/app.pl>:
+
+    use strict;
+    use warnings;
+    use FindBin;
+    use lib "$FindBin::Bin/../lib";
+    use MyApp;
+
+    MyApp->to_app;
+
+To fatpack it, we will begin by tracing the script:
+
+    $ fatpack trace bin/app.pl
+
+This creates a F<fatpacker.trace> file. From this we create the packlists:
+
+    $ fatpack packlists-for `cat fatpacker.trace` > packlists
+
+The packlists are stored in a file called, surprisingly, F<packlists>.
+
+Now we create the tree using the following command:
+
+    $ fatpack tree `cat packlists`
+
+The tree is created under the directory F<fatlib>.
+
+Now that we have the tree, we simply need to pack it all together.  While
+this will create a file containing the dependency tree, we also want to
+add our script to it, so we'll do it all in one command:
+
+    $ (fatpack file; cat bin/app.pl) > myapp.pl
+
+This creates a file called F<myapp.pl> with everything in it. But before
+we can run it, we need to account for one small detail. Dancer2
+is using L<MIME::Types> which has a database all of MIME types and helps
+translate those. The small database file containing all of these types is
+a binary and therefore cannot be fatpacked. We need to copy it to
+the current directory so our script can find it.
+
+    $ cp fatlib/MIME/types.db .
+
+Now we can use the file just like any other L<PSGI> application file:
+
+    $ plackup myapp.pl
+
+While we're using C<plackup> here, it's just an example of a server that
+will read this. You would usually configure this in your web server as
+a PSGI application script.
+
+=head2 Conclusion
+
+L<Dancer2> aims to allow you to package your apps in any number of ways
+and L<App::FatPacker> is a very useful packaging mechanism we aim to
+continually support.
+
+You can now easily pack everyting and send your
+co-worker/colleague/enemies a single file that has everything in it,
+all dependencies bundled in.
+
+Next time someone says I<"But I can't install anything">, throw your
+packed Dancer web application at them!
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
