@@ -1,0 +1,83 @@
+=head1 Sweetening the test suite
+
+The testing suite of a project is an important component, allowing users and
+developers to maintain trust in the code. Having an organized testing suite
+makes it easier for developers to add new tests, improve existing tests, and
+make sure tests are evenly covering the variety of code from all of its
+angles, as well as making it easier for contributors to help out.
+
+=head2 The sweet suite
+
+While mayhem ruled the testing suite of Dancer (both version 1 and 2), we've
+recently started rearranging it in order to handle the various situations our
+code works under.
+
+Here's the new structure:
+
+=head3 t/classes/
+
+The main component of the testing suite are the classes. In L<Dancer2> all the
+DSL implementation is built in core classes. This allows us to decouple the
+keywords the user uses and their implementation.
+
+Under the F<t/classes/> we run tests for classes only. This should not run web
+requests, understand the web environment, or anything of the sort.
+
+Each class has a directory for itself, allowing you to quick find it, and add
+tests to it. Each method gets its own test file. We test roles as well, of
+course. In each directory we can provide static files fo test various
+scenarios.
+
+=head3 t/dsl/
+
+The user-visible interface of the Dancer web framework is the DSL, which are
+those keywords we use to define routing.
+
+The DSL is tested under the F<t/dsl/> directory. Inside it each DSL keyword
+has its own file. Keywords requiring more than a single test, or requiring
+static files (such as sample configuration files), receive their own
+directory.
+
+We're still porting the old DSL keywords into clean tests inside the
+F<t/dsl/> directory, which means this directory is still relatively small
+and most of the DSL tests are strewn across the general F<t/> directory.
+
+We wouldn't say no to any help offered. :)
+
+=head3 t/issues/
+
+Regression tests offer a test which isn't covered by the above described
+categories. We use regression tests to check specific situations, rather than
+code paths.
+
+Since these situations arise in tickets (and tickets can always be opened
+for them if not) we created a directory holding all of these tests, sorted
+by the tracker and the ticket issue in that tracker.
+
+Often times a good way to handle an issue is to provide a test there, which
+can then allow verifying it was fixed.
+
+For example, we have F<t/issues/gh_723.t> to make sure that scenario doesn't
+pop up again as a bug.
+
+=head2 Conclusion
+
+Nowadays when we want to play with tests, we already know where they go and
+how to write them. Now you do too, which makes it possible for you to write up
+some tests when providing a fix or a feature, or when you just want to improve
+the testing coverage.
+
+Consistency in test suite structure is absolutely vital in order to
+continually improve the testing coverage and make sense of the testing code.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
