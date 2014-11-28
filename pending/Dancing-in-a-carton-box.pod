@@ -1,0 +1,111 @@
+=head1 Dancing in a Carton
+
+My new favorite way to package L<Dancer2> applications nowadays is L<Carton>.
+You setup a single file, type a command or two, and you're done. Here's how
+it works and how you set it up yourself.
+
+=head2 What Carton does?
+
+L<Carton> sets up a local copy of your project prerequisites. You only need
+to define them in a file and ask Carton to download all of them and set them
+up.
+
+When you want to deploy your app, you just carry the git clone and ask
+Carton to set up the environment again and you will then be able to run it.
+
+The benefit is multi-fold:
+
+=over 4
+
+=item * Local directory copy
+
+By putting all the dependencies in a local directory, you can make sure
+they aren't updated by someone else by accident and their versions locked
+to the version you picked.
+
+=item * Sync versions
+
+Deciding which versions of the dependent modules your project needs allows
+you to sync this across other developers as well. Suddenly you're all using
+the same version. Those versions don't change unless you want them to, and
+then everyone, again, uses the same new versions.
+
+=item * Carry only the requirement, not bundled modules
+
+Instead of bundling the modules, you only actually bundle the definitions.
+Carton builds them for you when you need it.
+
+=back
+
+=head2 Setting it up
+
+First thing we do is set up a new app:
+
+    $ dancer2 -a MyApp
+    ...
+
+Then we delete the files we don't care about:
+
+    $ rm -f Makefile.PL MANIFEST MANIFEST.SKIP
+
+Now let's create a Git repo:
+
+    $ git init && git add . && git commit -m "initial commit"
+
+Let's add a definition using the L<cpanfile> format:
+
+    $ cat > cpanfile
+    requires 'Dancer2' => 0.155000;
+    requires 'Template' => 0;
+    recommends 'URL::Encode::XS' => 0;
+    recommends 'CGI::Deurl::XS' => 0;
+    recommends 'HTTP::Parser::XS' => 0;
+
+We can now ask Carton to set it up:
+
+    $ carton install
+    Installing modules using [...]
+    Successfully installed [...]
+    ...
+    Complete! Modules were install into [...]/local
+
+Now we have two files: F<cpanfile> and F<cpanfile.snapshot>. We add both of
+them to our Git repository and we make sure we don't accidentally add the
+F<local/> directory Carton created which holds the modules it installed:
+
+    $ echo local/ >> .gitignore
+    $ git add .gitignore cpanfile cpanfile.snapshot
+    $ git commit -m "Start using carton"
+
+When we want to update the versions on the production machine, we simply
+call:
+
+    $ carton install --deployment
+
+By using C<--deployment> we make sure we only install the modules we have in
+our F<cpanfile.snapshot> file and does not fallback to querying the CPAN.
+
+=head2 Conclusion
+
+Setting up L<Carton> takes two minutes and allows us to provide specific
+requirements for our applications and a mechanism to install them on a
+production machine while ensuring it will create a local copy of everything.
+
+We no longer care about the system module versions and we can maintain
+multiple versions of each module used in each separate application. If a
+certain application doesn't need to update a module, it just doesn't, while
+not preventing another application from update its own version of the module.
+
+Try it out, you'll love it!
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
