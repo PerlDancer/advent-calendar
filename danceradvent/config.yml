@@ -21,7 +21,7 @@ charset: "UTF-8"
 template: "template_toolkit"
 start_year: 2010
 
-render_future: 1
+render_future: 0
 
 engines:
     template_toolkit:
