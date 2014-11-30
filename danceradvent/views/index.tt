@@ -3,21 +3,13 @@
 
 
 
-[% IF year == 2013 %]
+[% IF year == 2014 %]
 
 <p>
-Unfortunately there is no Dancer advent calendar this year - David Precious
-(bigpresh) who usually manages it is just snowed under with work and looking
-after his newborn son, and just hasn't had the time to keep up with it.
+Yes, there definitely is an advent calendar running this year!
 </p>
-
 <p>
-David apologises for this, and hopes to have the calendar back in full force
-next year.
-</p>
-
-<p>
-The articles which did get completed are:
+Expect the next article coming up December 1st!
 </p>
 
 <ul>
