@@ -34,7 +34,7 @@ This article will focus mainly on Dancer2.
 
 =head2 Dancer at LPW2013
 
-Andrew Solomon ran a free two-hour Dancer 2 training course at this year's 
+Andrew Solomon ran a free two-hour Dancer 2 training course at last year's
 London Perl  Workshop.  Andrew's course was a hands-on training session to 
 develop a website with dynamic content using Dancer, during which the attendees
 would:
