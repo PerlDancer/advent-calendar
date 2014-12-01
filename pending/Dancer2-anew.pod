@@ -1,0 +1,145 @@
+=head1 Dancer2 - starting anew
+
+It has a different namespace, a different release manager, and a different
+repo - L<Dancer2> sounds like a completely new thing, which it is. But it
+also isn't.
+
+=head2 The portsmith's history
+
+Dancer started as a Perl port of Sinatra - a successful light web framework
+in Ruby. The author of Dancer, Alexis Sukrieh (AKA, sukria), who is also
+a Ruby programmer, had enjoyed it so much, he wanted something similar in
+Perl. He then began the task of porting Sinatra to Perl under the name
+B<Dancer>.
+
+L<Dancer> had become very successful. In fact it had been so successful a
+wonderful warm community grew around it. Users and developers alike sharing
+their use cases, giving talks, trainings, writing articles, and even
+making it part of their job.
+
+When Dancer became a production framework in various companies, a major
+flaw in the design had creeped into sight: the global state. (Chime in
+with horror music.)
+
+Many components in Dancer were globals and this shared state made it
+impossible to have multiple applications without side-effects. Sukria had
+gone underground and returned with B<Dancer 2>. A completely rewritten
+framework, based on the same principle as Dancer, sharing the same DSL
+and overall design, but lacking the global state which had crippled
+Dancer so.
+
+This version promised to be the noble successor.
+
+=head2 The version that never was
+
+Unfortunately the code was still incompatible in some ways. Plugins, mainly,
+did not work, since the architecture was vastly different. We wanted to
+release both a I<2.0> branch and a I<1.0> branch, but CPAN does not allow
+that. We then decided to split the namespace to allow both versions to
+exist at the same time while we iron out the missing bits. Considering
+B<Mongrel2> and even Perl's L<Amon2>,
+why not B<Dancer2>?
+
+After a few releases, Sukria had to attend to more pressing issues, and
+Dancer2 received little attention. Sawyer, who had become the project
+leader for production version of Dancer, took Dancer2, and
+Yanick Champoux, the amazing French Canadian, had taken the production
+version of Dancer under his wing - one of many wings, in fact.
+
+=head2 The prodigal daughter
+
+Following multiple big releases, Dancer2 had become ready for mass usage.
+It has a few rough edges, but in most ways, it's in fact much more reliable.
+
+Dancer2 has the following advantages over Dancer 1, amongst others:
+
+=over 4
+
+=item * Composable Dancer Applications
+
+Dancer2 Apps are composable units that take care of their own dispatching.
+While we have the original C<dance> behavior to dispatch over all registered
+applications, we now have much better mechanisms to handle separate
+applications without forcing the user to have all or nothing.
+
+This Advent Calendar will feature an article showcasing this functionality
+with plenty of explanations on the matter.
+
+=item * Decoupled DSL implementation
+
+The DSL implementation in Dancer2 is decoupled in a way that allows us to
+improve it without changing it for the users. In fact, Dancer2 shares the
+majority of the DSL with Dancer 1 and we can keep that working as expected.
+
+=item * Successful object system
+
+Instead of rolling our own objects, Dancer2 uses L<Moo>, which provides the
+same behavior as L<Moose> for all the objects we have. It allows us to have
+much smarter objects than we did before with lazy attributes, attribute
+builders, role composition, and more.
+
+=item * Better development server
+
+Dancer2 uses the L<Plack> core development server, L<HTTP::Server::PSGI>,
+which provides a more reliable experience. In the past, for Dancer 1, we
+had to work around a lot of problems with the development server.
+
+=item * Less specialized code
+
+Dancer 1 contained a lot of unnecessary code which was removed in favor of
+a proper implementation around Plack: this includes the command line
+parsing when importing the DSL, static file serving, testing code, and more.
+
+=item * Robust CLI capabilities
+
+The command-line interface in Dancer2 is written in L<App::Cmd>, which
+allows us to extend it fully, providing interesting command-line features.
+
+We haven't yet gone nuts with it, but now we'll be able to do so, and we
+have a few interesting ideas.
+
+=item * Devoted set of developers
+
+While Dancer version 1 has been placed into freeze mode, Dancer2 has a
+group of developers devoted to it. More and more developers have joined the
+core team as well. This includes the aforementioned Yanick, Russell Jenkins,
+Mickey Nasriachi, Stefan Hornburg (Racke), Steven Humphrey, Alberto Simões,
+and David Precious. Somewhere in there Sawyer X is probably there, but we
+can't attest to that - at least not legally.
+
+=back
+
+At the end of the day, though, there is one major consideration we've yet
+to mention.
+
+=head2 The version that is
+
+While many users are still on Dancer 1, Dancer2 is ready and waiting, and
+we're pooling all of our efforts to improving it. Dancer 1 is on freeze
+mode, meaning no new features.
+
+Dancer2 is B<NOT> a new framework, it is simply the next version. When
+asked in the past, we explained that this isn't Perl 5 and Perl 6.
+
+Dancer2 might have a few rough edges, but it's much more reliable,
+correct, featureful, and a much safer bet than Dancer 1.
+
+=head2 Conclusion
+
+Please consider writing your new code in L<Dancer2> and also porting any
+major applications you want to continue to develop. If you find difficulties
+in the process, please let us know, so we could fix them.
+
+Be careful though, that's the first step to becoming a contributor! :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
