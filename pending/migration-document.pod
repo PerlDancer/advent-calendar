@@ -10,19 +10,27 @@ entirely new namespace. What were they? How do we migrate?
 
 The reason we changed the namespace wasn't really due much to the change a
 user will necessarily see, but more due to the incredible difference in core
-architecture.
+architecture, and CPAN's inability to maintain two running versions in the
+same namespace, as mentioned in the
+L<previous article|http://advent.perldancer.org/2014/2>.
 
 L<Dancer2> is actually a complete rewrite. It had small portions of the code
 moved and some of the documentation was copied over, but mainly it is
 completely restructured.
 
 It no longer relies on reinventing the wheel as much. Users simply didn't care
-about installing another module or two or three or more. Having L<fatpacker>
-allows you to fatpack your entire Dancer2 application in a single file. Having
-L<carton> allows you to package it all nicely. Having L<Pinto> allows you to
-set up an entire personal CPAN for your company. Things are much easier.
+about installing another module or two or three or even more. At the same
+time, enough tools we written to still allow you to get away with not being
+able to install dependencies, so the entire problem became moot.
 
-(Watch for additional articles that cover L<fatpacker> and L<carton> in this
+For example, Having L<local::lib> allows you to install an entire module tree
+in a local user's directory (not requiring administrative privileges). Having
+L<fatpacker> allows you to fatpack your entire Dancer2 application in a single
+file. Having L<Carton> allows you to package it all nicely. Having L<Pinto>
+allows you to set up an entire personal CPAN for your company. Things are
+much easier.
+
+(Watch for additional articles that cover L<fatpacker> and L<Carton> in this
 advent calendar.)
 
 Additionally, we wanted the ability to make core changes without breaking a lot
@@ -48,32 +56,6 @@ A few examples:
 
 =over 4
 
-=item * HTTP::Server::Simple replaced with HTTP::Server::PSGI
-
-Originally Dancer would use L<HTTP::Server::Simple> which supported PSGI, but
-it was a pain to use, since it had issues we needed to patch and provided a
-dependency we weren't happy about.
-
-As it happens, L<Plack> comes with a great development server called
-L<HTTP::Server::PSGI>. Since we're building on Plack, we might as well make use
-of it. This is why Dancer2 uses it instead.
-
-=item * Removing ':script' import key for plackup
-
-Dancer 1 had the C<:script> import key which would read your command line
-arguments to change how the Dancer server would run.
-
-Since L<Plack> has the L<plackup> command line tool, it already reads your
-command line arguments. Why make a duplicate effort?
-
-=item * Fully object-oriented
-
-Dancer2 has changed its core substantially to be much more object oriented.
-Now the core is implemented in objects. The DSL layer simply provides an
-interface to those objects.
-
-This makes everything much easier to compose and test.
-
 =item * Each class is an entire app
 
 A Dancer App is now every class which consumes L<Dancer2>. This means they
@@ -93,6 +75,32 @@ Now C<Admin> and C<Public> are fully independent applications. They
 will not share any resources and will be able to have different engines
 (template, session, serializer, logger) which will not be shared. No more
 worrying about globals.
+
+=item * Removing ':script' import key for plackup
+
+Dancer 1 had the C<:script> import key which would read your command line
+arguments to change how the Dancer server would run.
+
+Since L<Plack> has the L<plackup> command line tool, it already reads your
+command line arguments. Why make a duplicate effort?
+
+=item * Fully object-oriented
+
+Dancer2 has changed its core substantially to be much more object oriented.
+Now the core is implemented in objects. The DSL layer simply provides an
+interface to those objects.
+
+This makes everything much easier to compose and test.
+
+=item * HTTP::Server::Simple replaced with HTTP::Server::PSGI
+
+Originally Dancer would use L<HTTP::Server::Simple> which supported PSGI, but
+it was a pain to use, since it had issues we needed to patch and provided a
+dependency we weren't happy about.
+
+As it happens, L<Plack> comes with a great development server called
+L<HTTP::Server::PSGI>. Since we're building on Plack, we might as well make use
+of it. This is why Dancer2 uses it instead.
 
 =back
 
@@ -122,88 +130,24 @@ We tried to change very little of the DSL. C<load> and C<param_array> no
 longer exist, and C<session> can also provide the session object, not just
 retrieve and set values for keys.
 
-=item * Mount your applications with Plack::Builder
+=item * Applications are self-dispatching units
 
-The biggest change, since now each package is its own application is that they
-need to be mounted using L<Plack::Builder>.
+As explained above, any module that uses C<Dancer2> becomes a Dancer
+Application, which creates a separated dispatcher only for the routes created
+under that module namespace.
 
-    package MyApp {
-        use Dancer2;
-        get '/' => sub {...};
-        ...
-    }
+The application's engines will not be shared with others - an issue that
+pained experienced developers of Dancer 1.
 
-    package MyApp::User {
-        use Dancer2;
-        get '/view' => sub {...};
-        ...
-    }
+If you want to compose multiple Dancer Applications to create a single web
+application, you can use L<Plack::Builder> and C<to_app>. Stay tuned for
+an article explaining this exact situation.
 
-    package MyApp::Project {
-        use Dancer2;
-        get '/view' => sub {...};
-        ...
-    }
+=item * Multiple packages for a single app
 
-Then the file C<app.pl> should be:
-
-    use MyApp::User;
-    use MyApp::Project;
-    use Plack::Builder;
-
-    builder {
-        mount '/'        => MyApp->to_app;
-        mount '/user'    => MyApp::User->to_app;
-        mount '/project' => MyApp::Project->to_app;
-    };
-
-The effect of the mounting is that these applications will be completely
-separate and L<Plack::Builder> will assure only the appropriate application
-handles a given request.
-
-Another effect of mounting is that the mounting point (C</user>, for example)
-is stripped from the path the application needs to match. This means that
-C<MyApp::User> doesn't need to define C</user/view>, but just C</view> as the
-example above shows.
-
-=item * But what if they're the same app?
-
-If they are the same app, you can use the C<appname> import keyword to bind
-them together to create a single application across multiple files:
-
-    package MyApp {
-        use MyApp::User;
-        use MyApp::Project;
-        use Dancer2;
-        get '/' => sub {...};
-        ...
-    }
-
-    package MyApp::User {
-        use Dancer2 appname => 'MyApp';
-        get '/user/view' => sub {...};
-        ...
-    }
-
-    package MyApp::Project {
-        use Dancer2 appname => 'MyApp';
-        get '/project/view' => sub {...};
-        ...
-    }
-
-Now C<app.pl> is:
-
-    use MyApp;
-
-    MyApp->to_app;
-
-In this example we bind the user-specific and project-specific applications
-to the main application (thus only creating a single Dancer2 app) so we don't
-need any mounting anymore. The paths are then full.
-
-Note that it no longer matters who calls C<use MyApp::User> or
-C<use MyApp::Project>. It could just the same be called inside C<app.pl> but
-it's easier to put them as C<MyApp> since they are part of it.
+Allowing multiple packages to create a single Dancer Application is also
+possible using the C<appname> feature. This will also appear in an upcoming
+article.
 
 =back
 
@@ -219,7 +163,7 @@ Instead, we've compiled a list (with the kind help of Snigdha Dagar) of all
 of these changes under L<Dancer2::Manual::Migration>.
 
 If you're interested in migrating your applications to Dancer2, or would like
-to write a new application and care to know what the differene is, you should
+to write a new application and care to know what the differences are, you should
 consult it.
 
 Of course we welcome any changes and improvements to this document as it is a
@@ -240,7 +184,7 @@ code.
 
 =head2 Author
 
-This article has been written by Sawyer X for the Perl
+This article has been written by Sawyer X and Mickey Nasriachi for the Perl
 Dancer Advent Calendar 2014.
 
 =head2 Copyright
