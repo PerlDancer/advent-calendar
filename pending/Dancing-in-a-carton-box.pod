@@ -1,6 +1,6 @@
-=head1 Dancing in a Carton
+=head1 Your website in a carton box
 
-My new favorite way to package L<Dancer2> applications nowadays is L<Carton>.
+My new favorite way to package L<Dancer2> applications is L<Carton>.
 You setup a single file, type a command or two, and you're done. Here's how
 it works and how you set it up yourself.
 
@@ -26,13 +26,14 @@ to the version you picked.
 =item * Sync versions
 
 Deciding which versions of the dependent modules your project needs allows
-you to sync this across other developers as well. Suddenly you're all using
-the same version. Those versions don't change unless you want them to, and
-then everyone, again, uses the same new versions.
+you to sync this with other developers as well. Now you're all using
+the same version and they don't change unless you want update the versions
+you want. When updated everyone again uses the same new version of
+everything.
 
 =item * Carry only the requirement, not bundled modules
 
-Instead of bundling the modules, you only actually bundle the definitions.
+Instead of bundling the modules, you only actually bundle the requirements.
 Carton builds them for you when you need it.
 
 =back
@@ -52,7 +53,7 @@ Now let's create a Git repo:
 
     $ git init && git add . && git commit -m "initial commit"
 
-Let's add a definition using the L<cpanfile> format:
+Let's add a requirement using the L<cpanfile> format:
 
     $ cat > cpanfile
     requires 'Dancer2' => 0.155000;
@@ -83,7 +84,7 @@ call:
     $ carton install --deployment
 
 By using C<--deployment> we make sure we only install the modules we have in
-our F<cpanfile.snapshot> file and does not fallback to querying the CPAN.
+our F<cpanfile.snapshot> file and do not fallback to querying the CPAN.
 
 =head2 Conclusion
 
@@ -93,8 +94,9 @@ production machine while ensuring it will create a local copy of everything.
 
 We no longer care about the system module versions and we can maintain
 multiple versions of each module used in each separate application. If a
-certain application doesn't need to update a module, it just doesn't, while
-not preventing another application from update its own version of the module.
+certain application doesn't need to update a module, it just doesn't have to,
+and at the same time doesn't prevent another application from updating its
+own modules.
 
 Try it out, you'll love it!
 
