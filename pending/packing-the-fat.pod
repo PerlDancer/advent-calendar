@@ -1,5 +1,8 @@
 =head1 Packing the Fat
 
+After speaking of one way to handle dependencies, it's time to talk about
+another.
+
 One promise we've made with L<Dancer2> is it will always be I<fatpackable>,
 but only a few people actually know what this means and why it's
 important.
@@ -23,11 +26,12 @@ it, how it works, and how to use it.
 =head2 FatPacking Dancer2 applications
 
 By saying L<Dancer2> is fatpackable, we mean that we make sure the
-core can be fatpacked. We do this by having the core require only
-pure-Perl modules and only optionally use XS modules to improve speed.
+Dancer2 can be fatpacked. We do this by requiring by default only
+pure-Perl modules. We allow you to optionally install XS modules
+to improve speed, but Dancer2 will work just fine without them.
 
 This means that as long as your application is also pure-Perl, you could
-create a single file with your application and all of Dancer2.
+create a single file with your application and all of Dancer2 in it.
 
 Let's take a look at an example.
 
@@ -72,7 +76,7 @@ add our script to it, so we'll do it all in one command:
 
 This creates a file called F<myapp.pl> with everything in it. But before
 we can run it, we need to account for one small detail. Dancer2
-is using L<MIME::Types> which has a database all of MIME types and helps
+is using L<MIME::Types> which has a database of all MIME types and helps
 translate those. The small database file containing all of these types is
 a binary and therefore cannot be fatpacked. We need to copy it to
 the current directory so our script can find it.
@@ -94,7 +98,7 @@ and L<App::FatPacker> is a very useful packaging mechanism we aim to
 continually support.
 
 You can now easily pack everyting and send your
-co-worker/colleague/enemies a single file that has everything in it,
+co-worker/colleague/enemy a single file that has everything in it,
 all dependencies bundled in.
 
 Next time someone says I<"But I can't install anything">, throw your
