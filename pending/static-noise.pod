@@ -1,7 +1,7 @@
 =head1 Static noise - Static file serving in Dancer2
 
 All too often beginners would stumble over the behavior of static file
-serving in Dancer2. The idea made sense on paper but somehow - when you
+serving in Dancer2. The idea made sense on paper but somehow, when you
 put it in practical terms, it wasn't just a hurdle but a real pain to
 constantly headbutt without realizing, I<"damn it, that again!">
 
@@ -12,7 +12,7 @@ how it was fixed after we explain what was wrong.
 =head2 Ex-static
 
 The logic for request serving in Dancer 1 is simple. It consists of the
-following steps, run in the following order:
+following steps run in order:
 
 =over 4
 
@@ -27,7 +27,7 @@ following steps, run in the following order:
 =back
 
 In L<Dancer2> these items were broken down into composable units known as
-handlers. L<Dancer2::Handler::File> was to serve static files (which
+handlers. L<Dancer2::Handler::File> serves static files (which
 the DSL keyword C<send_file> uses internally) and
 L<Dancer2::Handler::AutoPage> renders template files.
 
@@ -56,7 +56,7 @@ peculiar situations.
 
 =head2 Problem 1: Greed is NOT good
 
-In order for these routes to accept I<any> input, they used a greedy
+In order for these routes to accept I<any> input, they use a greedy
 B<megasplat> route, which captures everything:
 
     get '/**' => sub {
@@ -64,7 +64,7 @@ B<megasplat> route, which captures everything:
         # (as long as they are a GET request)
     };
 
-Users can define these routes as well, of course.
+(Users can define these routes as well, of course.)
 
 The first manifestation of the reshuffling in order of execution occurred
 when users defined greedy B<megasplat> routes which accidentally captured
@@ -82,12 +82,12 @@ is actually the small problem.
 
 Remember hooks? Sure you do. Every route can have hooks. Amongst available
 hooks there are the B<before> and B<after> hooks which control the execution
-sequence of a matched route, allowing you to call code before it is executed
-and after, respectively.
+sequence of a matched route, allowing you to call code before and after it is
+executed, respectively.
 
 How does that come into play? Since the B<File> and B<AutoPage> handlers
 create regular routes (just like a user might), the B<before> and B<after>
-hook actually apply to them.
+hooks actually apply to them.
 
 What?
 
@@ -95,12 +95,12 @@ Yes! This meant that, for example, your B<before> route hooks were called for
 static files. If they contained a security check (for which many users use
 them), you might accidentally prevent a file from being rendered. Strike two!  
 
-I<"You can't see the picture for lacking access because you lack access!">
+I<"You can't see the lacking access picture because you lack access!">
 
-=head2 Plack strikes again
+=head2 Plack strikes back
 
-Before we hit a I<Strike three> we decided to fix this. Since we're
-depending on Plack and the associated technology to help resolve so many
+Before we hit a I<strike three> we decided to fix this. Since we're
+depending on L<Plack> and the associated technology to help resolve so many
 issues, we looked there.
 
 One wonderful part of Plack is the middlewares. One specific middleware
@@ -117,7 +117,7 @@ This means we're back to a proper static file serving behavior. They are
 now served properly before the app and the hooks do not apply to them.
 
 We still kept the B<File> handler to provide C<send_file>, but it
-is no longer in charge of serving static files anymore.
+is no longer in charge of automatically serving static files.
 
 The B<AutoPage> handler is kept as is because hooks make sense in rendering
 templates. You might want to use the B<before_template> hook in order
