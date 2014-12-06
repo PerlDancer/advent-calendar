@@ -1,0 +1,216 @@
+=head1 Doing an API Mashup with Dancer
+
+I was delighted to receive a Twitter message from Su-Shee on an article
+about mashing up an API call with L<Sinatra|http://www.sinatrarb.com/>:
+
+=begin html
+
+<blockquote class="twitter-tweet" lang="en"><p>.<a href="https://twitter.com/PerlSawyer">@PerlSawyer</a> tiny total beginner&#39;s <a href="https://twitter.com/hashtag/sinatra?src=hash">#sinatra</a> example, should be blatantly copied for <a href="https://twitter.com/hashtag/dancer?src=hash">#dancer</a>... <a href="https://t.co/SlSia0f92a">https://t.co/SlSia0f92a</a> &quot;learn how to API&quot; :)</p>&mdash; Su-Shee (@sheeshee) <a href="https://twitter.com/sheeshee/status/541175744358268928">December 6, 2014</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+=end html
+
+You might wonder how a version of it would look like in Dancer. Shouldn't
+be a problem. Let's have a go at it!
+
+=head2 Prior work
+
+If you haven't had the time or inclination to read the aforementioned
+article (which we actually recommend), here is a brief description of our
+task.
+
+We want to create an app that makes a request to a weather API and then
+displays it dynamically in a web page.
+
+=head2 To everything a start
+
+Setting up the application was relatively quick. Open up your favorite
+editor on a new file. Let's call it F<mashup.pl>:
+
+Other than L<Dancer2> for defining routes, we will use L<HTTP::Tiny> to
+make the weather API request, L<JSON> to decode it from JSON format, and
+finally L<File::Spec> to provide a fully-qualified path to our template
+engine. That last bit will be explained later on.
+
+    use JSON;
+    use Dancer2;
+    use HTTP::Tiny;
+    use File::Spec;
+
+=head2 Configuration
+
+Now we set up some variables for our web application. We will use the
+excellent L<Template::Toolkit|Template> template system. It is simple and
+easy to work with.
+
+Dancer searches for our templates in our views directory, which defaults
+to F<views> directory in our current directory. Since we want to put our
+template in our current directory, we will configure that. However,
+I<Template::Toolkit> does not want us to provide a relative path without
+configuring it to allow it. This is a security issue. So, we're using
+L<File::Spec> to create a full path to where we are.
+
+We also unset the default layout, so Dancer won't try to wrap our template
+with another one. This is a feature in Dancer to allow you to wrap your
+templates with a layout when your templating system doesn't support it.
+Since we're not using a layout here, we don't need it.
+
+    set template => 'template_toolkit';       # set template engine
+    set layout   => undef;                    # disable layout
+    set views    => File::Spec->rel2abs('.'); # full path to views
+
+A lot of explanation and only three lines of code. :)
+
+Now, we define our URL:
+
+    my $url = 'http://api.openweathermap.org/data/2.5/weather?id=5110629&units=imperial';
+
+=head2 Route - the gist of it
+
+The main component is our web route. We will define a main route which,
+upon a request, will fetch the information from the weather API, decode it,
+and then display it to the user.
+
+Route definition:
+
+    get '/' => sub {
+        ...
+    };
+
+Editing the stub of route dispatching code, we start by making the
+request and decoding it:
+
+    # fetch data
+    my $res = HTTP::Tiny->new->get($url);
+
+    # decode request
+    my $data = decode_json $res->{'content'};
+
+The data is not just a flat hash. It's a deep structure. To make this post
+simpler, we will filter it for only the simple keys in the retrieved data:
+
+    my $metrics = { map +(
+        ref $data->{$_} ? () : ( $_ => $data->{$_} )
+    ), keys %{$data} };
+
+All that is left now is to render it:
+
+    template index => { metrics => $metrics };
+
+Oh, and to make this into a runnable-application, we add the magic word:
+
+    dance;
+
+=head2 And the template
+
+We can't forget about the HTML code of course. The following is our
+F<index.tt> template file:
+
+    <table>
+      <th>The Weather in Buffalo, NY, USA</th>
+      <tr>
+        <td>
+        [% FOREACH metric IN metrics.keys %]
+            <tr><td>[% metric %]</td><td>[% metrics.$metric %]</td></tr>
+        [% END %]
+        </td>
+      </tr>
+    </table>
+
+    <hr noshade>
+
+    Powered by the <a href = 'http://openweathermap.org/' target = _new>Open W
+    eather Map API</a>
+
+Et Voila!
+
+=head2 All together now
+
+Here is our complete app:
+
+    use JSON;
+    use Dancer2;
+    use HTTP::Tiny;
+    use File::Spec;
+
+    set template => 'template_toolkit';
+    set layout   => undef;
+    set views    => File::Spec->rel2abs('.');
+
+    my $url = 'http://api.openweathermap.org/data/2.5/weather?id=5110629&units=imperial';
+    get '/' => sub {
+        my $res     = HTTP::Tiny->new->get($url);
+        my $data    = decode_json $res->{'content'};
+        my $metrics = { map +(
+            ref $data->{$_} ? () : ( $_ => $data->{$_} )
+        ), keys %{$data} };
+
+        template index => { metrics => $metrics };
+    };
+
+    dance;
+
+And the result we have at the end:
+
+=begin html
+
+<table>
+  <th>The Weather in Buffalo, NY, USA</th>
+  <tr>
+    <td>
+    
+        <tr><td>id</td><td>5110629</td></tr>
+    
+        <tr><td>cod</td><td>200</td></tr>
+    
+        <tr><td>name</td><td>Buffalo</td></tr>
+    
+        <tr><td>base</td><td>cmc stations</td></tr>
+    
+        <tr><td>dt</td><td>1417885200</td></tr>
+    
+    </td>
+  </tr>
+</table>
+
+<hr noshade>
+
+Powered by the <a href = 'http://openweathermap.org/' target = _new>Open Weather Map API</a>
+
+=end html
+
+=head2 Conclusion
+
+Many of the odder configuration options were actually due to writing an
+application outside the defaults of a normal production-ready application.
+
+If we had a F<views> directory, we wouldn't need L<File::Spec> and
+to configure the C<views>. If we had used a layout, which we would normally
+use, we wouldn't need to disable the layout using the C<layout>
+option. If we tried to account for all data returned, we would also write
+a template that supports a deeper structure, or dumped it to HTML from its
+hash representation, which would probably had been easier.
+
+At the end, the production code would share all of these comments and end
+up both smaller and simpler. Of course, our production code would check
+for errors on fetching the data and decoding it, which we have conveniently
+ignored. :)
+
+One clear difference between our implementation and the I<Sinatra> one is
+we don't actually stick any HTML in the code itself. There is no need. We
+simply throw it to the templating engine.
+
+With light web frameworks writing your application is usually as
+straight-forward and simple as it seems in our head.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
