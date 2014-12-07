@@ -155,16 +155,16 @@ And the result we have at the end:
 =begin html
 
 <table>
-  <th>The Weather in Buffalo, NY, USA</th>
-  <tr>
-    <td>
-        <tr><td>id</td><td>5110629</td></tr>
-        <tr><td>cod</td><td>200</td></tr>
-        <tr><td>name</td><td>Buffalo</td></tr>
-        <tr><td>base</td><td>cmc stations</td></tr>
-        <tr><td>dt</td><td>1417885200</td></tr>
-    </td>
-  </tr>
+<th>The Weather in Buffalo, NY, USA</th>
+<tr>
+<td>
+<tr><td>id</td><td>5110629</td></tr>
+<tr><td>cod</td><td>200</td></tr>
+<tr><td>name</td><td>Buffalo</td></tr>
+<tr><td>base</td><td>cmc stations</td></tr>
+<tr><td>dt</td><td>1417885200</td></tr>
+</td>
+</tr>
 </table>
 <hr noshade>
 Powered by the <a href = 'http://openweathermap.org/' target = _new>Open Weather Map API</a>
