@@ -17,11 +17,12 @@ Here's the new structure:
 =head3 t/classes/
 
 The main component of the testing suite are the classes. In L<Dancer2> all the
-DSL implementation is built in core classes. This allows us to decouple the
-keywords the user uses and their implementation.
+DSL implementation is built on top of core classes. This allows us to
+decouple the keywords the user uses and their implementation.
 
 Under the F<t/classes/> we run tests for classes only. This should not run web
-requests, understand the web environment, or anything of the sort.
+requests, understand the web environment, or anything of the sort. Some
+exceptions may apply, but we try to minimize those.
 
 Each class has a directory for itself, allowing you to quick find it, and add
 tests to it. Each method gets its own test file. We test roles as well, of
@@ -51,13 +52,13 @@ categories. We use regression tests to check specific situations, rather than
 code paths.
 
 Since these situations arise in tickets (and tickets can always be opened
-for them if not) we created a directory holding all of these tests, sorted
-by the tracker and the ticket issue in that tracker.
+for them if not), we created a directory holding all of these tests, sorted
+by the tracker and the ticket ID in that tracker.
 
-Often times a good way to handle an issue is to provide a test there, which
+Often times a good way to handle an issue is to provide a test, which
 can then allow verifying it was fixed.
 
-For example, we have F<t/issues/gh_723.t> to make sure that scenario doesn't
+For example, we have F<t/issues/gh-723.t> to make sure that scenario doesn't
 pop up again as a bug.
 
 =head2 Conclusion
@@ -67,7 +68,7 @@ how to write them. Now you do too, which makes it possible for you to write up
 some tests when providing a fix or a feature, or when you just want to improve
 the testing coverage.
 
-Consistency in test suite structure is absolutely vital in order to
+Consistency in the test suite is absolutely vital in order to
 continually improve the testing coverage and make sense of the testing code.
 
 =head2 Author
