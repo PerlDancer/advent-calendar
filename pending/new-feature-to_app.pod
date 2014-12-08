@@ -13,7 +13,7 @@ of engines (such as a template, a session storage, a logger, and a serializer -
 not all required), you might begin to see a problem here.
 
 If you have two applications (meaning two packages that have C<use Dancer2> in
-them) called C<MyApp::A> and C<MyApp::B>, and you call the C<psgi_app> keyword
+them) called C<MyApp::A> and C<MyApp::B>, and you call the C<dance> keyword
 to create a full fledged PSGI application from them, Dancer will try to match
 a request against each one. It will start with C<MyApp::A> and then C<MyApp::B>.
 
@@ -27,9 +27,13 @@ If your handler is:
     use MyApp::A;
     use Dancer2;
 
-    psgi_app;
+    dance;
 
 It will now check C<MyApp::B> first and C<MyApp::A> last.
+
+In fact, it will check C<MyApp::B> first, C<MyApp::A> second, and the last
+will be whatever package this snippet of code you saw is in - in case it
+has any routes configured in it before C<dance> was called.
 
 =head2 Why is this bad?
 
@@ -44,19 +48,38 @@ If you're preloading applications into memory (which is a good idea in large
 infrastructures), your resulting application might hit someone else's route
 instead.
 
-If you're using the B<AutoPage> feature you might snag on a different app's
+If you're using the B<AutoPage> feature, you might snag on a different app's
 template. If one app has a B<Serializer> defined, you might return serialized
 output. If different apps have a different B<Session> engine, that's even
 worse. That's tantamount to a security risk - although we try to minimize that
-risk internally moving session objects around so you don't hit a mistaken
+risk internally by moving session objects around so you don't hit a mistaken
 session.
 
 =head2 What can we do?
 
-The first change we made, back in Dancer2 0.150000, was to allow calling the
+The first change we made, back in Dancer2 0.150000, was to call the
 C<psgi_app> keyword with specific application names, either by class name or
 by a regular expression. This allowed you to create PSGI applications from
 specific Dancer Apps:
+
+    # preload everything
+    use MyApp::A;
+    use MyApp::B;
+    use MyApp::C;
+    use MyApp::D;
+    use MyApp::E;
+
+    # an app for A, B, C
+    my $abc_app = Dancer2->psgi_app([ qr{^MyApp::[ABC]$} ]);
+
+    # an app for D, E
+    my $d_app = Dancer2->psgi_app([ 'MyApp::D', 'MyApp::E' ]);
+
+This allows us to load into memory all the applications we have and then
+create a PSGI application from only some of them.
+
+Here is another example which also joins multiple apps into a single,
+bigger PSGI app with L<Plack::Builder>:
 
     use MyApp::A;
     use MyApp::B;
@@ -65,12 +88,9 @@ specific Dancer Apps:
     use Plack::Builder;
 
     builder {
-        mount '/'        => psgi_app(['MyApp::A']);
-        mount '/special' => psgi_app([ qr{^MyApp::[B|C]$} ]);
+        mount '/'        => Dancer2->psgi_app(['MyApp::A']);
+        mount '/special' => Dancer2->psgi_app([ qr{^MyApp::[BC]$} ]);
     };
-
-Now you have created two PSGI applications: one wraps only C<MyApp::A>, while
-the other wraps both C<MyApp::B> and C<MyApp::C>.
 
 This was a major improvement, but it still didn't address the core problem.
 
@@ -81,7 +101,7 @@ I'm glad you asked!
 The code problem was that the dispatching was the duty of the core dispatcher
 object (an instance of L<Dancer2::Core::Dispatcher>) instead of the app object
 itself (L<Dancer2::Core::App>). Since the routing should have been done in the
-app object (the lowest context for sessions and routes), it made sense to move
+app object (the lowest context for engines and routes), it made sense to move
 it there instead of the dispatcher object.
 
 We've done so in Dancer2 0.151000, a version later.
@@ -92,11 +112,28 @@ one major addition: the C<to_app> class method.
 =head2 to_app or not to_app
 
 While perhaps not the same question Shakespeare asked, it is a noble one
-indeed.
+just the same.
 
-The C<to_app> method creates a PSGI app from a single application. This means
-you can now treat a Dancer2 App has it's own unit that can be composed into
-any path you like.
+The C<to_app> method creates a PSGI app from a single application - not from
+all of your applications or a PSGI app that is restricted to specific ones.
+
+This means you can now treat a Dancer2 App as its own unit that can be
+composed into any path you like.
+
+The following:
+
+    MyApp->to_app;
+
+gives the same behavior to the user as:
+
+    Dancer2->psgi_app(['MyApp']);
+
+except it does it using quite a few workarounds.
+
+Instead of using the awkward C<< Dancer2->psgi_app() >>, which
+provides the same behavior as C<dance()>, you could use C<to_app>. This
+won't require calling C<use Dancer2> in your handler, since it's a method
+on your Dancer2 application class.
 
 When you have multiple Dancer2 applications, you can compose them together
 using either L<Plack::App::URLMap> or the wrapper syntax for it available in
@@ -110,11 +147,24 @@ L<Plack::Builder>:
         mount '/admin' => MyApp::Admin->to_app;
     };
 
-This assures you that you can compose deterministic Dancer applications.
+The effect of the mounting is that these applications will be completely
+separate and L<Plack::Builder> will assure only the appropriate application
+handles a given request.
+
+Instead of creating a loop around all of them, you provide each app with its
+own dispatching mechanism, in charge only for the routes defined inside it.
+
+Another effect of mounting is that the mounting point (C</admin>, for example)
+is stripped from the path the application needs to match. This means that
+C<MyApp::Admin> doesn't need to define C</admin/view>, but just C</view>.
+
+This has become such a useful and important feature that if you try to call
+C<psgi_app> on an application (instead of on C<Dancer2> or
+C<< Dancer2->runner >>, it will effectively call C<to_app> underneath.
 
 =head2 Conclusion
 
-Yes, we B<do> want C<to_app>. :)
+In short, yes. We B<do> want C<to_app>. :)
 
 =head2 Author
 
@@ -126,4 +176,3 @@ Dancer Advent Calendar 2014.
 No copyright retained. Enjoy.
 
 2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
-
