@@ -12,14 +12,15 @@ A Dancer2 App is simply a package containing routes and engines which receives
 a request and returns a response. The engines are not mandatory, but might be
 a template, a session, a logger, and a serializer.
 
-A PSGI application is a code reference which receives a request as an env
-hash (from a server using a L<Plack> handler.
+A PSGI application is a code reference which receives a request as a hash of
+environment variables (from a server using a L<Plack> handler) and returns a
+proper PSGI response which could be an array reference or a code reference.
 
 =head2 Too many apps!
 
-As soon as you import L<Dancer2> (C<use Dancer2>), you have just created a
-Dancer2 App. It will use your package (defined by either the C<package>
-function in Perl or the default in Perl: C<main>) in order to define the App
+As soon as you import L<Dancer2> (by calling C<use Dancer2>), you create a
+Dancer2 App. It will use your class name (defined by either the C<package>
+function in Perl or the default in Perl: C<main>) to define the Dancer2 App
 name. This is how Dancer2 will recognize your application.
 
 This introduces an interesting situation. If you wish to separate your App
@@ -42,12 +43,13 @@ is a complete separate scope, will not be available to a different application:
     }
 
 These are two different Dancer2 Apps. They have different scopes, contexts,
-and thus different engines. While C<MyApp::User> has a serializer (the L<JSON>
-one), C<MyApp::User::Edit> does not.
+and thus different engines. While C<MyApp::User> a serializer (the L<JSON>
+one) defined, C<MyApp::User::Edit> will not have that configuration.
 
 If you want the path C</edit> to have a serializer also, you will need to
 define one for C<MyApp::User::Edit>. This is not just tedious, but when you
-mix this with the C<to_app> method, you have a problem:
+mix this with the C<to_app> method (described in the previous article, you
+have a problem:
 
     use MyApp::User;
     use MyApp::User::Edit;
@@ -59,16 +61,14 @@ mix this with the C<to_app> method, you have a problem:
         # what about MyApp::User::Edit ???
     };
 
-I<<(There is another article on C<to_app> specifically.)>>
-
 If C</> is taken by C<MyApp::User>, where do we put C<MyApp::User::Edit>?
 
 We don't actually wish C<MyApp::User::Edit> to be another application, we just
 want it to be a comfortable extension to the regular app, providing additional
-routes.
+routes that are part of the same already-existing application.
 
 While you might think loading C<MyApp::User::Edit> within C<MyApp::User> will
-help it just extend it, that is not the case. It will still fail.
+help to just extend it, that is not the case. It will still fail.
 
 C<appname> to the rescue!
 
@@ -92,17 +92,19 @@ Now, by using C<appname> when importing, we can ask this App to simply extend
 an existing one (or one will be created if it does not exist yet) and add
 the routing there.
 
-The serializer will be available, it will have the same configuration and it
-will even interally just represent these with a single application object.
+The serializer will be available, it will have the same configuration, and it
+will even represent all of the routes with the same internal application
+object.
 
     # app.pl
     use MyApp::User;
     use MyApp::User::Edit;
 
+    # single application composed of routes provided in multiple files
     MyApp::User->to_app;
 
-Usually we would put extensions such as these inside the class extended, as
-such:
+Usually we would load classes that contain additional routes inside the
+original class they extend:
 
     package MyApp::User {
         use Dancer2;
@@ -122,9 +124,9 @@ This way we only need to load one when we create an app:
 The import option C<appname> allows you to seamlessly extend Dancer2 Apps
 without creating unnecessary additional applications or repeat any definitions.
 
-This allows you to spread your application routes on multiple files and allow
-ease of mind when developing it, and accommodate multiple developers working
-on the same codebase.
+This allows you to spread your application routes across multiple files and
+allow ease of mind when developing it, and accommodate multiple developers
+working on the same codebase.
 
 =head2 Author
 
@@ -136,4 +138,3 @@ Dancer Advent Calendar 2014.
 No copyright retained. Enjoy.
 
 2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
-
