@@ -1,4 +1,6 @@
-=head1 New feature in Dancer2: appname
+=head1 What's in an appname?
+
+=head2 New feature in Dancer2: appname
 
 One change we absolutely love is the C<appname> import option, introduced in
 L<Dancer2> 0.150000.
