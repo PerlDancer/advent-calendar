@@ -1,0 +1,173 @@
+=head1 Serial Serializer - making API writing easier
+
+One of Dancer's engines is the B<serializer>, which helps you with writing
+APIs.
+
+Serializers essentially do two things:
+
+=over 4
+
+=item * Deserialize incoming requests
+
+When a user makes a request with serialized input, the serializer
+automatically deserializes it into actual input parameters.
+
+=item * Serialize outgoing responses
+
+When you return a data structure from a route, it will automatically serialize
+it for you before returning it to the user.
+
+=back
+
+=head2 Configuring
+
+In order to configure a serializer, you just need to pick which format
+you want for encoding/decoding (from the available
+Serializer namespace - C<Dancer::Serializer> for Dancer 1 and
+C<Dancer2::Serializer> for Dancer2) and set it up using the C<serializer>
+configuration keyword.
+
+It's recommended to explicitly add it in the actual code instead of the
+configuration file so it doesn't apply automatically to every app that
+reads the configuration file (unless that's what you want):
+
+    package MyApp;
+    use Dancer2;
+    set serializer => 'JSON'; # Dancer2::Serializer::JSON
+
+    ...
+
+=head2 Using
+
+Now that we have a serializer set up, we can just return data structures:
+
+    get '/' => sub {
+        return { resources => \%resources };
+    };
+
+When we return this data structure, it will automatically be serialized
+into JSON. No other code is necessary.
+
+We also now receive requests in JSON:
+
+    post '/:entity/:id' => sub {
+        my $entity = param('entity');
+        my $id     = param('id');
+
+        # input which was sent serialized
+        my $user = param('user');
+
+        ...
+    };
+
+We can now make a serialized request:
+
+    $ curl -X POST http://ourdomain/person/16 -d '{"user":"sawyer_x"}'
+
+It's all automatic.
+
+=head2 Always or never
+
+In previous versions of L<Dancer2> (and in L<Dancer> 1), serializers were only
+used when the data is a reference.
+
+There were some issues with that:
+
+=over 4
+
+=item * Unclear behavior
+
+You could have mixed routes that return serialized and non-serialized
+content, which is a source for confusion and inconsistency.
+
+Now you simply handle this by providing a package that has a serializer
+and a package that renders content. You can then separate them to different
+mounting points using L<Plack::Builder> as explained in a previous article
+and showed below.
+
+=item * What if the data is a string?
+
+Some serializers actually handle strings. L<Dancer2::Serializer::CBOR>, for
+example, can serialize strings. This previous ref-only behavior would render
+those serializers broken - not good.
+
+=back
+
+Instead, now everything is sent to serializers. Bad requests receive
+warnings and errors.
+
+=head2 Hooks
+
+While we're still working on adding an error hook, you can already hook
+into the serializer with a I<before> and I<after>:
+
+    hook before_serializer => sub {...};
+    hook after_serializer  => sub {...};
+
+=head2 App-specific feature
+
+Remember that serializers are engines. They affect a Dancer Application,
+which means that once you've set a serializer, B<all> routes within that
+package will be serialized and deserialized. This is how the feature works.
+
+As suggested above, if you would like to have both, you need to create
+another application which will not be serialized.
+
+A common usage for this is an API providing serialized endpoints (and
+receiving serialized requests) and providing rendered pages.
+
+    # MyApp.pm
+    package MyApp;
+    use Dancer2;
+
+    # another useful feature:
+    set auto_page => 1;
+
+    get '/' => sub { template 'index' => {...} };
+
+    # MyApp/API.pm
+    package MyApp::API;
+    use Dancer2;
+    set serializer => 'JSON'; # or any other serializer
+
+    get '/' => sub { +{ resources => \%resources, ... } };
+
+    # user-specific routes, for example
+    prefix => '/users' => sub {
+        get '/view'     => sub {...};
+        get '/view/:id' => sub {...};
+        put '/add'      => sub {...}; # automatically deserialized params
+    };
+
+    ...
+
+Then those will be mounted together for a single app:
+
+    # handler: app.pl:
+    use MyApp;
+    use MyApp::API;
+    use Plack::Builder;
+
+    builder {
+        mount '/'    => MyApp->to_app;
+        mount '/api' => MyApp::API->to_app;
+    };
+
+There ya go!
+
+=head2 Conclusion
+
+Serializers make it much easier to write API interfaces. We recommend using
+them in order to save yourself on typing. However, use caution knowing they
+will handle all input and all output and affect all routes in a package.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
