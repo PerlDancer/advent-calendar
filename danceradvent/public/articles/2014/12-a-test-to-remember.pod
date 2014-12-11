@@ -1,0 +1,264 @@
+=head1 A test to remember: testing your web application
+
+Perl has an extensive culture of testing which originated in the Perl
+language itself, carrying a staggering number of tests for its own
+features.
+
+We write a multitude of tests for every single bit in our distributions and
+we test them across different platforms, setups, versions of modules and
+applications, and even on different versions of perl[1] itself.
+
+For non-Perl regulars, you might think I'm exaggerating. Oh no, I'm not.
+Check out L<CPANTS, our CPAN Testing Service|http://cpants.cpanauthors.org/>
+for more details on our amazing free Perl testing service.
+
+It's safe to say: we love tests.
+
+I<< [1] We use B<Perl> (uppercase) for the language and B<perl> (lowercase)
+for the interpreter >>.
+
+=head2 But in the land of web...
+
+In the world of web, testing is trickier. A web application runs on a web
+server. That is usually an application written in another language (often
+C or C++), a long-running process with lots of configuration files and
+behavior that is hard to decouple.
+
+L<LWP> Gave us L<LWP::UserAgent> which gave us L<WWW::Mechanize>. As long
+as we had a web server running, we could just write some tests (turned on
+with an environment variable) that will make requests and test the results,
+producing proper TAP. There's even L<Test::WWW::Mechanize> to make it
+smoother.
+
+However, these don't handle the problem with testing in a web environment:
+the web server itself.
+
+=head2 Enter PSGI
+
+Any web application built on a L<PSGI> framework allows to approach the
+problem from an entirely different perspective.
+
+L<PSGI> applications (such as those created with Dancer) are actually
+code references fed to a web server. This means that as long as you create
+the proper request (specified by the L<PSGI> docs), you can call that
+application code reference with it and receive a response. No server is
+actually necessary. The server is merely there to create a proper
+request.
+
+L<Plack>, the set of utilities for L<PSGI> applications, comes with a
+special module to help this process: L<Plack::Test>.
+
+What L<Plack::Test> does is truly fantastic: it receives a common web
+request (using standard L<HTTP::Request> objects), fakes a web
+server in order to create a proper PSGI request, and sends it to the web
+application. When the web application returns a PSGI response (which Dancer
+applications do), it will then convert it to a common web response (as a
+standard L<HTTP::Response> object).
+
+This allows you to then create requests in your test, create the code
+reference for your web application, call them, and receive a response
+object, which you can then test to your heart's delight.
+
+Let's take a look at a few examples.
+
+=head2 Basic example
+
+Assuming we have a web application:
+
+    # MyApp.pm
+    package MyApp;
+    use Dancer2;
+    get '/' => sub {'OK'};
+    1;
+
+Now we want to write a test for it. Let's create F<base.t>:
+
+    # base.t
+    use strict;
+    use warnings;
+    use Test::More tests => 2;
+    use Plack::Test;
+    use HTTP::Request;
+    use MyApp;
+
+Now let's create a coderef for our application using the C<to_app> keyword:
+
+    my $app = MyApp->to_app;
+
+That was easy. Now let's create a test object from L<Plack::Test> for our
+application:
+
+    my $test = Plack::Test->create($app);
+
+Now we can call requests on it. We'll create our first request object and
+send it to our test object to receive a response:
+
+    my $request  = HTTP::Request->new( GET => '/' );
+    my $response = $test->request($request);
+
+We can now test it:
+
+    ok( $response->is_success, '[GET /] Successful request' );
+    is( $response->content, 'OK', '[GET /] Correct content' );
+
+=head2 Putting it all together
+
+If we put all our code together and remove some excess, we can come up
+with the following test file:
+
+    # base.t
+    use strict;
+    use warnings;
+    use Test::More;
+    use Plack::Test;
+    use HTTP::Request::Common;
+    use MyApp;
+
+    my $test     = Plack::Test->create( MyApp->to_app );
+    my $response = $test->request( GET '/' );
+
+    ok( $response->is_success, '[GET /] Successful request' );
+    is( $response->content, 'OK', '[GET /] Correct content' );
+
+    done_testing();
+
+It might seem like too much boilerplate, but there's enough modules to
+help you reduce that.
+
+=head2 Subtests
+
+We also separate our tests using L<Test::More>'s C<subtest> functionality,
+thus creating multiple self-contained tests that don't overwrite each other.
+
+Assuming we have a different app that has two states we want to test.
+
+    # MyApp.pm
+    package MyApp;
+    use Dancer2;
+    set serializer => 'JSON';
+
+    get '/' => sub {
+        my $user = param('user');
+
+        $user and return { user => $user };
+
+        return {};
+    };
+
+    1;
+
+This is a very contrived example of a route that checks for a user
+parameter. If it exists, it returns it in a hash with the key 'user'. If
+not, it returns an empty hash. Useful? Probably not, but a good example
+for having two tests.
+
+    # param.t
+    use strict;
+    use warnings;
+    use Test::More;
+    use Plack::Test;
+    use HTTP::Request::Common;
+    use MyApp;
+
+    my $test = Plack::Test->create( MyApp->to_app );
+
+    subtest 'A empty request' => sub {
+        my $res = $test->request( GET '/' );
+        ok( $res->is_success, 'Successful request' );
+        is( $res->content '{}', 'Empty response back' );
+    };
+
+    subtest 'Request with user' => sub {
+        my $res = $test->request( GET '/?user=sawyer_x' );
+        ok( $res->is_success, 'Successful request' );
+        is( $res->content '{"user":"sawyer_x"}', 'Empty response back' );
+    };
+
+    done_testing();
+
+We could, of course, use L<JSON> to decode and check for a proper object,
+which would be the right thing for a bigger response. Did I say
+I<contrived> yet? :)
+
+=head2 Cookies
+
+One interesting requirement is being able to handle cookies, mostly used
+for maintaining sessions. We can use L<Test::WWW::Mechanize::PSGI> or
+L<LWP::Protocol::PSGI>, I personally prefer using L<HTTP::Cookies> directly.
+
+Taking the previous test, assuming it actually creates and uses cookies
+for sessions, all we would need is the following:
+
+    # ... all the use statements
+    use HTTP::Cookies;
+
+    my $jar  = HTTP::Cookies->new;
+    my $test = Plack::Test->create( MyApp->to_app );
+
+    subtest 'A empty request' => sub {
+        my $res = $test->request( GET '/' );
+        ok( $res->is_success, 'Successful request' );
+        is( $res->content '{}', 'Empty response back' );
+        $jar->extract_cookies($res);
+        ok( $jar->as_string, 'We have cookies!' );
+    };
+
+    subtest 'Request with user' => sub {
+        my $req = GET '/?user=sawyer_x';
+        $jar->add_cookie_header($req);
+        my $res = $test->request($req);
+        ok( $res->is_success, 'Successful request' );
+        is( $res->content '{"user":"sawyer_x"}', 'Empty response back' );
+        $jar->extract_cookies($res);
+
+        ok( ! $jar->as_string, 'All cookies deleted' );
+    };
+
+    done_testing();
+
+Here we create a cookie jar, make sure all our requests and responses work
+with it, and we can even check for existing cookies, as well as cookies
+that were deleted by the response, since L<HTTP::Cookies> will understand
+a delete request (by setting an older time) and delete it.
+
+=head2 Where are the test helpers?
+
+Both Dancer 1 and 2 have L<Dancer::Test> and L<Dancer2::Test>, respectively,
+but in L<Dancer2> it is currently not recommended.
+
+The reason is that, because they weren't written with PSGI in mind, they
+are bending over backwards in order to fake the request, run it against
+a fake dispatcher, and then return a fake response.
+
+At the end of the day, it isn't only buggy and took a lot of our time and
+efforts into maintaining it, but it is also counter-intuitive.
+
+We might reinstate it later, once we've redesigned it to simply be a helper
+layer on top of L<Plack::Test>.
+
+For now, we suggest to avoid it and go directly for L<Plack::Test>.
+
+=head2 Conclusion
+
+Writing tests is a lot of fun and they help us make sure our applications
+work the way we want them to work. They help flesh out features, APIs,
+and maintain their correctness throughout changes, big and small.
+
+Writing tests for web application used to be difficult, but now, with the
+magic of L<PSGI>, it is simple and straight-forward.
+
+You can read more about testing in L<Dancer2::Manual::Testing>.
+
+Our next article will cover how we write tests ourselves in the L<Dancer2>
+core.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
