@@ -1,0 +1,165 @@
+=head1 The test core: How we test in Dancer2 core
+
+The Dancer2 core test suite is improving significantly. We have made
+vast changes in how we
+L<sort our tests|http://advent.perldancer.org/2014/8> and we now use
+L<Plack::Test> to L<write tests|http://advent.perldancer.org/12>.
+
+If you're interested in contributing, we would not only praise you for
+years to come, but also shower you and your family with gifts. But
+before you can contribute tests, it's important you understand our
+practices and conventions when writing tests.
+
+=head2 Basics
+
+There are a few guidelines for the tests which we try to maintain
+when writing tests:
+
+=over 4
+
+=item * C<use_ok> for testing classes load
+
+=item * Declare the number of tests
+
+=item * Use I<subtests> or code blocks for scoping
+
+=item * Try to reach as much coverage as possible
+
+=item * Reduce convenience modules and don't make them mandatory
+
+=item * Thus, skip if those modules aren't available
+
+=item * Provide each test with a test name - no empty tests
+
+=back
+
+=head2 Testing classes
+
+The main tests are actually for classes. As
+L<explained|http://advent.perldancer.org/2014/8>, we store these
+tests in F<t/classes/>, under a directory for each class we test.
+
+Let's take a look at the L<Dancer2::Core::Factory> object tests. Since
+it simply creates engine objects and contains only a single method,
+the test is rather simple.
+
+Boilerplate:
+
+    use strict;
+    use warnings;
+    use Test::More tests => 5;
+
+As explained, this is not a fast and hard rule, but we prefer to count
+the number of tests we have, to make sure the test doesn't miss a test
+someone has accidentally put on a condition.
+
+We test loading:
+
+    use_ok('Dancer2::Core::Factory');
+
+Then we test the object itself:
+
+    my $factory = Dancer2::Core::Factory->new;
+    isa_ok( $factory, 'Dancer2::Core::Factory' );
+    can_ok( $factory, 'create' );
+
+You might notice we pick descriptive names. We try to avoid variables
+names C<$f> in our core code as well as in our tests.
+
+Now we can test the C<create> method, which is actually a class method,
+so holding the factory object is not required. We generally avoid class
+methods, but in this class we're a bit more lax about it:
+
+    my $template = Dancer2::Core::Factory->create(
+        'template', 'template_toolkit', layout => 'mylayout'
+    );
+
+    isa_ok( $template, 'Dancer2::Template::TemplateToolkit' );
+    is( $template->{'layout'}, 'mylayout', 'Correct layout set in the template' );
+
+That's it. Pretty simple.
+
+=head2 Testing DSL
+
+In order to test DSL keywords, we need to have a valid application who
+uses C<Dancer2> and then try its DSL keywords. That's actually simple
+enough.
+
+The test F<t/dsl/app.t> provides our test for the C<app> keyword, which
+returns the current L<Dancer2::Core::App> a package is using.
+
+First we have our boilerplate:
+
+    use strict;
+    use warnings;
+    use Test::More tests => 2;
+    use Plack::Test;
+    use HTTP::Request::Common;
+
+Now we define an application in the code in its own scope so it doesn't
+interfere with the test itself, but be available to it:
+
+    {
+        package App;
+        use Dancer2;
+        get '/' => sub {
+            my $app = app;
+            ::isa_ok( $app, 'Dancer2::Core::App' );
+            ::is( $app->name, 'App', 'Correct app name' );
+        };
+    }
+
+This application uses C<Dancer2> and thus receives the keywords. Since
+our test is written in the implicit C<main> package, the double colon
+shorthand for C<main::> class resolution allows it to call C<::isa_ok>
+to reach the test's C<isa_ok> function (provided by L<Test::More>) and
+C<::is> allows it to reach the test's C<is> function (also provided by
+L<Test::More>).
+
+This test checks that if you reach the main path, it will call the
+C<app> keyword and check it received an instance, that it is the right
+instance, and that the name was even set correctly.
+
+We still need to write the code to reach it:
+
+    Plack::Test->create( App->to_app )->request( GET '/' );
+
+There.
+
+Often we return values from a web request, but in this specific
+case we're really interested in an object which the route receives and
+doing it by sending it back as a response would just be overengineering.
+
+=head2 What about external files?
+
+Some tests might require some additional files to work. Perhaps you're
+checking the side-effect of reading from the configuration file or a piece
+of code that works with the file system.
+
+One example is F<t/issues/gh-639> which has additional directories, each
+have their own F<config.yml> and test file to check against different
+configuration files as part of a general issue opened.
+
+=head2 Conclusions
+
+Following the guidelines you will be able to help us improve our tests,
+move our old ones, and provide new tests for issues you or others might
+open.
+
+We're very interested in having a good test coverage and providing
+reliable behavior. Tests are a major component of it and we would always
+be more than happy to receive more help in that field.
+
+Next time you open an issue, consider writing a test for it. If you're
+not sure how, please contact us. We would love to help. :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
