@@ -1,0 +1,131 @@
+=head1 Writing plugins for Dancer2
+
+Plugins provide you with additional keywords to decouple
+predefined behavior to make it easier on you so you won't need to
+implement the same thing over and over again.
+
+Let me show you how simple it is to write a plugin of your own.
+
+I<< (This explains the current API to plugins. Refer to
+L<Dancer2::Plugin> for up-to-date documentation.) >>
+
+=head2 A plugin that does nothing (so far)
+
+All you need to do is use L<Dancer2::Plugin> and that will provide
+you with all the keywords you need to write the plugin.
+
+    package Dancer2::Plugin::Kitteh;
+    use Dancer2::Plugin;
+
+    # we do nothing, just like most cats do
+
+    register_plugin;
+
+    1;
+
+=head2 Introducing keywords
+
+You can introduce new keywords the application will receive when it
+uses your plugin using the C<register> keyword:
+
+    register meow => sub {
+        my ( $dsl ) = plugin_args(@_);
+        my $app = $dsl->app;
+    };
+
+This is how we introduce the C<meow> keyword to the user.
+
+We use C<plugin_args> to make sure we get the plugin arguments. This
+is for compatibility.
+
+The keyword receives an object which represents the DSL object the
+app is connected to. You can use it in order to access the Dancer2
+core application connected to the user's scope.
+
+We can also control whether a keyword is I<app-global>, meaning it
+can be called from anywhere in an app or only from a route,
+which means during a request:
+
+    register meow => sub {
+        debug 'Meow!';
+    }, { is_global => 0 };
+
+=head2 Route decorators
+
+Some plugins generate routes from other routes, which makes them look
+a little bit like route decorators. Take L<Dancer2::Plugin::Auth::Tiny>
+for example:
+
+    get '/private' => needs login => sub { ... };
+
+The way it works is by taking the route sub as a parameter and creating
+its own route which calls it. We can do the same.
+
+    package Dancer2::Plugin::OnTuesday;
+    # ABSTRACT: Make sure a route only works on Tuesday
+    use Dancer2::Plugin;
+
+    register on_tuesday => sub {
+        my ( $dsl, $route_sub, @args ) = plugin_args(@_);
+
+        my $day = (localtime)[6];
+        $day == 2 or return pass;
+
+        return $route_sub->( $dsl, @args );
+    };
+
+    register_plugin;
+
+Now we can use this plugin as such:
+
+    package MyApp;
+    use Dancer2;
+    use Dancer2::Plugin::OnTuesday;
+
+    get '/' => on_tuesday => sub { ... };
+
+    # every other day
+    get '/' => sub { ... };
+
+=head2 Reading the configuration
+
+While a user can change the configuration using both the configuration file
+and the C<set> keyword, we need a single source for all configuration
+options for our plugin. This is handled automatically using the
+C<plugin_setting> keyword:
+
+    register meow => sub {
+        my $dsl = shift;
+        my $vol = plugin_setting->{'volume'} || 3;
+    };
+
+=head2 Extra tricks
+
+There are a few additional tricks available which weren't covered here,
+such as running code on import, registering additional hooks, and
+executing hooks. They are all documented in L<Dancer2::Plugin>.
+
+=head2 Conclusion
+
+The plugin infrastructure in the upgrade from Dancer 1 to Dancer 2
+has been problematic. We've tried various methods to allow plugins to
+coexist, then to specify how they work, and finally to provide a
+proper shim layer to enable working with both smealessly.
+
+Unfortunately all of these methods had problems and we resulted in
+separating the plugins. This does not mean that writing a
+plugin for Dancer 2 is difficult. In fact it's fairly simple.
+
+We're working on making them even more comfortable and remove any
+lingering problems, but as you can see they are already easy to write.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
