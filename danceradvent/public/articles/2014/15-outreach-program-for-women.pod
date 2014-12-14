@@ -1,0 +1,68 @@
+=head1 Outreach Program for Women (OPW) and Dancer
+
+The L<Outreach Program for Women|https://opw.gnome.org> (OPW) helps
+women work on Open Source and Free Software applications while
+receiving a salary and having a mentor by their side.
+
+L<The Perl Foundation|http://www.perlfoundation.org/> (TPF) is
+L<participating|http://www.perlfoundation.org/outreach_program_for_women>
+this year again, and this year we have the pleasure of participating
+with Dancer!
+
+=head2 Our participant
+
+Our applicant, Snigdha Dagar, has been accepted to work on L<Dancer2>'s
+documentation overhaul!
+
+She had already contributed the first draft of the
+L<Dancer2::Manual::Migration> document to help users with upgrading from
+L<Dancer> to L<Dancer2>.
+
+=head2 The documentation overhaul
+
+The documentation overhaul was deemed a crucial component in making the
+upgrading from Dancer 1 to Dancer 2 more attainable.
+
+The current documentation has been copied over from Dancer 1, but is not
+completely compatible. Some things have changed and many features have
+been added. Unfortunately in the frenzy of continuing upgrading Dancer
+and its abilities, along with important improvements, we lack the tuits
+to resolve the outstanding problems with the current documentation.
+
+Starting from scratch would be a tremendous amount of work, and whether
+it will be less or more work than going through the current documentation
+with a fine comb and sorting it out still does not resolve the problem
+with the lack of personnel for this task.
+
+What we need is human resources - and not the department. :)
+
+=head2 There is a plan
+
+Snigdha has provided a plan for overhauling the documentation, which
+includes researching other FOSS projects, provide introductory material,
+How-to guides, and cohesiveness of the overall documentation.
+
+Her work will help resolve the documentation problems, assure consistency,
+accuracy, and above all, a well structured, helpful documentation for such
+an important project.
+
+=head2 There will be updates
+
+We are excited and delighted to have her help in these upcoming months
+and we will be providing updates on the progress made.
+
+We are certain Snigdha would appreciate any guidance and assistance from
+the community. Feel free to suggest corrections, improvements, what to
+focus on, what to not focus on, and how to assure the success of her work
+and the project.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
