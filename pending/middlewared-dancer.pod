@@ -1,8 +1,9 @@
 =head1 Middlewared Dancer: our usage of middlewares
 
-L<Plack> provides a useful component called a
-L<Middleware|Plack::Middleware>, which wraps applications with
-functionality.
+Now that we understand what
+L<middlewares|http://advent.perldancer.org/2014/20> are and how to use
+them, we would like to share a small secret with which we ended the
+previous article.
 
 While much of the existing middlewares provide additional features, there
 are middlewares that can help supplement a web framework or reduce the
@@ -16,7 +17,8 @@ Here are the current middlewares we use internally in Dancer2:
 
 =head2 Static
 
-First, as described in another article in this 2014 Dancer Advent Calendar,
+First, as described in
+L<a previous article|http://advent.perldancer.org/2014/6>,
 Dancer2 now uses L<Plack::Middleware::Static> to provide static files.
 
 This helped provide consistency with both the previous behavior
