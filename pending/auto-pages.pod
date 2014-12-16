@@ -1,0 +1,108 @@
+=head1 Hidden feature: Auto Pages
+
+One feature we love in Dancer (both L<Dancer 1|Dancer> and
+L<Dancer 2|Dancer2>) is the I<AutoPage> feature.
+
+=head2 Auto-what?
+
+Most websites provide web pages - multiple web pages. Many web pages will
+have a template and not just static content.
+
+Rendering a template is simple:
+
+    get '/users/view' => sub {
+        template 'view' => {...};
+    };
+
+Assuming we have over 40 different pages, this becomes an arduous task of
+writing endpoints for each template, then keeping those up-to-date and
+continuing to add more.
+
+If only. If only someone would have come up with a feature that allowed
+automatically rendering templates by path. If only someone named
+B<David Precious>, who is now handling the absurd responsibility of
+fatherhood while leaving B<Sawyer X> to handle the
+L<Dancer Advent Calendar|http://advent.perldancer.org> all on his own,
+would have that idea and have already implemented it in Dancer 1, thus
+having it available from the early days of Dancer 2... oh wait, he did!
+
+=head2 How
+
+I<AutoPage> is a simple feature that you would love. Turning it on is
+as simple as:
+
+    set auto_page => 1;
+
+or in your configuration file:
+
+    auto_page: 1
+
+Dancer will take care of the rest.
+
+At this point, you might be wondering what it really does.
+
+=head2 Behind the scenes
+
+What I<AutoPage> does is very simple: when a request was not served by a
+static file or by a user defined route, it looks for a template that
+matches the path. If it finds one, it renders it.
+
+This means that the request C</users/edit> will first try to match a
+file, failing that it will try to match a route, and then, if still
+unsuccessful, it will go to I<AutoPage>. I<AutoPage> will search for
+a template under C<views/users/> named C<edit.tt>, assuming your I<views>
+directory is C<views> and your templating engine default extension is
+C<.tt>.
+
+I<AutoPage> will adhere to your C<views> and your templating system
+extension, so if those change, it will still work. It will also not
+render the layouts themselves, so you don't need to worry about someone
+being a smart-ass.
+
+=head2 Another reason it's awesome
+
+By fully rendering a template, not just statically serving it, you
+have the full range of request variables. That means that any code in
+your templates that requires variables (or callbacks) will work:
+
+    # in layout/main.tt:
+    Served by [% dancer_version %]
+
+This will work just fine. But what about variables we're adding in
+our code using the C<before_template_render> hook?
+
+    # in MyApp.pm:
+    use Time::HiRes 'time';
+    hook before_template_render => sub {
+        my $tokens = shift;
+        $tokens->{'timestamp'} = time;
+    };
+
+    # in users/edit.tt:
+    Request timestamp: [% timestamp %]
+
+Why would you put the timestamp there? I don't know. It's yet another
+contrived example that shows how you can add variables that will be
+accessible to the template rendered by I<AutoPage>.
+
+=head2 Conclusion
+
+The I<AutoPage> feature is probably one of the nicest subtle features
+in Dancer. We don't hide it, but we also don't make it abundantly clear
+to users how awesome it is and how you most likely want to use it.
+
+At the end of the day, this feature also serves as yet another reason
+to buy David Precious a drink, which will finally force him to come
+to some public Perl event. This is all part of our secret plan.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
