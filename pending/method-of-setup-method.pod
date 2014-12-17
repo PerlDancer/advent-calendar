@@ -1,0 +1,156 @@
+=head1 The method of the setup method
+
+Load-time setup of application variables depends on the availability of
+the configuration options, but we often have the requirement of being
+able to defer these to later. But how do we do this?
+
+=head2 A common requirement
+
+Many applications set up variables on load-time:
+
+    package MyApp;
+    use Dancer2;
+
+    my $dsn    = config->{'dsn'};
+    my $schema = MyApp::Schema->connect($dsn);
+
+    ...
+
+I<< (If you're using the L<Dancer2::Plugin::Database>, a similar thing
+will happen behind the scenes. >>
+
+The problem we have with this is that it requires the information to
+be available in the configuration (accessed via the C<config> keyword)
+before loading the application.
+
+    use MyApp; # config() will be called
+
+What happens when we want to set up the variables beforehand?
+
+I<I can do that>, you think to yourself. Here's the code:
+
+    use Dancer2; # for config() keyword
+    use MyApp;
+
+    config->{'dsn'} = $new_dsn; # too late, hot plate!
+
+Nope. Not going to work. When you call C<use MyApp>, it will already
+use the C<config> keyword to get the DSN.
+
+Alright, so you decide to change the configuration before you load the
+second application. Let's try that.
+
+    use Dancer2;
+    config->{'dsn'} = $new_dsn;
+    use MyApp;
+
+But that's not going to work, because C<use> is compile-time, not
+run-time. The order is actually as following:
+
+    use Dancer2;                # happens first
+    config->{'dsn'} = $new_dsn; # happens last
+    use MyApp;                  # happens right after "use Dancer2"
+
+You might think you could get around this with C<BEGIN> by forcing the
+changes to happen before it loads the application:
+
+    BEGIN {
+        use Dancer2;
+        config->{'dsn'} = $new_dsn;
+        use MyApp;
+    }
+
+Sure. That will control the order of events by forcing the C<config>
+statement to get called at compile-time, and because it's one line before
+the C<use MyApp> line, it will be called before it. Oh wait...
+
+Now you've hit a major design issue with L<Dancer2>. We no longer play
+with globals because globals are evil. This means that as soon as you
+called C<use Dancer2>, we created an application based on your package
+name.
+
+When you change the configuration (using the C<config> keyword), you
+change the configuration of the first application built. When you called
+C<use MyApp>, L<Dancer2> had created yet another application, solely for
+the I<MyApp> package. This is fully intended and is a major leading
+design for Dancer2.
+
+But how do we still handle this reasonable requirement?
+
+=head2 Moving to run-time
+
+Instead of trying to elevate the setup code to compile-time, why not just
+push the application setup to run-time instead?
+
+What if we loaded the code and imported it in runtime?
+
+    package MyApp;
+    use Dancer2;
+
+    my $dsn;
+    sub setup {
+        $dsn = config->{'dsn'};
+        # do something with $dsn
+
+        get '/' => sub {...};
+    }
+
+Now we just call C<setup> method when we want to
+start registering routes. It's a good start. Let's make it accept
+parameters:
+
+    package MyApp;
+    use Dancer2;
+
+    my $dsn
+    sub setup {
+        my $opts = shift;
+        $dsn = $opts->{'dsn'} || config->{'dsn'};
+        # do something with $dsn
+
+        get '/' => sub {...};
+    }
+
+Now we can call it from some other environment:
+
+    # mytest.t:
+    ...
+
+    use MyApp;
+    MyApp->setup({ dsn => 'dbi:SQLite:dbname=:memory:' });
+
+We can even set up our own schema object if we put that functionality
+in our C<setup> method:
+
+    my $test_dsn = 'dbi:SQLite:dbname=t/corpus/test.sqlite';
+    my $schema   = MyApp::Schema->connect($test_dsn);
+    MyApp->setup({ schema => $schema });
+
+    $schema->deploy;
+    ...
+
+=head2 The future
+
+Since this is such a useful bootstrapping pattern, we are still
+considering adding this as a built-in feature in L<Dancer2>. While you
+can roll your own this easily, we could envision making this even easier.
+
+Imagine having a C<bootstrap> method which could be run before the routes
+are registered or when you actually call C<to_app>, with optional
+bootstrap callbacks. It is possible and we might just blog about it
+in the future.
+
+Meanwhile, Dancer applications have just enough magic to do great things
+while still allowing you to make use of Perl to get around load-order
+and encapsulation issues.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
