@@ -1,0 +1,142 @@
+=head1 Authentication for the masses
+
+Just like at some point every developer writes a templating system,
+every web developer eventually writes a form for authentication.
+
+It's simple: we check the user credentials on a request and decide whether
+to continue or redirect them to a form. The form allows them to submit
+their username and password and we save that and create a session for them
+so when they now try the original request, we recognize them and allow them
+in.
+
+=head2 Basic application
+
+The application is fairly simple. We have a route that needs
+authentication, we have a route for showing the login page, and we have a
+route for posting login information and creating a session.
+
+    package MyApp;
+    use Dancer2;
+
+    get '/' => sub {
+        session('user')
+            or redirect('/login');
+
+        template index => {};
+    };
+
+    get '/login' => sub {
+        template login => {};
+    };
+
+    post '/login' => sub {
+        my $username  = param('username');
+        my $password  = param('password');
+        my $redir_url = param('redirect_url') || '/login';
+
+        $username eq 'john' && $password eq 'correcthorsebatterystaple'
+            or redirect $redir_url;
+
+        session user => $username;
+        redirect $redir_url;
+    };
+
+=head2 Tiny authentication helper
+
+L<Dancer2::Plugin::Auth::Tiny> allows you to
+abstract away not only the part that checks whether the session exists, but to
+also generate a redirect with the right path and return URL.
+
+We simply have to define what routes needs a login using Auth::Tiny's
+C<needs> keyword.
+
+    get '/' => needs login => sub {
+        template index => {};
+    };
+
+It creates a proper return URL using C<uri_for> and the address from
+which the user arrived - something we didn't do ourselves.
+
+We can thus decorate all of our private routes to require authentication
+in this simple manner. If a user does not have a session, it will
+automatically forward it to C</login>, in which we would render a form
+for the user to send a login request.
+
+Auth::Tiny even provides us with a new parameter, C<return_url>, which we
+can use to send the user back to their original requested path.
+
+We will still need to handle the password verification, but we have yet
+another small helper for this.
+
+=head2 Password hashing
+
+Many web developers don't understand the importance of hashing passwords.
+There are many articles to explain this, but few spend the time
+to read and understand them. From the multitude of methods available, and
+the different hashing alogrithms out there, it's not a simple task to
+decide on which combination to use and how.
+
+L<Dancer2::Plugin::Passphrase> (recently ported from Dancer 1) provides
+a simple passwords-as-objects interface with sane defaults for hashed
+passwords which you can use in your web application. It uses B<bcrypt>
+as the default but supports anything the L<Digest> interface does.
+
+Assuming we have the original user-creation form submitting a username
+and password:
+
+    package MyApp;
+    use Dancer2;
+    use Dancer2::Plugin::Passphrase;
+    post '/register' => sub {
+        my $username = param('username');
+        my $password = passphrase( param('password') )->generate;
+
+        # $password is now a hashed password object
+        save_user_in_db( $username, $password->rfc2307 );
+
+        template registered => { success => 1 };
+    };
+
+We can now add the B<POST> method for verifying that username and
+password:
+
+    post '/login' => sub {
+        my $username   = param('username');
+        my $password   = param('password');
+        my $saved_pass = fetch_password_from_db($username);
+
+        if ( passphrase($password)->matches($saved_pass) ) {
+            session user => $username;
+            redirect param('return_url') || '/';
+        }
+
+        # let's render instead of redirect...
+        template login => { error => 'Invalid username or password' };
+    };
+
+=head2 Conclusion
+
+Both L<Dancer2::Plugin::Auth::Tiny> and L<Dancer2::Plugin::Passphrase>
+are simple wrappers around basic functionality. You can check their code,
+it's pretty simple and straight-forward.
+
+The strength of plugins are not necessarily in complicated and weird code,
+but rather in abstracting difficult things to remember and get right, and
+making them accessible in your web environment and integrated with your
+application configuration.
+
+Authentication is not just easier with these modules, but safer.
+
+You might also want to read up on L<Dancer2::Plugin::Auth::Extensible>.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
