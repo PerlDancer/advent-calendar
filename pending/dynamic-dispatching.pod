@@ -6,7 +6,7 @@ a requirement and how to achieve it.
 
 =head2 The use-case
 
-Let’s say you were building a message board that supported any number of
+Let's say you were building a message board that supported any number of
 boards - each with a custom URL. For example, if this were something for a
 Beethoven fan site you might have a board for discussing each genre of work
 composed by him, with URLs like:
