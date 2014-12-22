@@ -132,7 +132,7 @@ not be a problem depending on your infrastructure.
 Also if boards are not fixed and are created all the time then this approach
 will not work very well as it would required an app restart to pick up all
 the new boards (or for that matter changes to the URL slugs for the existing
-boards, or deletions.
+boards, or deletions).
 
 =head2 The hook
 
