@@ -209,7 +209,22 @@ L<chained actions|http://techblog.babyl.ca/entry/chained-dancer>.
 
 =head2 Minimum version
 
-[INSERT prefix bug adventure here if needed]
+This article requires L<Dancer2> version 0.158000 which carries two
+important fixes for how paths are merged with prefixes.
+
+The first is for routes that do not have a leading
+forward slash, existing in the following situation:
+
+    prefix '/:board' => sub {
+        get '/' => sub {...};
+    };
+
+The second is for composing prefixes with variables along with routes
+that have no variables, as the examples above do, such as:
+
+    prefix '/:board' => sub {
+        get '/' => sub {...};
+    };
 
 =head2 Conclusion
 
