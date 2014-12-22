@@ -216,7 +216,7 @@ The first is for routes that do not have a leading
 forward slash, existing in the following situation:
 
     prefix '/:board' => sub {
-        get '/' => sub {...};
+        get '' => sub {...};
     };
 
 The second is for composing prefixes with variables along with routes
