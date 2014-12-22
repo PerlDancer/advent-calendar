@@ -13,11 +13,11 @@ composed by him, with URLs like:
 
 =over 4
 
-=item * http://www.beethovenfans.com/string-quartets
+=item * http://www.beethovenfans.com/string-quartets/
 
-=item * http://www.beethovenfans.com/symphonies
+=item * http://www.beethovenfans.com/symphonies/
 
-=item * http://www.beethovenfans.com/piano-sonatas
+=item * http://www.beethovenfans.com/piano-sonatas/
 
 =back
 
