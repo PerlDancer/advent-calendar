@@ -1,0 +1,226 @@
+=head1 Dynamic routing in Dancer is dynamic
+
+Dancer provides with a number of ways to do dynamic routing, A.K.A.,
+chained actions. Let's take a look at situations that lead to such
+a requirement and how to achieve it.
+
+=head2 The use-case
+
+Let’s say you were building a message board that supported any number of
+boards - each with a custom URL. For example, if this were something for a
+Beethoven fan site you might have a board for discussing each genre of work
+composed by him, with URLs like:
+
+=over 4
+
+=item * http://www.beethovenfans.com/string-quartets
+
+=item * http://www.beethovenfans.com/symphonies
+
+=item * http://www.beethovenfans.com/piano-sonatas
+
+=back
+
+Visiting the top-level board url would show you a list of all posts under
+that board. You could start a discussion by simply using I</new-post> under
+the board name. So to start a discussion under string-quartets, you'd go to:
+
+    http://www.beethovenfans.com/string-quartets/new-post
+
+Similarly, you could view or permalink to a specific post as:
+
+    http://www.beethovenfans.com/string-quartets/opus-18-no-6
+
+Where I<opus-18-no-6> is the unique identifier of the post - possibly generated
+from the title of the post.
+
+Similarly, to upvote a post on the board:
+
+    http://www.beethovenfans.com/string-quartets/opus-18-no-6/upvote
+
+Each time someone accesses one of these URLs, you first need to check if the
+discussion board exists. To put it in code:
+
+    get '/:board' => sub {
+        my $board = param('board');
+
+        # validation code for $board
+        ...
+    };
+
+    get '/:board/new-post' => sub {
+        my $board = param('board');
+
+        # validation code for $board
+    };
+
+    get '/:board/opus-18-no-6/upvote' => sub {
+        my $board = param('board');
+
+        # validation code for $board
+    };
+
+Each of these handlers have to start by validating the existence of a
+discussion board before they do anything else. It makes sense to have the
+discussion board validation logic in one place.
+
+=head2 Setup method
+
+One way to do this is by defining a special setup method which you call
+when the application starts up. This method can use the B<< C<prefix> >>
+keyword to set up routes for each board.
+
+    sub get_boards {
+        # in a real life application this would come from a
+        # database. for the sake of simplicity, we simply return
+        # a hard-coded list
+
+        return qw(string-quartets symphonies piano-sonatas piano-trios);
+    }
+
+    sub setup_routes {
+        my @boards = get_boards;
+
+        foreach my $board (@boards) {
+
+            prefix "/$board" => sub {
+
+                # any variables here will be accessible to the handlers
+                # defined below
+                my $welcome_message = "Welcome to the group for discussing: $board";
+
+                get '/' => sub {
+                    # show a list of all the posts under the board $board
+                    # for demo's sake simply return the welcome message
+                    return $welcome_message;
+                };
+
+                get '/:post_id' => sub {
+                    # do the work here or delegate to a specialised class
+                    my $post_id = param('post_id');
+
+                    # check if the ID is valid and do something with it
+                    # for demo's sake show variables you have access to:
+                    return "I was called with board: $board, post id: $post_id"
+                         . " and have access to the welcome_message variable: $welcome_message";
+                };
+            };
+        }
+    }
+
+Then in your app.pl:
+
+    #!/usr/bin/env perl
+
+    use FindBin;
+    use lib "$FindBin::Bin/../lib";
+
+    use beethoven;
+    beethoven->setup_routes;
+    beethoven->to_app;
+
+Calling setup_routes essentially materialises the routes beforehand based on
+what C<get_boards> returns. If the user enters a board that doesn't exist, it
+will automatically get picked up by Dancer's default handling of missing
+routes and a 404 error will be returned to the user.
+
+This approach works well if the number of boards is small. Say in hundreds,
+or may be in thousands, but not in hundreds of thousands. After a certain
+point the Dancer process will grow too big in memory. That might or might
+not be a problem depending on your infrastructure.
+
+Also if boards are not fixed and are created all the time then this approach
+will not work very well as it would required an app restart to pick up all
+the new boards (or for that matter changes to the URL slugs for the existing
+boards, or deletions.
+
+=head2 The hook
+
+There is another way that allows us to dynamically check for a board rather
+than materialising all our routes up front. The basic idea is to combine
+B<< C<prefix> >> with a B<< C<before> >> handler. Let's put together some
+code to illustrate this idea:
+
+    hook before => sub {
+        my $board = param('board');
+
+        if ($board && board_is_valid($board)) {
+            var board => $board;
+        }
+    };
+
+    prefix '/:board' => sub {
+
+        get '/' => sub {
+            # show a list of all the posts under the board $board
+            # for demo's sake simply return the welcome message
+            my $board = var('board') or pass;
+
+            my $welcome_message = "Welcome to the group for discussing: $board";
+            return $welcome_message;
+        };
+
+        get '/:post_id' => sub {
+            my $board = var('board') or pass;
+
+            # do the work here
+            my $post_id = param('post_id');
+
+            # check if the ID is valid and do something with it
+            # for demo's sake show variables you have access to:
+            return "I was called with board: $board, post id: $post_id";
+        };
+    };
+
+    sub board_is_valid {
+        my $board = shift;
+
+        return if not defined $board;
+
+        # in a real life application we would check this against a table in
+        # a database or through a backend service. for the sake of
+        # simplicty, let's just check against a hardcoded list
+        my %valid_boards = map { $_ => 1 }
+                           qw(string-quartets symphonies piano-sonatas piano-trios);
+
+        return defined $valid_boards{$board};
+    }
+
+
+This time, our C<before> handler will catch the request first. It sets up
+the C<board> variable using B<< C<var> >> that is automatically passed around
+to each handler. The handler first checks if the C<board> variable exists
+and if it doesn't, it simply defers the handling to the Dancer's default
+route handling. Since no other routes to handle the C<:board> exist, this
+results in a 404.
+
+While it alleviates the need to build all possible routes
+up front, the one downside to this approach is having to check for the
+presence of C<board> variable in each handler. On the positive side, you can
+dynmically add boards without restarting the application for them to be
+available.
+
+=head2 Even more ways
+
+Additional approaches for the dynamic route handling problem exist. Most
+notably, another approach was recently documented by Yanick Champoux uses
+L<megasplat|http://www.perladvent.org/2013/2013-12-02.html> to produce
+L<chained actions|http://techblog.babyl.ca/entry/chained-dancer>.
+
+=head2 Minimum version
+
+[INSERT prefix bug adventure here if needed]
+
+=head2 Conclusion
+
+Dancer has many methods of producing dynamic routes (or "chained actions") and
+each of them has its benefits and drawbacks.
+
+=head2 Author
+
+This article has been written by Deepak Gulati for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+Creative Commons Deepak Gulati 2014.
