@@ -1,0 +1,175 @@
+=head1 Past and future
+
+This last article is meant to reflect on the past, in the present,
+and speculate about the future, perhaps even - with the cover of
+darkness - offer some future plans, in quiet murmur, of course. :)
+
+=head2 Popularity
+
+We all care about popularity. Popularity isn't just cool factor, it's
+also a measurement of success - doing well, going in the right direction.
+
+But how do you measure popularity? It's
+L<hard|http://blog.timbunce.org/2008/04/12/tiobe-or-not-tiobe-lies-damned-lies-and-statistics/>.
+
+We have different mechanisms made just to measure success. In our
+world that would Github stars, Github watchers, and even MetaCPAN
+votes. However, if you take a look at Moose, it only has 78 stars on Github, and
+only 15 watchers. Would you say Moose is less successful than Dancer? Not
+at all. This measurement simply is far from accurate.
+
+However, there is another way to measure popularity.
+
+One of my favorite and most respected authors provides the following
+comment in all of his projects:
+
+I<All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug to
+cpan-RT.>
+
+Complex software accumulates tickets. These are bugs, feature requests,
+failing tests, missing tests, questions, and so on. Hopefully authors
+will collect these in a ticket system like RT or Github.
+
+The amount of tickets you have indicates how many of these came up. While
+some authors will open a staggering amount of tickets for their projects
+(which is nothing short of being thorough and responsible) and projects
+may have a devoted user who opens tickets upon tickets, most tickets are
+opened by the audience of users. The number indicates how many have used your
+software to a degree of contacting you, providing input, and found you or
+your project approachable and tried to help improve it.
+
+You can count the number of tickets for a project, remove the core authors
+(and check for when they weren't core authors yet - it happens sometimes),
+normalize to amount of users opening the issues, and look at the numbers.
+
+Dancer has two main repositories: Dancer 1 and Dancer 2. Together they have
+accumulated around 1,900 tickets. Yes, that's close to B<two thousand>
+tickets. About 1,000 of them are pull requests. Yes, that's right. Over
+B<one thousand> pull requests. Actually, my numbers are off. I only took
+into account Github. Dancer has been running on RT earlier and there's a
+quite a few there as well. That would also be off, because we accept
+tickets through any medium. We get them in personal emails, on the mailing
+list, at conferences, on IRC, and so on.
+
+Beyond all measurements, I'd say we reached people. More importantly,
+I would say these people reached us. I cannot be more proud of this
+achievement.
+
+I can talk about L<Booking|http://www.booking.com> using Dancer. I can
+talk about L<Shutterstock|http://www.shutterstock.com> using Dancer. I can
+talk about L<MoonFruit|http://www.moonfruit.com>, L<UK2|http://www.uk2.net>,
+L<Tilt|https://www.tilt.com>, L<FinanceJobs|https://www.financejobs.co>,
+L<PerlMaven|http://perlmaven.com>, L<Geekuni|http://geekuni.com>, the
+L<Strehler CMS|http://www.strehler-cms.org>, and even a
+L<spiritual church|http://www.finchleyspiritualistchurch.org.uk> and
+an L<anarchist library|http://theanarchistlibrary.org> using Dancer.
+
+I can talk about all of these, but that's not the great part. The great
+part is our contributors.
+
+=head2 Contribution is key
+
+Having someone contributing their time and skill is priceless. Contributors
+are the life-force of a project - not the core developers. Almost any
+core developer in Free and Open Source will undoubtedly tell you that
+development's gratitude is someone using it, thanking you for it, or better
+yet, improving it further by contributing something - a test, a documentation
+patch, or even opening tickets.
+
+Except for Dancer's founder, Alexis (I<@sukria>) Sukrieh, all Dancer core
+developers started as contributors. This includes yours truly and everyone
+else in the team. This hasn't changed since. We always saw and see ourselves
+simply as contributors with more responsibility.
+
+Dancer has enjoyed the help of an astonishing amount of contributors. Overall,
+the Dancer project has received contributions from over 270 people. While this
+seems big it fails to account for many contributors and many forms of
+contribution. It's merely the number of recognized code committers.
+
+Sam Batschelet organized the Dancer conference, Gabor Szabo took the Dancer
+website under his care, Peter Martini provided a Dancer Docker image, David
+Dick packages the project for Fedora, Paul Cochrane is working on improving
+the documentation for beginners, and there are numerous other examples for
+tremendous work done by the community.
+
+Let me take a moment to thank you all for the work you've done and the
+work that you do, in the community and for the community.
+
+So now, where is all of this heading?
+
+=head2 What the future holds...
+
+It's hard to say what the future holds for Dancer, but we do have quite
+a few plans.
+
+The short list contains:
+
+=over 4
+
+=item * Thorough documentation overhaul
+
+=item * Improve the plugin system for Dancer2
+
+=item * Port all useful plugins to Dancer2
+
+=item * Rewrite fair portions of the testing suite
+
+=item * Many core cleanups
+
+=item * Additional functionality
+
+=item * Speed optimizations
+
+=item * Compatibility shims
+
+=item * Code linting
+
+=back
+
+We even have some idea regarding features we want to introduce:
+
+=over 4
+
+=item * Full asynchronous support
+
+=item * Route naming
+
+=item * Chained hooks
+
+=item * Stronger command line tooling
+
+=item * More decoupling of components
+
+=back
+
+As you can see, there are plenty of ideas and the opportunities are abound.
+
+While we want to add some of these features as quickly as possible, we
+need to make sure we get them right, that we design them well, that we
+do not overlap with other features, and that we don't have to revert them.
+
+In fact, what we need is your help.
+
+I can promise some will be difficult to implement, some will take
+considerable time, and some will be like trudging through mud (especially
+any OS compatibility work), but above all, I can promise you will have a good
+time. :)
+
+I would like to thank everyone for an amazing year. I hope to see you and
+work with you this new year and provide you all with another set of articles
+at the next Advent Calendar.
+
+Have a merry Christmas, a wonderful Hanukkah, and a tremendous Festivus,
+for the rest of us!
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2014.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2014 // Sawyer X C<< <xsawyerx@cpan.org> >>
