@@ -220,11 +220,15 @@ forward slash, existing in the following situation:
     };
 
 The second is for composing prefixes with variables along with routes
-that have no variables, as the examples above do, such as:
+of a single forward slash, as the examples above do, such as:
 
     prefix '/:board' => sub {
         get '/' => sub {...};
     };
+
+Both of these are fixed in 0.158000. The above examples would work without
+this code on an older version, but to make sure copy-pasted examples work as
+is without changes, you would need to version indicated.
 
 =head2 Conclusion
 
