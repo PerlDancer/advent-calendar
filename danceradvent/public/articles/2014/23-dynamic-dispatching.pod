@@ -179,7 +179,7 @@ code to illustrate this idea:
 
         # in a real life application we would check this against a table in
         # a database or through a backend service. for the sake of
-        # simplicty, let's just check against a hardcoded list
+        # simplicity, let's just check against a hardcoded list
         my %valid_boards = map { $_ => 1 }
                            qw(string-quartets symphonies piano-sonatas piano-trios);
 
@@ -197,7 +197,7 @@ results in a 404.
 While it alleviates the need to build all possible routes
 up front, the one downside to this approach is having to check for the
 presence of C<board> variable in each handler. On the positive side, you can
-dynmically add boards without restarting the application for them to be
+dynamically add boards without restarting the application for them to be
 available.
 
 =head2 Even more ways
