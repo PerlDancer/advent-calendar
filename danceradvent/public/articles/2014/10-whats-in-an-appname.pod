@@ -45,7 +45,7 @@ is a complete separate scope, will not be available to a different application:
     }
 
 These are two different Dancer2 Apps. They have different scopes, contexts,
-and thus different engines. While C<MyApp::User> a serializer (the L<JSON>
+and thus different engines. While C<MyApp::User> has a serializer (the L<JSON>
 one) defined, C<MyApp::User::Edit> will not have that configuration.
 
 If you want the path C</edit> to have a serializer also, you will need to
