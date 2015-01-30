@@ -19,6 +19,7 @@ WriteMakefile(
         'DateTime'                  => 0,
         'Pod::POM'                  => 0,
         'POSIX'                     => 0,
+        'Template'                  => 0,
         'Test::More'                => 0,
         'Text::Outdent'             => 0,
         'URI'                       => 0,
