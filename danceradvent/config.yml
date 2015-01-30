@@ -24,7 +24,8 @@ start_year: 2010
 render_future: 0
 
 engines:
-    template_toolkit:
-        ENCODING: 'utf8'
-        start_tag: '[%'
-        end_tag: '%]'
+    template:
+        template_toolkit:
+            ENCODING: 'utf8'
+            start_tag: '[%'
+            end_tag: '%]'
