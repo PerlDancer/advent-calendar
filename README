@@ -1,4 +1,4 @@
-Dancer advent calendar 2012
+Dancer advent calendar 2015
 
 Article suggestions / volunteers to write them very much appreciated.
 
@@ -8,8 +8,7 @@ to indicate the status of that article.
 When we decide what order to run them in, we'll then reshuffle them into order.
 
 If you have ideas or want to volunteer, find us in irc.perl.org/#dancer, or
-email the dancer-users mailing list, or contact davidp@preshweb.co.uk - thanks!
-
+email the dancer-users mailing list, or contact xsawyerx@cpan.org - thanks!
 
 Flags: 
 
@@ -22,24 +21,11 @@ Flags:
 
 ==== ARTICLE IDEAS:
 
-[D] - What a difference a year makes
-      progress since last year - reading through CHANGES and writing about all
-      the new features in Dancer1 (if this becomes a bit long, it could be split
-      over multiple days)
-
-# Dancer2 - almost here posts - I think we could split this into a few:
-[R] - Why Dancer2 (re-use some content from last year?)
-[R] - What's new?  (Why is Dancer2 better?)
-[ ] - When, dammit? (How far off are we?  Point to dev release hopefully, and
-      mention it's being used in production for dogfooding)
-[ ] - What needs to be done?  Outline remaining tasks, request volunteers?
-
-[ ] - Extending colloboration - highlight how many more contributions we've had,
-      and mention the new policy of more liberal commit bit distribution
+[ ] - Changes since last year: fixes, features, etc.
 
 [ ] - State of the ecosystem
       a writeup of various Dancer plugins, especially ones which are new since
-      last year; this could be a series of posts over multiple days possibly
+      last year; this could be a series of posts over multiple days
 
 [ ] - Thanking contributors
       We could do a post thanking all the people who've contributed over the
@@ -48,24 +34,6 @@ Flags:
 [ ] - Dancing on the big screen
       Summarise talks mentioning Dancer at various Perl events
 
-[ ] - Dancer at LPW2012
-      Summarise Dancer-related stuff at LPW2012
+[ ] - New parameters keywords and why params() is bad.
 
-[ ] - Spotlighting Dancer users - pick some higher-profile users from the
-      dancefloor page and highlight their use of Dancer - perhaps even
-      contacting them with a few questions, like a short interview (bigpresh)
-
-[ ] - Spotlighting Dancer contributors - maybe picking a few contributors who'd
-      be willing to do a short interview on their contributions to and use of
-      Dancer
-
-[ ] - Dancer::Plugin::Auth::Extensible - I need to get my arse in gear and get
-      an initial version of this CPAN'd ASAP, then I could write an article on
-      it - basically, flexible, easy user authentication and access control made
-      easy for Dancer apps (bigpresh)
-
-[R] - Dancer deployment & avoiding slowloris type attacks via buffering proxy:
-      http://laltromondo.dynalias.net/~iki/informatica/soft/dancer_and_apache/
-      (melmothX - thanks!)
-
-[ ] - Dancer::Error refactoring (yanick)
+[ ] - An asynchronous Dancer2 application
