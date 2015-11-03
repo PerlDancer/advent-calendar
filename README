@@ -41,3 +41,5 @@ Flags:
 [ ] - Searching with multiple fields and pagination.
 
 [ ] - How to deploy on Nginx, How to deploy on Apache, etc.
+
+[ ] - Implementing an "around" modifier. (GH #1052)
