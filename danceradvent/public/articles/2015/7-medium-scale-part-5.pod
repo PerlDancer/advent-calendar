@@ -1,0 +1,207 @@
+=head1 Medium-Scale Dancer, Part 5: REST APIs and JSON
+
+In previous parts of L<this article series|/2015/3>, I defined each
+route handler as a one-liner, like so:
+
+ prefix '/mf' => sub {
+     get '/' => sub { retrieve(context); };
+     prefix '/subfeature' => sub {
+         get  '/'    => sub { _get(context); };
+         post '/'    => sub { _post(context); };
+         put  '/'    => sub { _put(context); };
+         del  '/:id' => sub { _del(context); };
+     };
+ };
+
+This is very much on purpose, despite the fact that Dancer lets you
+define all of the code for each route handler within the C<sub { ... }>
+block. Why add the extra function call layer?
+
+Simple: I want to make the URL structure of my web app explicit in the
+code.
+
+To some extent, you can see this by looking at your C<views> directory,
+since a prior article in this series encouraged you to map view files
+1:1 to Dancer routes, as much as possible. The problem with relying on
+the C<views> directory contents as a document for the web app's URL
+structure is that the OS's file system normally shows you only one layer
+of the directory hierarchy at a time. You have to go out of your way to
+see the whole tree in a compact form, on a single screen. That means you
+may never actually find yourself studying the hierarchy as a whole, and
+thus may never consider whether it is a cohesive design.
+
+This practice of defining Dancer route handlers as one-liners solves
+that. It ensures that every time you adjust the route handlers for your
+site, you're doing so while looking at the neighboring routes; you will
+be defining new routes in context, not independently. This counteracts
+the entropic forces that result in API design drift, because it
+implicitly encourages you to define new routes that fit logically into
+the scheme you defined previously. Without this extra Perl function call
+layer, the route definitions are visually broken up, so that you cannot
+see the whole design on a single screen. The resulting URL scheme can
+turn into a mess, as developers hack on the app over the course of
+years.
+
+This is also why I have carefully lined up the blocks and
+L<fat commas|https://en.wikipedia.org/wiki/Fat_comma> in the route
+definitions: I want patterns in the URL scheme to jump out at me.
+Left-justifying everything obscures these patterns.
+
+Now you may be asking, why does all this matter?
+
+The reason is simple: When you make patterns in the URL scheme
+graphically apparent, you may discover some previously hidden practical
+value that was just sitting there waiting to be exploited. It works for
+the same reason that seeing a plot for a numeric data set for the first
+time sometimes creates a clear call to action.
+
+It turns out that the example route scheme we've been defining
+throughout this article series includes a web API; it's just been
+sitting there, waiting to be discovered. With a bit of polishing, it
+might even turn into a proper
+L<REST|https://en.wikipedia.org/wiki/Representational_state_transfer>
+API. Let's try.
+
+Look back up at that route definition block above. What does it remind
+you of? If you said
+L<CRUD|https://en.wikipedia.org/wiki/Create,_read,_update_and_delete>,
+go to the head of the class.
+
+Now, HTTP verbs do not correspond directly to CRUD, because HTTP was not
+designed to be a CRUD API. There are competing design philosophies when
+it comes to mapping HTTP verbs to the CRUD model of persistent data
+storage.
+
+I prefer this mapping:
+
+   DB term    | HTTP verb
+ +------------+----------
+ | C = create | POST
+ | R = read   | GET
+ | U = udpate | PUT
+ | D = delete | DELETE
+
+The R = C<GET> and D = C<DELETE> rules are obvious, but it may not be
+clear to you why the other two rules are correct.
+
+L<The HTTP spec|http://www.w3.org/Protocols/rfc2616/rfc2616.html>
+defines C<POST> and C<PUT> so that they're nearly interchangeable, which
+is how we ended up with competing REST/CRUD API design philosophies.
+
+Some web API designers like to use C<POST> for both create and update
+operations, since you can distinguish the cases based on whether the
+HTTP request contains a database row ID: if so, it's a request to update
+an existing record, else it's a record creation request.
+
+That justification is fine in a web framework that defines the URL
+scheme in the file system, such as PHP, ASP, or JSP, since it is normal
+to handle all four verbs in a single file in that sort of web framework.
+In Dancer, my preferred scheme works better, since it defines one route
+per CRUD operation.
+
+Although the HTTP spec defines C<PUT> and C<POST> as partially
+interchangeable, you must not swap the C<PUT> and C<POST> verbs from the
+way I've defined them above. The HTTP spec says
+L<C<PUT> is idempotent|http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.1>, meaning
+that the browser is allowed to cache C<PUT> requests, suppressing
+subsequent identical calls if the request parameters do not change. In
+CRUD terms, this means that if you define "create" in terms of C<PUT>,
+the browser mignt not let you create two records with identical
+contents but different IDs, which means you risk losing data. The HTTP
+spec does not allow browsers to assume that identical C<POST> calls are
+idempotent, however, so we use that verb for CRUD's create operation,
+leaving C<PUT> = update.
+
+That's enough design philosophy; how does all that affect our Dancer
+code? We might decide that since we've almost got a REST API here that
+we might want to push it the rest of the way.
+
+Let's move the CRUD-like route handlers in C<lib/App/MajorFeature.pm> to
+C<lib/App/API/SubFeature.pm>, and also refine the programming interface
+a bit:
+
+ prefix '/api' => sub {
+     prefix '/subfeature' => sub {
+         post '/'    => sub { _post(context); };
+         get  '/'    => sub { _get(context); };
+         put  '/:id' => sub { _put(context); };
+         del  '/:id' => sub { _del(context); };
+     };
+ };
+
+My choice to use leading underscores in these module-internal route
+handler function names lets us parallel the Dancer DSL keyword naming
+scheme.
+
+You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
+
+ prefix '/api' => sub {
+     prefix '/subfeature' => sub {
+         post '/'    => sub { _create(context); };
+         get  '/'    => sub { _read(context); };
+         put  '/:id' => sub { _update(context); };
+         del  '/:id' => sub { _delete(context); };
+     };
+ };
+
+As in the previous article in this series, the leading underscore
+convention saves us some aggravation here, since C<delete> is a Perl
+keyword, and C<read> is a core Perl function.
+
+The only other thing to change here is that REST APIs normally return
+JSON or XML. I prefer JSON, since that's directly usable by the
+JavaScript code that made the Ajax call to one of these APIs. One of the
+best features of Dancer is that automatic JSON encoding is built right
+in. We might define the C<_create()> function referenced above as:
+
+ sub _create {
+     my ($ctx) = @_;     # see Part 2 for the definition of context()
+ 
+     my $params = $ctx->{request}->params;
+     my $db     = $ctx->{dbconn};
+ 
+     if ($db->create_something($params->{arg1}, $params->{arg2})) {
+         return {
+             success => JSON::true,
+             id      => $db->last_insert_id(),
+         };
+     }
+     else {
+         return {
+             success => JSON::false,
+             error   => 'failed to create record: ' . $db->last_error(),
+         };
+     }
+ }
+
+In Dancer, a hash reference returned from a route handler is
+automatically JSON-encoded, and the HTTP response's content type is set
+to C<application/json>. Parsing and using that reply on the client side
+in JavaScript is therefore trivial.
+
+If your new REST API route handlers previously returned HTML, and you
+have existing code that still needs this data in HTML form, I prefer to
+separate those Ajax call handlers into a different section of the URL
+hierarchy: C</parts>. The rule is simple: C</api> routes return JSON,
+whereas C</parts> routes return HTML fragments. Those fragments are
+intended to be inserted into an existing DOM via JavaScript. The
+C</parts> section of the URL hierarchy separates out such route handlers
+from those that return whole HTML pages.
+
+If you need both JSON and HTML versions of this data, you can use this
+function for both cases: directly as a route handler, letting Dancer
+translate the hashref to JSON for you, and indirectly from another route
+handler, consuming the hashref and translating it to HTML form. The app
+simply calls into its own API and provides an alternate rendering of the
+same data. Given that Dancer templates easily consume hashrefs, the
+HTML-side route handler might be nearly trivial:
+
+ sub get_subfeature_html {
+     return template '/mf/subfeature' => {
+         data => App::API::SubFeature::_read(@_[0]),  # pass along $ctx
+     };
+ }
+
+This article series concludes with a scheme for
+L<hot code reloading|/2015/8>, a very useful feature in any Dancer
+app, but especially helpful as your app grows larger.
