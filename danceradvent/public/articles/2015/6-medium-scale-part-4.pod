@@ -1,0 +1,81 @@
+=head1 Medium-Scale Dancer, Part 4: Front-End Matters
+
+This will be a short article, because the way you write your client-side
+JavaScript code and serve it to your users has almost nothing to do with
+Dancer. Nevertheless, there are a few things we can say here that tie
+into the prior articles in
+L<this series|http://advent.perldancer.org/2015/3>.
+
+=head2 Consolidate JavaScript Files
+
+Because each HTTP round-trip over the Internet takes
+L<human-scale time|https://en.wikipedia.org/wiki/Mental_chronometry> —
+tens to hundreds of milliseconds — an important part of making a fast
+web site is to consolidate your JavaScript code into as few files as
+possible.
+
+Ideally, you'll end up with just one JavaScript file, perhaps called
+C<public/js/app.js>.
+
+This seems to go against the whole thrust of this article series so far,
+which has been about factoring monolithic structures into smaller,
+purpose-focused ones. But, there's a trick that lets you have your cake
+and eat it, too: tools like L<RequireJS|http://requirejs.org/> allow you
+to "compile" multiple JavaScript files down to a single file. Coupled
+with
+L<minification|https://en.wikipedia.org/wiki/Minification_(programming)>,
+L<compression|https://en.wikipedia.org/wiki/HTTP_compression>, and aggressive
+L<caching|https://en.wikipedia.org/wiki/Web_cache> rules in your
+front-end web server, your app will feel a lot snappier to your users,
+even though the size of the web app on disk is no smaller than before.
+
+You might not choose to compile all of your JavaScript down to a single
+file. If several files makes more sense for your purposes, I suggest
+that you name those files after the top-level URL that uses it. For
+example, the C</mf> URLs we've been using in examples so far should be
+served by a C<public/js/mf.js> file. You might still wish to develop
+C<mf.js> in several different purpose-driven JS files, compiled down to
+C<mf.js> by RequireJS or a similar tool.
+
+=head2 Serve Static Assets Via a Front-End Reverse Proxy Server
+
+The
+L<Dancer2 Deployment Guide|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual/Deployment.pod>
+talks about running your app behind a front-end reverse proxy server,
+such as nginx or Apache's C<mod_proxy>. I strongly encourage you to do
+this, even in development.
+
+The server setup given in the deployment guide will cause the front-end
+proxy server to handle all requests for static content files itself,
+passing URLs down to Dancer only when it cannot find a static asset with
+the requested name. This takes a huge load off of Dancer, which, you
+must remember, is dynamic Perl code, so it will naturally be slower than
+the highly optimized C code in the proxy server.
+
+You might want to temporarily add something like this to your Dancer app
+to make sure the front-end proxy is doing what it ought to:
+
+ hook before => sub {
+     my $path = request->path;
+     my $static = $path =~ m{\.html$|^/(bitmaps|css|fonts|js|svg)/};
+     warning "Static URL got past proxy server: $path\n" if $static;
+ };
+
+Adjust the C<$static> regex to match your site's URL scheme, then reload
+the web app, and work through all of the pages. In normal operation, you
+should never get this warning.
+
+Take this code out for production, though, because it can be triggered
+by visiting bogus URLs such as C</bitmaps/does-not-exist.png>. There are
+bots on the web that pound on web sites with random URLs, hoping to find
+a vulnerability in the code. You don't want one of them to fill your
+disk up with log noise.
+
+Running a typical web app this way might reduce the number of hits that
+get down to the Dancer level by a factor of 10 to 100, since so much of
+a modern web app is composed of static asset files: bitmaps, fonts, CSS
+files, JavaScript files, etc.
+
+In the L<next part of this article series|http://advent.perldancer.org/2015/7>,
+we will discover the REST API that was hidden inside this monolithic web
+app the whole time.

@@ -1,0 +1,98 @@
+=head1 Medium-Scale Dancer, Part 1: Modules
+
+=head2 Or: How to Get Beyond Small-Scale in Dancer Application Design
+
+When you generate a Dancer app with C<dancer2 -a App>, you get a very
+nicely structured and useful starting point. As long as your app remains
+fairly small, you can work with this structure as-is clear through to
+completion. In that sense, the generated app is production-ready.
+
+The problem comes when you start getting to thousands of lines of Perl
+code, dozens of view files, and hundreds of routes, stretching the stock
+app design beyond its natural limits. This series of articles gives you
+one way to extend beyond this base.
+
+I say "one way" because Dancer is a policy-free web application
+framework. Its designers purposely avoided making whole classes of
+design decisions for you. That means that Dancer not only doesn’t force
+you to design your app the right way, the framework doesn’t even give
+hints about what the right way might be. It is up to you to use the
+toolset Dancer provides as you see fit.
+
+The design presented here is working quite well for us, so we think it
+is worthy of emulation, but we do not expect that it will work for all
+medium-scale web applications. Think of it as a mutually consistent
+collection of design ideas, rather than a prescription of the One True
+Way to design a Dancer application.
+
+=head2 The Generated Files
+
+When you say C<dancer2 -a App> at the command line, you get a few dozen
+files. Several of these files contain Perl code, but only one of those
+is interesting for the purposes of this article.
+
+We're setting C<bin/app.psgi> and C<public/dispatch.*> aside as
+"uninteresting" here because we recommend that you leave these files
+as-is. None of your app-specific Perl code should go in these files.
+
+We're also ignoring C<Makefile.PL>, since that isn't part of the app
+proper.
+
+That only leaves C<lib/App.pm>. For small-scale apps, simply piling all
+of your Dancer-related app code into this file is just fine. Up to about
+one or two thousand lines of code, you can just use it as-is, for the
+same reason that a thousand-line monolithic Perl script is fine in other
+contexts, too.
+
+=head2 Extending the Stock Scheme
+
+One of the nicest things about Dancer is that the generated startup code
+adds the app's C<lib> directory to the Perl module path. That leads to
+an obvious solution to the problem of too much code in a single file:
+break it out into other C<*.pm> files in the C<lib> directory. But how,
+exactly?
+
+I recommend following the example of CPAN, with a structure like the
+following:
+
+ lib/App.pm                 # your app's main module
+ lib/App/MajorFeature.pm    # implementation of a major app feature
+ lib/App/OtherFeature.pm    # as many feature impl files as you need
+ lib/App/API.pm             # if your app has a REST API, put it here
+ lib/App/Const.pm           # maybe you have some app-wide constants
+ lib/App/Utility.pm         # every big app has a "junk drawer" module
+
+Then in C<lib/App.pm>, you C<use> all of these modules:
+
+ use App::MajorFeature;
+ use App::OtherFeature;
+ use App::API;
+ use App::Const;
+ use App::Utility;
+
+How you design these modules is up to you. The
+L<standard rules|http://stackoverflow.com/questions/410359/how-can-i-learn-to-write-well-structured-programs-in-perl>
+for well-structured Perl application design apply.
+
+There is one Dancer2-specific thing to beware of here, though: you must
+L<set the C<appname> property on the sub-modules|http://advent.perldancer.org/2014/10>. If you
+don't, each sub-module will be considered a separate Dancer2
+application, which puts unwanted barriers between the modules.
+
+(Dancer1 didn't have this requirement, because it didn't have any
+concept of multiple apps within a single Dancer instance.)
+
+When it comes time to break C<lib/App.pm> up into multiple modules, I
+recommend that you move almost all Perl code into one of these modules,
+leaving only application initialization code in the top-level module.
+
+(This, by the way, is why we don't need to modify C<bin/app.psgi>: since
+it pretty much just loads Dancer and then calls C<lib/App.pm>, there is
+no point in splitting app initialization code across the two files. Let
+C<bin/app.psgi> remain a tiny little glue file that exists merely to
+make L<PSGI|http://plackperl.org/> happy.)
+
+Your initial refactoring of C<lib/App.pm> will likely leave all the
+route definitions behind, which is fine, because refactoring the routes
+is the subject of the
+L<next article in this series|http://advent.perldancer.org/2015/4>.
