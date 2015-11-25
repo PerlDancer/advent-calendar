@@ -44,7 +44,7 @@ L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
          delete $INC{$module};
          eval {
              # Suppress complaints about sub redefinition
-             no warnings 'redefine'; <br />
+             no warnings 'redefine';
              local $SIG{__WARN__} = sub {};
  
              # Reload the module, unloaded above
@@ -55,7 +55,7 @@ L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
              $g_module_times{$module} = $mt;
          };
          error "Reloading changed module $module: $@!" if $@;
-     } <br />
+     }
  }
  
  1;
