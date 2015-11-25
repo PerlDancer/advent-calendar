@@ -18,6 +18,10 @@ Consider this Dancer-aware reloader based on Hack 30 in
 L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
 
  package App::Reloader;
+
+ use strict;
+ use warnings;
+
  use Dancer2 appname => 'App';
  
  my $g_last_reload_check_time = 0;
@@ -44,7 +48,7 @@ L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
          delete $INC{$module};
          eval {
              # Suppress complaints about sub redefinition
-             no warnings 'redefine';
+             no warnings 'redefine';  ## no critic
              local $SIG{__WARN__} = sub {};
  
              # Reload the module, unloaded above
