@@ -43,14 +43,18 @@ implementing each route handler should move to C<lib/App/*.pm>. Ideally,
 each route handler body should do nothing more than call a function in
 one of these modules:
 
- get  '/mf'                => sub { App::MajorFeature::retrieve; };
- get  '/mf/subfeature'     => sub { App::MajorFeature::sub_feature; };
- post '/mf/subfeature'     => sub { App::MajorFeature::add; };
- put  '/mf/subfeature'     => sub { App::MajorFeature::modify; };
- del  '/mf/subfeature/:id' => sub { App::MajorFeature::remove; };
+ get  '/mf'                => \&App::MajorFeature::retrieve;
+ get  '/mf/subfeature'     => \&App::MajorFeature::sub_feature;
+ post '/mf/subfeature'     => \&App::MajorFeature::add;
+ put  '/mf/subfeature'     => \&App::MajorFeature::modify;
+ del  '/mf/subfeature/:id' => \&App::MajorFeature::remove;
 
-If that still looks like a bit of a mess to you, don't worry, we can
-factor out the redundancy in two stages.
+Notice that by moving all of the code for each route handler into a
+function in one of our module files, we can replace the inline anonymous
+function references with explicit fully-qualified function references.
+
+There's a fair bit of redundancy in that code, which we'll compress out
+in two stages.
 
 First, Dancer has the awesome
 L<C<prefix>|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#prefix>
@@ -58,12 +62,12 @@ feature, which lets us express the URL hierarchy directly in the code,
 without repeating elements of the URL:
 
  prefix '/mf' => sub {
-     get '/' => sub { App::MajorFeature::retrieve; };
+     get '/' => \&App::MajorFeature::retrieve;
      prefix '/subfeature' => sub {
-         get  '/'    => sub { App::MajorFeature::sub_feature; };
-         post '/'    => sub { App::MajorFeature::add; };
-         put  '/'    => sub { App::MajorFeature::modify; };
-         del  '/:id' => sub { App::MajorFeature::remove; };
+         get  '/'    => \&App::MajorFeature::sub_feature;
+         post '/'    => \&App::MajorFeature::add;
+         put  '/'    => \&App::MajorFeature::modify;
+         del  '/:id' => \&App::MajorFeature::remove;
      };
  };
 
@@ -89,12 +93,12 @@ Therefore, we can move all of the route definitions above from
 C<lib/App.pm> to the end of C<lib/App/MajorFeature.pm>:
 
  prefix '/mf' => sub {
-     get '/' => sub { retrieve; };
+     get '/' => \&retrieve;
      prefix '/subfeature' => sub {
-         get  '/'    => sub { sub_feature; };
-         post '/'    => sub { add; };
-         put  '/'    => sub { modify); };
-         del  '/:id' => sub { remove; };
+         get  '/'    => \&sub_feature;
+         post '/'    => \&add;
+         put  '/'    => \&modify;
+         del  '/:id' => \&remove;
      };
  };
 

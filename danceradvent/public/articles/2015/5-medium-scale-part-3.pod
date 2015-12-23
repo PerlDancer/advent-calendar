@@ -103,7 +103,7 @@ Then in C<lib/App/Parts/Component.pm>:
  }
  
  prefix '/parts' => sub {
-     get 'component' => sub { _get(); };
+     get 'component' => \&_get;
  };
 
 I chose the naming scheme for the function carefully. I want to be able
@@ -139,8 +139,8 @@ in it:
  }
  
  prefix '/mf' => sub {
-     get '/' => sub { Get; };
-     # other route handlers here <br />
+     get '/' => \&Get;
+     # other route handlers here
  };
 
 Then within C<views/mf/top.tt>, you can reference C<$component> to
