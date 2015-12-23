@@ -128,8 +128,6 @@ For example, C<lib/App/MajorFeature.pm> might have something like this
 in it:
 
  sub Get {
-     my ($ctx) = @_;     # see Part 2 for the definition of context()
- 
      # Work out how to build the main part of the top-level /mf page
      ...Perl code here...
  
@@ -141,7 +139,7 @@ in it:
  }
  
  prefix '/mf' => sub {
-     get '/' => sub { Get(context); };
+     get '/' => sub { Get; };
      # other route handlers here <br />
  };
 

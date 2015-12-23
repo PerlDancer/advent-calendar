@@ -4,12 +4,12 @@ In previous parts of L<this article series|/2015/3>, I defined each
 route handler as a one-liner, like so:
 
  prefix '/mf' => sub {
-     get '/' => sub { retrieve(context); };
+     get '/' => sub { retrieve; };
      prefix '/subfeature' => sub {
-         get  '/'    => sub { _get(context); };
-         post '/'    => sub { _post(context); };
-         put  '/'    => sub { _put(context); };
-         del  '/:id' => sub { _del(context); };
+         get  '/'    => sub { _get; };
+         post '/'    => sub { _post; };
+         put  '/'    => sub { _put; };
+         del  '/:id' => sub { _del; };
      };
  };
 
@@ -122,10 +122,10 @@ a bit:
 
  prefix '/api' => sub {
      prefix '/subfeature' => sub {
-         post '/'    => sub { _post(context); };
-         get  '/'    => sub { _get(context); };
-         put  '/:id' => sub { _put(context); };
-         del  '/:id' => sub { _del(context); };
+         post '/'    => sub { _post; };
+         get  '/'    => sub { _get; };
+         put  '/:id' => sub { _put; };
+         del  '/:id' => sub { _del; };
      };
  };
 
@@ -137,10 +137,10 @@ You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
 
  prefix '/api' => sub {
      prefix '/subfeature' => sub {
-         post '/'    => sub { _create(context); };
-         get  '/'    => sub { _read(context); };
-         put  '/:id' => sub { _update(context); };
-         del  '/:id' => sub { _delete(context); };
+         post '/'    => sub { _create; };
+         get  '/'    => sub { _read; };
+         put  '/:id' => sub { _update; };
+         del  '/:id' => sub { _delete; };
      };
  };
 
@@ -155,10 +155,8 @@ best features of Dancer is that automatic JSON encoding is built right
 in. We might define the C<_create()> function referenced above as:
 
  sub _create {
-     my ($ctx) = @_;     # see Part 2 for the definition of context()
- 
-     my $params = $ctx->{request}->params;
-     my $db     = $ctx->{dbconn};
+     my $params = request->params;
+     my $db     = get_db_conn;
  
      if ($db->create_something($params->{arg1}, $params->{arg2})) {
          return {
@@ -198,7 +196,7 @@ HTML-side route handler might be nearly trivial:
 
  sub get_subfeature_html {
      return template '/mf/subfeature' => {
-         data => App::API::SubFeature::_read(@_[0]),  # pass along $ctx
+         data => App::API::SubFeature::_read
      };
  }
 
