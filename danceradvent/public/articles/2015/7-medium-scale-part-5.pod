@@ -4,12 +4,12 @@ In previous parts of L<this article series|/2015/3>, I defined each
 route handler as a one-liner, like so:
 
  prefix '/mf' => sub {
-     get '/' => sub { retrieve; };
+     get '/' => \&retrieve;
      prefix '/subfeature' => sub {
-         get  '/'    => sub { _get; };
-         post '/'    => sub { _post; };
-         put  '/'    => sub { _put; };
-         del  '/:id' => sub { _del; };
+         get  '/'    => \&_get;
+         post '/'    => \&_post;
+         put  '/'    => \&_put;
+         del  '/:id' => \&_del;
      };
  };
 
@@ -122,10 +122,10 @@ a bit:
 
  prefix '/api' => sub {
      prefix '/subfeature' => sub {
-         post '/'    => sub { _post; };
-         get  '/'    => sub { _get; };
-         put  '/:id' => sub { _put; };
-         del  '/:id' => sub { _del; };
+         post '/'    => \&_post;
+         get  '/'    => \&_get;
+         put  '/:id' => \&_put;
+         del  '/:id' => \&_del;
      };
  };
 
@@ -137,10 +137,10 @@ You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
 
  prefix '/api' => sub {
      prefix '/subfeature' => sub {
-         post '/'    => sub { _create; };
-         get  '/'    => sub { _read; };
-         put  '/:id' => sub { _update; };
-         del  '/:id' => sub { _delete; };
+         post '/'    => \&_create;
+         get  '/'    => \&_read;
+         put  '/:id' => \&_update;
+         del  '/:id' => \&_delete;
      };
  };
 
