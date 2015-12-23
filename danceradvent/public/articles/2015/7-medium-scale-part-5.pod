@@ -14,11 +14,12 @@ route handler as a one-liner, like so:
  };
 
 This is very much on purpose, despite the fact that Dancer lets you
-define all of the code for each route handler within the C<sub { ... }>
-block. Why add the extra function call layer?
+define all of the code for each route handler within an anonymous code
+reference (e.g. C<sub { ... }>) block. What do we get by moving those
+functions elsewhere, and what do we gain that makes it worth tolerating
+the ugly C<\&> syntax?
 
-Simple: I want to make the URL structure of my web app explicit in the
-code.
+Simple: it makes the URL structure of the web app explicit in the code.
 
 To some extent, you can see this by looking at your C<views> directory,
 since a prior article in this series encouraged you to map view files
