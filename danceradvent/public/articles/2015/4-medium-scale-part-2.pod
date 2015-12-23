@@ -43,35 +43,14 @@ implementing each route handler should move to C<lib/App/*.pm>. Ideally,
 each route handler body should do nothing more than call a function in
 one of these modules:
 
- get  '/mf'                => sub { App::MajorFeature::retrieve(context); };
- get  '/mf/subfeature'     => sub { App::MajorFeature::sub_feature(context); };
- post '/mf/subfeature'     => sub { App::MajorFeature::add(context); };
- put  '/mf/subfeature'     => sub { App::MajorFeature::modify(context); };
- del  '/mf/subfeature/:id' => sub { App::MajorFeature::remove(context); };
+ get  '/mf'                => sub { App::MajorFeature::retrieve; };
+ get  '/mf/subfeature'     => sub { App::MajorFeature::sub_feature; };
+ post '/mf/subfeature'     => sub { App::MajorFeature::add; };
+ put  '/mf/subfeature'     => sub { App::MajorFeature::modify; };
+ del  '/mf/subfeature/:id' => sub { App::MajorFeature::remove; };
 
-If that still looks like a bit of a mess to you, don't worry, we'll 
-continue to improve it as we go along.
-
-The C<context()> function that I call from each of those route handlers
-is a small helper that I define at global scope within the app:
-
- sub context {
-     return {
-         config  => config(),
-         request => request(),
-         session => session(),
-         dbconn  => App::Utility::get_db_conn(),
-         etc     => ...
-     };
- }
-
-It just bundles up a bunch of Dancer objects into a hash for you,
-possibly along with some app-specific objects that are widely used
-within your app. I find this convenient, but perhaps you prefer to use
-the Dancer DSL to access each of these objects directly instead.
-
-The URL scheme defined above is quite redundant. We can factor out that
-redundancy in two stages.
+If that still looks like a bit of a mess to you, don't worry, we can
+factor out the redundancy in two stages.
 
 First, Dancer has the awesome
 L<C<prefix>|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#prefix>
@@ -79,22 +58,18 @@ feature, which lets us express the URL hierarchy directly in the code,
 without repeating elements of the URL:
 
  prefix '/mf' => sub {
-     get '/' => sub { App::MajorFeature::retrieve(context); };
+     get '/' => sub { App::MajorFeature::retrieve; };
      prefix '/subfeature' => sub {
-         get  '/'    => sub { App::MajorFeature::sub_feature(context); };
-         post '/'    => sub { App::MajorFeature::add(context); };
-         put  '/'    => sub { App::MajorFeature::modify(context); };
-         del  '/:id' => sub { App::MajorFeature::remove(context); };
+         get  '/'    => sub { App::MajorFeature::sub_feature; };
+         post '/'    => sub { App::MajorFeature::add; };
+         put  '/'    => sub { App::MajorFeature::modify; };
+         del  '/:id' => sub { App::MajorFeature::remove; };
      };
  };
 
-Factoring out the C</mf> part was a net loss of 1 character per route
-with our 4-space indents, but factoring out C</subfeature> saved us a
-net 6 characters per route, which really helps make the code easier to
-read.
-
-Rewriting your URL handlers this way will help us greatly later in this
-series of articles.
+As you can see, this makes the overall code narrower, because we're not
+repeating outselves as much. This move toward using C<prefix> will help
+considerably later in this series of articles.
 
 A second excellent feature of Dancer lets us shorten those lines of code
 still further.
@@ -114,44 +89,17 @@ Therefore, we can move all of the route definitions above from
 C<lib/App.pm> to the end of C<lib/App/MajorFeature.pm>:
 
  prefix '/mf' => sub {
-     get '/' => sub { retrieve(context); };
+     get '/' => sub { retrieve; };
      prefix '/subfeature' => sub {
-         get  '/'    => sub { sub_feature(context); };
-         post '/'    => sub { add(context); };
-         put  '/'    => sub { modify(context); };
-         del  '/:id' => sub { remove(context); };
+         get  '/'    => sub { sub_feature; };
+         post '/'    => sub { add; };
+         put  '/'    => sub { modify); };
+         del  '/:id' => sub { remove; };
      };
  };
 
 Now all the function calls are made within the C<App::MajorFeature>
 module, so we don't need to qualify them.
-
-If you are using my C<context()> idea, you will have to move it out of
-C<lib/App.pm>, such as into the C<App::Utility> module, exported by
-default:
-
- package App::Utility {
-     use Dancer2 appname => 'App';
- 
-     require Exporter;
-     use base qw(Exporter);
-     our @EXPORT = qw(context);
- 
-     sub get_db_conn {
-         # do something useful here;
-         # not exported, since context->{dbconn} holds our return value
-     }
- 
-     sub context {
-         return {
-             config  => config(),
-             request => request(),
-             session => session(),
-             dbconn  => get_db_conn(),
-             etc     => ...
-         };
-     }
- }
 
 Having done all this, all that's left behind in C<lib/App.pm> is Dancer
 startup and other initialization code, such as hook definitions, as is
