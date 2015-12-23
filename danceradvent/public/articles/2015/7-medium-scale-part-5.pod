@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Medium-Scale Dancer, Part 5: REST APIs and JSON
 
 In previous parts of L<this article series|/2015/3>, I defined each

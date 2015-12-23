@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Medium-Scale Dancer, Part 3: Views
 
 The

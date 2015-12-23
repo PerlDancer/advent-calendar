@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Medium-Scale Dancer, Part 1: Modules
 
 =head2 Or: How to Get Beyond Small-Scale in Dancer Application Design
