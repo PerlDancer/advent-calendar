@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Medium-Scale Dancer, Part 6: Hot Code Reloading
 
 Many other web frameworks have a hot code reloading feature: simply by

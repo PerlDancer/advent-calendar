@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Medium-Scale Dancer, Part 4: Front-End Matters
 
 This will be a short article, because the way you write your client-side
