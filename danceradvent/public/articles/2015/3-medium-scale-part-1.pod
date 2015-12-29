@@ -37,7 +37,7 @@ We're setting C<bin/app.psgi> and C<public/dispatch.*> aside as
 "uninteresting" here because we recommend that you leave these files
 as-is. None of your app-specific Perl code should go in these files.
 
-We're also ignoring C<Makefile.PL>, since that isn't part of the app
+We're also ignoring C<Makefile.PL> since that isn't part of the app
 proper.
 
 That only leaves C<lib/App.pm>. For small-scale apps, simply piling all
@@ -81,7 +81,7 @@ L<set the C<appname> property on the sub-modules|http://advent.perldancer.org/20
 don't, each sub-module will be considered a separate Dancer2
 application, which puts unwanted barriers between the modules.
 
-(Dancer1 didn't have this requirement, because it didn't have any
+(Dancer1 didn't have this requirement because it didn't have any
 concept of multiple apps within a single Dancer instance.)
 
 When it comes time to break C<lib/App.pm> up into multiple modules, I
@@ -95,6 +95,6 @@ C<bin/app.psgi> remain a tiny little glue file that exists merely to
 make L<PSGI|http://plackperl.org/> happy.)
 
 Your initial refactoring of C<lib/App.pm> will likely leave all the
-route definitions behind, which is fine, because refactoring the routes
+route definitions behind, which is fine because refactoring the routes
 is the subject of the
 L<next article in this series|http://advent.perldancer.org/2015/4>.
