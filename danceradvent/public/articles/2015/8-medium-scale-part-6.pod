@@ -28,28 +28,33 @@ L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
  
  my $g_last_reload_check_time = 0;
  my %g_module_times;
+ my %g_min_check_rate = 1;
  
  INIT {
      while (my ($module, $path) = each %INC) {
          $g_module_times{$module} = -M $path;
      }
  }
+
+ sub import {   
+     my ($module, %params) = @_;
+     $g_min_check_rate = $params{rate} if exists $params{rate};
+ }       
  
- sub reload {
-     my ($min_delta) = @_;
+ sub check {
      my $now = time;
-     return if ($now - $g_last_reload_check_time) < $min_delta;
+     return if ($now - $g_last_reload_check_time) < $g_min_check_rate;
      $g_last_reload_check_time = $now;
  
      while (my ($module, $time) = each %g_module_times) {
          my $mt = -M $INC{$module};
-         next if $mt == $time;
+         next if $mt == $time;                   # module hasn't changed
          next if $module eq 'App/Const.pm';      # can't redefine constants
          next if $module eq 'App/Reloader.pm';   # self-reload breaks things
  
          delete $INC{$module};
          eval {
-             # Suppress complaints about sub redefinition
+             # Suppress complaints about subroutine redefinition
              no warnings 'redefine';  ## no critic (ProhibitNoWarnings)
              local $SIG{__WARN__} = sub {};
  
@@ -76,16 +81,14 @@ L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
 You also need to merge the following into the module containing your
 Dancer hooks, C<lib/App.pm> by default:
 
- use App::Reloader;
- use Readonly;
- 
- Readonly::Scalar my $min_reload_check_time =>
+ use Dancer2 appname => 'App';
+ use App::Reloader rate =>
      (config->{environment} eq 'development' ? 1 : 15);
  
  hook before => sub {
      # do checks that cause an immediate client rejection first
  
-     App::Reloader::reload($min_reload_check_time);
+     App::Reloader::check;
  
      # now we can do other stuff that requires up-to-date modules
  };
@@ -114,7 +117,7 @@ last hit are still good. The example above checks at most once a second
 in development mode, and once every 15 seconds in production. You can
 adjust the timing to suit your purposes.
 
-C<Module::Reload> exposes a C<check()> function similar to C<reload()>
+C<Module::Reload> exposes a C<check()> function similar to our C<check()>
 above, so you could wrap it in your own timing logic, but I've moved
 that internal to the reloader, so you only need to pass in the time
 constant.
@@ -146,7 +149,7 @@ excluding every module that defines a constant. If you scatter
 C<Readonly> calls throughout your other modules instead, they'll be
 un-reloadable, too.
 
-=head2 Series Conclusion
+=head1 Series Conclusion
 
 Well, that's it, the end of
 L<this article series|http://advent.perldancer.org/2015/3>. We have gone
