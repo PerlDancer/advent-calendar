@@ -9,7 +9,7 @@ broke the monolithic C<lib/App.pm> file up into a series of Perl
 modules, each focused on a functional centroid of the application.
 
 If we describe the default C<lib/App.pm> file as monolithic, then we
-might get away with describing the view files as polylithic, because we
+might get away with describing the view files as polylithic because we
 do not need to break the view files up; they naturally map to web pages,
 so the app's URL scheme effectively keeps them separated by purpose.
 
@@ -61,15 +61,15 @@ scheme might look something like this:
  views/mf/subfeature/put.tt
  views/mf/subfeature/delete.tt
 
-This maps Dancer routes 1:1 to view files, using a naming scheme that is
-easy to remember, since it's nearly identical to the URL scheme. It's so
-simple a mapping that you could write a Perl one-liner to do the
-transform. By restricting yourself to a simple naming convention, you
-have removed a whole class of details that you have to keep in mind
-while working on your web app; you don't have to guess where the view
-file for a given route handler lives, you already I<know> where it
-lives. You will quickly rediscover this simple mapping years from now
-when you have to work on the web app again.
+This scheme maps Dancer routes 1:1 to view files, using a naming scheme
+that is easy to remember since it's nearly identical to the URL scheme.
+It's so simple a mapping that you could write a Perl one-liner to do the
+transform. Restricting yourself to a simple naming convention removes a
+whole class of details that you have to keep in mind while working on
+your web app; you don't have to guess where the view file for a given
+route handler lives, you already I<know> where it lives. You will
+quickly rediscover this simple mapping years from now when you have to
+work on the web app again.
 
 This naming scheme is very much a suggestion, rather than a
 prescription. For one thing, you may find that the C<DELETE
