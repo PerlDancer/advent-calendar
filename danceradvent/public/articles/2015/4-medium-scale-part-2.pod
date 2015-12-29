@@ -74,7 +74,7 @@ without repeating elements of the URL:
  };
 
 As you can see, this makes the overall code narrower, because we're not
-repeating outselves as much. This move toward using C<prefix> will help
+repeating ourselves as much. This move toward using C<prefix> will help
 considerably later in this series of articles.
 
 A second excellent feature of Dancer lets us shorten those lines of code
