@@ -37,7 +37,7 @@ This practice of defining Dancer route handlers as one-liners solves
 that. It ensures that every time you adjust the route handlers for your
 site, you're doing so while looking at the neighboring routes; you will
 be defining new routes in context, not independently. This counteracts
-the entropic forces that result in API design drift, because it
+the entropic forces that result in API design drift because it
 implicitly encourages you to define new routes that fit logically into
 the scheme you defined previously. Without this extra Perl function call
 layer, the route definitions are visually broken up, so that you cannot
@@ -70,7 +70,7 @@ you of? If you said
 L<CRUD|https://en.wikipedia.org/wiki/Create,_read,_update_and_delete>,
 go to the head of the class.
 
-Now, HTTP verbs do not correspond directly to CRUD, because HTTP was not
+Now, HTTP verbs do not correspond directly to CRUD because HTTP was not
 designed to be a CRUD API. There are competing design philosophies when
 it comes to mapping HTTP verbs to the CRUD model of persistent data
 storage.
@@ -92,14 +92,14 @@ defines C<POST> and C<PUT> so that they're nearly interchangeable, which
 is how we ended up with competing REST/CRUD API design philosophies.
 
 Some web API designers like to use C<POST> for both create and update
-operations, since you can distinguish the cases based on whether the
+operations since you can distinguish the cases based on whether the
 HTTP request contains a database row ID: if so, it's a request to update
 an existing record, else it's a record creation request.
 
 That justification is fine in a web framework that defines the URL
-scheme in the file system, such as PHP, ASP, or JSP, since it is normal
+scheme in the file system, such as PHP, ASP, or JSP since it is normal
 to handle all four verbs in a single file in that sort of web framework.
-In Dancer, my preferred scheme works better, since it defines one route
+In Dancer, my preferred scheme works better since it defines one route
 per CRUD operation.
 
 Although the HTTP spec defines C<PUT> and C<POST> as partially
@@ -148,11 +148,11 @@ You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
  };
 
 As in the previous article in this series, the leading underscore
-convention saves us some aggravation here, since C<delete> is a Perl
+convention saves us some aggravation here since C<delete> is a Perl
 keyword, and C<read> is a core Perl function.
 
 The only other thing to change here is that REST APIs normally return
-JSON or XML. I prefer JSON, since that's directly usable by the
+JSON or XML. I prefer JSON since that's directly usable by the
 JavaScript code that made the Ajax call to one of these APIs. One of the
 best features of Dancer is that automatic JSON encoding is built right
 in. We might define the C<_create()> function referenced above as:
