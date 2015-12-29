@@ -146,7 +146,7 @@ another.
 Now you know why I recommend collecting app-wide constants into a single
 module: we only need to make one exclusion to handle this, instead of
 excluding every module that defines a constant. If you scatter
-C<Readonly> calls throughout your other modules instead, they'll be
+C<Readonly> calls throughout your other modules instead, they will be
 un-reloadable, too.
 
 =head1 Series Conclusion
