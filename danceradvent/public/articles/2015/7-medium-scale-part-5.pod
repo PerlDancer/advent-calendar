@@ -109,7 +109,7 @@ L<C<PUT> is idempotent|http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec
 that the browser is allowed to cache C<PUT> requests, suppressing
 subsequent identical calls if the request parameters do not change. In
 CRUD terms, this means that if you define "create" in terms of C<PUT>,
-the browser mignt not let you create two records with identical
+the browser might not let you create two records with identical
 contents but different IDs, which means you risk losing data. The HTTP
 spec does not allow browsers to assume that identical C<POST> calls are
 idempotent, however, so we use that verb for CRUD's create operation,
