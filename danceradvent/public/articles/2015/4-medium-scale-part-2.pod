@@ -112,7 +112,7 @@ startup and other initialization code, such as hook definitions, as is
 appropriate for the app's top-level module.
 
 The bulk of the application's code is now collected into a set of
-tightly-scoped modules. These modules should also be largely decoupled,
+tightly-scoped modules. These modules should also be largely decoupled
 since only Dancer needs to know how to call into them, and you told it
 how from the module itself, by defining routes. Beautiful.
 
