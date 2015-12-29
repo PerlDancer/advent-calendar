@@ -2,7 +2,7 @@
 
 =head1 Medium-Scale Dancer, Part 4: Front-End Matters
 
-This will be a short article, because the way you write your client-side
+This will be a short article because the way you write your client-side
 JavaScript code and serve it to your users has almost nothing to do with
 Dancer. Nevertheless, there are a few things we can say here that tie
 into the prior articles in
@@ -16,7 +16,7 @@ tens to hundreds of milliseconds — an important part of making a fast
 web site is to consolidate your JavaScript code into as few files as
 possible.
 
-Ideally, you'll end up with just one JavaScript file, perhaps called
+Ideally, you will end up with just one JavaScript file, perhaps called
 C<public/js/app.js>.
 
 This seems to go against the whole thrust of this article series so far,
@@ -32,10 +32,10 @@ front-end web server, your app will feel a lot snappier to your users,
 even though the size of the web app on disk is no smaller than before.
 
 You might not choose to compile all of your JavaScript down to a single
-file. If several files makes more sense for your purposes, I suggest
-that you name those files after the top-level URL that uses it. For
-example, the C</mf> URLs we've been using in examples so far should be
-served by a C<public/js/mf.js> file. You might still wish to develop
+file. If it makes more sense for your purposes to use several files, I
+suggest that you name those files after the top-level URL that uses it.
+For example, the C</mf> URLs we've been using in examples so far should
+be served by a C<public/js/mf.js> file. You might still wish to develop
 C<mf.js> in several different purpose-driven JS files, compiled down to
 C<mf.js> by RequireJS or a similar tool.
 
@@ -43,7 +43,7 @@ C<mf.js> by RequireJS or a similar tool.
 
 The
 L<Dancer2 Deployment Guide|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual/Deployment.pod>
-talks about running your app behind a front-end reverse proxy server,
+recommends running your app behind a front-end reverse proxy server
 such as nginx or Apache's C<mod_proxy>. I strongly encourage you to do
 this, even in development.
 
@@ -74,7 +74,7 @@ a vulnerability in the code. You don't want one of them to fill your
 disk up with log noise.
 
 Running a typical web app this way might reduce the number of hits that
-get down to the Dancer level by a factor of 10 to 100, since so much of
+get down to the Dancer level by a factor of 10 to 100 since so much of
 a modern web app is composed of static asset files: bitmaps, fonts, CSS
 files, JavaScript files, etc.
 
