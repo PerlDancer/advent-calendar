@@ -47,8 +47,11 @@ So, what does this give us as standard? Let's have a look:
 =item * Default console logging
 
 Without any configuration, the default logging is unchanged. That is, messages
-will continue to be sent to the console via STDERR (the formatting has changed, but we'll
-worry about that later). So, not really any difference there.
+will continue to be sent to the console via STDERR (the formatting has changed,
+but we'll worry about that later). So, not really any difference there,
+although it's worth noting that by default debug messages will not be shown, as
+the default verbosity is a higher threshold. The threshold can be changed, see
+the L<dispachers> section below.
 
 =item * Additional logging keywords
 
@@ -215,6 +218,37 @@ and there are several types available (C<Log::Report::Dispatcher::*>). By
 default, a C<PERL> dispatcher is created for sending messages to STDERR,
 and a special C<Callback> dispatcher is used for sending the messages to the template.
 Dispatchers are added using the L<Dancer2::Logger::LogReport> configuration.
+
+The configuration of each dispatcher defines what messages it outputs. You
+might want one dispatcher to show all messages, but another to only display
+messages above a certain threshold. The C<mode> of a dispatcher defines what
+messages are shown. The default C<mode> is C<NORMAL>, which only shows messages
+at the level of C<NOTICE> and above. You can change the mode to C<VERBOSE>,
+C<ASSERT> or C<DEBUG> to get an increasing level of messages. If you don't
+specifiy a mode for a dispatcher, it will take the "global" value. The default
+global value is C<NORMAL>. The global value can be changed when loading the
+module:
+
+ use Dancer2::Plugin::LogReport mode => 'DEBUG';
+
+If you want finer control on what messages a dispatcher processes, you can
+also configure the C<accept> parameter. A full dispatcher configuration
+might look like this:
+
+ engines:
+   logger:
+     LogReport:
+       dispatchers:
+         default:              # Name. This one overrides the default dispatcher
+           type: PERL
+           mode: NORMAL
+           accept: FAILURE-    # Only FAILURE messages and above
+         syslog                # Additional dispatcher called syslog
+           type: SYSLOG
+           identity: myapp
+           facility: local0
+           flags: "pid ndelay nowait"
+           mode: DEBUG
 
 Dispatchers can also be used to format messages.
 
