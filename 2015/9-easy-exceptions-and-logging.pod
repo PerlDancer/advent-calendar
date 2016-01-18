@@ -51,7 +51,7 @@ will continue to be sent to the console via STDERR (the formatting has changed,
 but we'll worry about that later). So, not really any difference there,
 although it's worth noting that by default debug messages will not be shown, as
 the default verbosity is a higher threshold. The threshold can be changed, see
-the L<dispachers> section below.
+the L</Dispatchers> section below.
 
 =item * Additional logging keywords
 
