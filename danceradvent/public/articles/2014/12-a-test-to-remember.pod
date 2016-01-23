@@ -194,9 +194,10 @@ for sessions, all we would need is the following:
 
     my $jar  = HTTP::Cookies->new;
     my $test = Plack::Test->create( MyApp->to_app );
+    my $host = 'http://127.0.0.1';
 
     subtest 'A empty request' => sub {
-        my $res = $test->request( GET '/' );
+        my $res = $test->request( GET "$host/" );
         ok( $res->is_success, 'Successful request' );
         is( $res->content '{}', 'Empty response back' );
         $jar->extract_cookies($res);
@@ -204,7 +205,7 @@ for sessions, all we would need is the following:
     };
 
     subtest 'Request with user' => sub {
-        my $req = GET '/?user=sawyer_x';
+        my $req = GET "$host/?user=sawyer_x";
         $jar->add_cookie_header($req);
         my $res = $test->request($req);
         ok( $res->is_success, 'Successful request' );
@@ -220,6 +221,10 @@ Here we create a cookie jar, make sure all our requests and responses work
 with it, and we can even check for existing cookies, as well as cookies
 that were deleted by the response, since L<HTTP::Cookies> will understand
 a delete request (by setting an older time) and delete it.
+
+You will notice that we use a full domain. This is because
+L<HTTP::Cookies> needs the entire URL (including the scheme part) to make
+the cookies work.
 
 =head2 Accessing the configuration file
 
