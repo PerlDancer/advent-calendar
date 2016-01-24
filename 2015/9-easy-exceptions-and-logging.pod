@@ -165,7 +165,7 @@ How would we do that with L<Dancer2::Plugin::LogReport>?
  package MyApp;
 
  post '/settings' => sub {
-   if (process sub{ MyApp::update_settings($settings) }) {
+   if (process sub{ MyApp::Settings::update($settings) }) {
      success "Settings updated successfully";
    }
  };
