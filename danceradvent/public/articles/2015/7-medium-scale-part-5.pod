@@ -81,7 +81,7 @@ I prefer this mapping:
  +------------+----------
  | C = create | POST
  | R = read   | GET
- | U = udpate | PUT
+ | U = update | PUT
  | D = delete | DELETE
 
 The R = C<GET> and D = C<DELETE> rules are obvious, but it may not be
