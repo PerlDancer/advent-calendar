@@ -1,0 +1,177 @@
+=encoding utf8
+
+=head1 Implementing i18n in a Dancer application using Plugin::LogReport
+
+=head2 Introduction
+
+There are a number of ways to approach the internationalisation of a web
+application. I'm going to look at a method using L<Log::Report>, which includes
+very comprehensive translation functionality.
+
+More specifically, I will use its Dancer2 plugin,
+L<Dancer2::Plugin::LogReport>. If you haven't already, please look at my other
+article on that.
+
+=head2 A basic application
+
+Let's get started by creating a basic application with some strings that we want
+translated. We'll look at translating the content of templates later.
+
+ # In your route handler
+ package MyApp;
+ use Dancer2;
+ use Dancer2::Plugin::LogReport;
+ 
+ get '/' => sub {
+   notice "Hello world";
+   template 'index';
+ };
+
+ # In the index template
+ [% FOREACH message IN session.messages %]
+   <p>[% message.toString %]</p>
+ [% END %]
+
+By running this application, you should see C<Hello world> on the index page.
+
+=head2 Translating strings
+
+L<Log::Report> has L<a lot of functions to translate
+strings|Log::Report#Language-Translations>. We'll touch on 2 of the commonly
+used ones here.
+
+Firstly to simply translate a fixed string into another, we can use C<__> (2
+underscores):
+
+ notice __"Hello world";
+
+This might look a bit strange, but the 2 underscores are simply a function. You
+can wrap the text in parentheses if you prefer:
+
+ notice __("Hello world");
+
+They work like any other function, although be aware that you can't use single
+quotes, as C<__'> is interpreted as C<::> by Perl
+
+We can also use C<__x>, which is the same as C<__>, except that it allows for
+variables within the string. For example:
+
+ notice __x"Hello {name}", name => 'Andy';
+
+This means that when the text is extracted as message IDs, that any variable
+content is conveniently separated. It also allows all sorts of clever things,
+such as adjusting the text for pluralisation depending on variable conditions,
+but I won't go into that just yet.
+
+So, for now, update your web application accordingly:
+
+ get '/' => sub {
+   notice __"Hello world";
+   notice __x"Hello {name}", name => 'Andy';
+   template 'index';
+ };
+
+If you hadn't realised, the beauty of the above approach, is that initially you
+can just add (very easily) the translation functions to all your strings. Then,
+at a later date, you can add the translation framework.
+
+=head2 Extracting and translating the strings
+
+Let's add a translater to the application, but first, we'll need some
+translation tables.
+
+=head3 Extracting and creating PO translation tables
+
+These can be extracted using L<xgettext-perl>. From the base directory of your
+application:
+
+ xgettext-perl -p messages --from-code=iso-8859-1 .
+
+This will scan the current directory for appropriate perl files and create a
+new directory C<messages> with the strings to be translated as message IDs in a
+default C<.po> file. For more information on the module used to extract the
+strings, see L<Log::Report::Extract::PerlPPI>.
+
+For the purposes of this exercise, a PO file should have been created
+containing with the 2 message IDs ("Hello world" and "Hello {name}"). From this
+default PO file, create a specific language file in a new directory for this
+domain:
+
+ mkdir messages/default/
+ cp messages/default.utf-8.po messages/default/de_DE.utf8.po
+
+Now edit the file, inserting the translation text:
+
+ #: ./lib/Advent.pm:11
+ #, fuzzy
+ msgid "Hello world"
+ msgstr "Hallo Welt"
+
+=head3 Adding a translator to your application
+
+To add a translator, add the following code to your route handler:
+
+ use Log::Report::Translator::POT;
+
+ (textdomain 'default')->configure(
+   translator => Log::Report::Translator::POT->new(
+     lexicon => 'messages' # Directory of the PO files
+   )
+ );
+
+Now run your application, this time specifying another language:
+
+ LC_MESSAGES=de_DE.utf8 perl bin/app.pl
+
+When you visit the index page, the text should now have been appropriately
+translated.
+
+=head2 Translating text within templates
+
+Translating text within templates is very similar to translating strings within
+the application, except that being a template, the translation functions aren't
+quite so readily available. For the purposes of this example, I'm going to
+assume that you're using C<Template::Toolkit>.
+
+As we don't have a readily available translating function, we'll do things the
+other way around this time, and start by providing a translating function to each
+template. Add the following to your route handler:
+
+ sub translate {
+   my $msg = Log::Report::Message->fromTemplateToolkit('default', @_);
+   $msg->toString;
+ }
+ 
+ hook before_template => sub {
+   shift->{loc}  = \&translate;
+ };
+
+The above code adds a subroutine C<loc> that can be called from within each
+template. As a simple example, add the following to your index template:
+
+ [% loc("We are dancing") %]
+
+(See L<Log::Report::Extract::Template> for more powerful examples.)
+
+Again, we'll need to extract the message IDs for translation. This can be done
+in a similar manner to last time, but this time specifying template files:
+
+ xgettext-perl -p messages --from-code=iso-8859-1 --template TT2-loc --domain default .
+
+Note that this will overwrite your original extractions. Add the newly
+extracted message ID and its translation to your previous PO file:
+
+ msgid "We are dancing"
+ msgstr "Wir tanzen"
+
+Re-run the application, and both the previous string as well as new template
+text should be translated.
+
+=head2 Handling plurals
+
+I won't go into the full power of L<Log::Report>, but to give a flavour of
+what's possible, here's how to handle pluralisation:
+
+  my @files = ("File") x (int(rand(2))+1);
+  notice __xn"Saved one file", "Saved {_count} files", @files;
+
