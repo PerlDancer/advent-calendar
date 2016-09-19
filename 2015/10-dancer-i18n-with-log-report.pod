@@ -103,12 +103,14 @@ domain:
  mkdir messages/my-domain/
  cp messages/my-domain.utf-8.po messages/my-domain/de_DE.utf8.po
 
-Now edit the file, inserting the translation text:
+Now edit the file, inserting the translation text into the existing lines:
 
  #: ./lib/Advent.pm:11
  #, fuzzy
  msgid "Hello world"
  msgstr "Hallo Welt"
+ msgid "Hello {name}"
+ msgstr "Hallo {name}"
 
 =head3 Adding a translator to your application
 
@@ -141,7 +143,7 @@ other way around this time, and start by providing a translating function to eac
 template. Add the following to your route handler:
 
  sub translate {
-   my $msg = Log::Report::Message->fromTemplateToolkit('my-domain', @_);
+   my $msg = Log::Report::Message->fromTemplateToolkit('tt-domain', @_);
    $msg->toString;
  }
  
@@ -150,7 +152,11 @@ template. Add the following to your route handler:
  };
 
 The above code adds a subroutine C<loc> that can be called from within each
-template. As a simple example, add the following to your index template:
+template. Note that we are using a different domain. This is normally best so
+as to keep the sets of messages completely separate, but it's also possible to
+use the same domain if you prefer.
+
+ As a simple example, add the following to your index template:
 
  [% loc("We are dancing") %]
 
@@ -159,13 +165,27 @@ template. As a simple example, add the following to your index template:
 Again, we'll need to extract the message IDs for translation. This can be done
 in a similar manner to last time, but this time specifying template files:
 
- xgettext-perl -p messages --from-code=iso-8859-1 --template TT2-loc --domain my-domain .
+ xgettext-perl -p messages --from-code=iso-8859-1 --template TT2-loc --domain tt-domain .
 
-Note that this will overwrite your original extractions. Add the newly
-extracted message ID and its translation to your previous PO file:
+Note that if you are using the same domain, then this will remove message
+strings from your original extractions (unless the same messages appear in the
+template files). To prevent this, you can you use the C<--no-cleanup> option,
+in which case the previous messages will be commented out. As per the comment
+above, it's best to use separate domains for this reason.
+
+Repeat the previous process, copying the default translation to a German file
+in the new domain, and add the translation:
 
  msgid "We are dancing"
  msgstr "Wir tanzen"
+
+Finally add a new translator for the new domain:
+
+ (textdomain 'tt-domain')->configure(
+   translator => Log::Report::Translator::POT->new(
+     lexicon => 'messages' # Directory of the PO files
+   )
+ );
 
 Re-run the application, and both the previous string as well as new template
 text should be translated.
