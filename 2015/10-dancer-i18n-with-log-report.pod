@@ -20,7 +20,7 @@ translated. We'll look at translating the content of templates later.
  # In your route handler
  package MyApp;
  use Dancer2;
- use Dancer2::Plugin::LogReport;
+ use Dancer2::Plugin::LogReport 'my-domain'; # domain used to group sets of messages
  
  get '/' => sub {
    notice "Hello world";
@@ -90,15 +90,18 @@ application:
 This will scan the current directory for appropriate perl files and create a
 new directory C<messages> with the strings to be translated as message IDs in a
 default C<.po> file. For more information on the module used to extract the
-strings, see L<Log::Report::Extract::PerlPPI>.
+strings, see L<Log::Report::Extract::PerlPPI>. Note that the domain specified
+in the options for L<Dancer2::Plugin::LogReport> (or L<Log::Report>) is used
+within the filename. Domains can be used to group together sets of messages
+(such as if you want to separate groups of messages for different modules).
 
 For the purposes of this exercise, a PO file should have been created
-containing with the 2 message IDs ("Hello world" and "Hello {name}"). From this
+containing the 2 message IDs ("Hello world" and "Hello {name}"). From this
 default PO file, create a specific language file in a new directory for this
 domain:
 
- mkdir messages/default/
- cp messages/default.utf-8.po messages/default/de_DE.utf8.po
+ mkdir messages/my-domain/
+ cp messages/my-domain.utf-8.po messages/my-domain/de_DE.utf8.po
 
 Now edit the file, inserting the translation text:
 
@@ -113,7 +116,7 @@ To add a translator, add the following code to your route handler:
 
  use Log::Report::Translator::POT;
 
- (textdomain 'default')->configure(
+ (textdomain 'my-domain')->configure(
    translator => Log::Report::Translator::POT->new(
      lexicon => 'messages' # Directory of the PO files
    )
@@ -138,7 +141,7 @@ other way around this time, and start by providing a translating function to eac
 template. Add the following to your route handler:
 
  sub translate {
-   my $msg = Log::Report::Message->fromTemplateToolkit('default', @_);
+   my $msg = Log::Report::Message->fromTemplateToolkit('my-domain', @_);
    $msg->toString;
  }
  
@@ -156,7 +159,7 @@ template. As a simple example, add the following to your index template:
 Again, we'll need to extract the message IDs for translation. This can be done
 in a similar manner to last time, but this time specifying template files:
 
- xgettext-perl -p messages --from-code=iso-8859-1 --template TT2-loc --domain default .
+ xgettext-perl -p messages --from-code=iso-8859-1 --template TT2-loc --domain my-domain .
 
 Note that this will overwrite your original extractions. Add the newly
 extracted message ID and its translation to your previous PO file:
