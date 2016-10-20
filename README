@@ -1,4 +1,4 @@
-Dancer advent calendar 2015
+Dancer advent calendar 2016
 
 Article suggestions / volunteers to write them very much appreciated.
 
@@ -27,19 +27,11 @@ Flags:
       a writeup of various Dancer plugins, especially ones which are new since
       last year; this could be a series of posts over multiple days
 
-[ ] - Thanking contributors
-      We could do a post thanking all the people who've contributed over the
-      last year, with a short description of each thing they contributed
-
-[ ] - Dancing on the big screen
-      Summarise talks mentioning Dancer at various Perl events
-
 [ ] - New parameters keywords and why params() is bad.
 
-[ ] - An asynchronous Dancer2 application
+[ ] - Asynchronousity in Dancer2.
+
+[ ] - How to speed up Dancer2.
+      (This would be based on the lightning talk at DancerConf-2016.)
 
 [ ] - Searching with multiple fields and pagination.
-
-[ ] - How to deploy on Nginx, How to deploy on Apache, etc.
-
-[ ] - Implementing an "around" modifier. (GH #1052)
