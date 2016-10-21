@@ -103,12 +103,15 @@ domain:
  mkdir messages/my-domain/
  cp messages/my-domain.utf-8.po messages/my-domain/de_DE.utf8.po
 
-Now edit the file, inserting the translation text into the existing lines:
+Now edit the file, inserting the translation text into the existing lines (the
+"fuzzy" flag can be removed to indicate that the text has been translated):
 
  #: ./lib/Advent.pm:11
- #, fuzzy
+ #,
  msgid "Hello world"
  msgstr "Hallo Welt"
+ #: ./lib/Advent.pm:12
+ #,
  msgid "Hello {name}"
  msgstr "Hallo {name}"
 
@@ -175,6 +178,9 @@ above, it's best to use separate domains for this reason.
 
 Repeat the previous process, copying the default translation to a German file
 in the new domain, and add the translation:
+
+ mkdir messages/tt-domain/
+ cp messages/tt-domain.utf-8.po messages/tt-domain/de_DE.utf8.po
 
  msgid "We are dancing"
  msgstr "Wir tanzen"
