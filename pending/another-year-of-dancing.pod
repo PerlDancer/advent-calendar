@@ -1,0 +1,238 @@
+=head1 Another year of dancing
+
+It's been a while since we had an advent calendar. It's about time.
+
+You might be wondering what we've been up to in the last year. Well,
+a lot.
+
+=over 4
+
+=item * New members
+
+Please welcome two new core team members:
+
+=over 4
+
+=item * Peter (@SysPete) Mottram
+
+If you have raised an issue, you have likely interacted with Peter. He
+takes care of the queue, co-organizes the conferences, and managed the
+entire transition to the new plugin architecture, helping authors by
+testing their code and transitioning the syntax.
+
+Oh, new plugin architecture? More to follow.
+
+=item * Jason (@CromeDome) Crome
+
+Jason Crome started by fixing up the documentation and moved on to help
+with the releases themselves. If you looked up Dancer2 recently on CPAN,
+you probably recognize his picture by now. :)
+
+Jason's handling of the releases allows us to maintain a higher quality
+of releases, including timing, announcements, and double checking the
+important Pull Requests and issues are resolved prior to the release.
+
+=back
+
+=item * New features
+
+=over 4
+
+=item * Asynchronous streaming responses
+
+We have finally introduced the ability to provide asynchronous and
+streaming responses. This allows you to do various interesting things,
+but it can be quite complex.
+
+This topic has its own article in this year's advent calendar. Stay
+tuned!
+
+=item * C<prefix> supports the route spec
+
+The C<prefix> syntax allowed you to reduce the repeated parts of strings,
+and it now supports the full spec in order to allow you to reduce the
+pattern strings:
+
+    prefix '/:action' => sub {
+        get '/:entity' => sub {...};
+    };
+
+=item * C<send_file> is now streaming
+
+The C<send_file> keyword will now also stream the response asynchrnously
+if it's available. You don't need to think about it. You don't even know
+it does it, but it does, automatically, or you. :)
+
+=item * New keywords
+
+=over 4
+
+=item * New paramters keywords
+
+We have introduced new keywords to retrieve information from the route,
+query, or body parameters. They help handle common incorrect and risky
+patterns.
+
+They will also appear in their own advent article. Stay tuned!
+
+=item * New header keywords
+
+Noticing we only have headers to handle the response headers, we have
+introduced several keywords to help you handle the request headers.
+
+=over 4
+
+=item * C<request_header>.
+
+Return the request header.
+
+=item * C<response_header>.
+
+A more explicit alternative to C<header>.
+
+=item * C<response_headers>.
+
+A more explicit alternative to C<headers>.
+
+=item * C<push_response_header>.
+
+A more explicit alternative to C<push_header>.
+
+=back
+
+You will notice you cannot I<push> a request header. This is on purpose,
+since request headers should not change, they only represent the request
+you received.
+
+(We might eventually deprecate the general C<header> and C<push_header>
+keywords.)
+
+=item * C<send_as>
+
+The C<send_as> keyword gets around the serializer.
+
+Interested? It has its own advent article!
+
+=item * Local config files
+
+You can now provide additional local configuration files that will be
+loaded, but can be kept out of a version control repository.
+
+Stay tuned for an article on that!
+
+=item * New config option C<change_session_id>
+
+We have added a configuration option for improved security in cookies.
+
+=item * New keywords C<encode_json>, C<decode_json>
+
+=back
+
+=item * C<template> keyword global
+
+The C<template> keyword can now be used outside a request. The relevant
+request-specific variables will not be available (since it's outside a
+request), but everything else will be available.
+
+=item * C<eval> shim
+
+You now have a shim for C<eval> behavior. If you need such an option,
+you already understand what it means.
+
+=item * Support 304 Not Modified
+
+We properly support B<304 Not Modified> when serving static files.
+
+=back
+
+=item * New documnetation
+
+We have revamped our documentation.
+
+The original documentation had irrelvant parts from Dancer 1 which no
+longer apply to Dancer 2, oudated components, unclear and confusing
+descriptions, and quite honestly, were hard to navigate.
+
+The rewritten documentation focus on clarifying how a Dancer 2 program is
+constructed, the definitions we use and what they mean, the important
+keywords, and how to use the syntax.
+
+It does not delve into deprecated patterns, nor does it explain it. The
+reasoning is that you could find it if you search, but we don't want to
+teach you what you shouldn't be doing.
+
+Documentation is a live project at any given time and our documentation
+is no different. This means we always need additional help with it. If you
+find something to improve, please let us know. We would appreciate your
+help.
+
+=item * Memory leaks sealed
+
+We have become better at identifyinig memory leaks and resolved a few
+important ones. We've also added various tests to improve our detection,
+which so far yield no additional ones.
+
+=item * Speedups
+
+Prompted by a user mentioning they still use Dancer 1 because it is faster,
+we have pushed hard and sped up Dancer 2 by quite a bit. It now does not
+match Dancer 1, but surpasses it.
+
+Here are some of the specific work we did:
+
+=over 4
+
+=item * Optimimzed routing
+
+The routing itself has been optimized. We have a few more plans for this
+part, but it is now faster and better.
+
+=item * Fewer layers, fewer dependencies
+
+We removed various layers (such as Middlewares) and removed some
+dependencies in order to get more direct access to faster components.
+
+We're learning where we can push more against abstractions and when we need
+to use them despite possible slower performance.
+
+=item * Better request object
+
+Our request object has been rewritten. It was originally our own custom
+object, written from scratch, but now it subclasses the useful
+L<Plack::Request> while adding Dancer-specific bits or components that were
+rejected from being included in the basic Plack class.
+
+=item * Faster headers
+
+We now internally use a faster header library, which is also used by Plack
+itself: L<HTTP::Headers::Fast>. We recommend using L<HTTP::XSHeaders>
+which we co-authored, which will speed your headers substantially.
+
+=item * Faster cookies
+
+We will optionally use L<HTTP::XSCookies> if it's available in order to
+speed up the cookie handling.
+
+=item * Faster serializers and config loader
+
+The JSON serializer will use L<JSON::MaybeXS> which will optionally use
+an XS implementation of L<JSON>, if available.
+
+=back
+
+=item * DancerConf 2015 and DancerConf 2016
+
+We have held two conferences over the last two years.
+
+While we're still working on the videos for DancerConf 2016, you can
+already find the videos for DancerConf 2015 on L<...|YouTube!>.
+
+=item * New plugin architecture
+
+The plugin architecture in Dancer 2 was one of the big remaining weak
+points. We had to resolve it.
+
+It had now been completely rewritten, and it has its own advent article
+in this calendar!
+
+=back
