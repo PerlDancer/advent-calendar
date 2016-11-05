@@ -59,7 +59,7 @@ pattern strings:
 
 =item * C<send_file> is now streaming
 
-The C<send_file> keyword will now also stream the response asynchrnously
+The C<send_file> keyword will now also stream the response asynchronously
 if it's available. You don't need to think about it. You don't even know
 it does it, but it does, automatically, or you. :)
 
@@ -67,7 +67,7 @@ it does it, but it does, automatically, or you. :)
 
 =over 4
 
-=item * New paramters keywords
+=item * New parameters keywords
 
 We have introduced new keywords to retrieve information from the route,
 query, or body parameters. They help handle common incorrect and risky
@@ -145,12 +145,12 @@ We properly support B<304 Not Modified> when serving static files.
 
 =back
 
-=item * New documnetation
+=item * New documentation
 
 We have revamped our documentation.
 
-The original documentation had irrelvant parts from Dancer 1 which no
-longer apply to Dancer 2, oudated components, unclear and confusing
+The original documentation had irrelevant parts from Dancer 1 which no
+longer apply to Dancer 2, outdated components, unclear and confusing
 descriptions, and quite honestly, were hard to navigate.
 
 The rewritten documentation focus on clarifying how a Dancer 2 program is
@@ -168,7 +168,7 @@ help.
 
 =item * Memory leaks sealed
 
-We have become better at identifyinig memory leaks and resolved a few
+We have become better at identifying memory leaks and resolved a few
 important ones. We've also added various tests to improve our detection,
 which so far yield no additional ones.
 
@@ -182,7 +182,7 @@ Here are some of the specific work we did:
 
 =over 4
 
-=item * Optimimzed routing
+=item * Optimized routing
 
 The routing itself has been optimized. We have a few more plans for this
 part, but it is now faster and better.
