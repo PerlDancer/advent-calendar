@@ -1,0 +1,122 @@
+=head1 Optimizing Dancer2 PT. 1
+
+One goal we have is making Dancer2 a fast web framework. While we
+continue to optimize our code, some changes are not possible due to
+obligations we have to users. However, there are many actions you can
+take to optimize your Dancer2 web applications.
+
+In this series of articles we will explore these actions, in order of
+the involvement required from you, starting from installing modules to
+configuring your server, to changing your architecture and code.
+
+While some of these suggestions apply to Dancer2, others apply to other
+frameworks, and even other languages.
+
+=head2 Built-in optimizations
+
+In this article we focus on optimizations that are built into Dancer2,
+but require your involvement. Specifically, this relates to various
+modules that, if you install them, things will simply run much faster.
+
+=head2 Why can't it just happen automatically?
+
+The first question, before explaining what you can install, is I<why>.
+Why can't all of these modules simply be part of Dancer2? In short,
+users.
+
+Dancer2 is used by many users, in various environments, all with
+different considerations. Some users install it on their machine, while
+others might use a hosting company.
+
+Dancer2 provides a promise to always use Pure-Perl code. This means
+that we will not, by default, use modules that require a C (or C++)
+compiler in order to install. This means you can always
+L<advent-calendar-on-fatpack|FatPack> your application with
+L<App::FatPacker>.
+
+Dancer2 will then check whether certain modules are available, and if
+so, will use those modules instead of the Pure-Perl default
+implementation. There are various other modules which take the same
+approach, meaning they in turn will also run faster having certain
+modules available.
+
+We try to list as many as possible of these modules in the
+documentation and in the metadata for installers, so some might be
+installed when you install Dancer2. Still, you might want to double
+check you have them installed.
+
+=head2 What should I install?
+
+=over 4
+
+=item * L<Class::XSAccessor>
+
+Dancer2 uses L<Moo> as the object system internally. L<Moo> itself can
+be sped up considerably by having this module installed.
+
+=item * L<URL::Encode::XS>
+
+Currently Dancer2 uses L<URL::Encode> to handle the URL encoding. While
+we intend to move this coming year to L<URL::XSEncode>, we haven't done
+so yet. Until we do, we will check whether you have the XS version
+installed, and if so, we will use that.
+
+=item * L<CGI::Deurl::XS>
+
+No, we don't use L<CGI>, don't you worry. However, we do parse the
+query string with this fast module.
+
+=item * L<HTTP::Parser::XS>
+
+Dancer2 uses several components of the L<Plack> set of utilities. It
+itself uses this module if it is available, so we recommend installing
+it.
+
+=item * L<YAML::XS>
+
+The Dancer2 configuration is read by L<Config::Any>, in order to allow
+you to use any format you prefer. L<Config::Any> will prefer
+L<YAML::XS>, if it's available.
+
+=item * L<Cpanel::JSON::XS>
+
+We have moved our code from L<JSON> to L<JSON::MaybeXS>. This makes the
+Dancer2 automatically try and use an XS JSON parser (preferably
+L<Cpanel::JSON::XS>). While it might load L<JSON::XS>, we recommend
+L<Cpanel::JSON::XS> instead.
+
+=item * L<HTTP::XSCookies>
+
+There are several cookie parsing modules on CPAN. There is an XS
+version, but it doesn't handle everything. Instead, and because of
+Dancer2, L<HTTP::XSCookies> was written. Dancer2 will use it, if
+available. Do you use cookies or sessions? You should install it.
+
+=item * L<Math::Random::ISAAC::XS> and L<Crypt::URandom>
+
+If both of these modules are available, Dancer2 will generate a secure
+session ID. For security and speed purposes, we recommend installing
+them.
+
+=item * L<Scope::Upper>
+
+Have you ever noticed that C<redirect>, C<forward>, C<send_error>, and
+C<pass> return from the route for you? We achieve this by using a
+module called L<Return::MultiLevel>. It has a Pure-Perl implementation,
+but if the module L<Scope::Upper> is installed, it will use that
+instead.
+
+=item * L<EV> (in case of L<AnyEvent>)
+
+Dancer2 has asynchronous support, allowing for asynchronous code and
+streaming responses. If you are writing an asynchronous web application
+using L<AnyEvent> or run on an L<AnyEvent> server, we recommend you
+install L<EV>.
+
+=back
+
+=head2 Coming next
+
+In the next article, we will explore what kind of server configurations
+we can apply in order to achieve better performance for our
+applications.
