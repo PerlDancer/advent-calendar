@@ -225,7 +225,8 @@ an XS implementation of L<JSON>, if available.
 We have held two conferences over the last two years.
 
 While we're still working on the videos for DancerConf 2016, you can
-already find the videos for DancerConf 2015 on L<...|YouTube!>.
+already find the videos for DancerConf 2015 on
+L<YouTube!|https://www.youtube.com/watch?v=UbU5R-SHbDE&list=PLf1KDvMbyeCQq4mkMt8jDPzS9uPUX_mNo>.
 
 =item * New plugin architecture
 
