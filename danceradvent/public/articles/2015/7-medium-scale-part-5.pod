@@ -21,7 +21,12 @@ reference (e.g. C<sub { ... }>) block. What do we get by moving those
 functions elsewhere, and what do we gain that makes it worth tolerating
 the ugly C<\&> syntax?
 
-Simple: it makes the URL structure of the web app explicit in the code.
+We get two benefits by doing so.
+
+First, named subroutines make stack traces easier to read.
+
+Second, and far more important to our purposes here in this article
+series, it makes the URL structure of the web app explicit in the code.
 
 To some extent, you can see this by looking at your app's C<views>
 subdirectory, since a prior article in this series encouraged you to map
