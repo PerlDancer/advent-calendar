@@ -10,7 +10,7 @@ fairly small, you can work with this structure as-is clear through to
 completion. In that sense, the generated app is production-ready.
 
 The problem comes when you get to thousands of lines of Perl code,
-dozens of view files, and dozens of routes, stretching the stock app
+dozens of templates, and dozens of routes, stretching the stock app
 design beyond its natural limits. This series of articles gives you one
 way to extend beyond this base.
 
