@@ -9,9 +9,10 @@ broke the monolithic C<lib/App.pm> file up into a series of Perl
 modules, each focused on a functional centroid of the application.
 
 If we describe the default C<lib/App.pm> file as monolithic, then we
-might get away with describing the view files as polylithic because we
-do not need to break the view files up; they naturally map to web pages,
-so the app's URL scheme effectively keeps them separated by purpose.
+might get away with describing the app's C<views/> tree as "polylithic"
+because there is no monolith to break up; the template files in this
+subtree naturally map to web pages, so the app's URL scheme effectively
+keeps them separated by purpose.
 
 Although we will not start this part of the series needing to break up
 an overly large file, I can pass along some tips that might cause you to
@@ -50,9 +51,9 @@ C<*.js> files, rather than put it inline in the HTML file.
 
 There is nothing about the way Dancer works that enforces or even
 encourages any particular C<views/*> file naming scheme. Thus this tip:
-for your own sanity, I recommend that you name your view files after the
-corresponding route. The Dancer scheme corresponding to the above PHP
-scheme might look something like this:
+for your own sanity, I recommend that you name your template files after
+the corresponding route. The Dancer scheme corresponding to the above
+PHP scheme might look something like this:
 
  views/top.tt
  views/mf/top.tt
@@ -61,15 +62,15 @@ scheme might look something like this:
  views/mf/subfeature/put.tt
  views/mf/subfeature/delete.tt
 
-This scheme maps Dancer routes 1:1 to view files, using a naming scheme
-that is easy to remember since it's nearly identical to the URL scheme.
-It's so simple a mapping that you could write a Perl one-liner to do the
-transform. Restricting yourself to a simple naming convention removes a
-whole class of details that you have to keep in mind while working on
-your web app; you don't have to guess where the view file for a given
-route handler lives, you already I<know> where it lives. You will
-quickly rediscover this simple mapping years from now when you have to
-work on the web app again.
+This scheme maps Dancer routes 1:1 to template files, using a naming
+scheme that is easy to remember since it's nearly identical to the URL
+scheme.  It's so simple a mapping that you could write a Perl one-liner
+to do the transform. Restricting yourself to a simple naming convention
+removes a whole class of details that you have to keep in mind while
+working on your web app; you don't have to guess where the template file
+for a given route handler lives, you already I<know> where it lives. You
+will quickly rediscover this simple mapping years from now when you have
+to work on the web app again.
 
 This naming scheme is very much a suggestion, rather than a
 prescription. For one thing, you may find that the C<DELETE
@@ -84,8 +85,8 @@ necessarily to follow the one I've laid out above.
 =head2 Factor Common UI Elements Out
 
 If you reuse a particular UI element across different parts of your web
-app, put its view file into a special view directory. I use
-C<views/parts> for this.
+app, put its template file into a special subdirectory of C<views/>. I
+use C<views/parts> for this.
 
 If you have an HTML fragment page that is incorporated into your web app
 dynamically on the client side via Ajax, you will need a corresponding

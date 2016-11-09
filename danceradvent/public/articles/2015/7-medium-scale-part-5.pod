@@ -23,15 +23,15 @@ the ugly C<\&> syntax?
 
 Simple: it makes the URL structure of the web app explicit in the code.
 
-To some extent, you can see this by looking at your C<views> directory,
-since a prior article in this series encouraged you to map view files
-1:1 to Dancer routes, as much as possible. The problem with relying on
-the C<views> directory contents as a document for the web app's URL
-structure is that the OS's file system normally shows you only one layer
-of the directory hierarchy at a time. You have to go out of your way to
-see the whole tree in a compact form, on a single screen. That means you
-may never actually find yourself studying the hierarchy as a whole, and
-thus may never consider whether it is a cohesive design.
+To some extent, you can see this by looking at your app's C<views>
+subdirectory, since a prior article in this series encouraged you to map
+template files 1:1 to Dancer routes, as much as possible. The problem
+with relying on the C<views> directory contents as a document for the
+web app's URL structure is that the OS's file system normally shows you
+only one layer of the directory hierarchy at a time. You have to go out
+of your way to see the whole tree in a compact form, on a single screen.
+That means you may never actually find yourself studying the hierarchy
+as a whole, and thus may never consider whether it is a cohesive design.
 
 This practice of defining Dancer route handlers as one-liners solves
 that. It ensures that every time you adjust the route handlers for your
