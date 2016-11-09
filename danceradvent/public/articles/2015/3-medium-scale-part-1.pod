@@ -58,20 +58,20 @@ exactly?
 I recommend following the example of CPAN, with a structure like the
 following:
 
- lib/App.pm                 # your app's main module
- lib/App/MajorFeature.pm    # implementation of a major app feature
- lib/App/OtherFeature.pm    # as many feature impl files as you need
- lib/App/API.pm             # if your app has a REST API, put it here
- lib/App/Const.pm           # maybe you have some app-wide constants
- lib/App/Utility.pm         # every big app has a "junk drawer" module
+    lib/App.pm                 # your app's main module
+    lib/App/MajorFeature.pm    # implementation of a major app feature
+    lib/App/OtherFeature.pm    # as many feature impl files as you need
+    lib/App/API.pm             # if your app has a REST API, put it here
+    lib/App/Const.pm           # maybe you have some app-wide constants
+    lib/App/Utility.pm         # every big app has a "junk drawer" module
 
 Then in C<lib/App.pm>, you C<use> all of these modules:
 
- use App::MajorFeature;
- use App::OtherFeature;
- use App::API;
- use App::Const;
- use App::Utility;
+    use App::MajorFeature;
+    use App::OtherFeature;
+    use App::API;
+    use App::Const;
+    use App::Utility;
 
 How you design these modules is up to you. The
 L<standard rules|http://stackoverflow.com/questions/410359/how-can-i-learn-to-write-well-structured-programs-in-perl>

@@ -5,15 +5,15 @@
 In previous parts of L<this article series|/2015/3>, I defined each
 route handler as a one-liner, like so:
 
- prefix '/mf' => sub {
-     get '/' => \&retrieve;
-     prefix '/subfeature' => sub {
-         get  '/'    => \&_get;
-         post '/'    => \&_post;
-         put  '/'    => \&_put;
-         del  '/:id' => \&_del;
-     };
- };
+    prefix '/mf' => sub {
+        get '/' => \&retrieve;
+        prefix '/subfeature' => sub {
+            get  '/'    => \&_get;
+            post '/'    => \&_post;
+            put  '/'    => \&_put;
+            del  '/:id' => \&_del;
+        };
+    };
 
 This is very much on purpose, despite the fact that Dancer lets you
 define all of the code for each route handler within an anonymous code
@@ -77,12 +77,12 @@ storage.
 
 I prefer this mapping:
 
-   DB term    | HTTP verb
- +------------+----------
- | C = create | POST
- | R = read   | GET
- | U = update | PUT
- | D = delete | DELETE
+      DB term    | HTTP verb
+    +------------+----------
+    | C = create | POST
+    | R = read   | GET
+    | U = update | PUT
+    | D = delete | DELETE
 
 The R = C<GET> and D = C<DELETE> rules are obvious, but it may not be
 clear to you why the other two rules are correct.
@@ -123,14 +123,14 @@ Let's move the CRUD-like route handlers in C<lib/App/MajorFeature.pm> to
 C<lib/App/API/SubFeature.pm>, and also refine the programming interface
 a bit:
 
- prefix '/api' => sub {
-     prefix '/subfeature' => sub {
-         post '/'    => \&_post;
-         get  '/'    => \&_get;
-         put  '/:id' => \&_put;
-         del  '/:id' => \&_del;
-     };
- };
+    prefix '/api' => sub {
+        prefix '/subfeature' => sub {
+            post '/'    => \&_post;
+            get  '/'    => \&_get;
+            put  '/:id' => \&_put;
+            del  '/:id' => \&_del;
+        };
+    };
 
 My choice to use leading underscores in these module-internal route
 handler function names lets us parallel the Dancer DSL keyword naming
@@ -138,14 +138,14 @@ scheme.
 
 You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
 
- prefix '/api' => sub {
-     prefix '/subfeature' => sub {
-         post '/'    => \&_create;
-         get  '/'    => \&_read;
-         put  '/:id' => \&_update;
-         del  '/:id' => \&_delete;
-     };
- };
+    prefix '/api' => sub {
+        prefix '/subfeature' => sub {
+            post '/'    => \&_create;
+            get  '/'    => \&_read;
+            put  '/:id' => \&_update;
+            del  '/:id' => \&_delete;
+        };
+    };
 
 As in the previous article in this series, the leading underscore
 convention saves us some aggravation here since C<delete> is a Perl
@@ -157,23 +157,23 @@ JavaScript code that made the Ajax call to one of these APIs. One of the
 best features of Dancer is that automatic JSON encoding is built right
 in. We might define the C<_create()> function referenced above as:
 
- sub _create {
-     my $params = request->params;
-     my $db     = get_db_conn;
- 
-     if ($db->create_something($params->{arg1}, $params->{arg2})) {
-         return {
-             success => JSON::true,
-             id      => $db->last_insert_id(),
-         };
-     }
-     else {
-         return {
-             success => JSON::false,
-             error   => 'failed to create record: ' . $db->last_error(),
-         };
-     }
- }
+    sub _create {
+        my $params = request->params;
+        my $db     = get_db_conn;
+    
+        if ($db->create_something($params->{arg1}, $params->{arg2})) {
+            return {
+                success => JSON::true,
+                id      => $db->last_insert_id(),
+            };
+        }
+        else {
+            return {
+                success => JSON::false,
+                error   => 'failed to create record: ' . $db->last_error(),
+            };
+        }
+    }
 
 In Dancer, a hash reference returned from a route handler is
 automatically JSON-encoded, and the HTTP response's content type is set
@@ -197,11 +197,11 @@ simply calls into its own API and provides an alternate rendering of the
 same data. Given that Dancer templates easily consume hashrefs, the
 HTML-side route handler might be nearly trivial:
 
- sub get_subfeature_html {
-     return template '/mf/subfeature' => {
-         data => App::API::SubFeature::_read
-     };
- }
+    sub get_subfeature_html {
+        return template '/mf/subfeature' => {
+            data => App::API::SubFeature::_read
+        };
+    }
 
 This article series concludes with a scheme for
 L<hot code reloading|/2015/8>, a very useful feature in any Dancer

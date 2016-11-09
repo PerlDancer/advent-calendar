@@ -24,9 +24,9 @@ Older web frameworks like PHP, ASP, and JSP define the web app's URL
 structure in the file system. The route scheme defined in the previous
 part of this article series would look like this in PHP:
 
- index.php
- mf/index.php
- mf/subfeature/index.php
+    index.php
+    mf/index.php
+    mf/subfeature/index.php
 
 The view code — HTML and inline JavaScript — is intermixed with the
 server-side code in the same file. Worse, single files like
@@ -55,12 +55,12 @@ for your own sanity, I recommend that you name your template files after
 the corresponding route. The Dancer scheme corresponding to the above
 PHP scheme might look something like this:
 
- views/top.tt
- views/mf/top.tt
- views/mf/subfeature/get.tt
- views/mf/subfeature/post.tt
- views/mf/subfeature/put.tt
- views/mf/subfeature/delete.tt
+    views/top.tt
+    views/mf/top.tt
+    views/mf/subfeature/get.tt
+    views/mf/subfeature/post.tt
+    views/mf/subfeature/put.tt
+    views/mf/subfeature/delete.tt
 
 This scheme maps Dancer routes 1:1 to template files, using a naming
 scheme that is easy to remember since it's nearly identical to the URL
@@ -92,22 +92,22 @@ If you have an HTML fragment page that is incorporated into your web app
 dynamically on the client side via Ajax, you will need a corresponding
 Dancer route for it, and probably a Perl module for it, too:
 
- views/parts/component.tt
- lib/App/Parts/Component.pm
+    views/parts/component.tt
+    lib/App/Parts/Component.pm
 
 Then in C<lib/App/Parts/Component.pm>:
 
- sub _get {
-     # ...work out how to build the component
- 
-     return template '/parts/component' => {
-         stuff => 'goes here'
-     };
- }
- 
- prefix '/parts' => sub {
-     get 'component' => \&_get;
- };
+    sub _get {
+        # ...work out how to build the component
+    
+        return template '/parts/component' => {
+            stuff => 'goes here'
+        };
+    }
+    
+    prefix '/parts' => sub {
+        get 'component' => \&_get;
+    };
 
 I chose the naming scheme for the function carefully. I want to be able
 to use short names here that correspond to the HTTP verb that the
@@ -130,21 +130,21 @@ page is served.
 For example, C<lib/App/MajorFeature.pm> might have something like this
 in it:
 
- sub Get {
-     # Work out how to build the main part of the top-level /mf page
-     ...Perl code here...
- 
-     # Assemble the pieces
-     return template '/mf/top' => {
-         component   => App::Parts::Component::Get(),
-         other_stuff => 'goes here',
-     };
- }
- 
- prefix '/mf' => sub {
-     get '/' => \&Get;
-     # other route handlers here
- };
+    sub Get {
+        # Work out how to build the main part of the top-level /mf page
+        ...Perl code here...
+    
+        # Assemble the pieces
+        return template '/mf/top' => {
+            component   => App::Parts::Component::Get(),
+            other_stuff => 'goes here',
+        };
+    }
+    
+    prefix '/mf' => sub {
+        get '/' => \&Get;
+        # other route handlers here
+    };
 
 Then within C<views/mf/top.tt>, you can reference C<$component> to
 bodily include that component's HTML fragment into the larger page.
