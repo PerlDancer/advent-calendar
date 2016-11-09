@@ -38,8 +38,8 @@ We're setting C<bin/app.psgi> and C<public/dispatch.*> aside as
 "uninteresting" here because we recommend that you leave these files
 as-is. None of your app-specific Perl code should go in these files.
 
-We're also ignoring C<Makefile.PL> since that isn't part of the app
-proper.
+We're also ignoring C<Makefile.PL> since it's part of the app's build
+system, not part of the app proper.
 
 That only leaves C<lib/App.pm>. For small-scale apps, simply piling all
 of your Dancer-related app code into this file is just fine. Up to about
