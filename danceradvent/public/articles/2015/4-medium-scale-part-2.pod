@@ -20,36 +20,36 @@ If you extend the generated C<lib/App.pm> file by following the simplest
 examples from the Dancer documentation, you might have a mess that looks
 something like this:
 
- get '/mf' => sub {
-     # Lots of Perl code to return the top-level MajorFeature view
- };
+    get '/mf' => sub {
+        # Lots of Perl code to return the top-level MajorFeature view
+    };
 
- get '/mf/subfeature' => sub {
-     # Implementation of a sub-feature of MajorFeature
- };
+    get '/mf/subfeature' => sub {
+        # Implementation of a sub-feature of MajorFeature
+    };
 
- post '/mf/subfeature' => sub {
-     # Maybe you need a way to add new subfeature objects
- };
+    post '/mf/subfeature' => sub {
+        # Maybe you need a way to add new subfeature objects
+    };
 
- put '/mf/subfeature' => sub {
-     # And maybe also a way to edit existing subfeature objects
- };
+    put '/mf/subfeature' => sub {
+        # And maybe also a way to edit existing subfeature objects
+    };
 
- del '/mf/subfeature/:id' => sub {
-     # And a way to delete them, too
- };
+    del '/mf/subfeature/:id' => sub {
+        # And a way to delete them, too
+    };
 
 The first thing to fix here is that almost all of the Perl code
 implementing each route handler should move to C<lib/App/*.pm>. Ideally,
 each route handler body should do nothing more than call a function in
 one of these modules:
 
- get  '/mf'                => \&App::MajorFeature::retrieve;
- get  '/mf/subfeature'     => \&App::MajorFeature::sub_feature;
- post '/mf/subfeature'     => \&App::MajorFeature::add;
- put  '/mf/subfeature'     => \&App::MajorFeature::modify;
- del  '/mf/subfeature/:id' => \&App::MajorFeature::remove;
+    get  '/mf'                => \&App::MajorFeature::retrieve;
+    get  '/mf/subfeature'     => \&App::MajorFeature::sub_feature;
+    post '/mf/subfeature'     => \&App::MajorFeature::add;
+    put  '/mf/subfeature'     => \&App::MajorFeature::modify;
+    del  '/mf/subfeature/:id' => \&App::MajorFeature::remove;
 
 Notice that by moving all of the code for each route handler into a
 function in one of our module files, we can replace the inline anonymous
@@ -63,15 +63,15 @@ L<C<prefix>|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod
 feature, which lets us express the URL hierarchy directly in the code,
 without repeating elements of the URL:
 
- prefix '/mf' => sub {
-     get '' => \&App::MajorFeature::retrieve;
-     prefix '/subfeature' => sub {
-         get  ''     => \&App::MajorFeature::sub_feature;
-         post ''     => \&App::MajorFeature::add;
-         put  ''     => \&App::MajorFeature::modify;
-         del  '/:id' => \&App::MajorFeature::remove;
-     };
- };
+    prefix '/mf' => sub {
+        get '' => \&App::MajorFeature::retrieve;
+        prefix '/subfeature' => sub {
+            get  ''     => \&App::MajorFeature::sub_feature;
+            post ''     => \&App::MajorFeature::add;
+            put  ''     => \&App::MajorFeature::modify;
+            del  '/:id' => \&App::MajorFeature::remove;
+        };
+    };
 
 As you can see, this makes the overall code narrower, because we're not
 repeating ourselves as much. This move toward using C<prefix> will help
@@ -94,15 +94,15 @@ that any code at global scope within these modules also runs at startup.
 Therefore, we can move all of the route definitions above from
 C<lib/App.pm> to the end of C<lib/App/MajorFeature.pm>:
 
- prefix '/mf' => sub {
-     get '' => \&retrieve;
-     prefix '/subfeature' => sub {
-         get  ''     => \&sub_feature;
-         post ''     => \&add;
-         put  ''     => \&modify;
-         del  '/:id' => \&remove;
-     };
- };
+    prefix '/mf' => sub {
+        get '' => \&retrieve;
+        prefix '/subfeature' => sub {
+            get  ''     => \&sub_feature;
+            post ''     => \&add;
+            put  ''     => \&modify;
+            del  '/:id' => \&remove;
+        };
+    };
 
 Now all the function calls are made within the C<App::MajorFeature>
 module, so we don't need to qualify them.

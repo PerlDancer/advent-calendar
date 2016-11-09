@@ -57,11 +57,11 @@ the highly optimized C code in the proxy server.
 You might want to temporarily add something like this to your Dancer app
 to make sure the front-end proxy is doing what it ought to:
 
- hook before => sub {
-     my $path = request->path;
-     my $static = $path =~ m{\.html$|^/(bitmaps|css|fonts|js|svg)/};
-     warning "Static URL got past proxy server: $path\n" if $static;
- };
+    hook before => sub {
+        my $path = request->path;
+        my $static = $path =~ m{\.html$|^/(bitmaps|css|fonts|js|svg)/};
+        warning "Static URL got past proxy server: $path\n" if $static;
+    };
 
 Adjust the C<$static> regex to match your site's URL scheme, then reload
 the web app, and work through all of the pages. In normal operation, you
