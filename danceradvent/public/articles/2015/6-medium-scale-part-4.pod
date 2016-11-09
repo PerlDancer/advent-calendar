@@ -83,15 +83,32 @@ it useful to be able to put random files into my app's C<public/>
 directory on production systems so that I can have HTTP access to them
 via the Dancer app without restarting anything. Case in point: your
 Dancer app is running on a Linux server at a remote site, and you need
-to send a file too big to email to someone at that site, but they're
-running Windows on their PC, and the Linux box doesn't run Samba, so
-HTTP is the only easy way they have to get the file from your server
-onto their PC. (Can you tell that I'm writing from personal experience?
-Yes, indeed, I am.) Annnnyway, the point is, you don't want to be forced
-to adjust the front-end proxy settings in such a case to make it handle
-the I<ad hoc> file transfer. You want the Dancer app to backstop the
+to send a file too big to email to someone at that site, but that person
+runs Windows on their PC, and the Linux box doesn't run Samba, so HTTP
+is the only easy way they have to get the file from your server onto
+their PC. (Can you tell that I'm writing from personal experience?  Yes,
+indeed, I am.) Annnnyway, the point is, you don't want to be forced to
+adjust the front-end proxy settings in such a case to make it handle the
+I<ad hoc> file transfer. You want the Dancer app to backstop the
 front-end proxy in such cases, serving up any file the proxy server
 isn't preconfigured to serve.
+
+I can offer a related bit of advice here: if you must change the
+C<log_level> setting of a Dancer app running in a public-facing
+production setting, never raise it to C<core>, at least not for very
+long. Dancer logs all URLs retrieved at that level, and the default
+Dancer C<production.yml> file is configured to write log messages to a
+file file, rather than the console. On today's Internet, it is common to
+encounter bots that do nothing but request nonsense URLs from every web
+server they can find. These URLs may make sense to certain vulnerable
+applications, or they may simply be random, as the bot is searching for
+hidden resources on your server. You don't want a long series of such
+hits to fill your disk with log messages.
+
+Meta-advice: on production systems, configure your OS's log rotation
+system to keep your Dancer app's log file trimmed to a reasonable size.
+Dancer doesn't do that on its own. The Dancer2 docs recommend using
+C<logrotate> in C<copytruncate> mode.
 
 In the L<next part of this article series|http://advent.perldancer.org/2015/7>,
 we will discover the REST API that was hidden inside this monolithic web
