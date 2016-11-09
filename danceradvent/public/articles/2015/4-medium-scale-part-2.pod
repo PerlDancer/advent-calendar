@@ -64,11 +64,11 @@ feature, which lets us express the URL hierarchy directly in the code,
 without repeating elements of the URL:
 
  prefix '/mf' => sub {
-     get '/' => \&App::MajorFeature::retrieve;
+     get '' => \&App::MajorFeature::retrieve;
      prefix '/subfeature' => sub {
-         get  '/'    => \&App::MajorFeature::sub_feature;
-         post '/'    => \&App::MajorFeature::add;
-         put  '/'    => \&App::MajorFeature::modify;
+         get  ''     => \&App::MajorFeature::sub_feature;
+         post ''     => \&App::MajorFeature::add;
+         put  ''     => \&App::MajorFeature::modify;
          del  '/:id' => \&App::MajorFeature::remove;
      };
  };
@@ -95,11 +95,11 @@ Therefore, we can move all of the route definitions above from
 C<lib/App.pm> to the end of C<lib/App/MajorFeature.pm>:
 
  prefix '/mf' => sub {
-     get '/' => \&retrieve;
+     get '' => \&retrieve;
      prefix '/subfeature' => sub {
-         get  '/'    => \&sub_feature;
-         post '/'    => \&add;
-         put  '/'    => \&modify;
+         get  ''     => \&sub_feature;
+         post ''     => \&add;
+         put  ''     => \&modify;
          del  '/:id' => \&remove;
      };
  };
