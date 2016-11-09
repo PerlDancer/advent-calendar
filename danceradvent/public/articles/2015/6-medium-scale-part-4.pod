@@ -77,6 +77,22 @@ permanently to your C<environments/development.yml> file, so that you
 find and fix such problems in development, before you deploy to
 production.
 
+I cannot recommend doing this permanently at the C<config,yml> or
+C<environments/production.yml> levels, because I have occasionally found
+it useful to be able to put random files into my app's C<public/>
+directory on production systems so that I can have HTTP access to them
+via the Dancer app without restarting anything. Case in point: your
+Dancer app is running on a Linux server at a remote site, and you need
+to send a file too big to email to someone at that site, but they're
+running Windows on their PC, and the Linux box doesn't run Samba, so
+HTTP is the only easy way they have to get the file from your server
+onto their PC. (Can you tell that I'm writing from personal experience?
+Yes, indeed, I am.) Annnnyway, the point is, you don't want to be forced
+to adjust the front-end proxy settings in such a case to make it handle
+the I<ad hoc> file transfer. You want the Dancer app to backstop the
+front-end proxy in such cases, serving up any file the proxy server
+isn't preconfigured to serve.
+
 In the L<next part of this article series|http://advent.perldancer.org/2015/7>,
 we will discover the REST API that was hidden inside this monolithic web
 app the whole time.
