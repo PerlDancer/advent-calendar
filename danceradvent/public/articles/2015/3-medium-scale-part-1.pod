@@ -9,10 +9,10 @@ nicely structured and useful starting point. As long as your app remains
 fairly small, you can work with this structure as-is clear through to
 completion. In that sense, the generated app is production-ready.
 
-The problem comes when you start getting to thousands of lines of Perl
-code, dozens of view files, and hundreds of routes, stretching the stock
-app design beyond its natural limits. This series of articles gives you
-one way to extend beyond this base.
+The problem comes when you get to thousands of lines of Perl code,
+dozens of view files, and dozens of routes, stretching the stock app
+design beyond its natural limits. This series of articles gives you one
+way to extend beyond this base.
 
 I say "one way" because Dancer is a policy-free web application
 framework. Its designers purposely avoided making whole classes of
