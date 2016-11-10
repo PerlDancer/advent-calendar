@@ -78,7 +78,7 @@ permanently in your C<environments/development.yml> file to ensure that
 you find and fix such problems in development, before you deploy to
 production.
 
-I cannot recommend doing this permanently at the C<config,yml> or
+I cannot recommend doing this permanently at the C<config.yml> or
 C<environments/production.yml> levels, because I have occasionally found
 it useful to be able to put random files into my app's C<public/>
 directory on production systems so that I can have HTTP access to them
