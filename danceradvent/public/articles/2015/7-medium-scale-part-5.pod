@@ -120,9 +120,10 @@ That's enough design philosophy; how does all that affect our Dancer
 code? We might decide that since we've almost got a REST API here that
 we might want to push it the rest of the way.
 
-Let's move the CRUD-like route handlers in C<lib/App/MajorFeature.pm> to
-C<lib/App/API/SubFeature.pm>, and also refine the programming interface
-a bit:
+Let's move the CRUD-like route handlers in
+C<lib/App/MajorFeature/SubFeature.pm> to
+C<lib/App/API/MajorFeature/SubFeature.pm>. We can also refine the
+programming interface a bit:
 
     prefix '/api' => sub {
         prefix '/sf' => sub {
