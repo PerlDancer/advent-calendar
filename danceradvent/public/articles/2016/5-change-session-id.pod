@@ -1,0 +1,107 @@
+=head1 change_session_id
+
+It is considered good security practice to change session ID on any change
+of privilege level, for example on login.  It is also a requirement of a
+number of established security standards so is something you should be
+doing in your web applications.
+
+=head2 Session destruction
+
+Destroying a session in L<Dancer2> has always been possible using
+L<Dancer2::Core::App/destroy_session> thus:
+
+    app->destroy_session;
+
+Session destruction by its very nature causes the session ID to change since
+the server instructs the client to forget the session ID, send it a new
+session ID and also destroys any session data held on the server.  This is
+considered a "good thing" when a user logs out of an application but it is
+not very useful when a user logs in and you want to keep existing session
+data such as cart products.
+
+=head2 change_session_id
+
+L<Dancer2::Core::App/change_session_id> to the rescue!
+
+If you are using a recent version of L<Dancer2::Plugin::Auth::Extensible>
+to handle authentication and authorisation then you already have
+C<change_session_id> called on successful login. If you are using some
+other solution then you want to do something like this:
+
+    post '/login' => sub {
+        my $username = body_parameters->get("username");
+        my $password = body_parameters->get("password");
+
+        if ( my_authentication_check( $username, $password ) ) {
+            # login successful
+            app->change_session_id;
+        }
+    };
+
+You might also want to consider calling C<change_session_id> after successful
+password change.
+
+=head2 The gory details
+
+If you are planning to write a new session engine you should really read
+this part...
+
+=head3 Native session engine support
+
+All session engines should implement the private method C<_change_id>
+which has the signature:
+
+    _change_id $self, $old_id, $new_id
+
+Where C<$self> is the session engine object, and C<$old_id> and C<$new_id>
+are the old and new session IDs respectively. The session engine should do
+whatever is necessary for the ID change to be successful such as changing
+the key used in the session storage.
+
+All file-based session engines such as L<Dancer2::Session::YAML> and
+L<Dancer2::Session::JSON> get native support for C<change_session_id>
+since they consume the L<Dancer2::Core::Role::SessionFactory::File> which
+provides C<_change_id>.
+
+=head3 Non-native fallback support
+
+If you have a session engine that doesn't implement C<_change_id> then don't
+worry: we added a fallback mechanism to L<Dancer2> which does this:
+
+    my $session = $self->session;
+
+    # grab data, destroy session and store data again
+    my %data = %{$session->data};
+
+    # destroy existing session
+    $self->destroy_session;
+
+    # get new session
+    $session = $self->session;
+
+    # write data from old session into new
+    # Some engines add session id to data so skip id.
+    while (my ($key, $value) = each %data ) {
+        $session->write($key => $value) unless $key eq 'id';
+    }
+
+    # clear out destroyed session - no longer relevant
+    $self->clear_destroyed_session;
+
+This fallback mechanism will hopefully be removed some time in the future.
+
+=head2 Further reading
+
+L<OWASP Session Management Cheat Sheet|https://www.owasp.org/index.php/Session_Management_Cheat_Sheet>.
+
+=head2 Author
+
+This article has been written by Peter Mottram for the Perl
+Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2016 // Peter Mottram (SysPete) C<< <peter@sysnix.com> >>
+
