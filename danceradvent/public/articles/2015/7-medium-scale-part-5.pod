@@ -191,6 +191,13 @@ automatically sets the the HTTP response's content type is set to
 C<application/json>. Parsing and using that reply on the client side in
 JavaScript is therefore trivial.
 
+This does not interfere with the more typical C<template> return value
+from route handlers, since those are labeled in such a way that they
+bypass the JSON serializer. This way of returning either JSON or HTML to
+the caller depending solely on whether the Dancer app uses C<template>
+feels natural and effortless to me, and therefore makes the code feel
+"right."
+
 If your new REST API route handlers previously returned HTML, and you
 have existing code that still needs this data in HTML form, I prefer to
 separate those Ajax call handlers into a different section of the URL
