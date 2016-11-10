@@ -17,7 +17,7 @@ web site is to consolidate your JavaScript code into as few files as
 possible.
 
 Ideally, you will end up with just one JavaScript file, perhaps called
-C<public/js/app.js>.
+C<public/javascripts/app.js>.
 
 This seems to go against the whole thrust of this article series so far,
 which has been about factoring monolithic structures into smaller,
@@ -35,9 +35,9 @@ You might not choose to compile all of your JavaScript down to a single
 file. If it makes more sense for your purposes to use several files, I
 suggest that you name those files after the top-level URL that uses it.
 For example, the C</mf> URLs we've been using in examples so far should
-be served by a C<public/js/mf.js> file. You might still wish to develop
-C<mf.js> in several different purpose-driven JS files, compiled down to
-C<mf.js> by RequireJS or a similar tool.
+be served by a C<public/javascripts/mf.js> file. You might still wish to
+develop C<mf.js> in several different purpose-driven JS files, compiled
+down to C<mf.js> by RequireJS or a similar tool.
 
 =head2 Serve Static Assets Via a Front-End Reverse Proxy Server
 
