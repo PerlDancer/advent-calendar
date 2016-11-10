@@ -19,64 +19,64 @@ solutions.
 Consider this Dancer-aware reloader based on Hack 30 in
 L<Perl Hacks|http://shop.oreilly.com/product/9780596526740.do>:
 
-	 package App::Reloader;
+    package App::Reloader;
 
-	 use strict;
-	 use warnings;
+    use strict;
+    use warnings;
 
-	 use Dancer2 appname => 'App';
-	 
-	 my $g_last_reload_check_time = 0;
-	 my %g_module_times;
-	 my %g_min_check_rate = 1;
-	 
-	 INIT {
-		 while (my ($module, $path) = each %INC) {
-			 $g_module_times{$module} = -M $path;
-		 }
-	 }
+    use Dancer2 appname => 'App';
+     
+    my $g_last_reload_check_time = 0;
+    my %g_module_times;
+    my %g_min_check_rate = 1;
+     
+    INIT {
+        while (my ($module, $path) = each %INC) {
+            $g_module_times{$module} = -M $path;
+        }
+    }
 
-	 sub import {   
-		 my ($module, %params) = @_;
-		 $g_min_check_rate = $params{rate} if exists $params{rate};
-	 }       
-	 
-	 sub check {
-		 my $now = time;
-		 return if ($now - $g_last_reload_check_time) < $g_min_check_rate;
-		 $g_last_reload_check_time = $now;
-	 
-		 while (my ($module, $time) = each %g_module_times) {
-			 my $mt = -M $INC{$module};
-			 next if $mt == $time;                   # module hasn't changed
-			 next if $module eq 'App/Const.pm';      # can't redefine constants
-			 next if $module eq 'App/Reloader.pm';   # self-reload breaks things
-	 
-			 delete $INC{$module};
-			 eval {
-				 # Suppress complaints about subroutine redefinition
-				 no warnings 'redefine';  ## no critic (ProhibitNoWarnings)
-				 local $SIG{__WARN__} = sub {};
-	 
-				 # Reload the module, unloaded above
-				 require $module;
-				 debug "Reloaded changed module $module.";
-	 
-				 # Only mark it updated if that didn't throw an exception.
-				 $g_module_times{$module} = $mt;
+    sub import {   
+        my ($module, %params) = @_;
+        $g_min_check_rate = $params{rate} if exists $params{rate};
+    }       
+     
+    sub check {
+        my $now = time;
+        return if ($now - $g_last_reload_check_time) < $g_min_check_rate;
+        $g_last_reload_check_time = $now;
+    
+        while (my ($module, $time) = each %g_module_times) {
+            my $mt = -M $INC{$module};
+            next if $mt == $time;                   # module hasn't changed
+            next if $module eq 'App/Const.pm';      # can't redefine constants
+            next if $module eq 'App/Reloader.pm';   # self-reload breaks things
+    
+            delete $INC{$module};
+            eval {
+                # Suppress complaints about subroutine redefinition
+                no warnings 'redefine';  ## no critic (ProhibitNoWarnings)
+                local $SIG{__WARN__} = sub {};
+    
+                # Reload the module, unloaded above
+                require $module;
+                debug "Reloaded changed module $module.";
+    
+                # Only mark it updated if that didn't throw an exception.
+                $g_module_times{$module} = $mt;
 
-				 # Return true to skip exception hnandler
-				 1;
-			 }
-			 or do {
-				 error "Failed to reload changed module $module: $@!";
-			 }
-		 }
+                # Return true to skip exception hnandler
+                1;
+            }
+            or do {
+                error "Failed to reload changed module $module: $@!";
+            }
+        }
 
-		 return;
-	 }
-	 
-	 1;
+        return;
+    }
+    
+    1;
 
 You also need to merge the following into the module containing your
 Dancer hooks, C<lib/App.pm> by default:
