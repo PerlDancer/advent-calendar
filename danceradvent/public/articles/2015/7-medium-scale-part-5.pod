@@ -210,6 +210,9 @@ value from its natural data type to another one; a conscientious
 developer asks whether there is a good reason to fight the default
 conversion rules in each case.
 
+
+=head2 Returning the Same Data in Both HTML and JSON Forms
+
 If your new REST API route handlers previously returned HTML, and you
 have existing code that still needs this data in HTML form, I prefer to
 separate those Ajax call handlers into a different section of the URL
