@@ -198,6 +198,15 @@ the caller depending solely on whether the Dancer app uses C<template>
 feels natural and effortless to me, and therefore makes the code feel
 "right."
 
+Dancer does have a way to force use of a particular serializer: the
+L<C<send_as> DSL keyword|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#send_as>.
+My immediate reaction to finding a C<send_as> call in a Dancer app is to
+L<wrinlke my nose|https://en.wikipedia.org/wiki/Code_smell> for the same
+reason I mistrust type casts elsewhere in code. Both mechanisms force a
+value from its natural data type to another one; a conscientious
+developer asks whether there is a good reason to fight the default
+conversion rules in each case.
+
 If your new REST API route handlers previously returned HTML, and you
 have existing code that still needs this data in HTML form, I prefer to
 separate those Ajax call handlers into a different section of the URL
