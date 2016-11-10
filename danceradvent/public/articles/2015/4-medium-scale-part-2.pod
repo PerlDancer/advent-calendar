@@ -13,8 +13,8 @@ If you structured your app in the way recommended in the previous
 article, each major feature of your web app is now in its own Perl
 module. That Perl module's name likely corresponds to some part of your
 app's URL scheme. Let's say you're exposing the features of
-C<App::MajorFeature> as C</mf> in URLs, with sub-features underneath
-that.
+C<App::MajorFeature> as C</mf> in URLs, with sub-features defined in
+C<App::MajorFeature::SubFeature> and exposed via C</mf/sf> routes.
 
 If you extend the generated C<lib/App.pm> file by following the simplest
 examples from the Dancer documentation, you might have a mess that looks
@@ -24,19 +24,19 @@ something like this:
         # Lots of Perl code to return the top-level MajorFeature view
     };
 
-    get '/mf/subfeature' => sub {
+    get '/mf/sf' => sub {
         # Implementation of a sub-feature of MajorFeature
     };
 
-    post '/mf/subfeature' => sub {
+    post '/mf/sf' => sub {
         # Maybe you need a way to add new subfeature objects
     };
 
-    put '/mf/subfeature' => sub {
+    put '/mf/sf' => sub {
         # And maybe also a way to edit existing subfeature objects
     };
 
-    del '/mf/subfeature/:id' => sub {
+    del '/mf/sf/:id' => sub {
         # And a way to delete them, too
     };
 
@@ -45,11 +45,11 @@ implementing each route handler should move to C<lib/App/*.pm>. Ideally,
 each route handler body should do nothing more than call a function in
 one of these modules:
 
-    get  '/mf'                => \&App::MajorFeature::retrieve;
-    get  '/mf/subfeature'     => \&App::MajorFeature::sub_feature;
-    post '/mf/subfeature'     => \&App::MajorFeature::add;
-    put  '/mf/subfeature'     => \&App::MajorFeature::modify;
-    del  '/mf/subfeature/:id' => \&App::MajorFeature::remove;
+    get  '/mf'        => \&App::MajorFeature::retrieve;
+    get  '/mf/sf'     => \&App::MajorFeature::sub_feature;
+    post '/mf/sf'     => \&App::MajorFeature::add;
+    put  '/mf/sf'     => \&App::MajorFeature::modify;
+    del  '/mf/sf/:id' => \&App::MajorFeature::remove;
 
 Notice that by moving all of the code for each route handler into a
 function in one of our module files, we can replace the inline anonymous
@@ -65,7 +65,7 @@ without repeating elements of the URL:
 
     prefix '/mf' => sub {
         get '' => \&App::MajorFeature::retrieve;
-        prefix '/subfeature' => sub {
+        prefix '/sf' => sub {
             get  ''     => \&App::MajorFeature::sub_feature;
             post ''     => \&App::MajorFeature::add;
             put  ''     => \&App::MajorFeature::modify;
@@ -96,7 +96,7 @@ C<lib/App.pm> to the end of C<lib/App/MajorFeature.pm>:
 
     prefix '/mf' => sub {
         get '' => \&retrieve;
-        prefix '/subfeature' => sub {
+        prefix '/sf' => sub {
             get  ''     => \&sub_feature;
             post ''     => \&add;
             put  ''     => \&modify;
