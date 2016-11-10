@@ -268,6 +268,24 @@ change-triggering event, the Ajax handler sends new data back to the
 Dancer app and gets back an updated JSON data structure, with which it
 updates the initial HTML returned by the Dancer app.
 
+This has two additional benefits besides avoiding a violation of the
+L<DRY principle|https://en.wikipedia.org/wiki/Don%27t_repeat_yourself>:
+
+First, it saves one HTTP round trip on the initial request over the
+common alternative design, where the server simply returns an empty HTML
+container which must be filled by JavaScript code with a subsequent
+JavaScript Ajax call; HTTP round-trips are usually expensive enough to
+add human-scale amounts of delay to your web app's response time, so any
+time you spend to remove unnecessary round-trips usually pays immediate
+tangible benefits.
+
+Second, this design ensures that your web app returns an initial HTML
+view of the data even to clients not running JavaScript. Even if you can
+ensure that your normal web users will run JavaScript, you may gain some
+SEO benefit by returning an HTML form of your web app's dynamic content
+to web spiders that refuse to run embedded and referenced JavaScript
+code.
+
 This article series concludes with a scheme for
 L<hot code reloading|/2015/8>, a very useful feature in any Dancer
 app, but especially helpful as your app grows larger.
