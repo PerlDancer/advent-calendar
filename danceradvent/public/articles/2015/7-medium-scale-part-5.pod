@@ -7,7 +7,7 @@ route handler as a one-liner, like so:
 
     prefix '/mf' => sub {
         get '' => \&retrieve;
-        prefix '/subfeature' => sub {
+        prefix '/sf' => sub {
             get  ''     => \&_get;
             post ''     => \&_post;
             put  ''     => \&_put;
@@ -129,7 +129,7 @@ C<lib/App/API/SubFeature.pm>, and also refine the programming interface
 a bit:
 
     prefix '/api' => sub {
-        prefix '/subfeature' => sub {
+        prefix '/sf' => sub {
             post ''     => \&_post;
             get  ''     => \&_get;
             put  '/:id' => \&_put;
@@ -144,7 +144,7 @@ scheme.
 You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
 
     prefix '/api' => sub {
-        prefix '/subfeature' => sub {
+        prefix '/sf' => sub {
             post ''     => \&_create;
             get  ''     => \&_read;
             put  '/:id' => \&_update;
@@ -224,13 +224,13 @@ HTML-returning route, say something like this:
     use Dancer2 appname => 'App';
 
     sub _get {
-        return template '/mf/subfeature' => {
+        return template '/mf/sf' => {
             data => App::API::SubFeature::_get
         };
     }
 
     prefix '/mf' => sub {
-        prefix '/subfeature' => sub {
+        prefix '/sf' => sub {
             get '' => \&_get;
             # etc.
         }
@@ -257,7 +257,7 @@ this:
 That is, the API side is returning a complicated Perl data structure
 directly, intending that Dancer JSONify it for the caller, while a
 different route handler outside the JSON API section passes that same
-data structure into our C</mf/subfeature> template in order to provide
+data structure into our C</mf/sf> template in order to provide
 an alternative HTML rendering of the same data. The work to produce that
 complicated Perl data structure only has to happen in once place even
 though it is consumed as both HTML and JSON.

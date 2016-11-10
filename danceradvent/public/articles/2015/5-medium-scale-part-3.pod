@@ -26,11 +26,11 @@ part of this article series would look like this in PHP:
 
     index.php
     mf/index.php
-    mf/subfeature/index.php
+    mf/sf/index.php
 
 The view code — HTML and inline JavaScript — is intermixed with the
 server-side code in the same file. Worse, single files like
-C<mf/subfeature/index.php> have to handle multiple HTTP verbs; in our
+C<mf/sf/index.php> have to handle multiple HTTP verbs; in our
 example, C<GET>, C<POST>, C<PUT>, and C<DELETE>. If each verb returns a
 different web page, you end up with a huge top-level C<if/elseif/else>
 block dividing the file up into a bunch of logically separate chunks.
@@ -57,10 +57,10 @@ PHP scheme might look something like this:
 
     views/top.tt
     views/mf/top.tt
-    views/mf/subfeature/get.tt
-    views/mf/subfeature/post.tt
-    views/mf/subfeature/put.tt
-    views/mf/subfeature/delete.tt
+    views/mf/sf/get.tt
+    views/mf/sf/post.tt
+    views/mf/sf/put.tt
+    views/mf/sf/delete.tt
 
 This scheme maps Dancer routes 1:1 to template files, using a naming
 scheme that is easy to remember since it's nearly identical to the URL
@@ -73,11 +73,10 @@ will quickly rediscover this simple mapping years from now when you have
 to work on the web app again.
 
 This naming scheme is very much a suggestion, rather than a
-prescription. For one thing, you may find that the C<DELETE
-/mf/subfeature> route needs no view, because it just deletes one
-database record and then redirects you to C<GET /mf/subfeature> to show
-the change in the normal view. In that case, you would not need
-C<views/mf/subfeature/delete.tt>.
+prescription. For one thing, you may find that the C<DELETE /mf/sf>
+route needs no view, because it just deletes one database record and
+then redirects you to C<GET /mf/sf> to show the change in the normal
+view. In that case, you would not need C<views/mf/sf/delete.tt>.
 
 The important thing is to I<have> a well-thought-out naming scheme, not
 necessarily to follow the one I've laid out above.
