@@ -126,11 +126,13 @@ C<lib/App/API/MajorFeature/SubFeature.pm>. We can also refine the
 programming interface a bit:
 
     prefix '/api' => sub {
-        prefix '/sf' => sub {
-            post ''     => \&_post;
-            get  ''     => \&_get;
-            put  '/:id' => \&_put;
-            del  '/:id' => \&_del;
+        prefix '/mf' => sub {
+            prefix '/sf' => sub {
+                post ''     => \&_post;
+                get  ''     => \&_get;
+                put  '/:id' => \&_put;
+                del  '/:id' => \&_del;
+            };
         };
     };
 
@@ -141,11 +143,13 @@ scheme.
 You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
 
     prefix '/api' => sub {
-        prefix '/sf' => sub {
-            post ''     => \&_create;
-            get  ''     => \&_read;
-            put  '/:id' => \&_update;
-            del  '/:id' => \&_delete;
+        prefix '/mf' => sub {
+            prefix '/sf' => sub {
+                post ''     => \&_create;
+                get  ''     => \&_read;
+                put  '/:id' => \&_update;
+                del  '/:id' => \&_delete;
+            };
         };
     };
 
