@@ -216,19 +216,57 @@ intended to be inserted into an existing DOM via JavaScript. The
 C</parts> section of the URL hierarchy separates out such route handlers
 from those that return whole HTML pages.
 
-If you need both JSON and HTML versions of this data, you can use this
-function for both cases: directly as a route handler, letting Dancer
-translate the hashref to JSON for you, and indirectly from another route
-handler, consuming the hashref and translating it to HTML form. The app
-simply calls into its own API and provides an alternate rendering of the
-same data. Given that Dancer templates easily consume hashrefs, the
-HTML-side route handler might be nearly trivial:
+Sometimes you need the same data in both HTML and JSON forms. I find
+that Dancer makes this easy. In the Perl module defining the
+HTML-returning route, say something like this:
 
-    sub get_subfeature_html {
+    package App::SubFeature
+    use Dancer2 appname => 'App';
+
+    sub _get {
         return template '/mf/subfeature' => {
-            data => App::API::SubFeature::_read
+            data => App::API::SubFeature::_get
         };
     }
+
+    prefix '/mf' => sub {
+        prefix '/subfeature' => sub {
+            get '' => \&_get;
+            # etc.
+        }
+    }
+
+The key line is in the middle of the example, which calls over into the
+module defining the corresponding API route handler, which looks like
+this:
+
+    package App::API::SubFeature
+    use Dancer2 appname => 'App';
+
+    sub _get {
+        return {
+            some => 'complicated',
+            data => 'structure',
+        };
+    }
+
+    prefix '/api' => sub {
+        # more route defs, including one to call _get() above
+    }
+
+That is, the API side is returning a complicated Perl data structure
+directly, intending that Dancer JSONify it for the caller, while a
+different route handler outside the JSON API section passes that same
+data structure into our C</mf/subfeature> template in order to provide
+an alternative HTML rendering of the same data. The work to produce that
+complicated Perl data structure only has to happen in once place even
+though it is consumed as both HTML and JSON.
+
+This pattern is common in code that needs to return an initial view of a
+given data structure which is later updated via Ajax: on some
+change-triggering event, the Ajax handler sends new data back to the
+Dancer app and gets back an updated JSON data structure, with which it
+updates the initial HTML returned by the Dancer app.
 
 This article series concludes with a scheme for
 L<hot code reloading|/2015/8>, a very useful feature in any Dancer
