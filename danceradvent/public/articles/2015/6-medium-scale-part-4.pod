@@ -60,10 +60,11 @@ your C<config.yml> file:
 
     static_handler: 0
 
-Reload the web app, and work through all of the app's routes to make
-sure you don't get any new 404 errors; it may be helpful to have your
-browser's developer tools window up, displaying the Network log, while
-you do this, else you may not notice failed Ajax file loads.
+Reload the web app, then work through all of the app's routes to make
+sure you don't get any new 404 errors. It may be helpful to open the
+Network tab in your browser's developer tools alongside the browser
+window you're testing your web app in so that you're more likely to
+notice any new errors that happen in background Ajax calls.
 
 Running a typical web app this way might reduce the number of hits that
 get down to the Dancer level by a factor of 10 to 100 since so much of
