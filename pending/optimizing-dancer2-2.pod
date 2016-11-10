@@ -1,0 +1,78 @@
+=head1 Optimizing Dancer2 PT. 2
+
+In the previous article we explored the optional modules we can install
+in order to make things run faster. Other than having them installed,
+no special changes we required.
+
+However, there are much greater changes we can make with greater value.
+In this article we will discuss changes in our server configuration.
+
+=head2 Picking your server
+
+While L<Plack> has a built-in server, you wouldn't want to use this.
+For many the go-to server is Apache, due to its stability and
+feature abundance. However, its performance is sub-optimal at times.
+
+If you're already running a Perl application, you can opt for a
+Perl-based web server. They perform exceedingly well. Servers like
+L<Starman> or L<Gazelle> can provide high-performance.
+
+If you're interested in seeking alternatives, L<...|uWSGI> provides
+a fast web server with support for PSGI protocol. It also one
+additional special feature: Asynchronous cleanup handlers, which
+allow you to asynchronously handle cleanup tasks such as clearing
+intermediate objects, write to disk, log, etc.
+
+=head2 Faster sessions
+
+Applications tend to use sessions.
+
+Picking the right session storage is a matter of balance, as with
+many things. If you are looking for speed, forget about the file-based
+session storage like JSON or YAML or Sereal. Instead, use Redis or
+Memcached.
+
+=head2 Static file serving
+
+All your static files are normally served by Dancer2 using a static
+middleware. It works, but it's far from the fastest solution.
+
+Many web servers support serving static files for you, especially if
+they are also a reverse proxy. NGINX is a fast web server and reverse
+proxy that can serve the static files for you, with much greater speed,
+and then run your web application for everything else.
+
+If you serve the static files through a different mechanism, you
+can disable the middleware in Dancer2 that handles it:
+
+    # in your config.yml:
+    static_handler: 0
+
+    # or in your MyApp.pm
+    set 'static_handler' => 0;
+
+Dancer2 will then generate a faster web application by not even
+checking for static files at all.
+
+(This is touching your stack structure, which we will delve into
+further in the next blog post in this series.)
+
+=head2 HTTPS - where appropriate
+
+Security is important but it's not without cost.
+
+HTTPS adds additional processing and network time. You might want
+to reduce some of it for critical parts of the website that do
+not require security. This is usually a meager amount, but it's
+worth noting.
+
+Take into account, though, that you could lose much more if you
+make a mistake and do not enable HTTPS where it is needed. In
+many cases it's preferable to just keep it rather than be in
+doubt.
+
+=head2 Coming next
+
+In the next article, we will focus on our stack and explore the
+architectural changes we can make in order to speed up our web
+applications.
