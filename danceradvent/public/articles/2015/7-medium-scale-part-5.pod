@@ -160,7 +160,11 @@ The only other thing to change here is that REST APIs normally return
 JSON or XML. I prefer JSON since that's directly usable by the
 JavaScript code that made the Ajax call to one of these APIs. One of the
 best features of Dancer is that automatic JSON encoding is built right
-in. We might define the C<_create()> function referenced above as:
+in. First, enable the feature by adding this to your C<config.yml> file:
+
+    serializer: JSON
+
+That lets us write the C<_create()> function referenced above as:
 
     sub _create {
         my $params = request->params;
@@ -180,10 +184,12 @@ in. We might define the C<_create()> function referenced above as:
         }
     }
 
-In Dancer, a hash reference returned from a route handler is
-automatically JSON-encoded, and the HTTP response's content type is set
-to C<application/json>. Parsing and using that reply on the client side
-in JavaScript is therefore trivial.
+By telling Dancer that we want unlabeled return values from route
+handlers to be sent through the built-in JSON serializer, it not only
+converts Perl data structures to their JSON equivalents, it also
+automatically sets the the HTTP response's content type is set to
+C<application/json>. Parsing and using that reply on the client side in
+JavaScript is therefore trivial.
 
 If your new REST API route handlers previously returned HTML, and you
 have existing code that still needs this data in HTML form, I prefer to
