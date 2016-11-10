@@ -74,8 +74,8 @@ files, JavaScript files, etc.
 You might want to take this a step further, in fact. Instead of merely
 disabling Dancer's static file handler in your C<config.yml> file for
 the duration of a single test session, you could instead disable it
-permanently to your C<environments/development.yml> file, so that you
-find and fix such problems in development, before you deploy to
+permanently in your C<environments/development.yml> file to ensure that
+you find and fix such problems in development, before you deploy to
 production.
 
 I cannot recommend doing this permanently at the C<config,yml> or
