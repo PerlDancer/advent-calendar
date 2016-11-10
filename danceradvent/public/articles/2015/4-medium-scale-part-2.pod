@@ -46,10 +46,10 @@ each route handler body should do nothing more than call a function in
 one of these modules:
 
     get  '/mf'        => \&App::MajorFeature::retrieve;
-    get  '/mf/sf'     => \&App::MajorFeature::sub_feature;
-    post '/mf/sf'     => \&App::MajorFeature::add;
-    put  '/mf/sf'     => \&App::MajorFeature::modify;
-    del  '/mf/sf/:id' => \&App::MajorFeature::remove;
+    get  '/mf/sf'     => \&App::MajorFeature::SubFeature::retreive;
+    post '/mf/sf'     => \&App::MajorFeature::SubFeature::add;
+    put  '/mf/sf'     => \&App::MajorFeature::SubFeature::modify;
+    del  '/mf/sf/:id' => \&App::MajorFeature::SubFeature::remove;
 
 Notice that by moving all of the code for each route handler into a
 function in one of our module files, we can replace the inline anonymous
@@ -66,10 +66,10 @@ without repeating elements of the URL:
     prefix '/mf' => sub {
         get '' => \&App::MajorFeature::retrieve;
         prefix '/sf' => sub {
-            get  ''     => \&App::MajorFeature::sub_feature;
-            post ''     => \&App::MajorFeature::add;
-            put  ''     => \&App::MajorFeature::modify;
-            del  '/:id' => \&App::MajorFeature::remove;
+            get  ''     => \&App::MajorFeature::SubFeature::retreive;
+            post ''     => \&App::MajorFeature::SubFeature::add;
+            put  ''     => \&App::MajorFeature::SubFeature::modify;
+            del  '/:id' => \&App::MajorFeature::SubFeature::remove;
         };
     };
 
@@ -92,20 +92,27 @@ so every one of our app's modules gets executed on startup. This means
 that any code at global scope within these modules also runs at startup.
 
 Therefore, we can move all of the route definitions above from
-C<lib/App.pm> to the end of C<lib/App/MajorFeature.pm>:
+C<lib/App.pm> to the end of the module where we define each route's
+handler. That is, the tail end of C<lib/App/MajorFeature.pm> says:
 
     prefix '/mf' => sub {
         get '' => \&retrieve;
+    };
+
+...and the tail end of C<lib/App/MajorFeature/SubFeature.pm> says:
+
+    prefix '/mf' => sub {
         prefix '/sf' => sub {
-            get  ''     => \&sub_feature;
+            get  ''     => \&retreive;
             post ''     => \&add;
             put  ''     => \&modify;
             del  '/:id' => \&remove;
         };
     };
 
-Now all the function calls are made within the C<App::MajorFeature>
-module, so we don't need to qualify them.
+The route definitions are much shorter now because they refer to
+module-local functions defined above the route definitions, so the code
+references don't need to be fully-qualified.
 
 Having done all this, all that's left behind in C<lib/App.pm> is Dancer
 startup and other initialization code, such as hook definitions, as is
