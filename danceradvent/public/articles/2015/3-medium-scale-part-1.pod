@@ -17,10 +17,10 @@ way to extend beyond this base.
 I say "one way" because Dancer is a policy-free web application
 framework. Its designers purposely avoid making whole classes of design
 decisions for you. That means that Dancer not only doesn’t force you to
-design your app the right way, the framework rarely even gives hints
-about what the right way might be. Dancer prefers to present itself to
-you, the app developer, as a box of tools, which you are free to use as
-you see fit.
+design your app the "right way," by its creators' lights, the framework
+rarely even gives hints about what the right way might be. Dancer
+prefers to present itself to you, the app developer, as a box of tools,
+which you are free to use as you see fit.
 
 The design presented here is working quite well for us, so we think it
 is worthy of emulation, but we do not expect that it will work for all
