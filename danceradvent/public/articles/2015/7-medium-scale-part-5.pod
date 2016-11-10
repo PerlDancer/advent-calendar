@@ -21,22 +21,18 @@ reference (e.g. C<sub { ... }>) block. What do we get by moving those
 functions elsewhere, and what do we gain that makes it worth tolerating
 the ugly C<\&> syntax?
 
-We get two benefits by doing so.
+The first benefit we get from doing that is that named subroutines make
+stack traces easier to read.
 
-First, named subroutines make stack traces easier to read.
-
-Second, and far more important to our purposes here in this article
-series, it makes the URL structure of the web app explicit in the code.
-
-To some extent, you can see this by looking at your app's C<views>
-subdirectory, since a prior article in this series encouraged you to map
-template files 1:1 to Dancer routes, as much as possible. The problem
-with relying on the C<views> directory contents as a document for the
-web app's URL structure is that the OS's file system normally shows you
-only one layer of the directory hierarchy at a time. You have to go out
-of your way to see the whole tree in a compact form, on a single screen.
-That means you may never actually find yourself studying the hierarchy
-as a whole, and thus may never consider whether it is a cohesive design.
+Second — and far more important to our purposes here in this article
+series — defining your routes this way makes the URL structure of the
+web app explicit in the code. You are more likley to notice design
+problems by studying the indented route definitions in the Perl code
+than by looking at your app's C<views> subdirectory, even if it is
+structured exactly the same way as recommended in an earlier article in
+this series, simply because it is atypical to be looking at a full tree
+view of a filesystem. You end up with a kind of tunnel vision when
+looking at one directory at a time.
 
 This practice of defining Dancer route handlers as one-liners solves
 that. It ensures that every time you adjust the route handlers for your
