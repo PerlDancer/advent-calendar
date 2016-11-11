@@ -214,7 +214,7 @@ explicitly marked. If your application returns HTML more often than
 JSON, this may seem backwards. Wouldn't it be simpler to leave the
 default serializer unset, so that C<template> calls and such return
 normally, and mark the JSON-returning API route handlers explicitly
-instead via C<send_as JSON =E<gt>...>?
+instead via C<send_as JSON =E<gt> ...>?
 
 You could indeed do that, but then you lose a nice side benefit of this
 arrangement: it makes it easy to define parallel route handlers for
@@ -242,10 +242,15 @@ Consider this addition to the route handlers defined above:
 Briefly, what this does is define a C</parts> route hierarchy that is
 parallel to the C</api> hierarchy, with the former implemented in terms
 of the latter. That is, the application's API returns JSON, and the
-applications "parts" subsystem returns HTML fragments that present the
-same data the JSON APIs return but in HTML form.
+applications "parts" subsystem returns HTML renditions of the same data
+returned by the JSON API. This works because the API route handlers are
+defined to return raw Perl data structures, which we can consume
+directly from other route handlers as above, or let Dancer render them
+to JSON when those route handlers are called by a web client.
 
-Then you can include one of those parts inside a complete HTML page:
+While you could consume these HTML fragments ("parts") via Ajax, you can
+also save an HTTP round trip by textually including them into complete
+web pages assembled by Dancer's template mechanism:
 
     package App::MajorFeature::SubFeature
     use Dancer2 appname => 'App';
@@ -264,7 +269,11 @@ Then you can include one of those parts inside a complete HTML page:
         };
     };
 
-Now we have three different ways to get the same data: as part of a
+The C</views/mf/sf.tt> template can then reference C<part> to insert the
+HTML fragment into the larger web page, without duplicating the HTML
+code for that fragment.
+
+This gives us three different ways to get the same data: as part of a
 complete web page (C<GET /mf/sf>), as an HTML fragment that we can
 insert into an existing web page via Ajax on the browser side or textual
 inclusion on the Dancer side (C<GET /parts/mf/sf>), and as raw JSON data
