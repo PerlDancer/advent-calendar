@@ -200,10 +200,10 @@ Doing so does mean that your existing HTML-returning route handlers have
 to be explicitly marked to return HTML instead:
 
     get '/some/html/returning/route' => sub {
-		send_as html => template '/some/template' => {
-			some => 'parameters',
-		};
-	};
+        send_as html => template '/some/template' => {
+            some => 'parameters',
+        };
+    };
 
 
 =head2 Returning the Same Data in Both HTML and JSON Forms
@@ -226,10 +226,10 @@ Consider this addition to the route handlers defined above:
     use Dancer2 appname => 'App';
 
     sub _get {
-		send_as html => template 'parts/mf/sf' => {
-			content => App::API::MajorFeature::SubFeature::_get(),
-		}
-	}
+        send_as html => template 'parts/mf/sf' => {
+            content => App::API::MajorFeature::SubFeature::_get(),
+        }
+    }
 
     prefix '/parts' => sub {
         prefix '/mf' => sub {
@@ -251,18 +251,18 @@ Then you can include one of those parts inside a complete HTML page:
     use Dancer2 appname => 'App';
 
     sub _get {
-		send_as html => template 'mf/sf' => {
-			some => 'parameters',
-			go   => 'here',
-			part => App::Parts::MajorFeature::SubFeature::_get(),
-		}
-	}
+        send_as html => template 'mf/sf' => {
+            some => 'parameters',
+            go   => 'here',
+            part => App::Parts::MajorFeature::SubFeature::_get(),
+        }
+    }
 
-	prefix '/mf' => sub {
-		prefix '/sf' => sub {
-			get '' => \&_get;
-		};
-	};
+    prefix '/mf' => sub {
+        prefix '/sf' => sub {
+            get '' => \&_get;
+        };
+    };
 
 Now we have three different ways to get the same data: as part of a
 complete web page (C<GET /mf/sf>), as an HTML fragment that we can
