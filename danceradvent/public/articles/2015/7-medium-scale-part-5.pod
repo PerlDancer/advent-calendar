@@ -279,26 +279,18 @@ insert into an existing web page via Ajax on the browser side or textual
 inclusion on the Dancer side (C<GET /parts/mf/sf>), and as raw JSON data
 that we could process on the browser side (C<GET /api/mf/sf>).
 
-This layered design pattern is common in code that needs to return an
-initial view of a given data structure which is later updated via Ajax.
-The initial page load pre-renders the raw data on the Dancer side by
-calling down into its own C<App::Parts> route handler, textually
-including the returned HTML fragment into the larger HTML page. Then as
-dynamic events happen on the browser side, the JavaScript code handling
-those events can either fetch a new rendering of the data by calling
-back to the C</parts> route handler that serves up that HTML fragment,
-or it can get the same data in JSON form via an C</api> call.
-
-This design has two additional benefits besides avoiding a violation of the
+This layered design pattern has two additional benefits besides avoiding
+violations of the
 L<DRY principle|https://en.wikipedia.org/wiki/Don%27t_repeat_yourself>:
 
-First, it saves one HTTP round trip on the initial request over the
-common alternative design, where the server simply returns an empty HTML
-container which must be filled by JavaScript code with a subsequent
-JavaScript Ajax call; HTTP round-trips are usually expensive enough to
-add human-scale amounts of delay to your web app's response time, so any
-time you spend to remove unnecessary round-trips usually pays immediate
-tangible benefits.
+First, textually including an HTML rendering of the raw data on the
+server side as part of the initial HTTP page load saves an HTTP round
+trip over the common alternative design, where the server simply returns
+an empty HTML container which must be filled by JavaScript code with a
+subsequent JavaScript Ajax call. HTTP round-trips are usually expensive
+enough to add human-scale amounts of delay to your web app's response
+time, so any time you spend to remove unnecessary round-trips usually
+pays immediate tangible benefits.
 
 Second, this design ensures that your web app returns an initial HTML
 view of the data even to clients not running JavaScript. Even if you can
