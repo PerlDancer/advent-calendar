@@ -26,7 +26,7 @@ stack traces easier to read.
 
 Second — and far more important to our purposes here in this article
 series — defining your routes this way makes the URL structure of the
-web app explicit in the code. You are more likley to notice design
+web app explicit in the code. You are more likely to notice design
 problems by studying the indented route definitions in the Perl code
 than by looking at your app's C<views> subdirectory, even if it is
 structured exactly the same way as recommended in an earlier article in
