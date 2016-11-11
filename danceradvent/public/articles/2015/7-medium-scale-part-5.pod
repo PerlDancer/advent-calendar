@@ -165,7 +165,7 @@ in.
 
 First, enable the feature by adding this to your C<config.yml> file:
 
-    serializer: JSON
+    serializer: "JSON"
 
 That lets us write the C<_create()> function referenced above as:
 
@@ -187,94 +187,100 @@ That lets us write the C<_create()> function referenced above as:
         }
     }
 
-By telling Dancer that we want unlabeled return values from route
-handlers to be sent through the built-in JSON serializer, it not only
-converts Perl data structures to their JSON equivalents, it also
-automatically sets the response's HTTP C<Content-Type> header to
+By telling Dancer that we want all routes to return JSON unless
+explicitly told otherwise, we can simply return Perl data structures and
+have Dancer translate them into JSON form for us. It will also
+automatically set the response's HTTP C<Content-Type> header to
 C<application/json>. Parsing and using that reply on the client side in
-JavaScript is therefore trivial.
+JavaScript is therefore trivial. Many web frameworks can consume such
+APIs directly, such as jQuery via
+L<C<$.getJSON()>|https://api.jquery.com/jQuery.getJSON/>.
 
-This does not interfere with the more typical C<template> return value
-from route handlers, since those are labeled in such a way that they
-bypass the JSON serializer. This way of returning either JSON or HTML to
-the caller depending solely on whether the Dancer app uses C<template>
-feels natural and effortless to me, and therefore makes the code feel
-"right."
+Doing so does mean that your existing HTML-returning route handlers have
+to be explicitly marked to return HTML instead:
 
-Dancer does have a way to force use of a particular serializer: the
-L<C<send_as> DSL keyword|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#send_as>.
-My immediate reaction to finding a C<send_as> call in a Dancer app is to
-L<wrinlke my nose|https://en.wikipedia.org/wiki/Code_smell> for the same
-reason I mistrust type casts elsewhere in code. Both mechanisms force a
-value from its natural data type to another one; a conscientious
-developer asks whether there is a good reason to fight the default
-conversion rules in each case.
+    get '/some/html/returning/route' => sub {
+		send_as html => template '/some/template' => {
+			some => 'parameters',
+		};
+	};
 
 
 =head2 Returning the Same Data in Both HTML and JSON Forms
 
-If your new REST API route handlers previously returned HTML, and you
-have existing code that still needs this data in HTML form, I prefer to
-separate those Ajax call handlers into a different section of the URL
-hierarchy: C</parts>. The rule is simple: C</api> routes return JSON,
-whereas C</parts> routes return HTML fragments. Those fragments are
-intended to be inserted into an existing DOM via JavaScript. The
-C</parts> section of the URL hierarchy separates out such route handlers
-from those that return whole HTML pages.
+You might now be asking why you would arrange things as above, where the
+default serializer is JSON and HTML-returning routes have to be
+explicitly marked. If your application returns HTML more often than
+JSON, this may seem backwards. Wouldn't it be simpler to leave the
+default serializer unset, so that C<template> calls and such return
+normally, and mark the JSON-returning API route handlers explicitly
+instead?
 
-Sometimes you need the same data in both HTML and JSON forms. I find
-that Dancer makes this easy. In the Perl module defining the
-HTML-returning route, say something like this:
+You could indeed do that, but then you lose a nice side benefit of this
+arrangement: it makes it easy to define parallel route handlers for
+returning HTML-rendered versions of APIs that return raw JSON data.
 
-    package App::SubFeature
+Consider this addition to the route handlers defined above:
+
+    package App::Parts::MajorFeature::SubFeature
     use Dancer2 appname => 'App';
 
     sub _get {
-        return template '/mf/sf' => {
-            data => App::API::SubFeature::_get
+		send_as html => template 'parts/mf/sf' => {
+			content => App::API::MajorFeature::SubFeature::_get(),
+		}
+	}
+
+    prefix '/parts' => sub {
+        prefix '/mf' => sub {
+            prefix '/sf' => sub {
+                get '' => \&_get;
+            };
         };
-    }
+    };
 
-    prefix '/mf' => sub {
-        prefix '/sf' => sub {
-            get '' => \&_get;
-            # etc.
-        }
-    }
+Briefly, what this does is define a C</parts> route hierarchy that is
+parallel to the C</api> hierarchy, with the former implemented in terms
+of the latter. That is, the application's API returns JSON, and the
+applications "parts" subsystem returns HTML fragments that present the
+same data the JSON APIs return but in HTML form.
 
-The key line is in the middle of the example, which calls over into the
-module defining the corresponding API route handler, which looks like
-this:
+Then you can include one of those parts inside a complete HTML page:
 
-    package App::API::SubFeature
+    package App::MajorFeature::SubFeature
     use Dancer2 appname => 'App';
 
     sub _get {
-        return {
-            some => 'complicated',
-            data => 'structure',
-        };
-    }
+		send_as html => template 'mf/sf' => {
+			some => 'parameters',
+			go   => 'here',
+			part => App::Parts::MajorFeature::SubFeature::_get(),
+		}
+	}
 
-    prefix '/api' => sub {
-        # more route defs, including one to call _get() above
-    }
+	prefix '/mf' => sub {
+		prefix '/sf' => sub {
+			get '' => \&_get;
+		};
+	};
 
-That is, the API side is returning a complicated Perl data structure
-directly, intending that Dancer JSONify it for the caller, while a
-different route handler outside the JSON API section passes that same
-data structure into our C</mf/sf> template in order to provide
-an alternative HTML rendering of the same data. The work to produce that
-complicated Perl data structure only has to happen in once place even
-though it is consumed as both HTML and JSON.
+Now we have three different ways to get the same data: as part of a
+complete web page (C<GET /mf/sf>), as an HTML fragment that we can
+insert into an existing web page via Ajax on the browser side or textual
+inclusion on the Dancer side (C<GET /parts/mf/sf>), and as raw JSON data
+that we could process on the browser side (C<GET /api/mf/sf>).
 
-This pattern is common in code that needs to return an initial view of a
-given data structure which is later updated via Ajax: on some
-change-triggering event, the Ajax handler sends new data back to the
-Dancer app and gets back an updated JSON data structure, with which it
-updates the initial HTML returned by the Dancer app.
+This layered design pattern is common in code that needs to return an
+initial view of a given data structure which is later updated via Ajax.
+The initial page load pre-renders the raw data on the Dancer side by
+calling down into its own C<App::Parts> route handler, textually
+including the returned HTML fragment into the larger HTML page. Then as
+dynamic events happen on the browser side, the JavaScript code handling
+those events can either fetch a new rendering of the data by calling
+back to the C</parts> route handler that serves up that HTML fragment,
+or it can get the same data in JSON form via an C</api> call.
 
-This has two additional benefits besides avoiding a violation of the
+This design has two additional benefits besides avoiding a violation of the
 L<DRY principle|https://en.wikipedia.org/wiki/Don%27t_repeat_yourself>:
 
 First, it saves one HTTP round trip on the initial request over the
