@@ -214,7 +214,7 @@ explicitly marked. If your application returns HTML more often than
 JSON, this may seem backwards. Wouldn't it be simpler to leave the
 default serializer unset, so that C<template> calls and such return
 normally, and mark the JSON-returning API route handlers explicitly
-instead?
+instead via C<send_as JSON =E<gt>...>?
 
 You could indeed do that, but then you lose a nice side benefit of this
 arrangement: it makes it easy to define parallel route handlers for
