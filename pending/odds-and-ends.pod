@@ -1,0 +1,39 @@
+=encoding utf8
+
+=head1 Odds and ends for newbies and wannabees
+
+For starters, you can install Dancer2 on your computer and create your first
+Dancer2 project as follows:
+
+   cpanm Dancer2
+   dancer2 gen -a OddsAndEnds
+
+=head1 Recommended Plack settings
+
+=head2 Multiple processes
+
+plackup -s Starman --workers=2 bin/app.psgi
+
+=head2 Network access restriction
+
+Restrict network access on your development instance to either localhost
+or your local network, e.g.
+
+    plackup --host 127.0.0.1
+
+    plackup --host 192.168.1.227
+
+=head1 Nice Javascript libraries
+
+=head2 DataTables
+
+=head2 Further reading
+
+=head2 Author
+
+This article has been written by Racke aka Stefan Hornburg for the Perl
+Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+2016 // Stefan Hornburg (Racke) C<< <racke@linuxia.de> >>
