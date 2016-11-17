@@ -1,0 +1,195 @@
+=head1 Optimizing Dancer2 PT. 3
+
+After improving our web server and web server configurations in our
+previous article, we can now dive deeper into our stack. There is much
+to gain by deciding how we configure our stack, what technologies we
+use, and how we architect our platform.
+
+=head2 Offloading tasks
+
+Have you ever implemented a queue system in a web application? Of
+course you have! We all have! However, this proves to be a common
+mistake that must be rectified if we seek to have a fast web
+application.
+
+Queues are not the only example of trying to accomplish as much as
+possible within the web application instead of offloading it to
+other components which are more suitable at their given task.
+
+=over 4
+
+=item * Queues
+
+Queues are enticing to write since they seem simple at first. We
+C<push> to an array, C<pop> on the other side, and run.
+Unfortunately, a proper queue system needs to take into account
+working across data centers, journaling and crash recovery, and
+even multiple processes for work.
+
+We recommend using a proper queue or proper DB meant for storing
+and dealing with queues. You can use RabbitMQ for queuing or if
+you want to use a worker system, you can store your work in
+Redis.
+
+Either way, you shouldn't implement such a grant task yourself
+inside your web application. It just won't cut it.
+
+=item * Scheduled tasks (cron jobs)
+
+Many tasks are performed asynchronously in the web server since they
+take a long time to run. However, it makes them more fragile,
+error-prone, and opaque, making it hard to trace and debug.
+
+Instead, scheduled task runners are available on common operating
+systems.
+
+=item * Caching
+
+There is L<Plack::Middleware::Cache> available, but at the end
+of the day, caching can definitely be done better by any proper
+caching server.
+
+We recommend Varnish.
+
+=back
+
+=head2 Preloading modules
+
+Our web applications tend to use many modules, some of which quite
+heavy. Most web servers fork in order to handle multiple workers.
+But why waste the start-up time of heavy modules on each fork of the
+web server? This is what preloading is for.
+
+If you load modules before you start your web server, you can allow
+the web server to fork with the modules already loaded in memory,
+and to share that memory.
+
+While this saves a lot of memory, it also saves the CPU required
+on every fork generator in order to load the modules.
+
+    # app.psgi
+    use MyApp;
+
+    # preloading
+    use Moose ();
+    use DBIx::Class ();
+    use AnotherBigModule ();
+
+    MyApp->to_app;
+
+=head2 Faster headers everywhere
+
+Handling headers is one of the most common tasks performed in a
+web request. It is done by the caching layer, the reverse proxy,
+the web server, and your application.
+
+The most common module in Perl to handle headers is the old
+L<HTTP::Headers>, and I<old> is right. L<Plack> moved to a faster
+version, aptly named L<HTTP::Headers::Fast>, which tries to maintain
+compatibility but improve the speed. It is about 20% faster, which
+is already a major benefit, since L<Plack> an make many uses of
+headers.
+
+Dancer2 internally uses L<HTTP::Headers::Fast> in order to assure
+faster results, but you can take this one step further by changing
+what Dancer2 (and Plack) will use, along with any other component
+in your web application.
+
+If you load L<HTTP::XSHeaders> early in your application, it will
+override the other HTTP libraries (namely L<HTTP::Headers> and
+L<HTTP::Headers::Fast>) and changes their code (and subsequently)
+any code that calls it) to a much higher performant C-based
+implementation of headers.
+
+    # app.psgi
+    use HTTP::XSHeaders;
+    use MyApp;
+
+    ...
+
+=head2 Reduce I/O with loggers and sessions
+
+Logging and session reading and writing are also frequently performed
+actions. It also involves I/O, writing to disk, or involve a network
+operation. Those can be slow.
+
+Make sure to maintain a useful logging level in your application,
+not writing at all levels, to prevent excessive writing to disk
+or network, and use a fast logger engine.
+
+Additionally, usse a memory-based session storage, not the L<YAML>
+or L<JSON> ones, since they both write to disk and serialize - two
+unnecessary expensive actions.
+
+=head2 Prevent unnecessary actions with constants
+
+Many of us don't know that Perl supports constant folding, allowing
+it to reduce and completely eliminate the running of unnecessary
+code paths if you give it enough information.
+
+An example is the following code:
+
+    use constant {
+        'DEBUG' => 0,
+    };
+
+    if ( DEBUG()) {
+        debug('This is a debug statement');
+    }
+
+Perl would know at this case to not even include the C<debug> line,
+since it will certainly not be reached. You can also control that
+using an environment variable, to make this more useful:
+
+    use constant {
+        'DEBUG' => $ENV{'MYAPP_DEBUG'},
+    };
+
+    if ( DEBUG() ) {
+        debug('This is a debug statement');
+    }
+
+This allows you to remove unnecessary lines, such as log statements
+that require debugging or a certain level or logging.
+
+=head2 Faster templating
+
+If you're not writing a web service, you are likely to be using
+templates. Rendering a template is a simple task, but when using
+templating frequently, it starts to take more time.
+
+If speed is crucial, it is a key point to improve. We recommend
+using L<Text::XSlate> for a blazing fast templating system.
+
+=head2 Middlewares aren't everything
+
+Middlewares are quite beneficial. They allow use to split the
+work between layers and keep layers simple and thin. However, they
+are much more expensive than we realize.
+
+Each middleware call requires two additional subroutine calls
+on every request. While calling subroutines in perl 5.24 has been
+considerably improved in speed (30% faster!), it is still a cost
+worth realizing and possibly amending.
+
+In many cases middlewares need access to information you already
+have in your application. Benchmark before you either decide to
+move to middleware, or when contemplating removing them.
+
+=head2 Reduce assets cost
+
+Serving our assets through a CDN or other caching server, or even
+through our reverse proxy is faster, but we take this one step
+further by improving the asset files themselves.
+
+For images, you can reduce the size and amount of required file
+transfers by using sprites.
+
+For Javascript files, you can both concatenate the files together
+and reduce their size by minifying them.
+
+=head2 Coming next
+
+Our next article in this series will deal directly with our application
+code. How can we write faster code in order to speed up our
+application?

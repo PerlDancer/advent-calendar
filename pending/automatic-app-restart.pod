@@ -1,0 +1,96 @@
+=pod
+
+=head1 Automatically Restarts
+
+A common annoyance many of us share when developing web applications is
+restarting our web application every time we edit files.
+
+While we do not need to restart our web server when changing images or
+template files, we still require it when changing our application code.
+
+Dancer 1 had an option to reload the application on file changes but it
+proved brittle and in some cases caused more annoyance than it prevented.
+
+There are several ways to handle this nowadays. Let's go through them.
+
+=head2 C<Plack::Middleware::Refresh>
+
+The L<Plack::Middleware::Refresh> module allows us to ...
+
+All we need to do is load this middleware in our handler:
+
+    # app.psgi
+    use MyApp;
+    use Plack::Builder;
+
+    builder {
+        enable 'Refresh';
+        MyApp->to_app;
+    };
+
+However, this will turn it on all the time under every environment.
+We can control that by loading it only if we are in the development
+environment:
+
+    # app.psgi
+    use MyApp;
+    use Plack::Builder;
+
+    builder {
+        if ( $ENV{'PLACK_ENV'} eq 'development' ) {
+            enable 'Refresh';
+        }
+
+        MyApp->to_app;
+    };
+
+However, this requires changing our handler. This will affect all
+other developers as well, and might cause restarts while we're still
+working on multiple files and cannot control whether it will restart.
+
+There are other solutions that possibly provide more flexibility.
+
+=head2 C<plackup -r> or C<plackup -R>
+
+L<Plack> comes with a built-in command to start a web server for our
+web application. It doesn't start all web servers but it works for
+Perl-based web servers such as L<Starman> or L<Gazelle>.
+
+    # start web server, restarting when a file in lib/ changes
+    plackup -r bin/app.psgi
+
+We may have renamed the F<lib> directory. In this case, we will need to
+use C<-R> instead:
+
+    # assuming we lib/ to routes/
+    plackup -R bin,routes bin/app.psgi
+
+This will monitor both F<bin> and F<routes> so you can update your
+code or your handler and the web server will restart automatically.
+
+You can also monitor additional directories. Imagine having having a
+templating system that uses compiled templates. You generated the
+compiled ones during a start of the application. The original ones
+would be stored in F<templates> and compiled and stored in F<views>.
+
+    plackup -R routes,templates bin/app.psgi
+
+Any change to F<routes> directory or to F<templates> will force a
+restart, compiling your templates again and providing you with fresh
+code.
+
+=head2 C<Shotgun>
+
+As a last resort, when the above approach aren't convenient or do
+not perform well, you can use the C<Shotgun> loader from
+L<Plack::Loader::Shotgun>.
+
+It's quite simple and you can load it by calling it with C<-L>:
+
+    plackup -L Shotgun bin/app.psgi
+
+Instead of watching and restarting, this loader simply forks and
+runs each request with its own process. If you are loading heavy
+modules and would like to speed it up, you can do so with C<-M>:
+
+    plackup -MMoose -MDBIx::Class -L Shotgun bin/app.psgi
