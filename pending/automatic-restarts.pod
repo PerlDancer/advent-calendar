@@ -1,12 +1,13 @@
 =pod
 
-=head1 Automatically Restarts
+=head1 Automatic Restarts
 
 A common annoyance many of us share when developing web applications is
 restarting our web application every time we edit files.
 
-While we do not need to restart our web server when changing images or
-template files, we still require it when changing our application code.
+While we do not need to restart our web server when changing image,
+JavaScript, CSS, or template files, we still require it when changing
+our application code.
 
 Dancer 1 had an option to reload the application on file changes but it
 proved brittle and in some cases caused more annoyance than it prevented.
@@ -15,7 +16,8 @@ There are several ways to handle this nowadays. Let's go through them.
 
 =head2 C<Plack::Middleware::Refresh>
 
-The L<Plack::Middleware::Refresh> module allows us to ...
+The L<Plack::Middleware::Refresh> module allows us to refresh your
+application and all of its modules.
 
 All we need to do is load this middleware in our handler:
 
@@ -48,7 +50,7 @@ However, this requires changing our handler. This will affect all
 other developers as well, and might cause restarts while we're still
 working on multiple files and cannot control whether it will restart.
 
-There are other solutions that possibly provide more flexibility.
+There are other solutions that are likely to yield more flexibility.
 
 =head2 C<plackup -r> or C<plackup -R>
 
