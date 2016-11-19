@@ -88,7 +88,7 @@ sent should work for most people, but can be configured if required.
 To display the messages, you can do something like this in your layout template:
 
     [% FOREACH msg IN session.messages %]
-      <p>[% msg.toString | html_entity %]</p>
+        <p>[% msg.toString | html_entity %]</p>
     [% END %]
 
 Each message is an object, and can be stringified as above.
@@ -97,9 +97,9 @@ The object includes a function to automatically select a sensible Bootstrap
 color, so if you're using Bootstrap in your application, you could do this:
 
     [% FOREACH msg IN session.messages %]
-      <div class="alert alert-[% msg.bootstrap_color %]">
-        [% msg.toString | html_entity %]
-      </div>
+        <div class="alert alert-[% msg.bootstrap_color %]">
+            [% msg.toString | html_entity %]
+        </div>
     [% END %]
 
 =item * Using the message keywords without using C<Dancer2>
@@ -138,24 +138,24 @@ something like this:
     package MyApp;
 
     post '/settings' => sub {
-      my $message;
-      try {
-        MyApp::Settings->update($settings);
-        $message = "Settings updated successfully";
-      }
-      catch {
-        $message = $@;
-      };
-      # Do something with $message
-      ...
+        my $message;
+        try {
+            MyApp::Settings->update($settings);
+            $message = "Settings updated successfully";
+        }
+        catch {
+            $message = $@;
+        };
+        # Do something with $message
+        ...
     };
  
     package MyApp::Settings;
 
     sub update {
-      ...
-      die "Invalid email address" unless ...
-      ...
+        ...
+        die "Invalid email address" unless ...
+        ...
     }
 
 That works fine to a degree, but the code can easily get more verbose than that,
@@ -166,19 +166,19 @@ How would we do that with L<Dancer2::Plugin::LogReport>?
     package MyApp;
 
     post '/settings' => sub {
-      if (process sub{ MyApp::Settings::update($settings) }) {
-        success "Settings updated successfully";
-      }
-      # No further code needed - all messages already handled
+        if (process sub{ MyApp::Settings::update($settings) }) {
+            success "Settings updated successfully";
+        }
+        # No further code needed - all messages already handled
     };
 
     package MyApp::Settings;
 
     use Log::Report;
     sub update {
-      ...
-      error "Invalid email address" unless ...
-      ...
+        ...
+        error "Invalid email address" unless ...
+        ...
     }
 
 That's it. But what if it wasn't successful? Well, the module handles all that
