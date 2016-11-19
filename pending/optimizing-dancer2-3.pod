@@ -121,37 +121,6 @@ Additionally, usse a memory-based session storage, not the L<YAML>
 or L<JSON> ones, since they both write to disk and serialize - two
 unnecessary expensive actions.
 
-=head2 Prevent unnecessary actions with constants
-
-Many of us don't know that Perl supports constant folding, allowing
-it to reduce and completely eliminate the running of unnecessary
-code paths if you give it enough information.
-
-An example is the following code:
-
-    use constant {
-        'DEBUG' => 0,
-    };
-
-    if ( DEBUG()) {
-        debug('This is a debug statement');
-    }
-
-Perl would know at this case to not even include the C<debug> line,
-since it will certainly not be reached. You can also control that
-using an environment variable, to make this more useful:
-
-    use constant {
-        'DEBUG' => $ENV{'MYAPP_DEBUG'},
-    };
-
-    if ( DEBUG() ) {
-        debug('This is a debug statement');
-    }
-
-This allows you to remove unnecessary lines, such as log statements
-that require debugging or a certain level or logging.
-
 =head2 Faster templating
 
 If you're not writing a web service, you are likely to be using
