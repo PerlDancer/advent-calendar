@@ -1,0 +1,375 @@
+=head1 Optimizing Dancer2 PT. 4
+
+After inspecting our stack and infrastructure, it is time to look into
+our code, inspecting patterns that can be improved in our attempt to
+speed up our applications.
+
+=head2 Prevent unnecessary actions with constants
+
+Many of us don't know that Perl supports constant folding, allowing
+it to reduce and completely eliminate the running of unnecessary
+code paths if you give it enough information.
+
+An example is the following code:
+
+    use constant {
+        'DEBUG' => 0,
+    };
+
+    if ( DEBUG()) {
+        debug('This is a debug statement');
+    }
+
+Perl would know at this case to not even include the C<debug> line,
+since it will certainly not be reached. You can also control that
+using an environment variable, to make this more useful:
+
+    use constant {
+        'DEBUG' => $ENV{'MYAPP_DEBUG'},
+    };
+
+    if ( DEBUG() ) {
+        debug('This is a debug statement');
+    }
+
+This allows you to remove unnecessary lines, such as log statements
+that require debugging or a certain level or logging.
+
+=head2 Proper parameters access
+
+Dancer2 introduced new parameter keywords: C<route_parameters>,
+C<query_parameters>, and C<body_parameters>.
+
+Other than the problems when using C<param> or C<params> (review advent
+article about it), an additional small problem is that it will only
+return results after parsing all possible parameters. If you have a
+B<GET> request but someone included body parameters (whether by accident
+or maliciously), they will be parsed when accessing C<param> or C<params>.
+
+However, by using the appropriate parameters keyword, Dancer2 will only
+parse the correct input.
+
+=head2 Faster parameters access
+
+More importantly, all the new keyword represent the parameters using
+L<Hash::MultiValue>. This means that you can access them in two ways:
+
+    # no matter how many "name" was provided, you get a single one
+    my $name = query_parameters->get('name');
+
+    # no matter how many "name" was provided, you get an array
+    my @all_names = query_parameters->get_all('name');
+
+Usually we use only one value, no matter how many were provided. In
+such case, we can also use the parameters as a hash reference:
+
+    my $name = query_parameters->get('name');
+
+    # faster
+    my $name = query_parameters->{'name'};
+
+This will only work when we only wish to retrieve one value. It will
+not work when given multiple values. We will need to use C<get_all>
+as shown before.
+
+=head2 Avoid slow routing syntax:
+
+Dancer2 allows you to control how the flow of the program using various
+keywords, but the following two are far slower than how you would
+normally do it.
+
+It might be fun to use them, but it's definitely slower.
+
+=over 4
+
+=item * C<pass>
+
+We suggest avoiding the C<pass> keyword. First, let us explain what it
+does.
+
+Let's assume we have two routes that will match two endpoints:
+
+    get '/:action' => sub {...};
+
+    get '/fail' => sub {...};
+
+A request to F</fail> can be handled by both of these routes. While
+in Dancer2 it works by first-come first-serve, meaning the first route
+that matches will be the first served, you can still control this,
+if you wish.
+
+The C<pass> keyword will allow you to pass the request to the next
+one in line. If a request does not C<pass>, it will not reach the next
+one, and if there is no next request, the application will return a
+404.
+
+    get '/:action' => sub {
+        my $action = route_parameters->{'action'};
+        if ( $action eq 'fail' ) {
+            # this will return from the route for you
+            pass;
+        }
+
+        # every action except 'fail'
+        ...
+    };
+
+    get '/fail' => sub {
+        # handle action 'fail'
+        ...
+    };
+
+However, while this seems pretty enough, it forces the request to
+go through the matching mechanism again, which can be completely
+avoided by having direct access using different mechanisms:
+
+=over 4
+
+=item * Reverse the routes
+
+If we reverse the routing by having the more exact routes at the top,
+we will not need to match because they will no longer cause multiple
+matches:
+
+    get '/fail' => sub {
+        # handle 'fail'
+        ...
+    };
+
+    get '/:action' => sub {
+        # anything other than 'fail' because it was already served
+        # no need for 'pass'
+        ...
+    };
+
+=item * Merge the routes
+
+At the end of the day what we have is an C<if> condition, and we
+could simply put that C<if> as part of a single route:
+
+    get '/:action' => sub {
+        my $action = route_parameters->{'action'};
+
+        if ( $action eq 'fail' ) {
+            # do the work...
+            ...
+
+            # or move it to a sub and call it:
+            return handle_fail_action(...);
+        }
+
+        ...
+    };
+
+=back
+
+=item * C<forward>
+
+The C<forward> keyword is far stronger than C<pass>. While C<pass>
+simply says "Not it!" with the current request, C<forward> creates a
+new request and passes it to the Dancer dispatcher to attempt to match
+it and serve it instead. Simply put, it provides an internal redirect.
+
+    get '/fail/:user' => sub {...};
+
+    get '/:action' => sub {
+        my $user   = query_parameters->{'user'};
+        my $action = route_parameters->{'action'};
+
+        if ( $action eq 'fail' ) {
+            forward "/fail/$user";
+        }
+    };
+
+Notice we receive a parameter from the query and send it then to
+another route that include two parts. It effectively created a new
+request and starts from the top. That is also why it is slow.
+
+It is better to handle this by either redirecting to the user or
+passing it to a subroutine that could be shared by both:
+
+    use URI::Escape;
+
+    sub _handle_fail {
+        my $user = shift;
+
+        # remember to avoid XSS!
+        my $safe_username = uri_escape($user);
+
+        ...
+    }
+
+    get '/fail/:user' => sub {
+        _handle_fail( query_parameters->{'user'} );
+    };
+
+    get '/:action' => sub {
+        my $action = route_parameters->{'action'};
+
+        if ( $action eq 'fail' ) {
+            return _handle_fail( query_parameters->{'user'} );
+        }
+    };
+
+Now there is no duplication of code and we only use one subroutine
+call instead of the entire dispatching engine.
+
+=back
+
+=head2 Unnecessary C<before> hook
+
+There is a common observed pattern of utilizing the C<before> hook
+when only some routes are required.
+
+An example of it is making sure we only serve a specific route
+securely. (If this seems contrived, it is taken from company code
+that was shared.)
+
+    hook 'before' => sub {
+        # check the address of the request
+        if ( request->address ne '127.0.0.1' ) {
+            # provide a 404 when the user is not local
+            status 404;
+            halt(1);
+        }
+    };
+
+    get '/private' => sub {...};
+
+We then realize that we accidentally blocked everything, so we add
+the specific route as another test.
+
+    hook 'before' => sub {
+        if (   request->path eq '/private'
+            && request->address ne '127.0.0.1' )
+        {
+            status 404;
+            halt(1);
+        }
+    };
+
+    get '/private' => sub {...};
+
+There we go. However, the C<before> route is called on I<every>
+request and is thus expensive for no reason.
+
+We can handle this in several other, better ways:
+
+=over 4
+
+=item * Add the code to the code itself
+
+    get '/private' => sub {
+        request->address eq '127.0.0.1'
+            or send_error 404;
+        ...
+    };
+
+This is much more direct, but this might be a longer piece of code
+and also tedious to add to every route. Instead, we can write code
+that creates code.
+
+=item * Decorate each route
+
+    sub only_local {
+        my $cb = shift;
+        return sub {
+            request->address eq '127.0.0.1'
+                or send_error 'File not found', 404;
+
+            goto &$cb;
+        };
+    }
+
+    get '/private' => only_local sub {
+        ...
+    };
+
+Here we only need to add C<only_local> to every subroutine call,
+avoiding duplication and making clearer code that performs better.
+
+In fact, it is this technology that L<Dancer2::Plugin::Auth::Tiny>
+uses for its syntax. It is fairly easy to create a plugin with it.
+
+=back
+
+=head2 Render on backend without layout
+
+Originally, before AJAX, we rendered entire pages on every request.
+Then with AJAX, we only rendered parts of it and sent over structures
+to allow rendering it on the client side later on.
+
+However, in many cases it is still more affordable from a performance
+stand-point to render it in the backend.
+
+If the data is bigger than the rendering of it (containing information
+that is used in condition statements, in order to determine what to
+render) or if the rendering is heavy, it is far better to still render
+it on the server side. You can set the layout to make sure a template
+is rendered without a layout.
+
+    get '/data/:user' => sub {
+        my $data = retrieve_data( route_parameters->{'user'} );
+        template 'data' => { 'user_data' => $data };
+    };
+
+    get '/' => sub {
+        my $user = session->{'id'};
+        my $data = retrieve_data($user);
+        template 'data' => { 'user_data' => $data };
+    };
+
+And you can, of course, split this further:
+
+    sub _render_data {
+        my $user = shift;
+        my $data = retrieve_data($user);
+        template 'data' => { 'user_data' => $data };
+    };
+
+    get '/data/:user' => sub {
+        return _render_data( route_parameters->{'user'} );
+    };
+
+    get '/' => sub {
+        my $data = retrieve_data( session->{'id'} );
+        return _render_data($user);
+    };
+
+=head2 Asynchronous cleanups (where possible)
+
+Often times we write code that generates data we need to clear and
+clean up. These cleanups take precious time in which the user is just
+waiting.
+
+There are some servers that support cleaning up stuff asynchronously,
+which means the user is done with the website, moved on, and the server
+will work in the background to clean up what we wanted. uWSGI is one
+web server that has supports for this ability.
+
+=head2 Less sugar
+
+L<Try::Tiny> is an often-used accurate, simple, clean, and recommended
+module to use when needing a `try`/`catch` pattern. As with many other
+sugar syntax modules, it is far less performant, and while being a good
+practice for most cases, when in need for speed, you might to avoid a
+some of these modules.
+
+Since this is probably one of the bigger costs, here's how you can
+perform a safe and accurate `try`/`catch` without L<Try::Tiny>:
+
+    eval {
+        run_action(); # this might die
+        1;            # make sure to result in true
+    } or do { # did it not reach the "1" above?
+        my $error = $@;
+        handle_error($error);
+    };
+
+=head2 Coming next
+
+Up until now we covered what you can do to optimize things, but we
+would also like to share the future plans we have for increasing our
+optimizations and improving the speed.
+
+Our last and final article in this series will focus on that.
