@@ -1,0 +1,49 @@
+=head1 Optimizing Dancer2 PT. 5
+
+So what do we have planned out for the future? We intend to introduce
+faster code for us, and more options for you to control the optimizations.
+
+=head2 Introduce more immutability
+
+An important rule in programming is "mutability is from the devil". At
+least it's what we say. The reason is that mutability (or "state")
+means constantly (or consistently) checking whether a value has
+changed, because, well, it can change.
+
+Immutability (values that cannot change) do not require checking. They
+are, by definition, consistent. However, we do pay for recreating
+values and reinstating immutable values, so sometimes it's worth it to
+just check instead of recreate.
+
+We intend to work harder on introducing more immutability where it
+affects our speed.
+
+=head2 Built-in XS
+
+We initiated several XS modules for Dancer2 to make use of, such as
+L<HTTP::XSHeaders> and L<HTTP::XSCookies>.
+
+We wish to add more optional usage of such fast XS-powered modules,
+such as L<Ref::Util>.
+
+These will allow you to make things run faster by simply loading
+these modules.
+
+=head2 Internal cleanups
+
+There are several slower parts in Dancer2, such as the path
+resolutions, decoding of input, type constraint checks, and the
+dispatcher. These are all be improved and we will work on improving
+them.
+
+=head2 Faster catch-most module
+
+We also intend to introduce a new module to try and both load as many
+useful plugins and trigger as many improved settings to speed up as
+much as possible at once.
+
+=head2 In conclusion
+
+It is not hard to optimize and in many cases it is not worth it.
+However, using the correct modules, middlewares, stack, and code, we
+can create both faster and - often times - simpler applications.
