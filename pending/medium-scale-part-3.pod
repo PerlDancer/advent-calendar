@@ -1,0 +1,159 @@
+=encoding utf8
+
+=head1 Medium-Scale Dancer, Part 3: Views
+
+The
+L<first|http://advent.perldancer.org/2015/3> two
+L<parts|http://advent.perldancer.org/2015/4> of this article series
+broke the monolithic C<lib/App.pm> file up into a series of Perl
+modules, each focused on a functional centroid of the application.
+
+If we describe the default C<lib/App.pm> file as monolithic, then we
+might get away with describing the app's C<views/> tree as "polylithic"
+because there is no monolith to break up; the template files in this
+subtree naturally map to web pages, so the app's URL scheme effectively
+keeps them separated by purpose.
+
+Although we will not start this part of the series needing to break up
+an overly large file, I can pass along some tips that might cause you to
+rethink the current structure of your app's C<views/*> tree.
+
+=head2 The View Naming Scheme Should Match the URL Scheme
+
+Older web frameworks like PHP, ASP, and JSP define the web app's URL
+structure in the file system. The route scheme defined in the previous
+part of this article series would look like this in PHP:
+
+    index.php
+    mf/index.php
+    mf/sf/index.php
+
+The view code — HTML and inline JavaScript — is intermixed with the
+server-side code in the same file. Worse, single files like
+C<mf/sf/index.php> have to handle multiple HTTP verbs; in our
+example, C<GET>, C<POST>, C<PUT>, and C<DELETE>. If each verb returns a
+different web page, you end up with a huge top-level C<if/elseif/else>
+block dividing the file up into a bunch of logically separate chunks.
+There are other bad consequences to this web framework design choice,
+such as that if you want your text editor to do syntax coloring
+correctly, it needs to be able to switch among PHP, JavaScript, and HTML
+syntax, all within the same file. The programmer ends up needing to do
+the same sort of context switching, too.
+
+Simply put, this is a mess.
+
+L<Template::Toolkit|http://www.template-toolkit.org/> — Dancer's default
+template system — solves part of this problem by separating the view
+files from the server-side Perl code. Modern web app development
+frameworks like L<Angular|https://angularjs.org/> solve the rest of it
+by encouraging you to move all of your JavaScript code into separate
+C<*.js> files, rather than put it inline in the HTML file.
+
+There is nothing about the way Dancer works that enforces or even
+encourages any particular C<views/*> file naming scheme. Thus this tip:
+for your own sanity, I recommend that you name your template files after
+the corresponding route. The Dancer scheme corresponding to the above
+PHP scheme might look something like this:
+
+    views/top.tt
+    views/mf/top.tt
+    views/mf/sf/get.tt
+    views/mf/sf/post.tt
+    views/mf/sf/put.tt
+    views/mf/sf/delete.tt
+
+This scheme maps Dancer routes 1:1 to template files, using a naming
+scheme that is easy to remember since it's nearly identical to the URL
+scheme.  It's so simple a mapping that you could write a Perl one-liner
+to do the transform. Restricting yourself to a simple naming convention
+removes a whole class of details that you have to keep in mind while
+working on your web app; you don't have to guess where the template file
+for a given route handler lives, you already I<know> where it lives. You
+will quickly rediscover this simple mapping years from now when you have
+to work on the web app again.
+
+This naming scheme is very much a suggestion, rather than a
+prescription. For one thing, you may find that the C<DELETE /mf/sf>
+route needs no view, because it just deletes one database record and
+then redirects you to C<GET /mf/sf> to show the change in the normal
+view. In that case, you would not need C<views/mf/sf/delete.tt>.
+
+The important thing is to I<have> a well-thought-out naming scheme, not
+necessarily to follow the one I've laid out above.
+
+=head2 Factor Common UI Elements Out
+
+If you reuse a particular UI element across different parts of your web
+app, put its template file into a special subdirectory of C<views/>. I
+use C<views/parts> for this.
+
+If you have an HTML fragment page that is incorporated into your web app
+dynamically on the client side via Ajax, you will need a corresponding
+Dancer route for it, and probably a Perl module for it, too:
+
+    views/parts/component.tt
+    lib/App/Parts/Component.pm
+
+Then in C<lib/App/Parts/Component.pm>:
+
+    sub _get {
+        # ...work out how to build the component
+    
+        return template '/parts/component' => {
+            stuff => 'goes here'
+        };
+    }
+    
+    prefix '/parts' => sub {
+        get 'component' => \&_get;
+    };
+
+I chose the naming scheme for the function carefully. I want to be able
+to use short names here that correspond to the HTTP verb that the
+function handles without colliding with the short names exported by
+Dancer's DSL. The L<standard Perl style rules|http://perldoc.perl.org/perlstyle.html>
+say that a leading underscore marks a function that isn't meant to be
+called from outside the module, which is exactly correct here; only the
+route handler defined below that function should be calling it.
+
+You may prefer a different scheme, such as C<Get()>, even though this is
+unconventional Perl style. Again, the important thing is to I<have> a
+consistent style, not that you use the style I've chosen here.
+
+One argument in favor of C<Get()> over C<_get()> is that you might need
+to be able to reuse this route handler in another of your Perl modules,
+bodily incorporating the HTML fragment within another web page on the
+server side, thus saving an Ajax round trip the first time that that web
+page is served.
+
+For example, C<lib/App/MajorFeature.pm> might have something like this
+in it:
+
+    sub Get {
+        # Work out how to build the main part of the top-level /mf page
+        ...Perl code here...
+    
+        # Assemble the pieces
+        return template '/mf/top' => {
+            component   => App::Parts::Component::Get(),
+            other_stuff => 'goes here',
+        };
+    }
+    
+    prefix '/mf' => sub {
+        get '/' => \&Get;
+        # other route handlers here
+    };
+
+Then within C<views/mf/top.tt>, you can reference C<$component> to
+bodily include that component's HTML fragment into the larger page.
+
+Now that we have sorted out the purely server-side HTML and Perl code
+files, we will look at the Dancer app design decisions that affect its
+presentation to the browser in the
+L<next part of this article series|http://advent.perldancer.org/2015/6>.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>

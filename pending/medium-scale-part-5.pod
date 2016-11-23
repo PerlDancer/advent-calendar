@@ -1,0 +1,309 @@
+=encoding utf8
+
+=head1 Medium-Scale Dancer, Part 5: REST APIs and JSON
+
+In previous parts of L<this article series|/2015/3>, I defined each
+route handler as a one-liner, like so:
+
+    prefix '/mf' => sub {
+        get '' => \&retrieve;
+        prefix '/sf' => sub {
+            get  ''     => \&_get;
+            post ''     => \&_post;
+            put  ''     => \&_put;
+            del  '/:id' => \&_del;
+        };
+    };
+
+This is very much on purpose, despite the fact that Dancer lets you
+define all of the code for each route handler within an anonymous code
+reference (e.g. C<sub { ... }>) block. What do we get by moving those
+functions elsewhere, and what do we gain that makes it worth tolerating
+the ugly C<\&> syntax?
+
+The first benefit we get from doing that is that named subroutines make
+stack traces easier to read.
+
+Second — and far more important to our purposes here in this article
+series — defining your routes this way makes the URL structure of the
+web app explicit in the code. You are more likely to notice design
+problems by studying the indented route definitions in the Perl code
+than by looking at your app's C<views> subdirectory, even if it is
+structured exactly the same way as recommended in an earlier article in
+this series, simply because it is atypical to be looking at a full tree
+view of a filesystem. You end up with a kind of tunnel vision when
+looking at one directory at a time.
+
+This practice of defining Dancer route handlers as one-liners solves
+that. It ensures that every time you adjust the route handlers for your
+site, you're doing so while looking at the neighboring routes; you will
+be defining new routes in context, not independently. This counteracts
+the entropic forces that result in API design drift because it
+implicitly encourages you to define new routes that fit logically into
+the scheme you defined previously. Without this extra Perl function call
+layer, the route definitions are visually broken up, so that you cannot
+see the whole design on a single screen. The resulting URL scheme can
+turn into a mess, as developers hack on the app over the course of
+years.
+
+This is also why I have carefully lined up the blocks and
+L<fat commas|https://en.wikipedia.org/wiki/Fat_comma> in the route
+definitions: I want patterns in the URL scheme to jump out at me.
+Left-justifying everything obscures these patterns.
+
+Now you may be asking, why does all this matter?
+
+The reason is simple: When you make patterns in the URL scheme
+graphically apparent, you may discover some previously hidden practical
+value that was just sitting there waiting to be exploited. It works for
+the same reason that seeing a plot for a numeric data set for the first
+time sometimes creates a clear call to action.
+
+It turns out that the example route scheme we've been defining
+throughout this article series includes a web API; it's just been
+sitting there, waiting to be discovered. With a bit of polishing, it
+might even turn into a proper
+L<REST|https://en.wikipedia.org/wiki/Representational_state_transfer>
+API. Let's try.
+
+Look back up at that route definition block above. What does it remind
+you of? If you said
+L<CRUD|https://en.wikipedia.org/wiki/Create,_read,_update_and_delete>,
+go to the head of the class.
+
+Now, HTTP verbs do not correspond directly to CRUD because HTTP was not
+designed to be a CRUD API. There are competing design philosophies when
+it comes to mapping HTTP verbs to the CRUD model of persistent data
+storage.
+
+I prefer this mapping:
+
+      DB term    | HTTP verb
+    +------------+----------
+    | C = create | POST
+    | R = read   | GET
+    | U = update | PUT
+    | D = delete | DELETE
+
+The R = C<GET> and D = C<DELETE> rules are obvious, but it may not be
+clear to you why the other two rules are correct.
+
+L<The HTTP spec|http://www.w3.org/Protocols/rfc2616/rfc2616.html>
+defines C<POST> and C<PUT> so that they're nearly interchangeable, which
+is how we ended up with competing REST/CRUD API design philosophies.
+
+Some web API designers like to use C<POST> for both create and update
+operations since you can distinguish the cases based on whether the
+HTTP request contains a database row ID: if so, it's a request to update
+an existing record, else it's a record creation request.
+
+That justification is fine in a web framework that defines the URL
+scheme in the file system, such as PHP, ASP, or JSP since it is normal
+to handle all four verbs in a single file in that sort of web framework.
+In Dancer, my preferred scheme works better since it defines one route
+per CRUD operation.
+
+Although the HTTP spec defines C<PUT> and C<POST> as partially
+interchangeable, you must not swap the C<PUT> and C<POST> verbs from the
+way I've defined them above. The HTTP spec says
+L<C<PUT> is idempotent|http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.1>, meaning
+that the browser is allowed to cache C<PUT> requests, suppressing
+subsequent identical calls if the request parameters do not change. In
+CRUD terms, this means that if you define "create" in terms of C<PUT>,
+the browser might not let you create two records with identical
+contents but different IDs, which means you risk losing data. The HTTP
+spec does not allow browsers to assume that identical C<POST> calls are
+idempotent, however, so we use that verb for CRUD's create operation,
+leaving C<PUT> = update.
+
+That's enough design philosophy; how does all that affect our Dancer
+code? We might decide that since we've almost got a REST API here that
+we might want to push it the rest of the way.
+
+Let's move the CRUD-like route handlers in
+C<lib/App/MajorFeature/SubFeature.pm> to
+C<lib/App/API/MajorFeature/SubFeature.pm>. We can also refine the
+programming interface a bit:
+
+    prefix '/api' => sub {
+        prefix '/mf' => sub {
+            prefix '/sf' => sub {
+                post ''     => \&_post;
+                get  ''     => \&_get;
+                put  '/:id' => \&_put;
+                del  '/:id' => \&_del;
+            };
+        };
+    };
+
+My choice to use leading underscores in these module-internal route
+handler function names lets us parallel the Dancer DSL keyword naming
+scheme.
+
+You might instead prefer to make the HTTP-to-CRUD mapping more explicit:
+
+    prefix '/api' => sub {
+        prefix '/mf' => sub {
+            prefix '/sf' => sub {
+                post ''     => \&_create;
+                get  ''     => \&_read;
+                put  '/:id' => \&_update;
+                del  '/:id' => \&_delete;
+            };
+        };
+    };
+
+As in the previous article in this series, the leading underscore
+convention saves us some aggravation here since C<delete> is a Perl
+keyword, and C<read> is a core Perl function.
+
+The only other thing to change here is that REST APIs normally return
+JSON or XML. I prefer JSON since that's directly usable by the
+JavaScript code that made the Ajax call to one of these APIs. One of the
+best features of Dancer is that automatic JSON encoding is built right
+in.
+
+First, enable the feature by adding this to your C<config.yml> file:
+
+    serializer: "JSON"
+
+That lets us write the C<_create()> function referenced above as:
+
+    sub _create {
+        my $params = request->params;
+        my $db     = get_db_conn;
+    
+        if ($db->create_something($params->{arg1}, $params->{arg2})) {
+            return {
+                success => JSON::true,
+                id      => $db->last_insert_id(),
+            };
+        }
+        else {
+            return {
+                success => JSON::false,
+                error   => 'failed to create record: ' . $db->last_error(),
+            };
+        }
+    }
+
+By telling Dancer that we want all routes to return JSON unless
+explicitly told otherwise, we can simply return Perl data structures and
+have Dancer translate them into JSON form for us. It will also
+automatically set the response's HTTP C<Content-Type> header to
+C<application/json>. Parsing and using that reply on the client side in
+JavaScript is therefore trivial. Many web frameworks can consume such
+APIs directly, such as jQuery via
+L<C<$.getJSON()>|https://api.jquery.com/jQuery.getJSON/>.
+
+Doing so does mean that your existing HTML-returning route handlers have
+to be explicitly marked to return HTML instead:
+
+    get '/some/html/returning/route' => sub {
+        send_as html => template '/some/template' => {
+            some => 'parameters',
+        };
+    };
+
+
+=head2 Returning the Same Data in Both HTML and JSON Forms
+
+You might now be asking why you would arrange things as above, where the
+default serializer is JSON and HTML-returning routes have to be
+explicitly marked. If your application returns HTML more often than
+JSON, this may seem backwards. Wouldn't it be simpler to leave the
+default serializer unset, so that C<template> calls and such return
+normally, and mark the JSON-returning API route handlers explicitly
+instead via C<send_as JSON =E<gt> ...>?
+
+You could indeed do that, but then you lose a nice side benefit of this
+arrangement: it makes it easy to define parallel route handlers for
+returning HTML-rendered versions of APIs that return raw JSON data.
+
+Consider this addition to the route handlers defined above:
+
+    package App::Parts::MajorFeature::SubFeature
+    use Dancer2 appname => 'App';
+
+    sub _get {
+        send_as html => template 'parts/mf/sf' => {
+            content => App::API::MajorFeature::SubFeature::_get(),
+        }
+    }
+
+    prefix '/parts' => sub {
+        prefix '/mf' => sub {
+            prefix '/sf' => sub {
+                get '' => \&_get;
+            };
+        };
+    };
+
+Briefly, what this does is define a C</parts> route hierarchy that is
+parallel to the C</api> hierarchy, with the former implemented in terms
+of the latter. That is, the application's API returns JSON, and the
+applications "parts" subsystem returns HTML renditions of the same data
+returned by the JSON API. This works because the API route handlers are
+defined to return raw Perl data structures, which we can consume
+directly from other route handlers as above, or let Dancer render them
+to JSON when those route handlers are called by a web client.
+
+While you could consume these HTML fragments ("parts") via Ajax, you can
+also save an HTTP round trip by textually including them into complete
+web pages assembled by Dancer's template mechanism:
+
+    package App::MajorFeature::SubFeature
+    use Dancer2 appname => 'App';
+
+    sub _get {
+        send_as html => template 'mf/sf' => {
+            some => 'parameters',
+            go   => 'here',
+            part => App::Parts::MajorFeature::SubFeature::_get(),
+        }
+    }
+
+    prefix '/mf' => sub {
+        prefix '/sf' => sub {
+            get '' => \&_get;
+        };
+    };
+
+The C</views/mf/sf.tt> template can then reference C<part> to insert the
+HTML fragment into the larger web page, without duplicating the HTML
+code for that fragment.
+
+This gives us three different ways to get the same data: as part of a
+complete web page (C<GET /mf/sf>), as an HTML fragment that we can
+insert into an existing web page via Ajax on the browser side or textual
+inclusion on the Dancer side (C<GET /parts/mf/sf>), and as raw JSON data
+that we could process on the browser side (C<GET /api/mf/sf>).
+
+This layered design pattern has two additional benefits besides avoiding
+violations of the
+L<DRY principle|https://en.wikipedia.org/wiki/Don%27t_repeat_yourself>:
+
+First, textually including an HTML rendering of the raw data on the
+server side as part of the initial HTTP page load saves an HTTP round
+trip over the common alternative design, where the server simply returns
+an empty HTML container which must be filled by JavaScript code with a
+subsequent JavaScript Ajax call. HTTP round-trips are usually expensive
+enough to add human-scale amounts of delay to your web app's response
+time, so any time you spend to remove unnecessary round-trips usually
+pays immediate tangible benefits.
+
+Second, this design ensures that your web app returns an initial HTML
+view of the data even to clients not running JavaScript. Even if you can
+ensure that your normal web users will run JavaScript, you may gain some
+SEO benefit by returning an HTML form of your web app's dynamic content
+to web spiders that refuse to run embedded and referenced JavaScript
+code.
+
+This article series concludes with a scheme for
+L<hot code reloading|/2015/8>, a very useful feature in any Dancer
+app, but especially helpful as your app grows larger.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>

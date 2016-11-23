@@ -1,0 +1,121 @@
+=encoding utf8
+
+=head1 Medium-Scale Dancer, Part 4: Front-End Matters
+
+This will be a short article because the way you write your client-side
+JavaScript code and serve it to your users has almost nothing to do with
+Dancer. Nevertheless, there are a few things we can say here that tie
+into the prior articles in
+L<this series|http://advent.perldancer.org/2015/3>.
+
+=head2 Consolidate JavaScript Files
+
+Because each HTTP round-trip over the Internet takes
+L<human-scale time|https://en.wikipedia.org/wiki/Mental_chronometry> —
+tens to hundreds of milliseconds — an important part of making a fast
+web site is to consolidate your JavaScript code into as few files as
+possible.
+
+Ideally, you will end up with just one JavaScript file, perhaps called
+C<public/javascripts/app.js>.
+
+This seems to go against the whole thrust of this article series so far,
+which has been about factoring monolithic structures into smaller,
+purpose-focused ones. But, there's a trick that lets you have your cake
+and eat it, too: tools like L<RequireJS|http://requirejs.org/> allow you
+to "compile" multiple JavaScript files down to a single file. Coupled
+with
+L<minification|https://en.wikipedia.org/wiki/Minification_(programming)>,
+L<compression|https://en.wikipedia.org/wiki/HTTP_compression>, and aggressive
+L<caching|https://en.wikipedia.org/wiki/Web_cache> rules in your
+front-end web server, your app will feel a lot snappier to your users,
+even though the size of the web app on disk is no smaller than before.
+
+You might not choose to compile all of your JavaScript down to a single
+file. If it makes more sense for your purposes to use several files, I
+suggest that you name those files after the top-level URL that uses it.
+For example, the C</mf> URLs we've been using in examples so far should
+be served by a C<public/javascripts/mf.js> file. You might still wish to
+develop C<mf.js> in several different purpose-driven JS files, compiled
+down to C<mf.js> by RequireJS or a similar tool.
+
+=head2 Serve Static Assets Via a Front-End Reverse Proxy Server
+
+The
+L<Dancer2 Deployment Guide|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual/Deployment.pod>
+recommends running your app behind a front-end reverse proxy server
+such as nginx or Apache's C<mod_proxy>. I strongly encourage you to do
+this, even in development.
+
+The server setup given in the deployment guide will cause the front-end
+proxy server to handle all requests for static content files itself,
+passing URLs down to Dancer only when it cannot find a static asset with
+the requested name. This takes a huge load off of Dancer, which, you
+must remember, is dynamic Perl code, so it will naturally be slower than
+the highly optimized C code in the proxy server.
+
+To make sure the front-end proxy is doing what it ought to, you can
+disable Dancer's built-in handling of static resources by adding this to
+your C<config.yml> file:
+
+    static_handler: 0
+
+Reload the web app, then work through all of the app's routes to make
+sure you don't get any new 404 errors. It may be helpful to open the
+Network tab in your browser's developer tools alongside the browser
+window you're testing your web app in so that you're more likely to
+notice any new errors that happen in background Ajax calls.
+
+Running a typical web app this way might reduce the number of hits that
+get down to the Dancer level by a factor of 10 to 100 since so much of
+a modern web app is composed of static asset files: bitmaps, fonts, CSS
+files, JavaScript files, etc.
+
+You might want to take this a step further, in fact. Instead of merely
+disabling Dancer's static file handler in your C<config.yml> file for
+the duration of a single test session, you could instead disable it
+permanently in your C<environments/development.yml> file to ensure that
+you find and fix such problems in development, before you deploy to
+production.
+
+I cannot recommend doing this permanently at the C<config.yml> or
+C<environments/production.yml> levels, because I have occasionally found
+it useful to be able to put random files into my app's C<public/>
+directory on production systems so that I can have HTTP access to them
+via the Dancer app without restarting anything. Case in point: your
+Dancer app is running on a Linux server at a remote site, and you need
+to send a file too big to email to someone at that site, but that person
+runs Windows on their PC, and the Linux box doesn't run Samba, so HTTP
+is the only easy way they have to get the file from your server onto
+their PC. (Can you tell that I'm writing from personal experience?  Yes,
+indeed, I am.) Annnnyway, the point is, you don't want to be forced to
+adjust the front-end proxy settings in such a case to make it handle the
+I<ad hoc> file transfer. You want the Dancer app to backstop the
+front-end proxy in such cases, serving up any file the proxy server
+isn't preconfigured to serve.
+
+I can offer a related bit of advice here: if you must change the
+C<log_level> setting of a Dancer app running in a public-facing
+production setting, never raise it to C<core>, at least not for very
+long. Dancer logs all URLs retrieved at that level, and the default
+Dancer C<production.yml> file is configured to write log messages to a
+file file, rather than the console. On today's Internet, it is common to
+encounter bots that do nothing but request nonsense URLs from every web
+server they can find. These URLs may make sense to certain vulnerable
+applications, or they may simply be random, as the bot is searching for
+hidden resources on your server. You don't want a long series of such
+hits to fill your disk with log messages.
+
+Meta-advice: on production systems, configure your OS's log rotation
+system to keep your Dancer app's log file trimmed to a reasonable size.
+Dancer doesn't do that on its own. The Dancer2 docs recommend using
+C<logrotate> in C<copytruncate> mode.
+
+In the L<next part of this article series|http://advent.perldancer.org/2015/7>,
+we will discover the REST API that was hidden inside this monolithic web
+app the whole time.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>
