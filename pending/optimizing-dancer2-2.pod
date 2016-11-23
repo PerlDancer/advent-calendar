@@ -76,3 +76,9 @@ doubt.
 In the next article, we will focus on our stack and explore the
 architectural changes we can make in order to speed up our web
 applications.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.

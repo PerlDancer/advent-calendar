@@ -237,3 +237,9 @@ It had now been completely rewritten, and it has its own advent article
 in this calendar!
 
 =back
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.

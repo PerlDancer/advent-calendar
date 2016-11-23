@@ -96,3 +96,9 @@ runs each request with its own process. If you are loading heavy
 modules and would like to speed it up, you can do so with C<-M>:
 
     plackup -MMoose -MDBIx::Class -L Shotgun bin/app.psgi
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.

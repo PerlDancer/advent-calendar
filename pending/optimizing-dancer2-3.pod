@@ -162,3 +162,9 @@ and reduce their size by minifying them.
 Our next article in this series will deal directly with our application
 code. How can we write faster code in order to speed up our
 application?
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.

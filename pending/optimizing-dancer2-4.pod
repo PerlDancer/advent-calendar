@@ -373,3 +373,9 @@ would also like to share the future plans we have for increasing our
 optimizations and improving the speed.
 
 Our last and final article in this series will focus on that.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.
