@@ -126,3 +126,8 @@ how from the module itself, by defining routes. Beautiful.
 In the L<next part of this series|http://advent.perldancer.org/2015/5>,
 we will consider how this application restructuring affects the way we
 arrange our template files on disk.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>

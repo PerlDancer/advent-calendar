@@ -162,3 +162,8 @@ by following some sensible naming conventions.
 
 I hope this reduces some of the growing pains in your own Dancer
 applications!
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>

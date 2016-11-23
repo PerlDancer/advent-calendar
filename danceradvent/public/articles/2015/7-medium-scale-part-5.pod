@@ -302,3 +302,8 @@ code.
 This article series concludes with a scheme for
 L<hot code reloading|/2015/8>, a very useful feature in any Dancer
 app, but especially helpful as your app grows larger.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>

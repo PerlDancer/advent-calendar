@@ -152,3 +152,8 @@ Now that we have sorted out the purely server-side HTML and Perl code
 files, we will look at the Dancer app design decisions that affect its
 presentation to the browser in the
 L<next part of this article series|http://advent.perldancer.org/2015/6>.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>
