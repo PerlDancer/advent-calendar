@@ -294,3 +294,6 @@ your application.
 
 I did a talk on the above at LPW: L<https://www.youtube.com/watch?v=S1eW5tE967c>
 
+=head2 Copyright
+
+No copyright retained. Enjoy.
