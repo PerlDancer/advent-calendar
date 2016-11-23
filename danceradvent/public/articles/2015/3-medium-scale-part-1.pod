@@ -99,3 +99,8 @@ Your initial refactoring of C<lib/App.pm> will likely leave all the
 route definitions behind, which is fine because refactoring the routes
 is the subject of the
 L<next article in this series|http://advent.perldancer.org/2015/4>.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>
