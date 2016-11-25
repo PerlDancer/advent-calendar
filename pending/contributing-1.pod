@@ -1,0 +1,75 @@
+=head1 Contributing to Dancer
+
+The Dancer community is a fun, active, and engaged community, dedicated to 
+the advancement of Dancer and the community as a whole. The core team, in 
+particular, relies on the community for bug reports, feature requests, and
+other information to find out how Dancer is used, what needs fixing, what
+needs improving, and how we can make the framework better for you. Part 1
+of this guide is intended to show you, at a high level, how to get involved
+in the community, and things you can do to help further Dancer development
+and the community. Part 2 of this will focus on the gory details: how to set
+up a development environment for Dancer, and more.
+
+Note: This applies primarily to Dancer2, but works for Dancer1 in some 
+regards. Dancer1 is not open for new feature development, but is actively
+maintained in a support-only mode; bug fixes and security patches are 
+incorporated in as timely a manner as possible. If you have a feature 
+idea and are using Dancer1, check the docs to see if it has already 
+been implemented, and if not, get hacking on Dancer2!
+
+=head2 Report a Bug
+
+This is perhaps the easiest way to get involved, and one of the most important
+for the project. If you run into a bug while using Dancer - be it in the 
+core framework, a plugin - B<please> report it! While you can report it in
+Dancer's IRC channel, it is not the most reliable reporting method available
+(that's not to say your report will get ignored there!).
+
+Development of Dancer happens on Github. Your best bet for reporting a bug
+in Dancer is to go to the L<issue tracker on GitHub|https://github.com/PerlDancer/Dancer2/issues>.
+WHAT ELSE GOES HERE???
+
+No matter how well we test Dancer during development, there is no way for us
+to find all of the potential bugs that may arise. The Core Team and the Dancer
+community depends on B<you> to report bugs that you find along the way!
+
+=head2 IRC
+
+https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Policy.pod
+
+A great way to participate and contribute to the Dancer project is to be active
+on the IRC channel.
+Ask a question
+Answer a question
+
+=head2 Sending a Documentation Patch
+
+=head2 Taking an Issue from the GitHub Queue
+
+=head2 Proposing/Implementing a Feature
+
+=head2 Writing a Plugin
+
+One of the beauties of Dancer is its extendability, and this extendability
+is provided through a robust plugin system. While there are many plugins 
+available in the Dancer ecosystem, there is always room for more! Do you have
+an itch to scratch? Have some code that you use over and over again that
+you think other members of the community might benefit from? Release that as
+a plugin, throw it on CPAN, and tell the community about it!
+
+Stuck for a plugin idea? Here's a few to get you started:
+
+- Handlebars plugin
+- Log4Perl plugin
+- Redis? CHI?
+
+=head2 Wrapping Up
+
+We've covered some of the ways that you can get involved in Dancer project. 
+The next article in this series will give you the gory details, such as
+working with L<Dist::Zilla>, how the core team decides on what gets 
+included, and more!
+
+=head2 Author
+
+Jason A. Crome (CromeDome) C<cromedome@cpan.org>
