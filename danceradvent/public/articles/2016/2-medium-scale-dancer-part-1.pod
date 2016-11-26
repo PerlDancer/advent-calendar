@@ -98,7 +98,7 @@ make L<PSGI|http://plackperl.org/> happy.)
 Your initial refactoring of C<lib/App.pm> will likely leave all the
 route definitions behind, which is fine because refactoring the routes
 is the subject of the
-L<next article in this series|http://advent.perldancer.org/2015/4>.
+next article in this series.
 
 =head2 Copyright
 
