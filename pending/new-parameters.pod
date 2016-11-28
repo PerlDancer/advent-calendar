@@ -1,0 +1,149 @@
+=head1 New parameters keywords
+
+A common problem and difficulty with web programming is incorrect
+parameters handling. We usually don't spend much time thinking about
+it, until things break. Dancer2 has added special keywords to help you
+out with this.
+
+=head2 The problem
+
+First, let's clarify what is the issue we come across.
+
+When handling parameters, we make several assumptions. Our first
+assumption is that all parameters are one big pile of information.
+Parameters come in two forms, and Dancer2's route spec adds another:
+B<query>, B<body>, and B<route>.
+
+When we call C<params>, we retrieve a parameter from the collection of
+all of these parameter values put together, which could be clobbered
+values, if they are provided multiple times:
+
+    post '/' => sub {
+        # is this from a query or from the body?
+        my $name = params->{'name'};
+    };
+
+We can control the source of the parameter values as the parameter to C<params>:
+
+    get '/' => sub {
+        # positively from the query
+        my $name = params('query')->{'name'};
+    };
+
+
+A much bigger mistake we make is assuming that parameters are provided
+as single values. Thus, we simply retrieve the parameter value:
+
+    post '/upload' => sub {
+        my $filename = params('body')->{'filename'};
+    };
+
+If you've been bitten before, this is already askew to you. What
+happens if the B<name> parameter was provided twice? Of course, we can
+write appropriate code for this as well:
+
+    post '/upload' => sub {
+        my @filenames = @{ params('body')->{'filename'} };
+    };
+
+However, we do not know how many were provided. It is possible that our
+form only contains a single parameter entry but a user has maliciously
+has sent two or more, or misused our API by mistake. We are then forced
+to verify this by writing code that checks for both scenarios:
+
+    post '/upload' => sub {
+        my @filenames;
+        if ( ref params('body')->{'filename'} ) {
+            if ( ref params('body')->{'filename'} eq 'ARRAY' ) {
+                @filenames = ( params('body')->{'filename'} );
+            } else {
+                # Will not happen
+            }
+        } else {
+            @filenames = @{ params('body')->{'filename'} };
+        }
+    };
+
+That is indeed a lot to take in. We also end up with an array of
+filenames, even if we only care about one. Let's write more succinct
+and accurate code for this:
+
+    post '/upload' => sub {
+
+        # if we assumed only one filename
+        my $filename
+            = ref params('body')->{'filename'}
+            ? params('body')->{'filename'}->[-1] # assuming last is ok
+            : params('body')->{'filename'};
+
+        # if we assumed multiple possible filenames
+        my @filenames
+            = ref params('body')->{'filename'}
+            ? @{ params('body')->{'filename'} }
+            : ( params('body')->{'filename'} );
+    };
+
+=head2 The solution
+
+We have introduced three new keywords to help you handle both of these
+issues easily: C<route_parameters>, C<query_parameters>, and
+C<body_parameters>. Let's explore them.
+
+Firstly, you may notice that they already provide a clear indication of
+the source of the parameters using their name. This is to be clear and
+declarative on what you want to retrieve, instead of assuming the
+jumble clobbered combination would be fine.
+
+Secondly, each one provides you with a L<Hash::MultiValue> object which
+can either be used as a hash, or as an object that can retrieve the
+amount of values declaratively.
+
+If we would like to make sure we always have a single value for a
+parameter, we simply either call it as a hash key or using the
+appropriate method:
+
+    post '/upload' => sub {
+        my $filename = body_parameters->get('filename');
+
+        # or
+
+        my $filename = body_parameters->{'filename'};
+    };
+
+If a single filename is provided, this will be the value. If multiple
+values are sent by the user (either on purpose or by mistake), you will
+always receive the last one. Does it matter? No, since the user was
+supposed to only send one anyway.
+
+But what happens when we want multiple values? That's trickier because
+we might still only get one value, but we can I<possibly> get multiple
+ones. With these new keywords, it's just as simple:
+
+    post '/upload' => sub {
+        # we support multiple filenames
+        # maybe none, maybe one, maybe more
+        my @filenames = body_parameters->get_all('filename');
+    };
+
+This will always return multiple values, no matter how many were
+actually sent.
+
+You can, of course, use all of them at once, despite them usually not
+being combined in HTTP:
+
+    post '/upload/:entity' => sub {
+        my $entity    = route_parameters->{'entity'};
+        my $user      = query_parameters->{'user'};
+        my @filenames = body_parameters->get_all('filename');
+        ...
+    };
+
+We wholeheartedly recommend using these new keywords instead of calling
+the other keywords such as C<param> and C<params>. They make your code
+clearer and smarter.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.
