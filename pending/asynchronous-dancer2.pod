@@ -1,0 +1,161 @@
+=head1 Asynchronous Dancer2
+
+A long awaited feature in Dancer2 is asynchronous (delayed) streaming
+responses. These are a lot of words, but what they eventually translate
+to is the ability to respond without blocking additional actions on the
+same thread. That still doesn't mean much. Let's see if we can clarify
+that.
+
+=head2 Blocking and non-blocking outside web
+
+By default, all code in Perl is run synchronously, or in other words,
+blocking. This means that no single action runs until the previous
+action ends.
+
+    for ( 1 .. 10 ) {
+        my $result = run_action();
+        ...
+    }
+
+If we wish to run more than one action at the same time, and assuming
+they are not dependent on each other, we can use multiple processes:
+
+    for ( 1 .. 10 ) {
+        my $pid = fork();
+        defined $pid
+            or die "Cannot fork: $!\n";
+
+        if ( $pid == 0 ) {
+            my $result = run_action();
+            ...
+        } else {
+            # this is the parent
+            # which is meaningless here...
+        }
+    }
+
+This will run each of them separately. If we have an event loop, we can
+schedule these actions using the event loop and provide a callback for
+handling the results:
+
+    for ( 1 .. 10 ) {
+        # this isn't a real function
+        # it depends on your event loop of choice
+        schedule_action_on_event_loop( sub {
+            my $result = shift;
+            ...
+        } );
+    }
+
+=head2 Within the web environment
+
+When working on a website, any response which takes a while to complete
+will hang the entire thread waiting for the action to finish and the
+user to receive a response. Additionally, any request which requires
+multiple blocking functions, it will take longer to complete, since we
+wait for each request.
+
+In order to handle this, a common technique is to use asynchronous
+syntax. Not all event loops support them and many provide their own
+event loop in order to handle it, forcing you to use their syntax only.
+
+Dancer2 recently added asynchronous syntax which is not bound to any
+existing event loop, making it possible to pick your own.
+
+=head2 Asynchronous in Dancer2
+
+Let's assume we want to run a web server with a single thread that does
+not fork. We can handle multiple users by responding asynchronously
+without forcing the next user to wait in line:
+
+    get '/' => sub {
+        delayed {
+            flush;
+            content template 'index';
+            done;
+        };
+    };
+
+This is a simple endpoint that doesn't do anything special, but it
+allows us to understand the existing syntax before we try something
+more complicated.
+
+The C<delayed> keyword begins an asynchronous response. It registers
+within your web server (which should be an asynchronous web server,
+mind you) a response to run asynchronously.
+
+The C<flush> keyword sends the headers to the user, allowing you to
+begin sending content to the user. This is when you begin to stream
+data.
+
+The C<content> keyword sends data to the user. Every time you call
+C<content>, no matter how many times, you will stream additional data.
+This data will be sent while being able to handle additional
+connections and clients within the single process of the web server.
+
+The C<done> keyword is simply the way to tell the server to close the
+connection with the user. You can then continue to run code, but the
+user will no longer be connected to your web server.
+
+So when is this really useful? Let's imagine a situation in which we
+would like to make several requests to remote servers, and then send
+the user all of them. We will use L<AnyEvent> as our event loop of
+choice (which will run with the C<Twiggy> web server.
+
+    use Dancer2;
+    use AnyEvent;
+    use AnyEvent::HTTP;
+
+    my @urls = qw<...>;
+
+    get '/' => sub {
+        delayed {
+            flush;
+
+            # keep track of responses with a condvar
+            my $cv = AnyEvent->condvar;
+
+            # decide what happens when all responses arrive
+            $cv->cb( delayed { done; } );
+
+            foreach my $url (@urls) {
+                $cv->begin;
+                http_get $url, delayed {
+                    my ( $headers, $body ) = @_;
+                    content $body;
+                    $cv->end;
+                };
+            }
+        };
+    };
+
+You will notice several new things here.
+
+Firstly, we're using a condition variable (C<condvar>), which helps us
+track all requests. Each time we are about to issue one, we count it
+using C<begin>. Every time we receive a response, we track it with
+C<end>.
+
+You might also notice we replaced every C<sub> call with C<delayed>.
+The way C<delayed> works is that it creates an asynchronous C<sub> that
+has the DSL available. This means that, simply put, every time you wish
+to have a C<sub> call and use Dancer2 keywords inside it, just replace
+the word C<sub> with C<delayed>. Everything else is the same.
+
+And lastly, we set the C<done> keyword before we run the requests,
+which doesn't necessarily make much sense, because it happens after.
+This is how it works with asynchronous programming.
+
+Take into account that other event loop might have other syntax, but
+they should all be similar enough.
+
+=head2 Future
+
+We have plans on introducing websockets in the future, and they as
+well, will be asynchronous and streaming.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.
