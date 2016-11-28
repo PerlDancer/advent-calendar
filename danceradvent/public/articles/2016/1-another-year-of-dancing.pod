@@ -123,6 +123,7 @@ Stay tuned for an article on that!
 =item * New config option C<change_session_id>
 
 We have added a configuration option for improved security in cookies.
+We will feature an article on them as well.
 
 =item * New keywords C<encode_json>, C<decode_json>
 
@@ -141,7 +142,8 @@ you already understand what it means.
 
 =item * Support 304 Not Modified
 
-We properly support B<304 Not Modified> when serving static files.
+We properly support B<304 Not Modified> when serving static files. An
+article on this to come!
 
 =back
 
