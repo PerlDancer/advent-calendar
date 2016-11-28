@@ -142,8 +142,7 @@ you already understand what it means.
 
 =item * Support 304 Not Modified
 
-We properly support B<304 Not Modified> when serving static files. An
-article on this to come!
+We properly support B<304 Not Modified> when serving static files.
 
 =back
 
