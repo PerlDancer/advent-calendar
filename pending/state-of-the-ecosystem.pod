@@ -3,7 +3,16 @@
 =head1 State of the Ecosystem
 
 At least 15 new plugins saw their first CPAN release in 2016 bringing the
-total number of L<Dancer2> plugins beyond the 70 mark. Thankyou to everyone
+total number of L<Dancer2> plugins beyond the 70 mark.
+
+2016 also saw many plugins converted to the new C<Plugin2> architecture. When
+using the new L<Dancer2::Plugin> plugins can now use other plugins and have
+their DSL directly available. At the last count 20 plugins have been released
+that use C<Plugin2> but there is still work to do. If you want to help out
+checkout the related
+L<GitHub issue|https://github.com/PerlDancer/Dancer2/issues/1078>.
+
+Thankyou to everyone
 for contributing your code, and your time, to help make the Dancer2 ecosystem
 even better.
 
