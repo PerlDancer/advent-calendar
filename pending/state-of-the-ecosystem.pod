@@ -94,6 +94,33 @@ Theo van Hoesel released L<Dancer2::Plugin::HTTP::Auth::Extensible> in January.
 This plugin is a fork of L<Dancer2::Plugin::Auth::Extensible> but with
 authentication via WWW-Authenticate header instead of using form + session.
 
+=head3 Interchange6
+
+Part of the L<Interchange6> e-commerce project,
+L<Dancer2::Plugin::Interchange6> was released in May. L<Interchange6> is a
+project founded by long-time L<Interchange|http://www.icdevgroup.org> developer
+Stefan Hornburg (Racke).
+
+The Interchange6 project has so far released the following components:
+
+=over
+
+=item * L<Interchange6::Schema>
+
+A schema using L<DBIx::Class> along with business logic.
+
+=item * L<Interchange6>
+
+A cart built using L<Moo>.
+
+=item * L<Dancer2::Plugin::Interchange6>
+
+Links the schema with the cart and provides keywords for use in your webshop.
+
+=back
+
+We're still working on a demo shop, due out Christmas. ;-)
+
 =head3 Minify
 
 L<Dancer2::Plugin::Minify> is a wrapper for HTML::Packer, JavaScript::Packer
