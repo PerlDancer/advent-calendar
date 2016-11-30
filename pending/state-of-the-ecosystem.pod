@@ -1,0 +1,171 @@
+=encoding utf8
+
+=head1 State of the Ecosystem
+
+At least 15 new plugins saw their first CPAN release in 2016 bringing the
+total number of L<Dancer2> plugins beyond the 70 mark.
+
+2016 also saw many plugins converted to the new C<Plugin2> architecture. When
+using the new L<Dancer2::Plugin> plugins can now use other plugins and have
+their DSL directly available. At the last count 20 plugins have been released
+that use C<Plugin2> but there is still work to do. If you want to help out
+checkout the related
+L<GitHub issue|https://github.com/PerlDancer/Dancer2/issues/1078>.
+
+Thankyou to everyone
+for contributing your code, and your time, to help make the Dancer2 ecosystem
+even better.
+
+=head2 New Plugins in 2016
+
+=head3 Auth::ActiveDirectory
+
+Mario Zieschang gave us L<Dancer2::Plugin::Auth::ActiveDirectory> in April.
+Thanks Mario!
+
+I haven't played with this one myself as I don't have any Windows servers but
+it could be a good option for AD environments. See also
+L</Auth::Extensible::Provider::LDAP>.
+
+=head3 Auth::Extensible::Provider::IMAP
+
+In October Jason Lewis asked about an IMAP provider for
+L<Dancer2::Plugin::Auth::Extensible> on the
+L<#dancer IRC channel|https://chat.mibbit.com/?channel=%23dancer&server=irc.perl.org>.
+I like a challenge so decided to create one that afternoon. The result was
+released as: L<Dancer2::Plugin::Auth::Extensible::Provider::IMAP>.
+
+=head3 Auth::Extensible::Provider::LDAP
+
+Although this existed in a git repo, it had no tests, was AD-specific and was
+not released to CPAN. In October I released a shiny new
+L<Dancer2::Plugin::Auth::Extensible::Provider::LDAP> which tries to be a little
+more LDAP server agnostic (and also has a good number of tests).
+Thanks to J. Stebens (corecache) for feedback and testing it against OpenLDAP.
+
+=head3 Auth::SAFE
+
+Released whilst this article was being written on 29th November by Константин
+Матюхин (KVENTIN), L<Dancer2::Plugin::Auth::SAFE> brings authentication via
+Thomson Reuters SAFE SSO to your Dancer app.
+
+=head3 BeforeRoute
+
+Michael CH Vu released his first L<Dancer2> version of his plugin
+L<Dancer2::Plugin::BeforeRoute> in August. This plugin allows you to add
+C<before> hooks to specific routes.
+
+=head3 Cart
+
+Need a simple and flexible cart in your L<Dancer2> app? Need something that can
+work with a new or existing database? Maybe the new Cart plugin is for you.
+
+Andrew Baerg and Ruben Amortegui made the first release of
+L<Dancer2::Plugin::Cart> in July, and Andrew went on to give a talk about
+it at the L<Perl Dancer Conference|https://perl.dance> in Vienna in September.
+You can find a demo app that Andrew created for his talk
+L<on GitHub|https://github.com/pullingshots/Cart-Demo>.
+
+=head3 Debugger
+
+More than just a plugin, L<Dancer2::Debugger> brings Stevan Little's
+L<Plack::Debugger> to the L<Dancer2> ecosystem with extra Dancer-specific
+panels.
+
+If you've ever used Marcel Grunauer's excellent L<Plack::Middleware::Debug>
+with your Dancer1 apps then this is what you'll want to use with L<Dancer2>.
+
+I'm not completely happy with the internals of this thing but I needed it in
+a hurry and hopefully I'll find time soon for a cleanup. Released in April,
+you can find my conference talk
+L<here|https://www.perl.dance/talks/41-plack-debugger-meets-dancer2>.
+
+=head3 EncryptID
+
+Rakesh Kumar Shardiwal's L<Dancer2::Plugin::EncryptID>, released in July,
+makes it easy to obfuscate internal IDs when using them in a URL given to
+users. Instead of seeing C<http://example.com/item/42> users will instead
+see C<http://example.com/item/c98ea08a8e8ad715>. This prevents nosy users
+from trying to iterate all items based on a simple ID in the URL.
+
+=head3 HTTP::Auth::Extensible
+
+Theo van Hoesel released L<Dancer2::Plugin::HTTP::Auth::Extensible> in January.
+This plugin is a fork of L<Dancer2::Plugin::Auth::Extensible> but with
+authentication via WWW-Authenticate header instead of using form + session.
+
+=head3 Interchange6
+
+Part of the L<Interchange6> e-commerce project,
+L<Dancer2::Plugin::Interchange6> was released in May. L<Interchange6> is a
+project founded by long-time L<Interchange|http://www.icdevgroup.org> developer
+Stefan Hornburg (Racke).
+
+The Interchange6 project has so far released the following components:
+
+=over
+
+=item * L<Interchange6::Schema>
+
+A schema using L<DBIx::Class> along with business logic.
+
+=item * L<Interchange6>
+
+A cart built using L<Moo>.
+
+=item * L<Dancer2::Plugin::Interchange6>
+
+Links the schema with the cart and provides keywords for use in your webshop.
+
+=back
+
+We're still working on a demo shop, due out Christmas. ;-)
+
+=head3 Minify
+
+L<Dancer2::Plugin::Minify> is a wrapper for HTML::Packer, JavaScript::Packer
+and CSS::Packer. Released in April, thanks David Zurborg!
+
+=head3 PageHistory
+
+A port of my old Dancer1 plugin, L<Dancer2::Plugin::PageHistory> was released
+in June. The C<add_to_history> keyword which is exported by this plugin allows
+you to add interesting items to the session-based history lists which are
+returned using the L<history> keyword.
+
+=head3 Pg
+
+Back in April, Lucas Tiago de Moraes released L<Dancer2::Plugin::Pg>, another
+twist on relational database plugins.
+
+See also: L<Dancer2::Plugin::Database> and L<Dancer2::Plugin::DBIC>.
+
+=head3 Swagger2
+
+Something I'd like to play with, L<Dancer2::Plugin::Swagger2> was released by
+Daniel Böhmer in March. This plugin creates routes directly from a Swagger
+(AKA OpenAPI) file. Neat.
+
+=head3 Tail
+
+Released in August, Jack Bilemjian's L<Dancer2::Plugin::Tail> allows you to
+tail a file from within your L<Dancer2> application.
+
+=head3 TemplateFlute
+
+L<Dancer2::Plugin::TemplateFlute>, along with its sister distro
+L<Dancer2::Template::TemplateFlute>, brings Racke's L<Template::Flute> forms
+to L<Dancer2>. Released in May 2016, we needed this in order to port the
+L<Perl Dancer Conference|https://perl.dance> website code from Dancer1.
+
+=head2 Author
+
+This article has been written by Peter Mottram for the Perl
+Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2016 // Peter Mottram (SysPete) C<< <peter@sysnix.com> >>
+
