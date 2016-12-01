@@ -1,0 +1,296 @@
+=encoding utf8
+
+=head1 Exception handling, error logging and user messages made easy
+
+=head2 Introduction
+
+Have you ever experienced any of the following when writing your Dancer
+application?
+
+=over 1
+
+=item * Found that handling user errors involved writing a lot of code
+
+=item * Wanted to log messages from a module, without that module depending on Dancer2
+
+=item * Wanted flexibility on sending messages to the user, to the system, or both
+
+=item * Found yourself writing the same code in every application in order to send messages to a template
+
+=item * Wanted a clean way to handle 500 errors, whilst getting notified as the system administrator
+
+=back
+
+L<Dancer2::Plugin::LogReport> combined with L<Dancer2::Logger::LogReport> are
+designed to do all of the above, and more.  Although the 2 modules can be used
+separately, it's recommended to use them both together.
+
+
+=head2 Getting Started
+
+Let's get started by adding the 2 modules to a Dancer2 app:
+
+    # In your route handler
+    package MyApp;
+    use Dancer2;
+    use Log::Report ();
+    use Dancer2::Plugin::LogReport;
+
+    # In your config
+    logger: LogReport
+
+So, what does this give us as standard? Let's have a look:
+
+=over 4
+
+=item * Default console logging
+
+By default, the logger will continue logging to STDERR. The formatting will be
+different, but that can be configured later.  It's worth noting that by default
+debug messages will not be shown, as the default verbosity is a higher
+threshold. The threshold can be changed, see the L</Dispatchers> section below.
+
+=item * Additional logging keywords
+
+We have some additional logging levels. Given that Dancer already provides us
+with 5, you might think this unnecessary. The extra levels give us a really handy
+feature though: we can differentiate between messages that we would normally want
+to send to the user, and messages that we would normally want sent to the system. For
+example, we can now do:
+
+    # Send a routine notice to the end user
+    notice "Hey user, I thought you might want to know this"
+
+    # Tell the user something has been successful
+    success "Your changes have been saved"
+
+    # Warn the user (not fatal)
+    mistake "You may not have wanted to use that setting"
+
+    # Tell the user an error has happened (fatal)
+    error "You can't use that option"
+
+    # Bork (also fatal)
+    panic "This really should not happen in our app"
+
+    # Log a debug message
+    trace "Started function foo"
+
+But where do these messages go? Read on.
+
+=item * Messages are saved in the session
+
+Messages are automatically saved in the session, in a key called C<messages>.
+By default, not all messages are saved, as you probably don't want the user
+seeing your debug messages. The default configuration of which messages are
+sent should work for most people, but can be configured if required.
+
+To display the messages, you can do something like this in your layout template:
+
+    [% FOREACH msg IN session.messages %]
+        <p>[% msg.toString | html_entity %]</p>
+    [% END %]
+
+Each message is an object, and can be stringified as above.
+
+The object includes a function to automatically select a sensible Bootstrap
+color, so if you're using Bootstrap in your application, you could do this:
+
+    [% FOREACH msg IN session.messages %]
+        <div class="alert alert-[% msg.bootstrap_color %]">
+            [% msg.toString | html_entity %]
+        </div>
+    [% END %]
+
+=item * Using the message keywords without using C<Dancer2>
+
+In any other module, you can now include C<Log::Report> and use the same
+keywords/functions to send messages to your application. The one exception is
+the use of the special C<success> keyword, which is specific to the plugin
+(although there is a workaround for that if needed).
+
+=item * Clean exception handling
+
+The module will also, by default, handle any application exceptions cleanly.
+Instead of sending a 500 error, it will forward to an appropriate page, with
+the message rendered in the template as above. More on this to follow later.
+
+If the application is running with C<show_errors> enabled, then the full error
+will be sent in the message. If C<show_errors> is disabled (such as in a
+production environment), a generic error message is shown and the full error
+will have been sent to the console, or whichever backend is configured.
+
+=back
+
+In summary, by including a couple of modules, we can easily send messages to
+a template, and we are handling application exceptions in a user-friendly manner,
+whilst still capturing the full error information.
+
+=head2 Handling user errors easily and cleanly
+
+Handling user errors can be a bit boring and tedious. We'll talk about a way
+to do so that requires very little code.
+
+First, let's have a look at how we might normally do it. I won't go into
+this in any detail, but you will probably recognise the concept. Maybe
+something like this:
+
+    package MyApp;
+
+    post '/settings' => sub {
+        my $message;
+        try {
+            MyApp::Settings->update($settings);
+            $message = "Settings updated successfully";
+        }
+        catch {
+            $message = $@;
+        };
+        # Do something with $message
+        ...
+    };
+ 
+    package MyApp::Settings;
+
+    sub update {
+        ...
+        die "Invalid email address" unless ...
+        ...
+    }
+
+That works fine to a degree, but the code can easily get more verbose than that,
+and even that alone can get a little tedious to keep typing.
+
+How would we do that with L<Dancer2::Plugin::LogReport>?
+
+    package MyApp;
+
+    post '/settings' => sub {
+        if (process sub{ MyApp::Settings::update($settings) }) {
+            success "Settings updated successfully";
+        }
+        # No further code needed - all messages already handled
+    };
+
+    package MyApp::Settings;
+
+    use Log::Report;
+    sub update {
+        ...
+        error "Invalid email address" unless ...
+        ...
+    }
+
+That's it. But what if it wasn't successful? Well, the module handles all that
+for you. The C<error> function in the module is fatal just like C<die>, but as
+we showed above, its text will have automatically been sent to the template
+for display to the user.
+
+If you use C<error> outside of C<process>, then it is still fatal and the
+text is still sent to the template, but it's not handled quite as cleanly:
+the user is forwarded back to the same page if it was a C<POST> request,
+forwarded to C</> if it was a C<GET> request, or fails uncleanly if it
+was already a C<GET> request to C<'/'>.
+
+As an aside, you would probably want to use the same route handler for both
+B<GET> and B<POST>. If the B<POST> is unsuccessful, the error is caught, and
+the page will behave as a B<GET> request (but with the error text rendered).
+
+=head3 A note on differentiating between expected and unexpected exceptions
+
+If a fatal error occurs that did not originate as a L<Log::Report> message,
+then at some point it has to be translated into its L<Log::Report> equivalent.
+By default in L<Log::Report> there is a bit of guesswork that goes into this
+(to try and classify exceptions aimed at users and developers of accordingly).
+However, given that it is very unlikely that in a web application you would
+want to report the exact exception message to an end user, within the latest
+versions of this plugin all fatal exceptions that occur are classified as
+C<PANIC>. This means that you can handle them as system errors and deal with
+the accordingly. Any unexpected exceptions (such as calling methods on
+undefined values) will then be handled cleanly within your web application.
+
+
+=head2 Dispatchers
+
+While you can use everything so far the way I have demonstrated, there is added
+value in understanding the concept of L<Log::Report> dispatchers. A dispatcher
+is something that processes a message, similar to a Dancer logging engine. You
+can have as many dispatchers as you want, and there are several types available
+(C<Log::Report::Dispatcher::*>). By default, a C<PERL> dispatcher is created
+for sending messages to STDERR, and a special C<Callback> dispatcher is used
+for sending the messages to the template.  Dispatchers are added using the
+L<Dancer2::Logger::LogReport> configuration.
+
+The configuration of each dispatcher defines what messages it outputs. You
+might want one dispatcher to show all messages, but another to only display
+messages above a certain threshold. The C<mode> of a dispatcher defines what
+messages are shown. The default C<mode> is C<NORMAL>, which only shows messages
+at the level of C<NOTICE> and above. You can change the mode to C<VERBOSE>,
+C<ASSERT> or C<DEBUG> to get an increasing level of messages. If you don't
+specifiy a mode for a dispatcher, it will take the "global" value. The default
+global value is C<NORMAL>. The global value can be changed when loading the
+module:
+
+    use Dancer2::Plugin::LogReport mode => 'DEBUG';
+
+If you want finer control on what messages a dispatcher processes, you can
+also configure the C<accept> parameter. A full dispatcher configuration
+might look like this:
+
+    engines:
+      logger:
+        LogReport:
+          dispatchers:
+            default:              # Name. This one overrides the default dispatcher
+              type: PERL
+              mode: NORMAL
+              accept: FAILURE-    # Only FAILURE messages and above
+            syslog                # Additional dispatcher called syslog
+              type: SYSLOG
+              identity: myapp
+              facility: local0
+              flags: "pid ndelay nowait"
+              mode: DEBUG
+
+Dispatchers can also be used to format messages.
+
+=head2 There is a lot more
+
+The above is just a flavour of the common and easy stuff you might like
+to do. C<Log::Report> itself is way, way more powerful than that though.
+There are even more advanced topic, such as:
+
+=over 4
+
+=item * Add messages to a class
+
+You can add messages to a particular type of class. I use this to tag
+some as HTML content. By default, I HTML-encode all messages in a template,
+this class can be used to bypass that.
+
+=item * Use syslog for email notifications
+
+I use a L<Syslog|Log::Report::Dispatcher::Syslog> dispatcher, and configure
+L<rsyslogd|http://man7.org/linux/man-pages/man8/rsyslogd.8.html> to email me on
+any message above a certain severity. This means that I am normally fixing an
+application error before it has been reported by the user.
+
+=item * Translate message into other languages
+
+You can translate your messages into other languages using
+L<Log::Report::Translator>.  Importantly, you can do this by dispatcher, so you
+can have user messages in the template translated, but system messages in the
+native language.  Stay tuned for a follow-up Advent article for details of how
+to do this.
+
+=item * DBIC logging
+
+You can use L<Log::Report::DBIC::Profiler> to profile DBIC queries in
+your application.
+
+=back
+
+=head2 Finally...
+
+I did a talk on the above at LPW: L<https://www.youtube.com/watch?v=S1eW5tE967c>
+
