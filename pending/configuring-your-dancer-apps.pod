@@ -1,6 +1,7 @@
 =head1 Configuring Your Dancer Applications
 
-It's been a really exciting year for Dancer2, and one of the many things 
+It's been a really exciting year for Dancer2 (and an even more exciting two
+years since the last Advent calendar!), and one of the many things 
 that's been improved is the configuration of Dancer2 applications. While
 some configuration oddities have been addressed, some additional conveniences 
 have been added as well. Let's get started and explore what's changed!
@@ -158,5 +159,10 @@ Scott Duff (aka perlpilot) for his work in making this possible.
 
 =head2 Author
 
-Jason A. Crome (CromeDome) C<cromedome@cpan.org>
+This article has been written by Jason A. Crome (CromeDome) C<cromedome@cpan.org>
+for the Perl Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
 
