@@ -1,14 +1,14 @@
 =head1 change_session_id
 
-It is considered good security practice to change session ID on any change
-of privilege level, for example on login.  It is also a requirement of a
-number of established security standards so is something you should be
-doing in your web applications.
+It is considered good security practice, and is a requirement of a number
+of established security standards, to change session ID on any change of
+privilege level. For starters you should consider doing this on user login,
+and possibly at any other time a user has some privilege added or removed.
 
 =head2 Session destruction
 
 Destroying a session in L<Dancer2> has always been possible using
-L<Dancer2::Core::App/destroy_session> thus:
+L<Dancer2::Core::App/destroy_session> like so:
 
     app->destroy_session;
 
@@ -43,17 +43,16 @@ password change.
 
 =head2 The gory details
 
-If you are planning to write a new session engine you should really read
-this part...
+This part is particularly relevant to implementors of session engines.
 
 =head3 Native session engine support
 
 All session engines should implement the private method C<_change_id>
-which has the signature:
+which is called like so:
 
-    _change_id $self, $old_id, $new_id
+    $session_engine->_change_id( $old_id, $new_id )
 
-Where C<$self> is the session engine object, and C<$old_id> and C<$new_id>
+Where C<$old_id> and C<$new_id>
 are the old and new session IDs respectively. The session engine should do
 whatever is necessary for the ID change to be successful such as changing
 the key used in the session storage.
