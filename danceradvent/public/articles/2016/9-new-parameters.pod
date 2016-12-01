@@ -142,6 +142,11 @@ We wholeheartedly recommend using these new keywords instead of calling
 the other keywords such as C<param> and C<params>. They make your code
 clearer and smarter.
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

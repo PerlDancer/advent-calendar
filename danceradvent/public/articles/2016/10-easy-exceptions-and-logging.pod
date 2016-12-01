@@ -294,6 +294,11 @@ your application.
 
 I did a talk on the above at LPW: L<https://www.youtube.com/watch?v=S1eW5tE967c>
 
+=head2 Author
+
+This article has been written by Andy Beverley for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

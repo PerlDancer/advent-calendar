@@ -153,6 +153,11 @@ files, we will look at the Dancer app design decisions that affect its
 presentation to the browser in the
 L<next part of this article series|http://advent.perldancer.org/2015/6>.
 
+=head2 Author
+
+This article has been written by Warren Young for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 © 2015, 2016 by Educational Technology Resources, licensed under

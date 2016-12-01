@@ -163,6 +163,11 @@ Our next article in this series will deal directly with our application
 code. How can we write faster code in order to speed up our
 application?
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

@@ -77,6 +77,11 @@ In the next article, we will focus on our stack and explore the
 architectural changes we can make in order to speed up our web
 applications.
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

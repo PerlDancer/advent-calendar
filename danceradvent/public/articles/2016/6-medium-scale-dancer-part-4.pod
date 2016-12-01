@@ -115,6 +115,11 @@ In the L<next part of this article series|http://advent.perldancer.org/2015/7>,
 we will discover the REST API that was hidden inside this monolithic web
 app the whole time.
 
+=head2 Author
+
+This article has been written by Warren Young for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 © 2015, 2016 by Educational Technology Resources, licensed under

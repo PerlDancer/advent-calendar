@@ -154,6 +154,11 @@ they should all be similar enough.
 We have plans on introducing websockets in the future, and they as
 well, will be asynchronous and streaming.
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

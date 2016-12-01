@@ -127,6 +127,11 @@ In the L<next part of this series|http://advent.perldancer.org/2015/5>,
 we will consider how this application restructuring affects the way we
 arrange our template files on disk.
 
+=head2 Author
+
+This article has been written by Warren Young for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 © 2015, 2016 by Educational Technology Resources, licensed under

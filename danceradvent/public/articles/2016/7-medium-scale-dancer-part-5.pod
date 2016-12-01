@@ -303,6 +303,11 @@ This article series concludes with a scheme for
 L<hot code reloading|/2015/8>, a very useful feature in any Dancer
 app, but especially helpful as your app grows larger.
 
+=head2 Author
+
+This article has been written by Warren Young for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 © 2015, 2016 by Educational Technology Resources, licensed under

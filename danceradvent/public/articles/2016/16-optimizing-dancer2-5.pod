@@ -48,6 +48,11 @@ It is not hard to optimize and in many cases it is not worth it.
 However, using the correct modules, middlewares, stack, and code, we
 can create both faster and - often times - simpler applications.
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

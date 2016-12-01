@@ -121,6 +121,11 @@ In the next article, we will explore what kind of server configurations
 we can apply in order to achieve better performance for our
 applications.
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

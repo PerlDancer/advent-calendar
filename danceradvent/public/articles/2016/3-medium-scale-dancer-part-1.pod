@@ -100,6 +100,11 @@ route definitions behind, which is fine because refactoring the routes
 is the subject of the
 next article in this series.
 
+=head2 Author
+
+This article has been written by Warren Young for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 © 2015, 2016 by Educational Technology Resources, licensed under

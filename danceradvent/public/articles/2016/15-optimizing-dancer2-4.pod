@@ -374,6 +374,11 @@ optimizations and improving the speed.
 
 Our last and final article in this series will focus on that.
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

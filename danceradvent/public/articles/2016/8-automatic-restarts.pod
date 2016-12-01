@@ -97,6 +97,11 @@ modules and would like to speed it up, you can do so with C<-M>:
 
     plackup -MMoose -MDBIx::Class -L Shotgun bin/app.psgi
 
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.

@@ -209,6 +209,11 @@ here's code that handles pluralisation:
     my @files = ("File") x (int(rand(2))+1);
     notice __xn"Saved one file", "Saved {_count} files", @files;
 
+=head2 Author
+
+This article has been written by Andy Beverley for the Perl
+Dancer Advent Calendar 2016.
+
 =head2 Copyright
 
 No copyright retained. Enjoy.
