@@ -1,0 +1,133 @@
+=encoding utf8
+
+=head1 Medium-Scale Dancer, Part 2: Route Definitions
+
+By the time a Dancer app grows large enough that you want to start
+breaking it up into multiple Perl modules, as in the
+L<previous article in this series|http://advent.perldancer.org/2015/3>,
+you've probably also defined enough routes that you're starting to have
+problems managing them all. Just as with the Perl code, Dancer lets us
+break up the monolithic route definition set, too.
+
+If you structured your app in the way recommended in the previous
+article, each major feature of your web app is now in its own Perl
+module. That Perl module's name likely corresponds to some part of your
+app's URL scheme. Let's say you're exposing the features of
+C<App::MajorFeature> as C</mf> in URLs, with sub-features defined in
+C<App::MajorFeature::SubFeature> and exposed via C</mf/sf> routes.
+
+If you extend the generated C<lib/App.pm> file by following the simplest
+examples from the Dancer documentation, you might have a mess that looks
+something like this:
+
+    get '/mf' => sub {
+        # Lots of Perl code to return the top-level MajorFeature view
+    };
+
+    get '/mf/sf' => sub {
+        # Implementation of a sub-feature of MajorFeature
+    };
+
+    post '/mf/sf' => sub {
+        # Maybe you need a way to add new subfeature objects
+    };
+
+    put '/mf/sf' => sub {
+        # And maybe also a way to edit existing subfeature objects
+    };
+
+    del '/mf/sf/:id' => sub {
+        # And a way to delete them, too
+    };
+
+The first thing to fix here is that almost all of the Perl code
+implementing each route handler should move to C<lib/App/*.pm>. Ideally,
+each route handler body should do nothing more than call a function in
+one of these modules:
+
+    get  '/mf'        => \&App::MajorFeature::retrieve;
+    get  '/mf/sf'     => \&App::MajorFeature::SubFeature::retreive;
+    post '/mf/sf'     => \&App::MajorFeature::SubFeature::add;
+    put  '/mf/sf'     => \&App::MajorFeature::SubFeature::modify;
+    del  '/mf/sf/:id' => \&App::MajorFeature::SubFeature::remove;
+
+Notice that by moving all of the code for each route handler into a
+function in one of our module files, we can replace the inline anonymous
+function references with explicit fully qualified function references.
+
+There's a fair bit of redundancy in that code, which we'll compress out
+in two stages.
+
+First, Dancer has the awesome
+L<C<prefix>|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#prefix>
+feature, which lets us express the URL hierarchy directly in the code,
+without repeating elements of the URL:
+
+    prefix '/mf' => sub {
+        get '' => \&App::MajorFeature::retrieve;
+        prefix '/sf' => sub {
+            get  ''     => \&App::MajorFeature::SubFeature::retreive;
+            post ''     => \&App::MajorFeature::SubFeature::add;
+            put  ''     => \&App::MajorFeature::SubFeature::modify;
+            del  '/:id' => \&App::MajorFeature::SubFeature::remove;
+        };
+    };
+
+As you can see, this makes the overall code narrower, because we're not
+repeating ourselves as much. This move toward using C<prefix> will help
+considerably later in this series of articles.
+
+A second excellent feature of Dancer lets us shorten those lines of code
+still further.
+
+So far, we've been using explicitly-qualified function names. This is
+because we want to use short function names within the modules (e.g.
+C<retrieve()>) without causing namespace collisions by exporting all of
+the functions. But in fact, there is actually no need to expose the API
+of your modules outside the module itself. Dancer doesn't care I<where>
+you define the route handlers, just that they're all defined by the time
+your caller wants to use them. In the previous part of this article
+series, we said C<use App::MajorFeature> and such within C<lib/App.pm>,
+so every one of our app's modules gets executed on startup. This means
+that any code at global scope within these modules also runs at startup.
+
+Therefore, we can move all of the route definitions above from
+C<lib/App.pm> to the end of the module where we define each route's
+handler. That is, the tail end of C<lib/App/MajorFeature.pm> says:
+
+    prefix '/mf' => sub {
+        get '' => \&retrieve;
+    };
+
+...and the tail end of C<lib/App/MajorFeature/SubFeature.pm> says:
+
+    prefix '/mf' => sub {
+        prefix '/sf' => sub {
+            get  ''     => \&retreive;
+            post ''     => \&add;
+            put  ''     => \&modify;
+            del  '/:id' => \&remove;
+        };
+    };
+
+The route definitions are much shorter now because they refer to
+module-local functions defined above the route definitions, so the code
+references don't need to be fully-qualified.
+
+Having done all this, all that's left behind in C<lib/App.pm> is Dancer
+startup and other initialization code, such as hook definitions, as is
+appropriate for the app's top-level module.
+
+The bulk of the application's code is now collected into a set of
+tightly-scoped modules. These modules should also be largely decoupled
+since only Dancer needs to know how to call into them, and you told it
+how from the module itself, by defining routes. Beautiful.
+
+In the L<next part of this series|http://advent.perldancer.org/2015/5>,
+we will consider how this application restructuring affects the way we
+arrange our template files on disk.
+
+=head2 Copyright
+
+© 2015, 2016 by Educational Technology Resources, licensed under
+L<Creative Commons Attribution-ShareAlike 4.0|http://creativecommons.org/licenses/by-sa/4.0/>
