@@ -25,7 +25,7 @@ Thanks Mario!
 
 I haven't played with this one myself as I don't have any Windows servers but
 it could be a good option for AD environments. See also
-L</Auth::Extensible::Provider::LDAP>.
+L<Dancer2::Plugin::Auth::Extensible::Provider::LDAP>.
 
 =head3 Auth::Extensible::Provider::IMAP
 
