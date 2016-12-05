@@ -23,7 +23,7 @@ data such as cart products.
 
 L<Dancer2::Core::App/change_session_id> to the rescue!
 
-If you are using a recent version of L<Dancer2::Plugin::Auth::Extensible>
+If you are using version 0.610 or later of L<Dancer2::Plugin::Auth::Extensible>
 to handle authentication and authorisation then you already have
 C<change_session_id> called on successful login. If you are using some
 other solution then you want to do something like this:
@@ -53,11 +53,13 @@ which is called like so:
     $session_engine->_change_id( $old_id, $new_id )
 
 Where C<$old_id> and C<$new_id>
-are the old and new session IDs respectively. The session engine should do
+are the old and new session IDs respectively.
+
+The session engine should do
 whatever is necessary for the ID change to be successful such as changing
 the key used in the session storage.
 
-All file-based session engines such as L<Dancer2::Session::YAML> and
+All file-based session engines including L<Dancer2::Session::YAML> and
 L<Dancer2::Session::JSON> get native support for C<change_session_id>
 since they consume the L<Dancer2::Core::Role::SessionFactory::File> which
 provides C<_change_id>.
