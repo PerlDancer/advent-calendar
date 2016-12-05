@@ -1,0 +1,125 @@
+=encoding utf8
+
+=head2 send_as BEER => 'Christmas Cheer'
+
+One Frequently Asked Question that arose in 2015 from several
+keen Dancer2 users was 
+
+  "How to return JSON from a specific route when we have a template
+  engine configured?"
+
+The best advice back then was to "split" you app into two distinct
+applications and use C<Plack::Builder> to glue them back together.
+
+  # bin/app.psgi
+  use Plack::Builder;
+  use MyApp;
+  use MyApp::API;
+
+  builder {
+      mount '/api' => MyApp::API->to_app;
+      mount '/'    => MyApp->to_app;
+  };
+
+However if you have a small number of routes that required serialization
+(or a small number that needed a template engine), the effort involved
+was onerous.
+
+Other suboptimal solutions (including the use of eldritch horrors) were
+proposed in issues on github prior to a suggestion to use a combination of
+Dancer2's C<send_file> and C<to_json> using an in-memory file handle:
+
+  set template => 'TemplateToolkit';
+
+  get '/api/thing' => sub {
+      my $json = to_json { thing => { to => [ 'return' ] } };
+      content_type => 'application/json';
+      send_file \$json;     # sends json
+  };
+
+Which just works; but involves excessive boilerplate and one needs to take
+care with text encodings. That's not the Dancer way!
+
+=head2 Dancer2::Plugin::SendAs
+
+Conferences have many benefits! There is the awesome talks, the hallway
+track, the benefits of getting a group together and discussing a problem
+face-to-face, or just having some time away to think about a particular
+problem.
+
+During some conference related downtime in 2015, L<Dancer2::Plugin::SendAs>
+was spec'd and implemented to encapsulate the previous patten into a simple
+to use c<send_as> keyword:
+
+  use Dancer2::Plugin::SendAs;
+
+  get '/api/thing' => sub {
+      send_as JSON => { thing => { to => [ 'return' ] } };
+  }; 
+
+Any Dancer2 serializer was supported, as well as HTML output:
+
+  get '/api' => sub {
+      send_as HTML => template( 'instructions.tt' );
+  };
+
+Simple. Easy. Neat. Now that's the Dancer way!
+
+=head2 From Plugin to Core
+
+The C<SendAs> plugin solved a problem many Dancers' encountered. The core
+team decided to move the plugins' functionality into core in early 2016.
+(Did you know the C<to_json> and C<from_json> keywords started as a plugin too?) 
+
+After cleaning up some edge cases and tweaking features, c<send_as> became
+a core keyword in the c<0.200000> release.
+
+The key differences in the core implemantation are
+
+=over 4
+
+=item Serializers must use the appropriate casing of their names. eg.
+C<JSON> or C<Serial>.  C<HTML> is special cased for returning HTML
+content, and must be in upper case.
+ 
+=item Serializers will load settings from the applications configuration.
+
+=back
+
+=head3 Lazy APIs
+
+Like C<send_file>, the C<send_as> keyword returns immediately from a route,
+allowing C<send_as> to short-circuit route logic, even when a
+serializer is defined:
+
+   set serializer => 'JSON';
+
+   post '/api/:id' => sub {
+       my $id = request->route_parameter->get('id');
+       if ( $id !~ m/^[0-9]$/ ) {
+           # send JSON error (could use C<return>)
+           status 500;
+           send_as JSON => { error => 'id not an integer' }; 
+       }
+       # continue with the rest of route logic.
+       #  that returns other JSON content
+       ...
+   };
+
+Hmmm that looks like the beginnings of another pattern to wrap up in a Plugin.
+Its not Christmas yet!
+
+C<Dancer2::Plugin::SendAs> remains on the CPAN (deprecated) for
+prosperity.
+
+=head2 Author
+
+This article has been written by Russell (veryrusty) Jenkins for
+the Perl Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2016 // Russell (veryrusty) Jenkins
+
