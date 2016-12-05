@@ -123,7 +123,7 @@ tightly-scoped modules. These modules should also be largely decoupled
 since only Dancer needs to know how to call into them, and you told it
 how from the module itself, by defining routes. Beautiful.
 
-In the L<next part of this series|http://advent.perldancer.org/2015/5>,
+In the L<next part of this series|http://advent.perldancer.org/2016/5>,
 we will consider how this application restructuring affects the way we
 arrange our template files on disk.
 
