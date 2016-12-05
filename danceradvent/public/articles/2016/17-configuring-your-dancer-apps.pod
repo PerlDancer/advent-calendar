@@ -60,13 +60,13 @@ files. For example:
 
     DANCER_CONFIG_EXT=json
 
-If this variable is set, no other type of configation file will be read, B<only>
+If this variable is set, no other type of configuration file will be read, B<only>
 JSON files. Dancer2 will be nice and let you know if there are other
 configuration files of other formats present, however.
 
 =head2 Creating Local Overrides
 
-Sometimes you will have local overrides for or addtions to certain settings
+Sometimes you will have local overrides for or additions to certain settings
 found in your F<config.yml> file, such as database settings, that you do not
 want to commit to your version control system. Thankfully, Dancer2 accounts
 this by letting you add a file called F<config_local.yml>. Local configuration
@@ -106,7 +106,7 @@ Effectively, your running configuration would be this:
                     PrintError: 1
 
 If you've converted to Dancer2 from Catalyst, this configuration technique
-should be familar to you.
+should be familiar to you.
 
 =head2 Configuring for Multiple Deployment Environments
 
