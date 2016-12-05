@@ -2,7 +2,7 @@
 
 =head1 Medium-Scale Dancer, Part 5: REST APIs and JSON
 
-In previous parts of L<this article series|/2015/3>, I defined each
+In previous parts of L<this article series|/2016/3>, I defined each
 route handler as a one-liner, like so:
 
     prefix '/mf' => sub {
@@ -300,7 +300,7 @@ to web spiders that refuse to run embedded and referenced JavaScript
 code.
 
 This article series concludes with a scheme for
-L<hot code reloading|/2015/8>, a very useful feature in any Dancer
+L<hot code reloading|/2016/8>, a very useful feature in any Dancer
 app, but especially helpful as your app grows larger.
 
 =head2 Author

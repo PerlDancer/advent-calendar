@@ -6,7 +6,7 @@ This will be a short article because the way you write your client-side
 JavaScript code and serve it to your users has almost nothing to do with
 Dancer. Nevertheless, there are a few things we can say here that tie
 into the prior articles in
-L<this series|http://advent.perldancer.org/2015/3>.
+L<this series|http://advent.perldancer.org/2016/3>.
 
 =head2 Consolidate JavaScript Files
 
@@ -111,7 +111,7 @@ system to keep your Dancer app's log file trimmed to a reasonable size.
 Dancer doesn't do that on its own. The Dancer2 docs recommend using
 C<logrotate> in C<copytruncate> mode.
 
-In the L<next part of this article series|http://advent.perldancer.org/2015/7>,
+In the L<next part of this article series|http://advent.perldancer.org/2016/7>,
 we will discover the REST API that was hidden inside this monolithic web
 app the whole time.
 

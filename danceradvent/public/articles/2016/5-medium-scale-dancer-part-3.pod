@@ -3,8 +3,8 @@
 =head1 Medium-Scale Dancer, Part 3: Views
 
 The
-L<first|http://advent.perldancer.org/2015/3> two
-L<parts|http://advent.perldancer.org/2015/4> of this article series
+L<first|http://advent.perldancer.org/2016/3> two
+L<parts|http://advent.perldancer.org/2016/4> of this article series
 broke the monolithic C<lib/App.pm> file up into a series of Perl
 modules, each focused on a functional centroid of the application.
 
@@ -151,7 +151,7 @@ bodily include that component's HTML fragment into the larger page.
 Now that we have sorted out the purely server-side HTML and Perl code
 files, we will look at the Dancer app design decisions that affect its
 presentation to the browser in the
-L<next part of this article series|http://advent.perldancer.org/2015/6>.
+L<next part of this article series|http://advent.perldancer.org/2016/6>.
 
 =head2 Author
 
