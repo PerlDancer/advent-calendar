@@ -1,9 +1,9 @@
 =head1 Configuring Your Dancer Applications
 
 It's been a really exciting year for Dancer2 (and an even more exciting two
-years since the last Advent calendar!), and one of the many things 
+years since the last Advent calendar!), and one of the many things
 that's been improved is the configuration of Dancer2 applications. While
-some configuration oddities have been addressed, some additional conveniences 
+some configuration oddities have been addressed, some additional conveniences
 have been added as well. Let's get started and explore what's changed!
 
 =head2 The Basics
@@ -34,41 +34,41 @@ You are not limited to YAML, however. JSON works just as well:
         }
     }
 
-In fact, any file format that can be read by L<Config::Any> can be used for 
+In fact, any file format that can be read by L<Config::Any> can be used for
 your application's config file. TIMTOWTDI!
 
-B<Note:> The examples that follow assume a YAML file format, but 
-rest assured that these same techniques work with any configuration file 
+B<Note:> The examples that follow assume a YAML file format, but
+rest assured that these same techniques work with any configuration file
 format supported by Dancer2.
 
 =head2 Some Potential Problems
 
-In Dancer1, YAML was the only supported format, and as such, establishing a 
+In Dancer1, YAML was the only supported format, and as such, establishing a
 set order in which configuration files were read was pretty easy: F<config.yml>
-followed by F<environments/$environment_name.yml>. Since Dancer2 supports 
+followed by F<environments/$environment_name.yml>. Since Dancer2 supports
 multiple file formats, the configuration file loader looks for all files whose
 name starts with F<config> and merges the results together, and the order in
 which they are merged is dependent upon the order in which L<Config::Any> tells
 us what file types it supports. This is not ideal because there is no reliable
 order in which our configuration files are read - there is no guarantee that
-F<config.yml> is read before F<config.json>... That's pretty scary in a 
+F<config.yml> is read before F<config.json>... That's pretty scary in a
 production environment!
 
 To resolve this potential gotcha, set the C<DANCER_CONFIG_EXT> environment
 variable to the file extension that you wish to use for your configuration
 files. For example:
-    
+
     DANCER_CONFIG_EXT=json
 
 If this variable is set, no other type of configation file will be read, B<only>
-JSON files. Dancer2 will be nice and let you know if there are other 
+JSON files. Dancer2 will be nice and let you know if there are other
 configuration files of other formats present, however.
 
 =head2 Creating Local Overrides
 
-Sometimes you will have local overrides for or addtions to certain settings 
+Sometimes you will have local overrides for or addtions to certain settings
 found in your F<config.yml> file, such as database settings, that you do not
-want to commit to your version control system. Thankfully, Dancer2 accounts 
+want to commit to your version control system. Thankfully, Dancer2 accounts
 this by letting you add a file called F<config_local.yml>. Local configuration
 files are always processed after the files they are named for; that is to say
 that F<config.yml> is always processed first, followed by F<config_local.yml>.
@@ -105,14 +105,14 @@ Effectively, your running configuration would be this:
                     RaiseError: 1
                     PrintError: 1
 
-If you've converted to Dancer2 from Catalyst, this configuration technique 
+If you've converted to Dancer2 from Catalyst, this configuration technique
 should be familar to you.
 
 =head2 Configuring for Multiple Deployment Environments
 
-In reality, your local development settings will likely differ from shared 
+In reality, your local development settings will likely differ from shared
 development server settings, which will likely be different than staging
-or production environment settings. To help you with this, Dancer2 lets you 
+or production environment settings. To help you with this, Dancer2 lets you
 specify your runtime environment when running your application:
 
     DANCER_ENVIRONMENT=staging plackup bin/mytestapp.psgi
@@ -129,7 +129,7 @@ after all other files.
 
 If you are using YAML-based configuration files only, and are launching an
 application in a production environment, these settings:
-    
+
     DANCER_CONFIG_EXT=yml
     DANCER_ENVIRONMENT=production
 
@@ -141,19 +141,19 @@ every one of these files):
     appdir/environments/production.yml
     appdir/environments/production_local.yml
 
-Settings found in the last file merged B<always> takes precedence, followed by 
+Settings found in the last file merged B<always> takes precedence, followed by
 settings found in the next most recently read file, and so on.
 
 =head2 Debugging Configuration Issues
 
 If you are ever unsure what order configuration files are being processed in,
-setting the environment variable C<DANCER_CONFIG_VERBOSE=1> prior to 
+setting the environment variable C<DANCER_CONFIG_VERBOSE=1> prior to
 launching your application will show you the order in which files have been
 loaded.
 
 =head2 Wrapping Up
 
-Dancer2 developers gained a lot of flexibility in how to to configure their 
+Dancer2 developers gained a lot of flexibility in how to to configure their
 applications in 2016. The core team would like to give a shout-out to Jonathan
 Scott Duff (aka perlpilot) for his work in making this possible.
 
