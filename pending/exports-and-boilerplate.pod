@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Reducing boilerplate and managing exports in Dancer2
 
 Dancer makes it easy to start small and grow fast. Today we will be looking at a techique to help manage that growth.
