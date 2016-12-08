@@ -4,13 +4,13 @@
 
 Dancer makes it easy to start small and grow fast. Today we will be looking at a techique to help manage that growth.
 
-A typical mature Dancer2 app will span multiple packages and import plugins.
+A typical mature Dancer2 app will span multiple packages and each package will make use of Dancer's plugins and other modules available on CPAN.
 
+  use Scalar::Util qw< blessed >;
+  use List::Util qw< first all none sum >;
   use Dancer2 appname => MyApp;
-  use Dancer2::Plugin::DBIC qw<schema resultset>;
+  use Dancer2::Plugin::DBIC qw< schema resultset >;
   use Dancer2::Plugin::Redis;
-
-... and you probably have a number of other 'frequently-used' modules up there too, such as L<Scalar::Util>.
 
 After the first couple of files, the copy-pasting becomes tedious and if you later change your mind about what to include, you leave yourself open to runtime errors when you try to call a function you never imported into the package namespace.
 
@@ -68,7 +68,7 @@ Modules like L<Exporter> provide a way to explicitly request that symbols be exp
 
   package MyApp::DSL;
   use Dancer2 appname => MyApp;
-  use Exporter qw<import>;
+  use Exporter qw< import >;
 
   our @EXPORT_OK = qw< get post put any del >;
   1;
@@ -98,7 +98,7 @@ So now you know enough to be able to replace
   use Scalar::Util qw< blessed >;
   use List::Util qw< first all none sum >;
   use Dancer2 appname => MyApp;
-  use Dancer2::Plugin::DBIC qw<schema resultset>;
+  use Dancer2::Plugin::DBIC qw< schema resultset >;
   use Dancer2::Plugin::Redis;
 
 with an expression like:
