@@ -87,7 +87,7 @@ By listing functions in C<@EXPORT_OK>, we have allowed them to be exported when 
 
 Note that a limitation of this approach is that you need at least one package per app. If you're only running one app then this won't be an issue.
 
-=head2 Making it better
+=head2 Group your exports with tags
 
 Chances are you don't want to name each and every function you need in your C<use> statement in every. Luckily, Exporter provides more options, too. Populating C<@EXPORT> will cause those functions to always be exported. You can also use C<%EXPORT_TAGS> to export groups of symbols.
 
