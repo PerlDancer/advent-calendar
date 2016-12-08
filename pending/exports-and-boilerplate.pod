@@ -1,0 +1,114 @@
+=head1 Reducing boilerplate and managing exports in Dancer2
+
+Dancer makes it easy to start small and grow fast. Today we will be looking at a techique to help manage that growth.
+
+A typical mature Dancer2 app will span multiple packages and import plugins.
+
+  use Dancer2 appname => MyApp;
+  use Dancer2::Plugin::DBIC qw<schema resultset>;
+  use Dancer2::Plugin::Redis;
+
+... and you probably have a number of other 'frequently-used' modules up there too, such as L<Scalar::Util>.
+
+After the first couple of files, the copy-pasting becomes tedious and if you later change your mind about what to include, you leave yourself open to runtime errors when you try to call a function you never imported into the package namespace.
+
+=head2 What Dancer2 "exports"
+
+Dancer2 "exports" almost eighty functions into the symbol table by default. That's a lot! You can get a complete list of them from the manual or from the symbol table itself with this one-liner:
+
+  perl -le 'use Dancer2; print for grep { main->can($_) && s/^\*main:://} map {$::{$_}} sort keys %main::;'
+
+(NB: If the concept of exporting and symbol tables in Perl is new to you, read C<perldoc -f use>. The documentation for L<Exporter> may also help you as we go along, but bear in mind that not all Perl modules - including Dancer2 - make use of Exporter.)
+
+For some applications this might present a problem: for instance, if you want to use L<List::Util/any> in a package where Dancer2 has been C<use>d, you cannot import it. Instead, you can qualify the C<any> from L<List::Util>:
+
+  any '/page/:id' => sub {
+    my $id = param('id');
+    forward '/401' if List::Util::any { $_ eq $id } @blocked_resources;
+    pass;
+  };
+
+If you're using the C<any> from List::Util more frequently than Dancer's C<any>, then you might decide you prefer to qualify the latter and import the former.
+
+However, you cannot selectively import functions from Dancer2 (this is something you might have noticed if you migrated from Dancer1 which allowed this). Nor will it help to C<require Dancer2>, as you will find that there is no such thing as C<Dancer2::any> (there was in Dancer1).
+
+The reason for this is the Dancer2's C<import> function (which is called when you C<use> it) does something clever, so that you to have multiple separate Dancer2 apps running in the same perl instance.
+
+  use Dancer2 appname => MyApp;
+
+At this point, rather than exporting the function in the usual way, Dancer2 creates a new function in your package namespace, which calls a method of the same name on a L<Dancer2::Core::App> object which it has created for you (NB: most of the methods are actually in the L<Dancer2::Role::DSL> class).
+
+B<So is there any way to control which parts of Dancer's DSL to import?>
+
+The answer is yes - but you need to write another package of your own to act as a façade.
+
+=head2 Write your own DSL
+
+The solution is to write a package which C<use>s Dancer, and which provides the syntax you want to all your other packages.
+
+A simple package would look like:
+
+  package MyApp::DSL;
+  use Dancer2 appname => MyApp;
+  use Exporter;
+  1;
+
+(NB: DSL stands for "Domain Specific Language", and in this case is just a small collection of functions. Dancer is a DSL for writing Plack-based web apps).
+
+This would provide access to the Dancer DSL as follows:
+
+  use MyApp::DSL;
+  MyApp::DSL::get('/' => sub { ... });
+
+Having to prefix everything with C<MyApp::DSL::> isn't very nice, though.
+
+Modules like L<Exporter> provide a way to explicitly request that symbols be exported, for instance:
+
+  package MyApp::DSL;
+  use Dancer2 appname => MyApp;
+  use Exporter qw<import>;
+
+  our @EXPORT_OK = qw< get post put any del >;
+  1;
+
+Now you can write:
+
+  use MyApp::DSL qw< get post put del >;
+  get '/' => sub { ... };
+
+Or maybe in another route, you just want to retrieve values from your config? That's ok, too:
+
+  use MyApp::DSL qw< config >;
+  my @plugins = keys %{ config('plugins') };
+
+By listing functions in C<@EXPORT_OK>, we have allowed them to be exported when they are specified in the C<use> statement.
+
+Note that a limitation of this approach is that you need at least one package per app. If you're only running one app then this won't be an issue.
+
+=head2 Making it better
+
+Chances are you don't want to name each and every function you need in your C<use> statement in every. Luckily, Exporter provides more options, too. Populating C<@EXPORT> will cause those functions to always be exported. You can also use C<%EXPORT_TAGS> to export groups of symbols.
+
+Don't forget, it's not just Dancer2's functions that you can put in your DSL package. If you have other (such as L<Scalar::Util/blessed>), you can add them too. This also gives you the opportunity to think about separation of concerns: for instance, you may decide that your route handling packages need access to all of Dancer2's functions, whereas the packages in which your business logic and flow control don't need the route handling functions; while you schema packages have a different set of functions. One strategy therefore is to create a different tag for each group of concerns, e.g. C<:controller>, C<:model>, C<:route>, etc. Alternatively, the tags could represent where the functions come from, e.g. C<:util>, C<:config>, C<:storage>, C<:routing>, etc.
+
+So now you know enough to be able to replace
+
+  use Scalar::Util qw< blessed >;
+  use List::Util qw< first all none sum >;
+  use Dancer2 appname => MyApp;
+  use Dancer2::Plugin::DBIC qw<schema resultset>;
+  use Dancer2::Plugin::Redis;
+
+with an expression like:
+
+  use MyApp::DSL qw< :util :storage :config >;
+
+or:
+
+  use MyApp::DSL qw< :model >;
+
+=head2 Author
+
+This article was written by Daniel Perrett C<< <perrettdl@googlemail.com> >> for the Perl Dancer Advent Calendar 2016.
+
+=cut
