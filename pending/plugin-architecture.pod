@@ -1,0 +1,187 @@
+=head1 The new Dancer2 plugin system
+
+The biggest milestone this year in Dancer2 was version 0.200000, which
+introduced the long-awaited, completely reworked Dancer2 plugin
+system.
+
+The previous plugin system suffered several key issues, all of which
+are now resolved by this new plugin systems.
+
+Plugins are now easy to write and are far more capable than they were
+before.
+
+=head2 Your first plugin
+
+When using the new plugin systems, you need only load a single class:
+
+    package Dancer2::Plugin::MyPlugin;
+    use strict;
+    use warnings;
+    use Dancer2::Plugin;
+
+You now have a full object oriented framework, which means you have
+attributes:
+
+    has 'name' => (
+        'is'      => 'ro',
+        'default' => sub {'Sawyer'},
+    );
+
+If we want to export any keywords, we only need to call the right
+keyword:
+
+    plugin_keywords('name');
+
+We can also call DSL by using the C<dsl> method. Our object oriented
+system will run the C<BUILD> method as soon as a new plugin object is
+loaded:
+
+    sub BUILD {
+        my $self = shift;
+
+        $self->dsl->get( '/', sub {
+            $self->dsl->template(
+                'index',
+                { 'name' => $self->name },
+            );
+        } );
+    }
+
+=head2 Configuring your plugin
+
+Your applications can now use the plugin, and even provide values
+for them:
+
+    # In your config.yml:
+    plugins:
+        MyPlugin:
+            name: "Yanick"
+
+Then later you can reach them using the C<config> attribute:
+
+    has 'name' => (
+        'is'      => 'ro',
+        'default' => sub {
+            return config->{'name'} || 'Sawyer';
+        },
+    );
+
+However, note that configurations will not update the attributes
+once they are set.
+
+=head3 Using other plugins
+
+You can use additional plugins within your plugin - a big thorn in the
+side of plugin developers until this new system.
+
+    package Dancer2::Plugin::Foo;
+    use strict;
+    use warnings;
+    use Dancer2::Plugin;
+    use Dancer2::Plugin::Bar;
+
+    # You can now use keywords from Dancer2::Plugin::Bar
+
+=head3 Hooks
+
+You can provide your own hooks using the C<plugin_hooks>. Users can
+register actions to these hooks and you can then execute these hooks
+from your application:
+
+    plugin_keywords('my_keyword');
+    plugin_hooks('my_hook');
+
+    sub my_keyword {
+        my $self = shift;
+        $self->execute_plugin_hook('my_hook');
+    }
+
+You can also call hooks available in the application:
+
+    $self->app->execute_hook('on_route_exception');
+
+=head3 Subclassing
+
+You can subclass other plugins:
+
+    package Dancer2::Plugin::Subclass;
+    use strict;
+    use warnings;
+
+    # Get keywords
+    use Dancer2::Plugin;
+
+    # Extend
+    extends('Dancer2::Plugin::Parent');
+
+    # Export this keyword as well
+    plugin_keywords('keyword_from_parent');
+
+    # redefine it
+    sub keyword_from_parent {
+        my ( $self, @args_from_user ) = @_;
+
+        my @args = @args_from_user;
+        if ( !@args ) {
+            @args = ( 'our', 'default', 'args' );
+        }
+
+        # Call the parent keyword
+        $self->SUPER::keyword_from_parent(@args);
+    }
+
+    1;
+
+=head3 Utilize existing plugins
+
+From version 0.205000, you can now easily locate additional plugins and
+use their abilities:
+
+  package Dancer2::Plugin::Special;
+  use strict;
+  use warnings;
+  use Dancer2::Plugin;
+
+  plugin_keywords('special');
+
+  sub special {
+    my $self = shift;
+
+    my $basic_plugin = $self->find_plugin('Dancer2::Plugin::Basic')
+        or $self->dsl->send_error( 'Please load Dancer2::Plugin::Basic', 500 );
+
+    my $basic = $basic_plugin->normal_keyword;
+    return "Special $basic";
+  }
+
+  1;
+
+Now a user needs to load both plugins, and they will work together.
+
+  package MyApp;
+  use Dancer2;
+  use Dancer2::Plugin::Basic;
+  use Dancer2::Plugin::Special;
+
+=head2 Summary
+
+All the details are available in L<Dancer2::Plugin>. There is at least
+one extra feature I haven't covered, just waiting for you to find it.
+Here's a clue: Attributes exporting. :)
+
+Now with the new plugin system in place, we can not only provide
+consistent and highly-capable plugins, but introduce new stable
+features in the future.
+
+Keep in touch to see where it leads us!
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.
