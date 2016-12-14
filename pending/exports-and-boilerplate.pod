@@ -8,7 +8,7 @@ A typical mature Dancer2 app will span multiple packages and each package will m
 
   use Scalar::Util qw< blessed >;
   use List::Util qw< first all none sum >;
-  use Dancer2 appname => MyApp;
+  use Dancer2 appname => 'MyApp';
   use Dancer2::Plugin::DBIC qw< schema resultset >;
   use Dancer2::Plugin::Redis;
 
@@ -65,7 +65,7 @@ Having to prefix everything with C<MyApp::DSL::> isn't very nice, though.
 Modules like L<Exporter> provide a way to explicitly request that symbols be exported, for instance:
 
   package MyApp::DSL;
-  use Dancer2 appname => MyApp;
+  use Dancer2 appname => 'MyApp';
   use Exporter qw< import >;
 
   our @EXPORT_OK = qw< get post put any del >;
@@ -99,7 +99,7 @@ So now you know enough to be able to replace
 
   use Scalar::Util qw< blessed >;
   use List::Util qw< first all none sum >;
-  use Dancer2 appname => MyApp;
+  use Dancer2 appname => 'MyApp';
   use Dancer2::Plugin::DBIC qw< schema resultset >;
   use Dancer2::Plugin::Redis;
 
