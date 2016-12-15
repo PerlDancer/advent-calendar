@@ -18,7 +18,7 @@ After the first couple of files, the copy-pasting becomes tedious. If you later 
 
 As a web framework, Dancer2 provides you with many keywords you can use to write your web code. Usually, this presents no problem, but in some cases Dancer2 might give you a function with the same name as a function in another module you wish to use. For example, Dancer2 provides a function C<any>, so you can write endpoints that work on multiple HTTP verbs, while L<List::Util> provides C<any>, a function which returns a true value if at least one item in a list matches a condition.
 
-If you want to use L<List::Util/any> in a package where Dancer2 has been C<use>d, you cannot import it. Instead, you can qualify the C<any> from L<List::Util>:
+If you want to use L<List::Util/any> in a package where Dancer2 has been C<use>d, you will find you cannot import both at once. Instead, you can qualify the C<any> from L<List::Util>:
 
   any '/page/:id' => sub {
     my $id = param('id');
