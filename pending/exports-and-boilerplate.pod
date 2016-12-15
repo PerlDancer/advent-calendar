@@ -115,4 +115,8 @@ or:
 
 This article was written by Daniel Perrett C<< <perrettdl@googlemail.com> >> for the Perl Dancer Advent Calendar 2016.
 
+=head2 Copyright
+
+© 2016 Daniel Perrett; you are free to reuse code without restriction and text under the L<Creative Commons Attribution-ShareAlike License 4.0|http://creativecommons.org/licenses/by-sa/4.0/>.
+
 =cut
