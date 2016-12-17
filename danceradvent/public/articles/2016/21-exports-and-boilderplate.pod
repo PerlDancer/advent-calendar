@@ -1,0 +1,176 @@
+=encoding utf8
+
+=head1 Reducing boilerplate and managing exports in Dancer2
+
+Dancer makes it easy to start small and grow fast. Today we will be
+looking at a techique to help manage that growth.
+
+A typical mature Dancer2 app will span multiple packages and each
+package will make use of Dancer's plugins and other modules available
+on CPAN.
+
+  use Scalar::Util qw< blessed >;
+  use List::Util   qw< first all none sum >;
+  use Dancer2 appname => 'MyApp';
+  use Dancer2::Plugin::DBIC qw< schema resultset >;
+  use Dancer2::Plugin::Redis;
+
+After the first couple of files, the copy-pasting becomes tedious. If
+you later change your mind about what to include, you leave yourself
+open to errors when you try to call a function you never imported into
+the package namespace.
+
+=head2 What Dancer2 exports
+
+As a web framework, Dancer2 provides you with many keywords you can use
+to write your web code. Usually, this presents no problem, but in some
+cases Dancer2 might give you a function with the same name as a
+function in another module you wish to use. For example, Dancer2
+provides a function C<any>, so you can write endpoints that work on
+multiple HTTP verbs, while L<List::Util> provides C<any>, a function
+which returns a true value if at least one item in a list matches a
+condition.
+
+If you want to use L<List::Util/any> in a package where Dancer2 has
+been C<use>d, you will find you cannot import both at once. Instead,
+you can qualify the C<any> from L<List::Util>:
+
+  any '/page/:id' => sub {
+    my $id = param('id');
+    send_error("Blocked!", 401)
+        if List::Util::any { $_ eq $id } @blocked_resources;
+    template 'page', { id => $id };
+  };
+
+If you're using the C<any> from List::Util more frequently than
+Dancer's C<any>, then you might decide you prefer to qualify the latter
+and import the former.
+
+However, you cannot selectively import functions from Dancer2, and you
+cannot use the qualified form C<Dancer2::any>, because there isn't
+actually an C<any> function in the C<Dancer2> package.
+
+The reason for this is that Dancer2's C<import> function (which is
+called when you C<use> it) does something clever, so that you can have
+multiple separate Dancer2 apps running in the same perl instance.
+
+  use Dancer2 appname => 'MyApp';
+
+NB: See L<http://advent.perldancer.org/2014/10> for more on C<appname>
+and running multiple apps.
+
+At this point, rather than exporting the function in the usual way,
+Dancer2 creates a new function in your package namespace, which calls a
+method of the same name on a L<Dancer2::Core::App> object which it has
+created for you (NB: most of the methods are actually in the
+L<Dancer2::Role::DSL> class).
+
+B<So is there any way to control which parts of Dancer's DSL to import?>
+
+The answer is yes - but you need to write another package of your own
+to act as a façade.
+
+=head2 Write your own DSL
+
+The solution is to write a package which C<use>s Dancer, and which
+provides the syntax you want to all your other packages.
+
+A simple package would look like:
+
+  package MyApp::DSL;
+  use Dancer2 appname => MyApp;
+  use Exporter;
+  1;
+
+(NB: DSL stands for "Domain Specific Language", and in this case is
+just a small collection of functions. Dancer is a DSL for writing
+Plack-based web apps).
+
+This would provide access to the Dancer DSL as follows:
+
+  use MyApp::DSL;
+  MyApp::DSL::get('/' => sub { ... });
+
+Having to prefix everything with C<MyApp::DSL::> isn't very nice, though.
+
+Modules like L<Exporter> provide a way to explicitly request that
+symbols be exported, for instance:
+
+  package MyApp::DSL;
+  use Dancer2 appname => 'MyApp';
+  use Exporter qw< import >;
+
+  our @EXPORT_OK = qw< get post put any del >;
+  1;
+
+Now you can write:
+
+  use MyApp::DSL qw< get post put del >;
+  get '/' => sub { ... };
+
+Or maybe in another route, you just want to retrieve values from your
+config? That's ok, too:
+
+  use MyApp::DSL qw< config >;
+  my @plugins = keys %{ config('plugins') };
+
+By listing functions in C<@EXPORT_OK>, we have allowed them to be
+exported when they are specified in the C<use> statement.
+
+Note that a limitation of this approach is that you need at least one
+package per app. If you're only running one app then this won't be an
+issue.
+
+=head2 Group your exports with tags
+
+Chances are you don't want to name each and every function you need in
+your C<use> statement in every. Luckily, Exporter provides more
+options, too. Populating C<@EXPORT> will cause those functions to
+always be exported. You can also use C<%EXPORT_TAGS> to export groups
+of symbols.
+
+Don't forget, it's not just Dancer2's functions that you can put in
+your DSL package. If you have other functions you use frequently and
+want to make available across your whole app (such as
+L<Scalar::Util/blessed>), you can add them too.
+
+This also gives you the opportunity to think about separation of
+concerns: for instance, you may decide that your route handling
+packages need access to all of Dancer2's functions, whereas the
+packages which handle your business logic and flow control don't need
+the route handling functions, while your schema packages have yet
+another set of functions.
+
+One strategy therefore is to create a different tag for each group of
+concerns, e.g. C<:controller>, C<:model>, C<:route>, etc.
+Alternatively, the tags could represent where the functions come from,
+e.g. C<:util>, C<:config>, C<:storage>, C<:routing>, etc.
+
+So now you know enough to be able to replace
+
+  use Scalar::Util qw< blessed >;
+  use List::Util qw< first all none sum >;
+  use Dancer2 appname => 'MyApp';
+  use Dancer2::Plugin::DBIC qw< schema resultset >;
+  use Dancer2::Plugin::Redis;
+
+with an expression like:
+
+  use MyApp::DSL qw< :util :storage :config >;
+
+or:
+
+  use MyApp::DSL qw< :model >;
+
+=head2 Author
+
+This article was written by
+Daniel Perrett C<< <perrettdl@googlemail.com> >> for the Perl Dancer
+Advent Calendar 2016.
+
+=head2 Copyright
+
+© 2016 Daniel Perrett; you are free to reuse code without restriction and text
+under the L<Creative Commons Attribution-ShareAlike License 4.0|http://creativecommons.org/licenses/by-sa/4.0/>.
+
+=cut
