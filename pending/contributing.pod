@@ -5,10 +5,9 @@ the advancement of Dancer and the community as a whole. The core team, in
 particular, relies on the community for bug reports, feature requests, and
 other information to find out how Dancer is used, what needs fixing, what
 needs improving, and how we can make the framework better for you. This
-guide is intended to show you, at a high level, how to get involved
-in the community, and things you can do to help further Dancer development
-and the community. Part 2 of this will focus on the gory details: how to set
-up a development environment for Dancer, and more.
+guide is intended to show you, at a high level, how to get involved in the 
+community, and things you can do to help further Dancer development and the 
+community. 
 
 Note: This applies primarily to Dancer2, but works for Dancer1 in some 
 regards. Dancer1 is not open for new feature development, but is actively
@@ -53,9 +52,42 @@ document. The Core Team takes violations of this policy very, very seriously.
 
 =head2 Sending a Documentation Patch
 
+This is one of the easiest ways to get involved, and how yours truly got his
+start in the Dancer community (so I know for a fact this is an effective 
+way!). We as developers are not always the best at documenting our own work,
+no matter how hard we try. We are biased, and used to looking at our work 
+in a particular way, and we cannot always explain how something should be 
+used in the best way, or document things in such a way that it answers all
+the questons a user may have. Dancer2 is no exception.
+
+Did you find a particular area of the docs to be hard to understand? Clarify
+it and send us a pull request on GitHub. Did we forget to document a 
+method or configuration setting? Send us a patch! Dancer's documentation is 
+a living work, and will evolve and improve over time with the help of our
+community. 
+
+Another useful addition to the documentation is to add a recipe to the 
+L<cookbook|Dancer2::Cookbook>. It's a great place to show a useful tip that
+doesn't really fit elsewhere in the documentation.
+
 =head2 Taking an Issue from the GitHub Queue
 
-=head2 Proposing/Implementing a Feature
+At the time of this writing, there are 82 current issues in the GitHub queue,
+13 of which are labelled Beginner Suitable. A great way to help out the 
+Dancer Core Team and the community is to pick up one of these issues, hack it
+out, and send us a pull request. No matter what your level of expertise is,
+there is something in the issue queue that will be suitable for you.
+
+Want to get your pull request looked at even quicker? By making sure your 
+pull request adequetely tests the issue you have tackled, it helps the Core
+Team fast track your work to the approval stage (because we don't have to
+write the tests...).
+
+We try to evaluate pull requests as quickly as we can. Please don't get 
+discouraged if it takes us a bit. A gentle reminder now and then is even ok,
+but remember we are all volunteers doing this for our love of Dancer too :)
+
+B<Note:> To get started hacking, make sure you have L<Dist::Zilla> installed.
 
 =head2 Writing a Plugin
 
@@ -75,10 +107,16 @@ Stuck for a plugin idea? Here's a few to get you started:
 =head2 Wrapping Up
 
 We've covered some of the ways that you can get involved in Dancer project. 
-The next article in this series will give you the gory details, such as
-working with L<Dist::Zilla>, how the core team decides on what gets 
-included, and more!
+No matter what level of experience you have with Perl or Dancer, everyone has
+a useful idea or skill they can contribute to the Dancer project and its 
+community. So what are you waiting for? :)
 
 =head2 Author
 
-Jason A. Crome (CromeDome) C<cromedome@cpan.org>
+This article has been written by Jason A. Crome (CromeDome) C<cromedome@cpan.org>
+for the Perl Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
