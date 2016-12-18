@@ -24,7 +24,7 @@ applications and use C<Plack::Builder> to glue them back together.
       mount '/'    => MyApp->to_app;
   };
 
-However if you have a small number of routes that required a templat engine
+However, if you have a small number of routes that required a template engine
 (or a small number that needed a serialization engine), the effort involved
 was onerous.
 
@@ -36,7 +36,7 @@ Dancer2's C<send_file> and C<to_json> using an in-memory file handle:
   set template   => 'template_toolkit';
 
   get '/html/route' => sub {
-      my $html = encode( 'UTF-8', template('awesome_template.tt') );
+      my $html = encode( 'UTF-8', template('awesome_template') );
       content_type => ''text/html; charset=UTF-8';
       send_file \$html;     # sends html
   };
@@ -64,7 +64,7 @@ to use c<send_as> keyword:
 Any Dancer2 serializer was supported, as well as HTML output:
 
   get '/api' => sub {
-      send_as HTML => template( 'instructions.tt' );
+      send_as HTML => template( 'instructions' );
   };
 
 Simple. Easy. Neat. Now that's the Dancer way!
@@ -102,7 +102,7 @@ serializer is defined:
        if ( $id !~ m/^[0-9]+$/ ) {
            # send HTML error page
            status 500;
-           send_as HTML => template('error.tt');
+           send_as HTML => template('error');
        }
        # Continue with the rest of route logic if id was an integer
        # Returns JSON content
