@@ -20,7 +20,7 @@ been implemented, and if not, get hacking on Dancer2!
 
 This is perhaps the easiest way to get involved, and one of the most important
 for the project. If you run into a bug while using Dancer - be it in the 
-core framework, a plugin - B<please> report it! While you can report it in
+core framework, or a plugin - B<please> report it! While you can report it in
 Dancer's IRC channel, it is not the most reliable reporting method available
 (that's not to say your report will get ignored there!).
 
@@ -38,17 +38,17 @@ community depends on B<you> to report bugs that you find along the way!
 
 A great way to participate and contribute to the Dancer project is to be active
 on the IRC channel. The Dancer Core Team strives to maintain a friendly and civil
-environment on the channel at all times, and users of C<#dancer> would generally
-agree that it's a pretty friendly place to be.
+environment on the channel at all times to all users.
 
 To get started, all you have to do is point your favorite IRC client to
-C<irg.perl.org#dancer> and you're off and running! Ask a question, answer
-a question, pitch your plugin idea... there are a number of ways for you 
-to get involved.
+C<irg.perl.org#dancer> and you're off and running. Don't have an IRC client? 
+The L<web interface|https://chat.mibbit.com/?channel=%23dancer&server=irc.perl.org> 
+is just a click away! Ask a question, answer a question, pitch your plugin idea... 
+there are a number of ways for you to get involved.
 
 All users are protected by our 
 L<community policy and community standards|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Policy.pod>
-document. The Core Team takes violations of this policy very, very seriously.
+document. The Core Team takes violations of this policy very seriously.
 
 =head2 Sending a Documentation Patch
 
@@ -74,8 +74,8 @@ doesn't really fit elsewhere in the documentation.
 
 At the time of this writing, there are 82 current issues in the GitHub queue,
 13 of which are labelled Beginner Suitable. A great way to help out the 
-Dancer Core Team and the community is to pick up one of these issues, hack it
-out, and send us a pull request. No matter what your level of expertise is,
+Dancer Core Team and the community is to pick up one of these issues, hack on
+it, and send us a pull request. No matter what your level of expertise is,
 there is something in the issue queue that will be suitable for you.
 
 Want to get your pull request looked at even quicker? By making sure your 
@@ -85,9 +85,16 @@ write the tests...).
 
 We try to evaluate pull requests as quickly as we can. Please don't get 
 discouraged if it takes us a bit. A gentle reminder now and then is even ok,
-but remember we are all volunteers doing this for our love of Dancer too :)
+but remember we are all volunteers doing this for our love of Dancer too. :)
 
-B<Note:> To get started hacking, make sure you have L<Dist::Zilla> installed.
+Are you not that familiar with GitHub? We accept patches in any format you can
+provider, but we are also happy to help you with your first pull request. If 
+you want a walk through of the process, hit up one of the Core Team members on
+IRC and we will be happy to help you out.
+
+B<Note:> To get started hacking, make sure you have L<Dist::Zilla> installed,
+as well as L<Dist::Zilla::PluginBundle::Dancer>, which has essential plugins 
+we use to build Dancer2.
 
 =head2 Writing a Plugin
 
