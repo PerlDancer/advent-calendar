@@ -2,13 +2,16 @@
 
 =head2 send_as BEER => 'Christmas Cheer'
 
-One Frequently Asked Question that arose in 2015 from several
-keen Dancer2 users was 
+One difference between Dancer and Dancer2 is that serializers are
+"Always or never". Sawyer X's L<2014 advent article|http://advent.perldancer.org/2014/11>
+explains why this change was important.
 
-  "How to return JSON from a specific route when we have a template
-  engine configured?"
+However one question that arose several times during 2015 from keen Dancer2 users was
 
-The best advice back then was to "split" you app into two distinct
+  "How do you return HTML from a specific route when we have a
+  serialization engine configured?"
+
+Back then, the best advice was to "split" your app into two distinct
 applications and use C<Plack::Builder> to glue them back together.
 
   # bin/app.psgi
@@ -21,26 +24,27 @@ applications and use C<Plack::Builder> to glue them back together.
       mount '/'    => MyApp->to_app;
   };
 
-However if you have a small number of routes that required serialization
-(or a small number that needed a template engine), the effort involved
+However if you have a small number of routes that required a templat engine
+(or a small number that needed a serialization engine), the effort involved
 was onerous.
 
 Other suboptimal solutions (including the use of eldritch horrors) were
 proposed in issues on github prior to a suggestion to use a combination of
 Dancer2's C<send_file> and C<to_json> using an in-memory file handle:
 
-  set template => 'TemplateToolkit';
+  set serializer => 'JSON';
+  set template   => 'template_toolkit';
 
-  get '/api/thing' => sub {
-      my $json = to_json { thing => { to => [ 'return' ] } };
-      content_type => 'application/json';
-      send_file \$json;     # sends json
+  get '/html/route' => sub {
+      my $html = encode( 'UTF-8', template('awesome_template.tt') );
+      content_type => ''text/html; charset=UTF-8';
+      send_file \$html;     # sends html
   };
 
 Which just works; but involves excessive boilerplate and one needs to take
 care with text encodings. That's not the Dancer way!
 
-=head2 Dancer2::Plugin::SendAs
+=head2 A prototype solution: Dancer2::Plugin::SendAs
 
 Conferences have many benefits! There is the awesome talks, the hallway
 track, the benefits of getting a group together and discussing a problem
@@ -55,7 +59,7 @@ to use c<send_as> keyword:
 
   get '/api/thing' => sub {
       send_as JSON => { thing => { to => [ 'return' ] } };
-  }; 
+  };
 
 Any Dancer2 serializer was supported, as well as HTML output:
 
@@ -69,7 +73,7 @@ Simple. Easy. Neat. Now that's the Dancer way!
 
 The C<SendAs> plugin solved a problem many Dancers' encountered. The core
 team decided to move the plugins' functionality into core in early 2016.
-(Did you know the C<to_json> and C<from_json> keywords started as a plugin too?) 
+(Did you know the C<to_json> and C<from_json> keywords started as a plugin too?)
 
 After cleaning up some edge cases and tweaking features, c<send_as> became
 a core keyword in the c<0.200000> release.
@@ -79,38 +83,34 @@ The key differences in the core implemantation are
 =over 4
 
 =item Serializers must use the appropriate casing of their names. eg.
-C<JSON> or C<Serial>.  C<HTML> is special cased for returning HTML
+C<JSON> or C<Sereal>.  C<HTML> is special cased for returning HTML
 content, and must be in upper case.
- 
+
 =item Serializers will load settings from the applications configuration.
 
 =back
-
-=head3 Lazy APIs
 
 Like C<send_file>, the C<send_as> keyword returns immediately from a route,
 allowing C<send_as> to short-circuit route logic, even when a
 serializer is defined:
 
    set serializer => 'JSON';
+   set template   => 'template_toolkit';
 
    post '/api/:id' => sub {
        my $id = request->route_parameter->get('id');
-       if ( $id !~ m/^[0-9]$/ ) {
-           # send JSON error (could use C<return>)
+       if ( $id !~ m/^[0-9]+$/ ) {
+           # send HTML error page
            status 500;
-           send_as JSON => { error => 'id not an integer' }; 
+           send_as HTML => template('error.tt');
        }
-       # continue with the rest of route logic.
-       #  that returns other JSON content
+       # Continue with the rest of route logic if id was an integer
+       # Returns JSON content
        ...
    };
 
-Hmmm that looks like the beginnings of another pattern to wrap up in a Plugin.
-Its not Christmas yet!
-
 C<Dancer2::Plugin::SendAs> remains on the CPAN (deprecated) for
-prosperity.
+posterity.
 
 =head2 Author
 
