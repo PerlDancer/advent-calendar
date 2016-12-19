@@ -1,0 +1,129 @@
+=head1 Contributing to Dancer
+
+The Dancer community is a fun, active, and engaged community, dedicated to 
+the advancement of Dancer and the community as a whole. The core team, in 
+particular, relies on the community for bug reports, feature requests, and
+other information to find out how Dancer is used, what needs fixing, what
+needs improving, and how we can make the framework better for you. This
+guide is intended to show you, at a high level, how to get involved in the 
+community, and things you can do to help further Dancer development and the 
+community. 
+
+Note: This applies primarily to Dancer2, but works for Dancer1 in some 
+regards. Dancer1 is not open for new feature development, but is actively
+maintained in a support-only mode; bug fixes and security patches are 
+incorporated in as timely a manner as possible. If you have a feature 
+idea and are using Dancer1, check the docs to see if it has already 
+been implemented, and if not, get hacking on Dancer2!
+
+=head2 Report a Bug
+
+This is perhaps the easiest way to get involved, and one of the most important
+for the project. If you run into a bug while using Dancer - be it in the 
+core framework, or a plugin - B<please> report it! While you can report it in
+Dancer's IRC channel, it is not the most reliable reporting method available
+(that's not to say your report will get ignored there!).
+
+Development of Dancer happens on Github. Your best bet for reporting a bug
+in Dancer is to go to the L<issue tracker on GitHub|https://github.com/PerlDancer/Dancer2/issues>.
+Before submitting a new bug, please be courteous and look to see if there
+is already an open issue for the problem you are observing, and if so, add
+whatever additional information you have to the existing issue.
+
+No matter how well we test Dancer during development, there is no way for us
+to find all of the potential bugs that may arise. The Core Team and the Dancer
+community depends on B<you> to report bugs that you find along the way!
+
+=head2 IRC
+
+A great way to participate and contribute to the Dancer project is to be active
+on the IRC channel. The Dancer Core Team strives to maintain a friendly and civil
+environment on the channel at all times to all users.
+
+To get started, all you have to do is point your favorite IRC client to
+C<irg.perl.org#dancer> and you're off and running. Don't have an IRC client? 
+The L<web interface|https://chat.mibbit.com/?channel=%23dancer&server=irc.perl.org> 
+is just a click away! Ask a question, answer a question, pitch your plugin idea... 
+there are a number of ways for you to get involved.
+
+All users are protected by our 
+L<community policy and community standards|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Policy.pod>
+document. The Core Team takes violations of this policy very seriously.
+
+=head2 Sending a Documentation Patch
+
+This is one of the easiest ways to get involved, and how yours truly got his
+start in the Dancer community (so I know for a fact this is an effective 
+way!). We as developers are not always the best at documenting our own work,
+no matter how hard we try. We are biased, and used to looking at our work 
+in a particular way, and we cannot always explain how something should be 
+used in the best way, or document things in such a way that it answers all
+the questons a user may have. Dancer2 is no exception.
+
+Did you find a particular area of the docs to be hard to understand? Clarify
+it and send us a pull request on GitHub. Did we forget to document a 
+method or configuration setting? Send us a patch! Dancer's documentation is 
+a living work, and will evolve and improve over time with the help of our
+community. 
+
+Another useful addition to the documentation is to add a recipe to the 
+L<cookbook|Dancer2::Cookbook>. It's a great place to show a useful tip that
+doesn't really fit elsewhere in the documentation.
+
+=head2 Taking an Issue from the GitHub Queue
+
+At the time of this writing, there are 82 current issues in the GitHub queue,
+13 of which are labelled Beginner Suitable. A great way to help out the 
+Dancer Core Team and the community is to pick up one of these issues, hack on
+it, and send us a pull request. No matter what your level of expertise is,
+there is something in the issue queue that will be suitable for you.
+
+Want to get your pull request looked at even quicker? By making sure your 
+pull request adequetely tests the issue you have tackled, it helps the Core
+Team fast track your work to the approval stage (because we don't have to
+write the tests...).
+
+We try to evaluate pull requests as quickly as we can. Please don't get 
+discouraged if it takes us a bit. A gentle reminder now and then is even ok,
+but remember we are all volunteers doing this for our love of Dancer too. :)
+
+Are you not that familiar with GitHub? We accept patches in any format you can
+provider, but we are also happy to help you with your first pull request. If 
+you want a walk through of the process, hit up one of the Core Team members on
+IRC and we will be happy to help you out.
+
+B<Note:> To get started hacking, make sure you have L<Dist::Zilla> installed,
+as well as L<Dist::Zilla::PluginBundle::Dancer>, which has essential plugins 
+we use to build Dancer2.
+
+=head2 Writing a Plugin
+
+One of the beauties of Dancer is its extendability, and this extendability
+is provided through a robust plugin system. While there are many plugins 
+available in the Dancer ecosystem, there is always room for more! Do you have
+an itch to scratch? Have some code that you use over and over again that
+you think other members of the community might benefit from? Release that as
+a plugin, throw it on CPAN, and tell the community about it!
+
+Stuck for a plugin idea? Here's a few to get you started:
+
+- L<Text::Handlebars> 
+- L<Log::Log4Perl> 
+- L<Log::Any>
+
+=head2 Wrapping Up
+
+We've covered some of the ways that you can get involved in Dancer project. 
+No matter what level of experience you have with Perl or Dancer, everyone has
+a useful idea or skill they can contribute to the Dancer project and its 
+community. So what are you waiting for? :)
+
+=head2 Author
+
+This article has been written by Jason A. Crome (CromeDome) C<cromedome@cpan.org>
+for the Perl Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
