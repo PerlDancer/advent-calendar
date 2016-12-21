@@ -1,0 +1,178 @@
+=pod
+
+=head1 How to avoid XSS issues easily
+
+XSS (fancy-talk for "Cross Side Scripting") is the security attack of
+injecting javascript into a page so that some other poor user will
+accidentally run unintentionally (and often with no knowledge of it
+either). Pretty cool, huh? Also pretty destructive.
+
+=head2 The trick about XSS
+
+The entire trick about XSS is that is works using a bigger principle
+of which you must have heard: Code injection!
+
+=head2 The trick about code injections
+
+Code injections only work due to one mistake we make. Here is the
+trick: trust. Trust is the problem. Just trust.
+
+=head2 Ne? Never!
+
+Of course we all know not to trust users. So why does this still
+happen? Because we don't realize where we implicitly trust them.
+Here's an example: Parameters in templates and queries.
+
+=head2 Templates
+
+Probably the most common source of XSS attacks is our templates.
+
+When we render a template, we provide a user with something to
+display, but because it's HTML, we also provide them with something
+they can I<run>. If the template renders as HTML, the HTML can
+contain Javascript. It can be at the end, or even embedded.
+
+I<Every HTML can contain Javascript>.
+
+Uh oh. This means that if we create the HTML... we can accidentally
+create HTML that can contain Javascript. If a user can control how
+the HTML is created, a user can control I<what> kind of Javascript
+is created with it, even if it wasn't supposed to contain any code.
+
+Let's write a small example in Perl:
+
+  my $name_from_user = prompt('Please enter your name: ');
+  render_template( 'template.tmpl', { 'name' => $name_from_user' } );
+
+Now let's assume the user gave the following as the name:
+
+  Sawyer<javascript>alert("Hey, what's up?")</javascript>
+
+This means that if we just use the variable C<name> in the template,
+we're accidentally adding Javascript code. Thus, XSS is born!
+
+=head2 Why is this bad?
+
+Simple!
+
+If I registered with that name, and Alice goes to a page that shows
+all the usernames, then Alice gets HTML that has my code in it.
+Alice's browser runs the Javascript and now gets a pop-up.
+
+Next time instead of a pop-up, I can just have it send the current
+browser cookies and passwords to some remote server I have.
+
+Or maybe I want to force Alice to go to some other website using a
+Javascript redirect and try to get her to purchase a product on
+which I get a commission? (I honestly did not just come up with it,
+I had to resolve such a problem.)
+
+Or maybe one of the other options I have when I can just run any
+Javascript code I want.
+
+=head2 Queries
+
+Another such example of trusted parameters is in queries. By using
+parameters we provided from the user in our queries, we provide
+inherent trust in their content as legal, correct, valid, and
+non-destructive SQL. That's often not the case, whether in honest
+mistake or in malice.
+
+If you are using value placeholders in L<DBI>, you're at least ahead of
+the curb, making sure it will get quoted correctly, but if you're just
+creating your own SQL code by using variables in the construction,
+you're putting yourself and your data at risk.
+
+=head2 Parameters
+
+But now you're thinking, "I know about this. I just escape all my
+variables". Good job! But what do you do about parameters? Do you
+validate and escape them before using them? Have you ever used a
+parameter in your template?
+
+Imagine the following code:
+
+    get '/' => sub {
+        my $name_from_user = query_parameters->get('name');
+
+        # render the "index" template
+        template 'index' => {
+            'name' => $name_from_user,
+        };
+    };
+
+
+The above code, the likes of which has been spotted by security,
+does just that. He takes input from the user and sends it to the
+template to be used. Injection complete.
+
+    get '/' => sub {
+        if ( failed_to_do_something ) {
+            redirect '/error?This%20Failed';
+        }
+
+        ...
+    };
+
+Now we redirect to a page that uses the parameter to know I<what>
+the error message is, it's content verbatim. A user that sees it
+can provide a different error instead and send it to someone else,
+in which case the error string can be javascript code that steals
+information. Whoops again!
+
+=head2 Fixes
+
+To fix, we can apply any of the following mechanisms:
+
+=over 4
+
+=item *
+
+Continue to HTML escape I<every> variable used, either in routing code
+or in the template.
+
+=item *
+
+Check user input better. If it's not a simple string, it fails. Make
+sure you allow Unicode character where appropriate!
+
+=item *
+
+In the example of the error, we could provide a key for a known error
+(like C</error?ErrorID=1>) and check that it's only a digit and only
+display the correlating error messages, which we have full control
+over.
+
+=back
+
+Escaping in the template is a good practice, since it is the boundary
+between one system and another. However, the boundary between the user
+input and your variables exists as well, and defending against it is
+also important.
+
+=head2 Conclusion
+
+The conclusion is simple: Parameters are not variables.
+
+While many of the template variables were at some point parameters from
+a user, there is still a fundamental difference between them. This difference
+(which makes the basis for all of these mistakes) is that parameters and
+template variables are substantially different things.
+
+Parameters come from the user. Template variables come from us. While we can
+trust ourselves (for the most part), we cannot trust what comes from the
+user, whether it's maliciously or just an honest mistake.
+
+Separating the two protects us from mistakenly using one verbatim for the
+other, and keeping the security team off our back. :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2016.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Sawyer X.
