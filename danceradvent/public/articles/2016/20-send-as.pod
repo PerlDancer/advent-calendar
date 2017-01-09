@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head2 send_as BEER => 'Christmas Cheer'
+=head1 send_as BEER => 'Christmas Cheer'
 
 One difference between Dancer and Dancer2 is that serializers are
 "Always or never". Sawyer X's L<2014 advent article|http://advent.perldancer.org/2014/11>
