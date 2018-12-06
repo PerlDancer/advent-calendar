@@ -1,0 +1,33 @@
+=head1 The Twelve Days of Dancer
+
+Hello and goodbye, 2018! It seems like we hardly knew you. It's been a few 
+years since our last calendar, and while everyone here is busy with other 
+projects, we still wanted to give you a mini-advent-calendar this year. 
+Welcome to the Twelve Days of Dancer!
+
+This year's calendar features twelve posts that cover a wide range of topics.
+We feature several new authors, cover some new ground (for us!) with an
+article on accessibility, and even have a crossover post showing how Dancer
+can be used with other frameworks.
+
+Without further ado, let's dance!
+
+=head2 State of the Dancer
+
+=head2 New Features
+
+=head2 Better Documentation
+
+=head2 Other Goodies
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
