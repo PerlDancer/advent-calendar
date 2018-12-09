@@ -1,0 +1,64 @@
+=head1 HISTORY
+
+I would call it re-birth. It all started during end of July 2017, I was going through the documentation 
+of L<Dancer2::Plugins|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Plugins.pod> and stumbled
+upon L<Dancer2::Plugin::Paginator>. To my surprise, I found the link broken. My initial thought was, if
+there was any typo in the name. All my investigation led to the dark corner of L<BackPAN|http://backpan.cpantesters.org/>.
+At this point, I decided to bring it live.
+
+
+=head1 REBIRTH
+
+Following the L<advise|http://neilb.org/2014/01/31/adoption-request.html> from Neil Bowers, I contacted the
+author B<Blabos de Blebe> by email, if he was happy for me take it forward. He not only encouraged me but also
+gave me permission to make it usable.
+
+=head1 CHALLENGE
+
+After the getting the push from the author, my first challenge was to make it compatible with L<Dancer2::Plugins|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Plugins.pod>.
+Having done this with other plugins e.g. L<Dancer2::Plugin::Captcha|https://metacpan.org/release/Dancer2-Plugin-Captcha>, 
+L<Dancer2::Plugin::Res|https://metacpan.org/release/Dancer2-Plugin-Res> and L<Dancer2::Plugin::Chain|https://metacpan.org/release/Dancer2-Plugin-Chain> earlier helped with this task.
+I should give credit to Sawyer X for this L<gift|http://advent.perldancer.org/2014/14>, part of L<Perl Dancer Advent Calendar 2014|http://advent.perldancer.org/2014>.
+
+=head1 EXAMPLE
+
+Let me show you an example as described in the official document for L<Dancer2::Plugin::Paginator|https://metacpan.org/release/Dancer2-Plugin-Paginator>.
+
+    use Dancer2;
+    use Dancer2::Plugin::Paginator;
+ 
+    get '/list' => sub {
+        my $paginator = paginator(
+	    'curr'     => $page,
+	    'items'    => rset('Post')->count,
+	    'base_url' => '/posts/page/',
+	);
+ 
+	template 'list', { paginator => $paginator };
+    };
+ 
+    dance;
+
+=head1 CONFIGURATION
+
+To bring the above example live, we need to tune the configuration slightly as below.
+
+    plugins:
+        Paginator:
+	    frame_size: 3
+	    page_size: 7
+
+=head1 CONCLUSION
+
+This is all you need, to get started. If you feel lucky, you can take a look at L<Paginator::Lite|https://metacpan.org/pod/Paginator::Lite> for more
+insights. Any questions/suggestions, feel free to get in touch mohammad.anwar@yahoo.com.
+
+=head2 AUTHOR
+
+This article has been written by Mohammad S Anwar for the Perl Dancer Advent Calendar 2018.
+
+=head2 COPYRIGHT
+
+No copyright retained. Enjoy.
+
+Mohammad S Anwar
