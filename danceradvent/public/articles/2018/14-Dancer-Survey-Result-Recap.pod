@@ -1,0 +1,67 @@
+=head1 Dancer Survey Result Recap
+
+=head2 Statistics
+
+112 responses
+86 (76.8) currently using Dancer
+60.5% using D2, with another 19.8% using both D1 and D2
+89.5% of respondents would recommend Dancer to another Perl developer, 46.5% would recommend it to a non-Perl developer
+41.2% planning to migrate D1 to D2
+48.2% of you wanted web sockets - you got them :)
+51.8% are happy with the community (lack of activity the common criticism)
+
+Oddly, 37.2% of you love the docs, and 37.2% of you hate them.
+
+=head2 Common reasons for recommending
+
+* Ease of use
+* Non-opinionated
+* Simplicity/ease of use
+* Light weight
+* Quality of documentation
+* Stability
+
+=head2 Common reasons for not recommending
+
+* Documentation
+* Plugin selection
+* Perl’s lack of sexiness
+
+=head2 Areas of improvement/things to improve
+
+* Be more community active
+* Deployment docs (lack of IIS)
+* Presentation of docs on website
+* How to construct larger apps
+* Improve async documentation
+* Port SimpleCRUD
+* Configuration
+* This stood out to me:
+    
+"More tutorials. Especially about deployment. I believe the greatest hurdle for new developers (as in new new, who start doing web stuff in Perl, or programming in general, with Dancer) is not to get started, but to get done. There is a lot of good content in all the major frameworks in the Perl ecosystem on how to build an application, but all of them lack in-depth tutorials with different alternatives for how to deploy them. This includes telling inexperienced users what hosting a web application means, what the different deployment types with PSGI do and which one to pick. I think having a really good guide would set Dancer apart from other frameworks."
+
+=head2 Cool uses of Dancer
+
+* Tau Station?
+* Service monitoring dashboard
+* VOIP provisioning app
+* Benefits management software
+* thegamecrafter.com component.studio tabletop.events wingapi.com
+* Unattended installation portal
+
+=head2 Feedback from survey that has been addressed
+
+* Lack of web sockets - see Yanick’s plugin
+* Documentation - number of patches since, with a manual rewrite in the works
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
