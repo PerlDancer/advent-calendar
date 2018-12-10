@@ -10,7 +10,7 @@ Following the L<advise|http://neilb.org/2014/01/31/adoption-request.html> from N
 
 =head2 CHALLENGE
 
-After the getting the push from the author, my first challenge was to make it compatible with L<Dancer2::Plugins|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Plugins.pod>. Having done this with other plugins e.g. L<Dancer2::Plugin::Captcha|https://metacpan.org/release/Dancer2-Plugin-Captcha>, L<Dancer2::Plugin::Res|https://metacpan.org/release/Dancer2-Plugin-Res> and L<Dancer2::Plugin::Chain|https://metacpan.org/release/Dancer2-Plugin-Chain> earlier helped with this task. I should give credit to Sawyer X for this L<gift|http://advent.perldancer.org/2014/14>, part of L<Perl Dancer Advent Calendar 2014|http://advent.perldancer.org/2014>.
+After getting the push from the author, my first challenge was to make it compatible with L<Dancer2::Plugins|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Plugins.pod>. Having done this with other plugins e.g. L<Dancer2::Plugin::Captcha|https://metacpan.org/release/Dancer2-Plugin-Captcha>, L<Dancer2::Plugin::Res|https://metacpan.org/release/Dancer2-Plugin-Res> and L<Dancer2::Plugin::Chain|https://metacpan.org/release/Dancer2-Plugin-Chain> earlier helped with this task. I should give credit to Sawyer X for this L<gift|http://advent.perldancer.org/2014/14>, part of L<Perl Dancer Advent Calendar 2014|http://advent.perldancer.org/2014>.
 
 =head2 EXAMPLE
 
@@ -42,7 +42,7 @@ To bring the above example live, we need to tune the configuration slightly as b
 
 =head2 REAL HANDS-ON
 
-Having seen the details, now let us try real example. I have got GitHub repository that I use to try new things related to Dancer2 i.e. <a href="https://github.com/manwar/Dancer2-Cookbook">Dancer2 Cookbook</a>. You should find a link"Books" showing the pagination magic.
+Having seen the details, now let us try real example. I have got GitHub repository that I use to try new things related to Dancer2 i.e. <a href="https://github.com/manwar/Dancer2-Cookbook">Dancer2 Cookbook</a>. You should find a link "Books" showing the pagination magic.
 
 =head3 Example Configuration
 
