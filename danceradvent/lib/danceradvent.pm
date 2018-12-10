@@ -159,6 +159,13 @@ sub _articles_viewable {
 
     my @articles;
     
+    # If this year is a twelve days of Dancer cut-down year, i.e. we have no
+    # article for the 1st but do for the 13th, then exclude the previous 12
+    # days:
+    if (!_article_exists($year, 1) && _article_exists($year, 13)) {
+        @days = grep { $_ >= 13 } @days;
+    }
+
     for my $day (@days) {
 
         push @articles, {
