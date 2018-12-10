@@ -69,6 +69,13 @@ get '/:year' => sub {
     my @all_entries 
         = grep { $_->{issued} != $today } _get_entries(params->{year});
 
+    # If this year doesn't have an article for day 1, but does for day 13, then
+    # it's a cut-down "Twelve Days of Dancer" year where we didn't have enough
+    # articles to fill the whole thing, so we use a different template in that
+    # case.
+    my $template = _article_exists(params->{year}, 1)
+        ? 'index' : 'index-twelvedays';
+
     # Assemble a list of other years which have viewable articles for links:
     my @other_years;
     for my $year (config->{start_year} .. (localtime)[5] + 1900) {
@@ -77,7 +84,7 @@ get '/:year' => sub {
                 grep { $_->{viewable} } @{ _articles_viewable($year) };
     }
 
-    return template 'index' => { 
+    return template $template => { 
         year => params->{year}, 
         articles => $articles, 
         all_entries => \@all_entries,
