@@ -63,8 +63,8 @@ get '/:year' => sub {
 
     my $articles = _articles_viewable(params->{year});
     
-    # Fetch the itles of all the posts so the template can provide a list
-    # of named posts. Exclude the today's article, to keep the mistery ;)
+    # Fetch the titles of all the posts so the template can provide a list
+    # of named posts. Exclude the today's article, to keep the mystery ;)
     my $today = DateTime->today();
     my @all_entries 
         = grep { $_->{issued} != $today } _get_entries(params->{year});
