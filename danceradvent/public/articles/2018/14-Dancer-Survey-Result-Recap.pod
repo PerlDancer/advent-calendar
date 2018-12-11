@@ -25,7 +25,7 @@ Oddly, 37.2% of you love the docs, and 37.2% of you hate them.
 
 * Documentation
 * Plugin selection
-* Perl’s lack of sexiness
+* Perl’s marketing/version drama/lack of sexiness/etc.
 
 =head2 Areas of improvement/things to improve
 
@@ -42,7 +42,6 @@ Oddly, 37.2% of you love the docs, and 37.2% of you hate them.
 
 =head2 Cool uses of Dancer
 
-* Tau Station?
 * Service monitoring dashboard
 * VOIP provisioning app
 * Benefits management software
