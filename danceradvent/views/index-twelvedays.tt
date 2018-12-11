@@ -1,0 +1,45 @@
+
+<h1>Perl Dancer Advent Calendar [% year %]</h1>
+
+<h2>The Twelve Days of Dancer</h2>
+
+<p>
+Happy Christmas, and welcome to the Dancer team's advent calendar for
+[% year %]!  We've gone for a cut-down "twelve days of Dancer" approach due to
+a shortage of quality posts and time - we'd rather put out fewer, better
+articles than just a load of filler.
+</p>
+
+[% IF other_years.size %]
+    <p>Other years:
+    [% FOR otheryear IN other_years %]
+    <a href="/[% otheryear %]">[% otheryear %]</a>
+    [% END %]
+    </p>
+[% END %]
+
+
+<div class="advent-calendar">
+[% FOR a IN articles %]
+    [% IF a.viewable -%]
+        <a class="advent-day" href="/[% year %]/[% a.day %]">[% a.day %]</a>
+    [%- ELSE -%]
+        <span class="advent-day">&nbsp;</span>
+    [%- END %]
+[% END %]
+</div>
+
+
+[% IF all_entries.size %]
+    <h2>Full article list</h2>
+    <p>
+    Here's a full list of the previous posts with their titles:
+    </p>
+    <ol>
+    [% FOR a IN all_entries %]
+        <li><a href="[% year %]/[% a.issued.day %]">[% a.title %]</a></li>
+    [% END %]
+    </ol>
+[% END %]
+
+
