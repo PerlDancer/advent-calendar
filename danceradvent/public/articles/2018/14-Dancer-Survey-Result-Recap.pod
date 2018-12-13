@@ -1,0 +1,145 @@
+=head1 Dancer Survey Result Recap
+
+Well, it's been way longer than it should have been, but I wanted to provide some information about the results of the 2017 Dancer Survey.
+
+=head2 Statistics
+
+Let's start off with some overall statistics:
+
+=over 4
+
+=item * There were 112 responses to the survey
+
+=item * 86 respondents (76.8%) are currently using Dancer(1)
+
+=item * 60.5% of those who responded are using Dancer2
+
+=item * 89.5% of respondents would recommend Dancer to another Perl developer, and 46.5% would recommend it to a non-Perl developer
+
+=item * 41.2% of Dancer(1) users are planning to migrate Dancer2
+
+=item * 48.2% of you wanted web sockets - and now you got them :)
+
+=item * 51.8% of respondents are happy with the community.
+
+=back
+
+Oddly enough, 37.2% of you love the docs, and 37.2% of you hate them. 
+
+This does give us some good insight into the direction users of Dancer are going. There are a number of Dancer users out there, with a growing shift towards Dancer2, and by and large, Dancer
+developers seem pretty happy. But we aren't content with merely happy, so let's see what people like and don't like, so we can see what can be improved.
+
+=head2 Common reasons for recommending
+
+There was a common theme among those who responded as to why they liked Dancer:
+
+=over 4
+
+=item * Simplicity/ease of use
+
+=item * Non-opinionated
+
+=item * Lightweight
+
+=item * Quality of documentation
+
+=item * Stability
+
+=back
+
+=head2 Common reasons for not recommending
+
+=over 4
+
+=item * Documentation
+
+=item * Plugin selection
+
+While we've seen the addition of some new plugins recently (for websockets, 
+Log4perl, and CHI, among others), we would love to see more. 
+
+=item * Negative public perception of Perl
+
+This is a hard problem to solve, and not one that is going to be solved by us alone.
+
+=back 
+
+=head2 Areas of improvement/things to improve
+
+There were some things that our community were anxious to see improved. I've listed items that came up multiple times:
+
+=over 4
+
+=item * Deployment docs (specifically, lack of IIS)
+
+=item * Presentation of docs on Dancer website
+
+=item * How to construct larger apps
+
+=item * Improve async documentation
+
+=item * Configuration
+
+=item * Be more community active
+
+This last item refers to the core team being more active on Stack Overflow, Perl Monks, and the like. To the best of our abilities, we will
+try to do so!
+
+=back
+
+This comment in particular stood out to me:
+    
+    "More tutorials. Especially about deployment. I believe the greatest 
+    hurdle for new developers (as in new new, who start doing web stuff 
+    in Perl, or programming in general, with Dancer) is not to get started, 
+    but to get done. There is a lot of good content in all the major 
+    frameworks in the Perl ecosystem on how to build an application, but 
+    all of them lack in-depth tutorials with different alternatives for how 
+    to deploy them. This includes telling inexperienced users what hosting a 
+    web application means, what the different deployment types with PSGI do 
+    and which one to pick. I think having a really good guide would set 
+    Dancer apart from other frameworks."
+
+This is certainly one area we have set out to improve in the documentation.
+
+=head2 Cool uses of Dancer
+
+Our users shared with us some of the cool things they have done with Dancer. 
+I'm considering doing some writeups on the Dancer website about some of them:
+
+=over 4
+
+=item * Service monitoring dashboard
+
+=item * VOIP provisioning app
+
+=item * Benefits management software
+
+=item * thegamecrafter.com (and their family of sites/applications)
+
+=item * Unattended installation portal
+ 
+=back 
+
+=head2 Wrapping it all up
+
+We received a lot of constructive feedback from this process, and while we might
+not do a survey every year, from time to time, this will be a good barometer
+of where things are and where we need to go.
+
+Some of the feedback we received has already been acted upon (websockets, doc
+improvements), and you can look forward to us addressing your other feedback
+as we are able. Right now, we are working on a better manual that has more 
+information about the things you'd most like to see. Stay tuned!
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+

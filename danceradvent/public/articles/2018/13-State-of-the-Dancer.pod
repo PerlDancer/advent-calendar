@@ -1,0 +1,103 @@
+=head1 The Twelve Days of Dancer
+
+Hello and goodbye, 2018! It seems like we hardly knew you. It's been a few 
+years since our last calendar, and while everyone here is busy with other 
+projects, we still wanted to give you a mini-advent-calendar this year. 
+Welcome to the Twelve Days of Dancer!
+
+This year's calendar features twelve posts that cover a wide range of topics.
+We feature several new authors, cover some new ground (for us!) with an
+article on accessibility, and even have a crossover post showing how Dancer
+can be used with other frameworks.
+
+Without further ado, let's dance!
+
+=head2 State of the Dancer
+
+In 2017 and 2018, we saw fewer but more significant updates to Dancer and 
+Dancer2. With Dancer (1) being in maintenance mode, updates come only when
+significant bugs are found, security vulnerabilities are found, or when a 
+change is proposed that greatly improve the lives of Dancer developers. 
+David Precious has been the light that guides Dancer(1) through the night,
+and has been an excellent resource for both the Dancer and Dancer2 communities
+on IRC and email.
+
+Meanwhile, Dancer2 continues to grow and evolve, though at a less frantic rate
+than earlier in its lifetime. Throughout the last two years, we've seen a 
+growing list of contributions from our community, through documentation 
+improvements, bug fixes, and new features.
+
+At the end of 2017, the Dancer Core Team ran a survey of Dancer developers to
+get community input on the Dancer project. We received an excellent response 
+to the survey, and it is being used to help guide the future direction of 
+Dancer and its community. The results of this survey will be discussed in 
+tomorrow's article.
+
+=head2 New Features
+
+Several significant new features came to pass since the last Advent Calendar:
+
+=head3 Websockets
+
+You asked, and Yanick delivered! L<Dancer2::Plugin::Websocket|https://metacpan.org/pod/Dancer2::Plugin::WebSocket>
+enables websockets from within your Dancer2 applications. To make this work
+properly, a non-blocking, streaming Plack server is needed (such as Twiggy).
+
+=head3 Mutable Serializer
+
+Dancer2 can now properly deserialize and serialize content based upon the 
+request headers. Even better, it's completely and easily configurable! Thanks
+to veryrusty for spearheading the effort to get this working! 
+
+=head3 No Default Middleware
+
+To support ETags and other similar features, the default Plack middleware used
+by Dancer2 can get in the way. To get around this, veryrusty added a 
+C<no_default_middleware> configuration option to Dancer2's F<config.yml> file
+to keep your application from using the default bundling of Plack middleware.
+
+=head2 Better Documentation
+
+Several dozen bug fixes, clarifications, and other enhancements have been made
+to the documentation, primarily by the Dancer2 community. As a result, the 
+quality of existing docs has been greatly improved.
+
+Several new examples have been added to both the Dancer2 distribution as well
+as the tutorial.
+
+Sawyer has started a significant project to rebuild the Dancer2 documentation 
+from scratch. The current docs lack a good description of why Dancer does 
+things a certain way, and doesn't give new users a good grounding in web 
+application design to know how and why some things should be done the way
+we've recommended. The new doc project aims to address this by detailing 
+important concepts in a clear and simple way.
+
+=head2 Performance Improvements
+
+Several important performance improvements were made to Dancer2, the most
+important of which being the migration from C<MooX::Types> to C<Type::Tiny>. 
+When C<Type::Tiny::XS> is used, the boost is even more significant.
+
+=head2 Security Improvements
+
+Two important security features were added:
+
+The session engine now requires a C<validate_id()> method to be implemented in
+the various session engines. This requirement shuts down an attack vector by
+making session IDs conform to a known format.
+
+SysPete implemented a C<change_session_id> keyword to easily change the 
+current session ID. This is a common (and recommended) security practice,
+especially when privilege level changes within an application.
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
