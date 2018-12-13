@@ -63,11 +63,18 @@ get '/:year' => sub {
 
     my $articles = _articles_viewable(params->{year});
     
-    # Fetch the itles of all the posts so the template can provide a list
-    # of named posts. Exclude the today's article, to keep the mistery ;)
+    # Fetch the titles of all the posts so the template can provide a list
+    # of named posts. Exclude the today's article, to keep the mystery ;)
     my $today = DateTime->today();
     my @all_entries 
         = grep { $_->{issued} != $today } _get_entries(params->{year});
+
+    # If this year doesn't have an article for day 1, but does for day 13, then
+    # it's a cut-down "Twelve Days of Dancer" year where we didn't have enough
+    # articles to fill the whole thing, so we use a different template in that
+    # case.
+    my $template = _article_exists(params->{year}, 1)
+        ? 'index' : 'index-twelvedays';
 
     # Assemble a list of other years which have viewable articles for links:
     my @other_years;
@@ -77,7 +84,7 @@ get '/:year' => sub {
                 grep { $_->{viewable} } @{ _articles_viewable($year) };
     }
 
-    return template 'index' => { 
+    return template $template => { 
         year => params->{year}, 
         articles => $articles, 
         all_entries => \@all_entries,
@@ -152,6 +159,13 @@ sub _articles_viewable {
 
     my @articles;
     
+    # If this year is a twelve days of Dancer cut-down year, i.e. we have no
+    # article for the 1st but do for the 13th, then exclude the previous 12
+    # days:
+    if (!_article_exists($year, 1) && _article_exists($year, 13)) {
+        @days = grep { $_ >= 13 } @days;
+    }
+
     for my $day (@days) {
 
         push @articles, {
