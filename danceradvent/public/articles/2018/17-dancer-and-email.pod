@@ -1,0 +1,131 @@
+=encoding utf8
+
+=head1 Dancer and Email
+
+Web applications regularly need to send email to its users, e.g. receipts or password reset links. 
+The L<Email|https://metacpan.org/pod/Dancer2::Plugin::Email> plugin for Dancer2 simplifies this task by
+providing the C<email> keyword and a sane default configuration.
+
+So the unavoidable "Hello world" example would look like:
+
+    email {
+        from => 'foo@perl.dance',
+        to => 'bar@perl.dance',
+        subject => 'Hello world',
+        text => 'Welcome to the dancefloor!',
+    };
+
+The more common case would be to use a template from your web application and turn it into a HTML email.
+
+Instead of using the C<template> keyword to return the HTML from your route to the browser, you generate HTML with a specific layout,
+store in a variable and send the email.
+
+    post '/welcome' => {
+      
+        my $html = template $template, $tokens, { layout => 'email' };
+
+        email {
+            from => 'foo@perl.dance',
+            to => 'bar@perl.dance',
+            subject => 'Welcome to the dancefloor!',
+            type => 'html',
+            body => $html,
+        }
+
+        redirect '/home';
+    }
+
+=head2 UTF-8
+
+Take care to encode your content and mail headers if it may contain UTF-8 characters.
+It might even look good in your email client if you don't do this, but not necessarily for other ones.
+
+    email {
+        from => 'foo@perl.dance',
+        to => 'bar@perl.dance',
+        subject => encode('MIME-Header', 'Über uns'),
+        type => 'html',
+        body => encode('UTF-8',
+            'Die Geschichte unseres Projekts begann mit dem französischen Entwicker Alexis Sukrieh ...'),
+    };
+
+=head2 Inline images
+
+You can simply deliver emails with links to images, but usually email clients would not load them without user interaction.
+It is possible though to attached the images to the email and reference them in the email body with a custom HTML tag:
+
+    email {
+        from      => 'foo@perl.dance',
+        to        => 'bar@perl.dance',
+        subject   => 'Welcome to the dancefloor!',
+        body      => q{<p>Image embedded: <img src="cid:mycid"/></p>},
+        type      => 'html',
+        attach    => [ { Id => 'mycid', Path => '/dancefloor/dcr-header-logo.pngpath/to/file' }],
+        multipart => 'related'
+};
+
+=head2 Providing plain text part
+
+L<HTML::FormatText::WithLinks|https://metacpan.org/pod/HTML::FormatText::WithLinks> makes it easy to provide a plain text version
+of your HTML email:
+ 
+    my $html = template $template, $tokens, { layout => 'email' };
+
+    my $f    = HTML::FormatText::WithLinks->new;
+    my $text = $f->parse($html);
+
+    email {
+        from => 'foo@perl.dance',
+        to => 'bar@perl.dance',
+        subject => 'Welcome to the dancefloor!',
+        body   => $text,
+        attach => {
+            Data     => $html,
+            Type     => "text/html"
+        },
+        multipart => 'alternative',
+    };
+
+=head2 Configuration
+
+=head3 Transports
+
+Under the hood the plugin uses L<Email::Sender|https://metacpan.org/pod/Email::Sender>, so you can utilize its transports instead of the "sendmail" one (local mail server).
+
+This is just a matter of adjusting your configuration:
+
+  plugins:
+    Email:
+      transport:
+        SMTP:
+          ssl: 1
+          host: 'mail.perl.dance'
+          port: 465
+          sasl_username: 'foo@perl.dance'
+          sasl_password: 'nevairbe'
+
+In development you want to B<prevent> email going out to B<real users>.
+
+This can be done with the L<Redirect|https://metacpan.org/pod/Email::Sender::Transport::Redirect> transport: 
+
+  plugins:
+    Email:
+      transport:
+        Sendmail:
+          redirect_address: racke@perl.dance
+
+All email will be send to the specificied address, but with extra headers added with the original recipients:
+
+  X-Intercepted-To: "Bar" <bar@perl.dance>
+  X-Intercepted-Cc: "Baz" <baz@perl.dance>
+
+=head3 Preseed headers
+
+If you have a standard email address and/or you want to have extra email headeers, you can specify these in the
+configuration as well:
+
+  plugins:
+    Email:
+      sender: "2019@perl.dance"
+      from: "Perl Dancer Conference 2019 <2019@perl.dance>"
+      X-Mailer: "PerlDance2018 4.0"
