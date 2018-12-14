@@ -1,0 +1,193 @@
+=head1 Customizing and extending your Dancer2 application generation
+
+Dancer2 provides a useful command line that helps you generate a
+Dancer2 application skeleton without having to write it yourself.
+
+For example, creating an app called C<My::Web::App>, you can run the following:
+
+    dancer2 gen -a My::Web::App
+
+The C<dancer2> command line has a few more options, which you can see, if
+you run C<dancer2 gen --help>.
+
+=head2 Changing the skeleton
+
+Dancer2 generates a skeleton that it useful for most developers, but if
+you are a seasoned Dancer2 developer, you might have a set of
+preferences not represented in the default skeleton.
+
+If it's different file setup that you want to have, you could partially
+achieve it with the C<dancer2 gen -s DIRECTORY>, indicating a different
+skeleton directory. But that doesn't fix all of it.
+
+To have full control over the entire scaffolding operation, you will
+need to have control of the command line implementation. Let me show
+you how.
+
+=head2 Extending in a class
+
+To extend the application in a class, you will need to write a new
+class with a new command. That class will then need to be loaded in your
+environment for you to enjoy it.
+
+There are two options:
+
+=over 4
+
+=item *
+
+Write a new distribution with your new module and install it locally. Done.
+
+=item *
+
+Write a new module and make the directory in which it sits available in
+your C<$PERL5LIB> environment variable.
+
+This option is more useful for companies that have a big library
+directory that is always available in the include directories list.
+
+An example of this:
+
+    # Creating the directory
+    $ mkdir -p /opt/perl/lib/Dancer2/CLI/Command/
+    $ cd /opt/perl/lib/Dancer2/CLI/Command/
+
+    # Putting a mostly-empty file
+    $ echo -e "package Dancer3::CLI::Command::new;\n1;" >> new.pm
+
+    # Now making sure this path is in PERL5LIB
+    # (replace the bashrc file path with your system's path)
+    echo "export PERL5LIB="/opt/perl/lib/:$PERL5LIB" >> /etc/bash.bashrc
+
+=head2 Writing your own command
+
+L<Dancer2> uses L<App::Cmd> to implement the C<dancer2> command line
+utility. This means you can introduce additional commands by just implementing
+a class.
+
+=head3 Writing a new command
+
+    package Dancer2::CLI::Command::activate
+    use strict;
+    use warnings;
+    use Path::Tiny qw< path >;
+    use App::Cmd::Setup -command;
+
+    sub description { 'Activating our application' }
+
+    sub opt_desc {
+        return (
+            [ 'directory|d', 'Application directory' ],
+            # More options...
+        );
+    }
+
+    sub validate_args {
+        my ( $self, $opt, $args ) = @_;
+        $opts->{'directory'}
+            or $self->usage_error('You did not provide a directory');
+
+        path( $opt->{'directory'} )->is_dir
+            or $self->usage_error('Path provided is not a directory');
+    }
+
+    sub execute {
+        my ( $self, $opt, $args ) = @_;
+        my $dir = $opts->{'directory'};
+        # Implement the application activation
+        # (Whatever that means...)
+    }
+
+    1;
+
+In this example, we introduce a new command to C<dancer2>. As long as
+this class is available in your path (such as via your C<$PERL5LIB>
+environment variable), you will be able to run the following:
+
+    $ dancer2 activate --directory foo/
+
+(The implementation of what "activation" means in this context is left
+to the reader.)
+
+But what if you want to provide an alteration of an existing command -
+the generation of the Dancer2 application?
+
+=head3 Writing a new command
+
+Let's say you have a set of adjustments you keep doing to your
+[company's] Dancer2 applications and you want to make these a default.
+
+You can write it as a new command or you can subclass the existing
+command and do whatever alterations you want before, during, and after
+the generation of the skeleton.
+
+  package Dancer2::CLI::Command::mygen;
+  use strict;
+  use warnings;
+  use Cwd (); # Our own dependencies
+
+  # Subclass the existing "gen" command
+  use parent 'Dancer2::CLI::Command::gen';
+
+  sub execute {
+    my ( $self, $opt, $args ) = @_;
+
+    # Do whatever you want in this area, before we generate
+
+    # For example, let's make sure the application
+    # matches a certain naming convention
+
+    my $app_name = $opt->{'application'};
+    $app_name =~ /^My::Company::App::/
+      or $self->usage_error('App must be prefixed by "My::Company::App");
+
+    # Maybe check we are only scaffolding in a particular directory
+    cwd() eq '/opt/my_company/webapps/'
+        or $self->usage_error('Only create apps in our webapps directory');
+
+    # At this point, we can run the original scaffolding
+    $self->SUPER::execute( $opt, $args );
+
+    # Now we finished generating, but we can contineu customizing what we have
+  }
+
+  1;
+
+Writing your own generation on top of the existing generation allows
+you to manage the input (including additional validation) and the
+output, giving you full control over the scaffolding process.
+
+Some examples on which customizations you might want to perform:
+
+=over 4
+
+=item * Add additional default imported classes
+
+=item * Change the output directory name
+
+=item * Update a database that we have a new application
+
+=item * Update your team with an email or IRC/Slack message
+
+=item * Remove files that are not applicable for your setup and add new ones
+
+=item * Write helpful output for the developer who scaffolded the app
+
+=back
+
+=head2 Conclusion
+
+I hope you find these techniques useful to introduce customization for
+your home-grown Dancer2 application setup. I know I do. :)
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2018 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
