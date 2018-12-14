@@ -53,11 +53,13 @@ An example of this:
     $ cd /opt/perl/lib/Dancer2/CLI/Command/
 
     # Putting a mostly-empty file
-    $ echo -e "package Dancer3::CLI::Command::new;\n1;" >> new.pm
+    $ echo -e "package Dancer2::CLI::Command::new;\n1;" >> new.pm
 
     # Now making sure this path is in PERL5LIB
     # (replace the bashrc file path with your system's path)
     echo "export PERL5LIB="/opt/perl/lib/:$PERL5LIB" >> /etc/bash.bashrc
+
+=back
 
 =head2 Writing your own command
 
