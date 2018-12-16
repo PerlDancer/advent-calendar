@@ -129,3 +129,8 @@ configuration as well:
       sender: "2019@perl.dance"
       from: "Perl Dancer Conference 2019 <2019@perl.dance>"
       X-Mailer: "PerlDance2018 4.0"
+
+=head2 Author
+
+This article has been written by racke for the Perl Dancer 
+Advent Calendar 2018.
