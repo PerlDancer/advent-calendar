@@ -50,7 +50,8 @@ code with our business models, we had to build some of our own plumbing around M
         lazy    => 1,
         default => sub( $self ) {
             $ENV{ MOJO_PUBSUB_EXPERIMENTAL } = 1;
-            Minion->new( mysql => MyJob::DBConnectionManager->new->get_connection_uri({ 
+            Minion->new( mysql => 
+              MyJob::DBConnectionManager->new->get_connection_uri({ 
                 db_type => 'feeds', 
                 io_type => 'rw',
             }));
@@ -85,11 +86,13 @@ With that in place, it was easy for our C<queue_job()> method to throw an error 
         my $queue    = $args->{ queue    } // 'default';
         my $job_args = $args->{ job_args };
 
-        die "queue_job(): Invalid job queue '$queue' specified" if $self->has_invalid_queues( $queue );
+        die "queue_job(): Invalid job queue '$queue' specified" 
+            if $self->has_invalid_queues( $queue );
 
         my %notes = ( title => $title, guid  => $guid );
 
-        return $self->runner->enqueue( $job_name => $job_args => { notes => \%notes, queue => $queue });
+        return $self->runner->enqueue( $job_name => $job_args => 
+            { notes => \%notes, queue => $queue });
     }
 
 =head2 Creating Jobs
@@ -112,7 +115,8 @@ And in the models themselves, creating a new queueable task was as easy as:
                 feed_id      => 2098,
                 group        => $company_db,
             );
-            MyJob::Models::FooBar->new( request_path => $request_path )->generate_xml({
+            MyJob::Models::FooBar->new( request_path => 
+              $request_path )->generate_xml({
                 pdf_guid     => $guid,
                 group        => $company_db,
                 force        => $force,
@@ -206,7 +210,8 @@ was attempting to run. If an unchecked exception occurs in a job, the worker wil
 
         $job->on( spawn => sub( $job, $pid ) {  
             $0 = "$title $guid";
-            $logger->info( "$title: Created child process $pid for job $id by parent $$ - $guid");
+            $logger->info( 
+                "$title: Created child process $pid for job $id by parent $$ - $guid");
         });
         
         $job->on( failed => sub( $job, $error ) {
@@ -228,7 +233,8 @@ Now, we apply the configuration (read below) to the worker. When the worker star
     my @queues   = @{ $hostconfig->{ queues }};
 
     if( $minion->has_invalid_queues( @queues ) ){
-        print "Invalid job queues specified: " . join( ',', $minion->get_invalid_queues( @queues ) );
+        print "Invalid job queues specified: " . join( ',', 
+            $minion->get_invalid_queues( @queues ) );
         say ". Aborting!";
         exit 1;
     }
@@ -244,7 +250,8 @@ Remember the YAML file we used to configure things up above? This last bit pulls
 hostname function):
 
     sub get_hostconfig {
-        my $minion_config = MyJob::Config->new({ filename => "environments/minions.yml" })->config;
+        my $minion_config = 
+            MyJob::Config->new({ filename => "environments/minions.yml" })->config;
         my $hostname      = get_hostname();
 
         if( exists $minion_config->{ $hostname }) {
@@ -266,3 +273,15 @@ is a true testament to the simplicity of working with Minion.
 
 We now have all the necessary pieces in place to scale our XML rendering both horizontally and vertically: thanks to Minion, we can easily run XML jobs across multiple boxes, and can more efficiently run 
 more jobs concurrently on the same hardware as before. This setup allows us to grow as quickly as our customer base does.
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
