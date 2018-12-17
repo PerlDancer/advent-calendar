@@ -221,7 +221,7 @@ By using Test::Mojo::Role::PSGI or by running against a locally-bound server, Te
 
 =head2 AUTHOR
 
-Joel (L<@joelaberger|https://twitter.com/joelaberger>) has Ph.D. in Physics from the University of Illinois at Chicago.
+Joel Berger (L<@joelaberger|https://twitter.com/joelaberger>) has Ph.D. in Physics from the University of Illinois at Chicago. 
 He an avid Perl user, L<author|https://metacpan.org/author/JBERGER>, and is a member of the Mojolicious Core Team.
 
 =head2 COPYRIGHT
