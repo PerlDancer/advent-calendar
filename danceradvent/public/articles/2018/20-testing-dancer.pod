@@ -1,4 +1,4 @@
-=head1 Testing Dancer
+=head1 Testing Dancer with Test::Mojo
 
 Authors of Dancer (and other) PSGI applications are probably accustomed to L<testing|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#TESTING> with L<Plack::Test|https://metacpan.org/pod/Plack::Test>, and while that is a venerated option, it is pretty bare-bones.
 
