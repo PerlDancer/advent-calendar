@@ -219,3 +219,11 @@ Testing WebSockets, even from a Dancer application, is easy!
 Although there are some great testing options in the PSGI space, Test::Mojo has lots of benefits for Dancer and PSGI users.
 By using Test::Mojo::Role::PSGI or by running against a locally-bound server, Test::Mojo can be a tool in the toolbox of any PSGI developer.
 
+=head2 AUTHOR
+
+Joel (L<@joelaberger|https://twitter.com/joelaberger>) has Ph.D. in Physics from the University of Illinois at Chicago.
+He an avid Perl user, L<author|https://metacpan.org/author/JBERGER>, and is a member of the Mojolicious Core Team.
+
+=head2 COPYRIGHT
+ 
+Copyright (c) 2018 Joel Berger
