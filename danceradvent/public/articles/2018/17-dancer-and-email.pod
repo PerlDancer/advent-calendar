@@ -119,6 +119,10 @@ All email will be send to the specificied address, but with extra headers added 
   X-Intercepted-To: "Bar" <bar@perl.dance>
   X-Intercepted-Cc: "Baz" <baz@perl.dance>
 
+Note: it's the presence of the C<redirect_address> parameter which tells the
+plugin you want mails redirected to that address, this will work with whatever
+transport you wish to use.
+
 =head3 Preseed headers
 
 If you have a standard email address and/or you want to have extra email headeers, you can specify these in the
