@@ -73,7 +73,7 @@ Using Log4perl is simple: use the logging keywords you are already familiar with
 
 Start your application and visit C<http://localhost:5000/>. You will see the following in your F<logs/mylog.log> file:
 
-    2018/12/18 21:36:02 DEBUG I'M IN THE INDEX 
+    2018/12/18 21:36:02 DEBUG I'M IN UR INDEX 
 
 =head2 Hey, I can't see my log messages on the screen!
 
