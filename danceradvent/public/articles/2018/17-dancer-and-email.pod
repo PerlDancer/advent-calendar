@@ -60,7 +60,7 @@ It is possible though to attached the images to the email and reference them in 
         subject   => 'Welcome to the dancefloor!',
         body      => q{<p>Image embedded: <img src="cid:mycid"/></p>},
         type      => 'html',
-        attach    => [ { Id => 'mycid', Path => '/dancefloor/dcr-header-logo.pngpath/to/file' }],
+        attach    => [ { Id => 'mycid', Path => '/dancefloor/dcr-header-logo.png' }],
         multipart => 'related'
 };
 
