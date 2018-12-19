@@ -1,0 +1,190 @@
+=head1 Parameter testing with Dancer2::Plugin::ParamTypes
+
+The most common web code you will ever write is testing your parameters.
+You might as well have a good way to do this.
+
+=head2 In the old ages
+
+Way back then, we used to write code to check all of our arguments.
+
+If we had a route that includes some ID, we would check that we
+received it and that it matches the type we want. We would then decide
+what to do if it doesn't match. Over time, we would clean up and
+refactor, and try to reuse the checking code.
+
+For example:
+
+    use Dancer2;
+    get '/:id' => sub {
+        my $id = route_parameters->{'id'};
+        if ( $id !~ /^[0-9]+$/ ) {
+            send_error 'Bad ID' => 400;
+        }
+
+        # optional
+        my $action = query_parameters->{'action'};
+        unless ( defined $action && length $action ) {
+            send_error 'Bad Action' => 400;
+        }
+
+        # use $id and maybe $action
+    };
+
+The more parameters we have, the more annoying it is to write these
+tests.
+
+But what's more revealing here is that this validation code is not
+actually part of our web code. It's input validation I<for> our web
+code.
+
+=head2 A different perspective
+
+What if - instead of having to write all of this code - we maintained
+the Dancer2 spirit and allowed you to B<declare> what your validation
+rules are, and have Dancer2 do the work for you?
+
+Lucky you! We have done just that with L<Dancer2::Plugin::ParamTypes>!
+
+=head3 Register your own types
+
+There are normally two options that type check syntax give you:
+
+=over 4 * Reinvent the available types
+
+We didn't want to create our own type system or type validations. There
+are already plenty of good ones.
+
+=over 4 * Hard-code a particular type system
+
+And we didn't want to tie the plugin with a specific type system
+because it might not suit you.
+
+=back
+
+Instead, we picked a third option: Allowing you to connect it with
+whatever you want.
+
+    use Dancer2;
+    use Dancer2::Plugin::ParamTypes;
+
+    # register an 'Int'
+    register_type_check(
+        'Int' => sub { $_[0] =~ /^[0-9]+$/ },
+    );
+
+You could also register existing type systems:
+
+    use MooX::Types::MooseLike::Base qw< Int >;
+    reigster_type_checks(
+        'Int' => sub { Int()->( $_[0] ) },
+    );
+
+=head3 Using your now-available types
+
+Once you register all the types you want, you could use them in your
+code with a simple stanza.
+
+    use Dancer2::Plugin::ParamTypes;
+    register_type_check(...);
+
+    # Indented to make it more readable
+    get '/:id' => with_types [
+                     [ 'route', 'id', 'Int' ],
+        'optional => [ 'query', 'action', 'Str' ],
+    ] => sub {...};
+
+=head2 Reusability, reusability, reusability
+
+L<Dancer2::Plugin::ParamTypes> was built with a company code-abase in
+mind, where you would like to have common types available. You could
+easily accomplish that by subclassing it.
+
+    package Dancer2::Plugin::MyCommonTypes;
+    use Dancer2::Plugin;
+
+    # Subclass the main plugin
+    extends('Dancer2::Plugin::ParamTypes');
+
+    # Provide your own 'with_types' keyword
+    plugin_keywords('with_types');
+
+    # Make our keyword call the parent plugin
+    sub with_types {
+        my $self = shift;
+        return $self->SUPER::with_types(@_);
+    }
+
+    # Register all of our own type checks at build time
+    sub BUILD {
+        my $self = shift;
+
+        $self->register_type_check(
+            'Int' => sub {...},
+        );
+
+        $self->register_type_check(...);
+        ...
+    }
+
+Now we have our own plugin that also provides C<with_types> which uses
+the original plugin with a set of registered type checks.
+
+    package MyApp;
+    use Dancer2;
+    use Dancer2::Plugin::MyCommonTypes;
+
+    get '/:id' => with_types [
+        [ 'route', 'id', 'Int' ],
+        ...
+    ] => sub {...};
+
+=head2 Could I do more with it?
+
+Absolutely!
+
+Type checking itself is the main role of this plugin, but you can also
+control how it behaves.
+
+The default action to perform when a type check fails is to error out,
+but you can decide to act differently by registering a different
+action.
+
+    register_type_action 'SoftError' => sub {
+        my ( $self, $details ) = @_;
+
+        warning "Parameter $details->{'name'} from $details->{'source'} "
+              . "failed checking for type $details->{'type'}, called "
+              . "action $details->{'action'}";
+
+        return;
+    };
+
+    get '/:id' => with_types [
+        [ 'query', 'age', 'Int', 'SoftError',
+    ] => sub {...};
+
+On a bad C<age> parameter, it will print out the following warning:
+
+  Parameter age from query failed checking for type Int, called action SoftError
+
+This means you can also register a set of actions that you want to call
+in different cases.
+
+=head2 Conclusion
+
+L<Dancer2::Plugin::ParamTypes> allows you to define your own types and
+your own actions, to create your own plugin that helps you maintain
+reusability and consistency across your application with fewer code
+duplication and less effort.
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl
+Dancer Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+2018 // Sawyer X C<< <xsawyerx@cpan.org> >>
+
