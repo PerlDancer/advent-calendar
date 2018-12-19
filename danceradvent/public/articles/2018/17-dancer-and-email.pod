@@ -125,7 +125,7 @@ transport you wish to use.
 
 =head3 Preseed headers
 
-If you have a standard email address and/or you want to have extra email headeers, you can specify these in the
+If you have a standard email address and/or you want to have extra email headers, you can specify these in the
 configuration as well:
 
   plugins:
