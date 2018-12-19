@@ -1,0 +1,156 @@
+=head1 Logging with Dancer2::Logger::Log4perl
+
+=head2 History
+
+It's late summer 2018, and there has been a hole in the logging ecosystem of Dancer2 for some time 
+now - we've been missing a Log4perl plugin. There are certainly a lot of great logging options 
+available (C<Dancer2::Logger::LogAny>, C<Dancer2::Logger::Syslog>, and C<Dancer2::Logger::LogReport> 
+to name a few), and a couple of them even include appenders for Log4perl. In looking at our own
+needs, however, they all seemed to be overkill.
+
+At C<$work>, everything is based on Log4perl (and, in our client-facing Java apps, Log4j), so 
+there has never been need for another logger. We'd been happily using C<Dancer::Logger::Log4perl>
+for years, and wanted to continue to use something familar to us. Before investing some time in
+writing our own Log4perl plugin for Dancer2, we expanded our search beyond metacpan, and were
+rewarded in doing so.
+
+We stumbled across a project from Ryan Larscheidt and Jon Miner at the University of Wisconsin.
+They wrote a Log4perl plugin for Dancer2 with the intent of releasing it, but as their priorities
+and projects shifted, it never made its way to CPAN. I used to go to MadMongers (Madison Perl Mongers),
+so before long, I was able to track them down and they gave me their blessing to release it. 
+
+A little packaging and a few tests later, C<Dancer2::Logger::Log4perl> was on its way to CPAN!
+
+=head2 Configuration
+
+First, we need to create a basic Log4perl configuration. Create a new Dancer2 application (I'll call
+mine C<TestLog4perl>), and in the application directory create a F<log4perl.conf> file with the following:
+
+    log4perl.rootLogger              = DEBUG, LOG1
+
+    log4perl.appender.LOG1           = Log::Log4perl::Appender::File
+    log4perl.appender.LOG1.filename  = logs/mylog.log
+    log4perl.appender.LOG1.mode      = append
+    log4perl.appender.LOG1.layout    = Log::Log4perl::Layout::PatternLayout
+    log4perl.appender.LOG1.layout.ConversionPattern = %d %p %m %n
+
+The first one defines our root application logger. The first parameter after the equals sign says
+what is the minimum level we should log. Since we are saying the minimum log level should be C<DEBUG>,
+any messages from Dancer2 itself, and anything logged at the C<core> level will be ignored. 
+
+After the minimum log level is a comma-separated list of appenders to write to. For now, we will create a
+single appender named C<LOG1> (we will see how to add a second appender below).  This will write
+to a file in the F<logs/> directory named F<mylog.log>, using the L<Log::Log4perl::Appender::File|https://metacpan.org/pod/Log::Log4perl::Appender::File>
+appender. When the app is started, it will append to an existing log file of that name (or create the file
+if necessary), and will write to it with a format specified by L<Log::Log4perl::Layout::PatternLayout|https://metacpan.org/pod/Log::Log4perl::Layout::PatternLayout>.
+
+Each appender can have its own configuration directives. Please consult the pod for each appender for a list
+of its configuration parameters. 
+
+Next, we have to tell our application that we are using C<Dancer2::Logger::Log4perl> as our preferred logger.
+Edit your F<environments/development.yml> file, and comment out the C<logger: "console"> line. Replace it
+with the following:
+
+    logger: log4perl
+    log: core
+    engines:
+       logger:
+          log4perl:
+             config_file: log4perl.conf
+
+This tells Dancer2 to use C<Dancer2::Logger::Log4perl> as its logging engine, and to send all levels of message to
+it. Finally, Log4perl should look for its configuration file in the root application directory in a file called
+F<log4perl.conf>.
+
+=head2 Usage
+
+Using Log4perl is simple: use the logging keywords you are already familiar with in Dancer:
+
+    get '/' => sub {
+        debug "I'M IN UR INDEX";
+        template 'index' => { 'title' => 'TestLog4perl' };
+    };
+
+Start your application and visit C<http://localhost:5000/>. You will see the following in your F<logs/mylog.log> file:
+
+    2018/12/18 21:36:02 DEBUG I'M IN THE INDEX 
+
+=head2 Hey, I can't see my log messages on the screen!
+
+That's because we didn't add a screen appender! With Log4perl, adding another appender is easy. Let's
+add another section to our F<log4perl.conf> file:
+
+    log4perl.appender.SCREEN         = Log::Log4perl::Appender::Screen
+    log4perl.appender.SCREEN.stderr  = 0
+    log4perl.appender.SCREEN.layout  = Log::Log4perl::Layout::PatternLayout
+    log4perl.appender.SCREEN.layout.ConversionPattern = %m %n
+
+This creates another appender named C<SCREEN>. We then need to tell our root logger to use this appender
+as well:
+
+    log4perl.rootLogger = DEBUG, LOG1, SCREEN
+
+Now, restart your application, and visit a route that has logging installed, and you will see your log
+message not only goes to the F<logs/mylog.log> file, but also displays on the console running your
+application. Easy!
+
+=head2 Some Gotchas
+
+There are a couple of important nuances you should be aware of:
+
+=over 4
+
+=item * Environment configuration replaces logging configuration
+
+If you put your logging configuration in F<config.yml> rather than one of your environment-specific
+configuration files (such as F<environments/development.yml>), you stand a good chance of not using
+the logging configuration you think you are using. The default configuration file for the development
+environment, for example, logs only to the console. If you put your Log4perl configuration in F<config.yml>
+and don't change your development configuration file, your Log4perl configuration will be passed over
+for the default console logger.
+
+From my own experience, B<always> configure your logger in your environment-specific configuration, unless
+you use the same configuration across all environments (I don't endorse this practice).
+
+=item * Core level messages are passed as log level trace, but will not be passed unless Dancer2's log level is core.
+
+Since C<core> doesn't have a good corresponding level in Log4perl, C<core> level messages are sent 
+over to Log4perl at the C<trace> log level. This B<only> happens when you set Dancer2's log level in your
+F<config.yml> file to C<core> however. So your preferred log level setting is respected, even if C<core> level 
+messages have to be reported at a different level.
+
+=item * C<log> should be set a lower priority than the lowest priority as set in your Log4perl configuration. 
+
+If it isn't, the log messages will not be passed to Log4perl. 
+
+=back
+
+=head2 Conclusion
+
+If Log4perl is all the logging you need in your Dancer2 applications, then C<Dancer2::Logger::Log4perl> is well worth
+a look. It gives you much of the functionality available to Log4perl while using the logging syntax built into Dancer2.
+This article should give you sufficient grounding to get going with Log4perl in your Dancer2 applications.
+
+=head2 Further Reading
+
+=over 4
+
+=item * L<Dancer2::Logger::Log4perl|https://metacpan.org/pod/Dancer2::Logger::Log4perl>
+
+=item * L<Log4perl|https://metacpan.org/pod/Log::Log4perl>
+
+=item * L<Log4Perl Tutorial|https://www.perl.com/pub/2002/09/11/log4perl.html/>
+
+=back
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
