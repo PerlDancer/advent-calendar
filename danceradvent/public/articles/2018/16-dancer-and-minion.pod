@@ -101,9 +101,9 @@ In our base model class (Moose-based), we would create an attribute for our job 
 
     has 'job_runner' => (
         is      => 'ro',
-        isa     => 'Empowered::JobQueue',
+        isa     => 'MyJob::JobQueue',
         lazy    => 1,
-        default => sub( $self ) { return Empowered::JobQueue->new->runner; },
+        default => sub( $self ) { return MyJob::JobQueue->new->runner; },
     );
 
 And in the models themselves, creating a new queueable task was as easy as:
