@@ -17,9 +17,9 @@ The Twelve Days of Dancer (starting December 13th):
 18 - Subclassing the Dancer CLI (Sawyer)
 19 - Logging with Dancer2::Logger::Log4perl (cromedome)
 20 - Testing Dancer2 apps with Test::Mojo (Joel Berger)
-21 - Using Dancer2::Logger::Console::Colored (simbabque)
+21 - Spam and bot prevention without the use of CAPTCHAs (cromedome)
 22 - ParamTypes, Part I & II (Sawyer)
-23 - Spam and bot prevention without the use of CAPTCHAs (cromedome)
+23 - Using Dancer2::Logger::Console::Colored (simbabque)
 24 - The future of Dancer (I can speak to projects I have in the works, but we can all collaborate on this one)
 
 For next year's calendar...

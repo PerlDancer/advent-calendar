@@ -33,7 +33,7 @@ Even before I learned about the accessibility issues with CAPTCHAs, I knew addin
 bad UX. It's shifting the burden of your problem onto your users. But when the only tool you think you possess 
 is a hammer, all of your problems start to look a lot like nails.
 
-The solution he encouraged me to pursue was to have two form fields on my contact form that should never get 
+The solution Job encouraged me to pursue was to have two form fields on my contact form that should never get 
 filled in: one that is a standard form field, but using CSS, is visually hidden from the user, and the other is
 to use a hidden form field. If any one of those fields is filled in, then you know you are dealing with a spambot,
 and you can take the appropriate action.
