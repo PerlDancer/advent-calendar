@@ -1,0 +1,134 @@
+=head1 Spam and bot prevention without the use of CAPTCHAs
+
+=head2 The problem
+
+I was writing a contact form for my LLC, and having been the victim of an automated form-filler in the
+past, I wanted to prevent getting spammed by my own contact form. My first instinct told me to add a CAPTCHA
+to the form as a means to ensure there's a human at the keyboard. But as it turns out, this isn't a great 
+solution for a variety of reasons.
+
+=head2 A little background
+
+I worked with my friend Job a few contracts back, and he is passionate about developing accessible software and
+educating other developers about accessibility issues. Job really opened my eyes to a lot of bad development 
+practices, and the problems they caused for users with accessibility needs. So when he heard I wanted to
+put a CAPTCHA on my form, he nearly had a stroke. When the initial shock wore off, we talked about how I could
+accomplish my goal, but do it in an accessible way.
+
+Why are CAPTCHAs bad for accessibility? I don't know about you, but even with good vision, I have a really 
+hard time reading the text on many CAPTCHAs. I cannot begin to imagine how much more difficult it would be 
+for a sighted user to attempt to read one. But many have audio, you say! Have you listened to a CAPTCHA
+that's read to you? I am slightly hard of hearing, and I am unable to make them out many times. And some
+clever developers have even found ways to circumvent the audio CAPTCHAs now.
+
+Even before I learned about the accessibility issues with CAPTCHAs, I knew adding one to my form was just
+bad UX. It's shifting the burden of your problem onto your users. But when the only tool you think you possess 
+is a hammer, all of your problems start to look a lot like nails.
+
+The solution he encouraged me to pursue was to have two form fields on my contact form that should never get 
+filled in: one that is a standard form field, but using CSS, is visually hidden from the user, and the other is
+to use a hidden form field. If any one of those fields is filled in, then you know you are dealing with a spambot,
+and you can take the appropriate action.
+
+=head2 Backend code
+
+Making this work in Dancer2 is really, really easy:
+
+    post '/contact' => sub {
+        my $spam_1 = body_parameters->get( 'spam_one' );
+        my $spam_2 = body_parameters->get( 'spam_two' );
+
+        redirect 'https://en.wikipedia.org/wiki/Three_Laws_of_Robotics'
+            if $spam_1 || $spam_2;
+
+        # Ok, we seem to be a real human, so do something...
+        my $contact;
+        my $name    = body_parameters->get( 'name'    );
+        my $email   = body_parameters->get( 'email'   );
+        my $subject = body_parameters->get( 'subject' );
+        my $message = body_parameters->get( 'message' );
+
+        # Now, your code to do something with the form info:
+        # - Put it in a database
+        # - email it
+        # - etc. etc.
+    };
+
+We look to see if either of the spam-catching form fields is populated. If either one of them is populated,
+we educate the bot in L<Asimov's Three Laws of Robotics|https://en.wikipedia.org/wiki/Three_Laws_of_Robotics>. 
+If not, we are reasonably certain we are dealing with a human, and we continue on our merry way.
+
+=head2 Front-end magic
+
+The front end is where things get a little more interesting (note: I have deliberately omitted any styling for
+the sake of brevity):
+
+    <form method="post" action="/contact" id="contact">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" placeholder="First and last name">
+
+        <label for="email">Email Address</label>
+        <input type="text" name="email" id="email" placeholder="someone@example.com">
+        
+        <label for="subject">Subject</label>
+        <input type="text" name="subject" id="subject" placeholder="Nature of inquiry?">
+        
+        <label for="message">Message</label>
+        <textarea name="message" id="message" placeholder="Message text"></textarea>
+
+        <label class="visuallyhidden">Don't fill this in!<input type="text" name="spam_one" tabindex="-1"></label>
+        <input type="hidden" name="spam_two">
+
+        <input type="submit">Send Request</input>
+    </form>
+
+For the most part, it's a standard HTML form with a couple of notable exceptions:
+
+    <label class="visuallyhidden">Don't fill this in!<input type="text" name="spam_one" tabindex="-1"></label>
+
+This uses a special CSS class, C<visuallyhidden>, to make this form field invisible to the user. By giving it 
+a C<tabindex="-1">, we make sure the user cannot accidentally tab to the field. There are still a few ways that 
+field could accidentally get focus however, so we help the user here by giving it a label that says "Don't fill 
+this in!"
+
+What does C<visuallyhidden> look like?
+
+    .visuallyhidden {
+        border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+
+The second preventative measure simply puts a hidden field on the page:
+    
+    <input type="hidden" name="spam_two">
+
+Screen readers know to ignore this because it's hidden, and because it's hidden, the page won't show this field.
+As a user, you won't ever have to fill it in.
+
+Thankfully, a lot of spam bots are stupid, and blindly fill in any form field they see. They can't parse the CSS
+in such a way that they can tell one of the fields is unusably hidden, and they often don't pay attention to
+the hidden attribute... so they fall right into our trap. Enjoy your free education, spambot!
+
+=head2 Final thoughts
+
+Is it foolproof? No, not by a longshot. Anyone who really wants to is going to find a way to spam you anyhow, 
+given a sufficient amount of time and motivation. But this will slow many down, and prevent a bunch, and 
+you won't drive sighted users away from your site.
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
