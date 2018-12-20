@@ -15,11 +15,19 @@ practices, and the problems they caused for users with accessibility needs. So w
 put a CAPTCHA on my form, he nearly had a stroke. When the initial shock wore off, we talked about how I could
 accomplish my goal, but do it in an accessible way.
 
+CAPTCHAs come in a number of shapes and sizes. At the time I wrote this, reCAPTCHA was the latest hotness. 
+It featured text that was really hard to read, and on occasion, featured audio for those who couldn't see or 
+read the text. They were also unfortunately stupidly easy to crack, and thanks to Mechanical Turk and other
+tricks, they quickly became a useless piece of nuisance for your average web user.
+
 Why are CAPTCHAs bad for accessibility? I don't know about you, but even with good vision, I have a really 
 hard time reading the text on many CAPTCHAs. I cannot begin to imagine how much more difficult it would be 
 for a sighted user to attempt to read one. But many have audio, you say! Have you listened to a CAPTCHA
 that's read to you? I am slightly hard of hearing, and I am unable to make them out many times. And some
-clever developers have even found ways to circumvent the audio CAPTCHAs now.
+clever developers have even found ways to circumvent the audio CAPTCHAs now. With more modern CAPTCHAs, users
+with screen readers and other assistive devices/settings can often exhibit some of the same signs that bots
+do, but unfortunately, you're not allowed to declare or prove your humanity - it's all up to a machine
+learning algorithm, and once you're marked a bot, things are out of your control.
 
 Even before I learned about the accessibility issues with CAPTCHAs, I knew adding one to my form was just
 bad UX. It's shifting the burden of your problem onto your users. But when the only tool you think you possess 
@@ -119,7 +127,8 @@ the hidden attribute... so they fall right into our trap. Enjoy your free educat
 
 Is it foolproof? No, not by a longshot. Anyone who really wants to is going to find a way to spam you anyhow, 
 given a sufficient amount of time and motivation. But this will slow many down, and prevent a bunch, and 
-you won't drive sighted users away from your site.
+you won't drive sighted users away from your site. In the three and a half years I have used this, only two
+spambots have made it through, and my server logs indicate that many others have tried.
 
 =head2 Author
 
