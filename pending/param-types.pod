@@ -68,9 +68,7 @@ whatever you want.
     use Dancer2::Plugin::ParamTypes;
 
     # register an 'Int'
-    register_type_check(
-        'Int' => sub { $_[0] =~ /^[0-9]+$/ },
-    );
+    register_type_check 'Int' => sub { $_[0] =~ /^[0-9]+$/ };
 
 You could also register existing type systems:
 
@@ -91,7 +89,15 @@ code with a simple stanza.
     get '/:id' => with_types [
                      [ 'route', 'id', 'Int' ],
         'optional => [ 'query', 'action', 'Str' ],
-    ] => sub {...};
+    ] => sub {
+        my $id = route_parameters->{'id'};
+
+        # do something with $id because we know it exists and validated
+
+        if ( my $action = query_parameters->{'action'} ) {
+            # if it exists, we know it's validated
+        }
+    };
 
 =head2 Reusability, reusability, reusability
 
@@ -118,11 +124,12 @@ easily accomplish that by subclassing it.
     sub BUILD {
         my $self = shift;
 
-        $self->register_type_check(
-            'Int' => sub {...},
-        );
+        $self->register_type_check 'Str'         => sub {...};
+        $self->register_type_check 'ShortStr'    => sub {...};
+        $self->register_type_check 'PositiveInt' => sub {...};
+        $self->register_type_check 'SHA1'        => sub {...};
 
-        $self->register_type_check(...);
+        # Maybe more?
         ...
     }
 
@@ -133,14 +140,48 @@ the original plugin with a set of registered type checks.
     use Dancer2;
     use Dancer2::Plugin::MyCommonTypes;
 
-    get '/:id' => with_types [
-        [ 'route', 'id', 'Int' ],
+    post '/:entity/update/:id' => with_types [
+        [ 'route', 'entity',  'Str'         ],
+        [ 'route', 'id',      'PositiveInt' ],
+        [ 'body',  'message', 'Str'         ],
+
+        'optional' => [ 'body', 'sid', 'SHA1' ],
+    ] => sub {
+        my ( $entity, $id ) = @{ route_parameters() }{qw< id entity >};
+        my $message = body_parameters->{'message'};
+        my $sid     = body_parameters->{'sid'} || '';
+
+        # everything is validated and required parameters are checked
         ...
-    ] => sub {...};
+    };
 
 =head2 Could I do more with it?
 
 Absolutely!
+
+=head3 Handle multiple sources
+
+Normally, you would dictate to a user how they should send their
+paramters (in the query, in the body, or as part of the path - in the
+route), but sometimes you cannot control this. Maybe you're maintaining
+an old interface or supporting outdated APIs.
+
+L<Dancer2::Plugin::ParamTypes> is flexible enough to support multiple
+sources for an argument:
+
+    any [ 'get', 'post' ] => '/:entity/:id' => with_types [
+        [ 'route',             'entity', 'Str' ],
+        [ 'route',             'id',     'PositiveInt' ],
+        [ [ 'query', 'body' ], 'format', 'Str' ],
+
+        'optional' => [ 'body', 'sid', 'SHA1' ],
+    ] => sub {...};
+
+In this form, the parameter C<format> can be provided either in the
+query string or in the body, because your route might be either a
+B<GET> or a B<POST>.
+
+=head3 Register type actions
 
 Type checking itself is the main role of this plugin, but you can also
 control how it behaves.
