@@ -1,0 +1,75 @@
+=head1 What's next for Dancer? (looking into the future)
+
+It's been a busy year, and we got a lot to be happy about. But there is always more work to
+be done, and always more improvements to be made.
+
+This list is by no means exhaustive, but it should give you a little glimpse for some of the 
+things we have in store for 2019:
+
+=over 4
+
+=item * New Documentation
+
+You asked for it, and I made reference to it on day 1, all new documentation is coming in
+2019. While many of you love the docs, a lot of you don't, and thanks to your comments in last
+year's survey, we think we have a good understanding of why. 
+
+The new documentation branch is well underway, and addresses the shortcomings of the existing 
+documentation by explaining important concepts in a clear and simple way. You'll have a better
+understanding of how and why Dancer2 does the things it does.
+
+New users will get some grounding in web development techniques, too. There's a lot of great
+changes for everyone!
+
+=item * New Website
+
+There's a lot of great information on the Dancer website, but it's looking tired. There's a 
+lot of new information to be added, and with a fresh coat of paint, Dancer's website will be as
+great as the software powering it.
+
+=item * More configuration options
+
+Configuration in Dancer2 leaves a lot to be desired (and I'll admit that I am a big part of 
+the reason for why that is). Look for an overhaul of the configuration system in 2019, which
+starts with a barebones configuration system and allows for pluggable configuration engines
+(much like loggers and sessions in Dancer2). Since we are dedicated to not breaking working 
+code, all of the existing configuration logic would be packaged as a plugin and enabled
+out of the box.
+
+=item * Inline parameter type checking
+
+Very similar in many ways to Sawyer's L<Dancer2::Plugin::ParamTypes|https://metacpan.org/pod/Dancer2::Plugin::ParamTypes>
+plugin, but provided as core functionality. SysPete is actively developing a way to provide
+(optional) type checking of parameters within the core of Dancer2.
+
+In case you haven't read L<Sawyer's article|http://advent.perldancer.org/2018/22> 
+about type checking parameters passed to your Dancer applications, I highly recommend 
+it. It will change the way you do data validation.
+
+=item * Continued support for Dancer (1)
+
+While most all of our effort is spent on Dancer2 these days, there are no plans to sunset
+Dancer (1) as of now. Many of the core developers are still actively maintaining applications
+written in Dancer, as is much of our community. 
+
+It is still our hope, however, that with an easy migration path from Dancer to Dancer2 that more
+of you will make the switch in 2019.
+
+=back
+
+=head2 Happy Holidays!
+
+We hope all of you have a safe and happy holiday season, and we look forward to a great 2019! 
+Until then, keep on Dancing!
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome
+
