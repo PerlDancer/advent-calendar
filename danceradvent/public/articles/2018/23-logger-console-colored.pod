@@ -1,0 +1,144 @@
+=head1 Dancer2::Logger::Console::Colored
+
+During development the console output of your app is often one of the most important tools.
+But sometimes there is just too much noise, and changing the log settings all the time is not convenient.
+Of course you can grep the log or scroll, but wouldn't it be nice to get visual clues for what you're looking for?
+
+With L<Dancer2::Logger::Console::Colored> you can do that. It's a drop-in replacement for the default
+console logger, but with color. It will make the message appear in color depending on the levels. You can turn
+it on by setting your logger in your environment config file:
+
+    logger: "Console::Colored"
+
+Your log will instantly become cheerful and seasonal according to this default configuration:
+
+    # config.yml (these are the defaults)
+    engines:
+      logger:
+        Console::Colored:
+          colored_origin: "cyan"
+          colored_levels:
+            core: "bold bright_white"
+            debug: "bold bright_blue"
+            info: "bold green"
+            warning: "bold yellow"
+            error: "bold yellow on_red"
+          colored_messages:
+            core: "bold bright_white"
+            debug: "bold bright_blue"
+            info: "bold green"
+            warning: "bold yellow"
+            error: "bold yellow on_red"
+
+=for html <img src="/images/2018/23/log-1.png">
+
+The C<colored_origin> refers to the part of the message that shows the package that this
+message originated in, as well as the file name and line.
+
+    >> Dancer2 v0.207000 server 28764 listening on http://0.0.0.0:3000
+    [main:28764] debug @2018-12-19 20:31:06> Hello World in test.pl l. 6
+     ^^^^                                                   ^^^^^^^    ^
+     
+The C<colored_levels> are the log levels themselves.
+
+    [main:28764] debug @2018-12-19 20:31:06> Hello World in test.pl l. 6
+                 ^^^^^
+
+And the C<colored_messages> refer to the actual message.
+
+    [main:28764] debug @2018-12-19 20:31:06> Hello World in test.pl l. 6
+                                             ^^^^^^^^^^^
+
+The colors are the same kind of color strings used by L<Term::ANSIColor>. The first
+color refers to the foreground, and the second one to the background. You can add an optional C<bold>.
+
+    [bold] [foreground] [on_background]
+
+=head2 Changing the log message
+
+If you don't like the default log format, you can change it with the C<log_format> setting, which is
+documented in detail in L<Dancer2::Core::Role::Logger>. You can just stick it in with the other configuration.
+
+    # config.yml (this is the default)
+    engines:
+      logger:
+        Console::Colored:
+          log_format: "[%a:%P] %L @%T> %m in %f l. %l"
+
+Usually you would run a single-worker server during development, so there is no need for request IDs.
+And since the message is now colored, we can also drop the log level. How about a simple format like
+the following:
+
+    %t %f:%l> %m
+    # 20/Dec/2018 16:41:07 MyApp.pm:22> Hello World
+ 
+=head2 I know regular expressions!
+ 
+Sometimes just reading the log is not enough. You're looking for a specific piece of information. There
+are three pages of log for a single request, and debugging is hard work. Grepping is an option,
+but you need to look for a complex pattern. Maybe a product SKU, a date or some other piece of information.
+
+With Dancer2::Logger::Console::Colored you can actually make it come out with a background color so you
+can spot it easily, without having to change your code (or your added debugging log statements). Instead,
+you can put a regular expression into your configuration file.
+ 
+    # config.yml
+    engines:
+      logger:
+        Console::Colored:
+          colored_regex:
+           - re: "customer number \d+"
+             color: "bold red"
+
+This will find customer numbers according to the pattern and make them bold and red. You can supply
+a regular expression pattern and a color setting.
+
+=for html <img src="/images/2018/23/log-2.png">
+
+Note that there is a list under the C<colored_regex> key. This means you can actually have
+multiple patterns. Even really simple ones that make C<print> style debugging easy
+and attractive.
+
+    # config.yml
+    engines:
+      logger:
+        Console::Colored:
+          colored_regex:
+           - re: "customer number \d+"
+             color: "bold red"
+           - re: "\bhere\b"
+             color: "white on_green"
+
+If you want to highlight an entire log message in a specific color, you can set a pattern that captures
+everything. However, this works on the message only, and not on the entire formatted line of log output.
+(Patches welcome!)
+
+    # config.yml
+    engines:
+      logger:
+        Console::Colored:
+          colored_regex:
+            - re: ".+here.+"
+              color: "white on_red"
+
+=for html <img src="/images/2018/23/log-3.png">
+
+This opens up a lot of possibilities, for debugging as well as for general logging during development.
+
+=head2 What else?
+
+There are still some feature ideas in the backlog, but it's already pretty useful. If you would
+like to see additional features, please feel free to
+[open an issue on github](https://github.com/simbabque/Dancer2-Logger-Console-Colored/issues).
+
+And if you happen to use Mojolicious as well and need something similar, take a look at
+L<Mojo::Log::Colored>, which is in the early stages of development, but works quite well.
+
+=head2 Author
+
+This article has been written by Julien Fiegehenn (simbabque) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
