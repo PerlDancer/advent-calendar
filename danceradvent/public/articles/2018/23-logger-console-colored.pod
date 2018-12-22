@@ -10,7 +10,7 @@ it on by setting your logger in your environment config file:
 
     logger: "Console::Colored"
 
-Your log will become colorful according to this default configuration:
+Your log will instantly become cheerful and seasonal according to this default configuration:
 
     # config.yml (these are the defaults)
     engines:
@@ -29,6 +29,8 @@ Your log will become colorful according to this default configuration:
             info: "bold green"
             warning: "bold yellow"
             error: "bold yellow on_red"
+
+=for html <img src="/images/2018/23/log-1.png">
 
 The C<colored_origin> refers to the part of the message that shows the package that this
 message originated in, as well as the file name and line.
@@ -55,7 +57,7 @@ color refers to the foreground, and the second one to the background. You can ad
 =head2 Changing the log message
 
 If you don't like the default log format, you can change it with the C<log_format> setting, which is
-documented in detail in L<Dancer2::Core::Role::Logger>. You can put it in with the other configuration.
+documented in detail in L<Dancer2::Core::Role::Logger>. You can just stick it in with the other configuration.
 
     # config.yml (this is the default)
     engines:
@@ -70,15 +72,15 @@ the following:
     %t %f:%l> %m
     # 20/Dec/2018 16:41:07 MyApp.pm:22> Hello World
  
- =head2 I know regular expressions!
+=head2 I know regular expressions!
  
- Sometimes just reading the log is not enough. You're looking for a specific piece of information. There
- are three pages of log for a single request, and debugging is hard work. Grepping is an option,
- but you need to look for a complex pattern. Maybe a product SKU, a date or some other piece of information.
- 
- With Dancer2::Logger::Console::Colored you can actually make it come out with a background color so you
- can spot it easily, without having to change your code (or your added debugging log statements). Instead,
- you can put a regular expression into your configuration file.
+Sometimes just reading the log is not enough. You're looking for a specific piece of information. There
+are three pages of log for a single request, and debugging is hard work. Grepping is an option,
+but you need to look for a complex pattern. Maybe a product SKU, a date or some other piece of information.
+
+With Dancer2::Logger::Console::Colored you can actually make it come out with a background color so you
+can spot it easily, without having to change your code (or your added debugging log statements). Instead,
+you can put a regular expression into your configuration file.
  
     # config.yml
     engines:
@@ -90,6 +92,8 @@ the following:
 
 This will find customer numbers according to the pattern and make them bold and red. You can supply
 a regular expression pattern and a color setting.
+
+=for html <img src="/images/2018/23/log-2.png">
 
 Note that there is a list under the C<colored_regex> key. This means you can actually have
 multiple patterns. Even really simple ones that make C<print> style debugging easy
@@ -107,6 +111,7 @@ and attractive.
 
 If you want to highlight an entire log message in a specific color, you can set a pattern that captures
 everything. However, this works on the message only, and not on the entire formatted line of log output.
+(Patches welcome!)
 
     # config.yml
     engines:
@@ -116,13 +121,24 @@ everything. However, this works on the message only, and not on the entire forma
             - re: ".+here.+"
               color: "white on_red"
 
+=for html <img src="/images/2018/23/log-3.png">
+
 This opens up a lot of possibilities, for debugging as well as for general logging during development.
 
 =head2 What else?
 
 There are still some feature ideas in the backlog, but it's already pretty useful. If you would
-like to see additional features, please feel free to open a ticket on github.
+like to see additional features, please feel free to
+[open an issue on github](https://github.com/simbabque/Dancer2-Logger-Console-Colored/issues).
 
 And if you happen to use Mojolicious as well and need something similar, take a look at
 L<Mojo::Log::Colored>, which is in the early stages of development, but works quite well.
 
+=head2 Author
+
+This article has been written by Julien Fiegehenn (simbabque) for the Perl Dancer 
+Advent Calendar 2018.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
