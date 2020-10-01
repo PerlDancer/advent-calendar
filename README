@@ -1,6 +1,6 @@
 Dancer advent calendar 2018 - The Twelve Days of Dancer!
 
-Article suggestions / volunteers to write them very much appreciated.
+Article suggestions/volunteers to write to them very much appreciated.
 
 This is the current state of the 2018 Advent Calendar. A few things have
 yet to be confirmed, so this list may go through another iteration or two.
@@ -11,12 +11,12 @@ email the dancer-users mailing list, or contact cromedome@cpan.org - thanks!
 The Twelve Days of Dancer (starting December 13th):
 13 - State of the Dancer (cromedome)
 14 - Dancer Survey Result Recap (cromedome)
-15 - Dancer2::Plugin::Paginator (manwar)
+15 - Dancer2::Plugin:: Paginator (malware)
 16 - Dancer2 and Minion (cromedome)
 17 - Dancer and Email (racke)
 18 - Subclassing the Dancer CLI (Sawyer)
 19 - Logging with Dancer2::Logger::Log4perl (cromedome)
-20 - Testing Dancer2 apps with Test::Mojo (Joel Berger)
+20 - Testing Dancer2 apps with Test:: Mojo (Joel Berger)
 21 - Spam and bot prevention without the use of CAPTCHAs (cromedome)
 22 - ParamTypes, Part I & II (Sawyer)
 23 - Using Dancer2::Logger::Console::Colored (simbabque)
