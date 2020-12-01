@@ -1,0 +1,226 @@
+=head1 What's a Quarren?
+
+It is almost a rite of passage, it seems, and not just in Perl, but in any development 
+ecosystem...a developer reaches a certain point in their career where they think they
+might have a better idea for a better CMS, so they write one.
+
+To be fair, some of these developer mid-life crises come earlier or later in the
+career. In my case, well, I've been at this for 30 years, so it's about time, I suppose.
+Some are built because of a specific itch that the developer wants to scratch, and for more than
+a few, "because I can" seems to be sufficient reason.  For me, it's a little bit of both reasons.
+
+I have managed several web sites in the course of my career,
+from a single-page static, to big multi-page statics, to data-driven dynamic content. For
+each, it seems, you need a different sort of CMS.
+
+That irritated me, but for the longest time, I knew I didn't have the tools I needed to do
+the job I wanted, or the time to flesh it out. My current job gave me most all of the former;
+we use L<Dancer2> for all of our sites, with L<DBIx::Class> under the hood talking to databases.
+
+Quarren was born during the early days of the 2020 pandemic; my husband and I couldn't get
+out much, and I had some free time to scratch down some ideas--and the name?  Well, this
+CMS was born in the Quarren-tine, of course.
+
+=head2 Whence Quarren?
+
+Most of the very popular CMSes out there have one or more problems that make it unsuitable
+for all of the use cases I have. Either they are too big a hammer (a static site with Joomla?),
+too small a hammer (more than very simple CSV-based data on Jekyll) or the wrong hammer 
+altogether (try setting up search on a Hugo site. No, really, I'll wait.)
+
+That's not to say that you can't shoehorn some of the use cases into a functional
+site. You can, for instance, set up a static site in WordPress, but then you have all
+kinds of lovely features that you don't need right at hand, which is a bit of a distraction.
+I want a CMS where you have the features you need for the site you're working on close to hand, but
+none of the features that you don't need.
+
+Now, lest you think I'm knocking WordPress, I'm not; it's a fine system, as are Joomla, Jekyll, 
+Hugo, Drupal, and a host of other systems. But they're not the hammer I wanted for the nails I need
+to drive; in the case of WordPress, one of the side effects of its plugin ecosystem is that there
+are a lot of really skeevy operators out there writing plugins for pay. If you're lucky, you'll get one
+that merely spams your email box after you by their plugin. If your luck isn't all that good,
+well. It's an ugly world out there, and I didn't want to play their games.
+
+=head2 Whereby Quarren?
+
+My goals for the project are
+
+=over
+
+=item * One CMS for everything I run, instead of the current three.
+
+=item * One copy of the code running per OS install.
+
+=item * I don't want to deal with skeevy paid-plugin shops.
+
+=item * Everything available on a relatively-easy-to-use deployment ecosystem (CPAN/apt/yum)
+
+=item * Mostly DB-agnostic--from sqlite up to Oracle, if possible.
+
+=item * Mostly search-tool agnostic--deploy what works for you, or don't deploy one at all.
+
+=item * I don't want to see features I'm not using in the admin UI
+
+=item * Code I can be proud to give back to the community I love
+
+=back
+
+=head3 The "Core" of Quarren
+
+The core of the system includes pages, users, and the plugin infrastructure to find and utilize plugins.
+Literally everthing else is a plugin. A default renderer and theme is provided, to "pass through" raw HTML
+from a page, and a single default permalink system ("slug") is included in the core.  With those bits
+in place, and no plugins, you can hand-hack HTML into a group of pages, and the system will properly render
+them.  I'm working on a very basic admin UI that would let you do just that, and for a single-page site, that
+may even be all that you need. By default, Dancer is using CHI caching for pages, and for some system
+parameters, to provide snappy response time.
+
+...but you don't want just that, do you? Of course not.  I don't either. The plugin infrastructure will
+automatically detect any plugins you have loaded on the system, and give the user options to turn them on or off.
+Each plugin may add additional renderers, taxonomy tools, editors, search tools, you name it. Some plugin
+namespaces I've already identified include:
+
+=over
+
+=item * Core
+
+=item * PageRender
+
+=item * UploadRender
+
+=item * DataRender
+
+=item * Shortcode
+
+=item * Theme
+
+=item * Cron
+
+=item * Search
+
+=back
+
+=head3 So, how's it going, Ruthie?
+
+Not as well as I'd hoped for, by now. Life, as we all know, gets in the way. But the code is available on 
+L<GitLab|https://gitlab.com/GeekRuthie/quarren-cms>, with an initial theme plugin L<here|https://gitlab.com/GeekRuthie/quarren-plugin-theme-barepages>.
+The main branch on the repo doesn't have an admin UI yet, but the code does function, if you're willing to force-feed
+your database a page or two. It's still very proof-of-concept, at this point.
+
+I have a couple of routes already set up and working.  C<get '/*'> will get a page by database ID, if present, or the
+default page specified in parameters, or lowest-id page in the database, if not, and pass it on to the chosen renderer.
+C<get '/**'> calls up the permalink method defined in parameters, or the default of "slug", and finds and renders the
+page based on its defined renderer. Both of these routes are very short, less than 25 lines of code, yet they provide
+the basis for the entire non-admin side of the system.
+
+=head3 But what about taxonomies?
+
+A good example of how the plugin system will alter the basic behavior of those two routes is the Taxonomy plugin.
+A URL like C</author/ruthie> would be picked up by the C<get '/**'> handler. The Core plugin
+Quarren::Plugin::Core::Taxonomy will have a
+Dancer2 C<before> hook to see if the first term (C<author>) is a known taxonomy, and if so, deal with it from there,
+passing on a Page schema object to the route using C<vars>.  If it's not a known taxonomy, or the taxonomy value is
+unknown, the hook will fall through to the regular route. 
+
+=head2 Whither Quarren?
+
+=head3 The 1.0 Roadmap
+
+As of 1.0, you've got a minimally-useful system for a hard-coded HTML single-page site.
+
+=over
+
+=item * Remove hard-coded schema, go dynamic, since some plugins may alter the schema
+
+=item * Core admin UI
+
+=item * Move default renderer and theme out of separate repos, and ship them with the core
+
+=item * Tests
+
+=item * Documentation
+
+=back
+
+=head3 The 1.02 Roadmap
+
+At this point, you're starting to see the capabilities for a simple blogging engine.
+
+=over
+
+=item * More permalink methods (date, date/slug, etc) in core
+
+=item * Quarren::Plugin::Core::Menu, for adding menus to theme plugins
+
+=item * Quarren::Plugin::Core::Taxonomy, for adding taxonomy management
+
+=item * Quarren::Plugin::PageRender::Markdown, for Markdown in the DB
+
+=item * Quarren::Plugin::PageRender::File::Markdown, for Markdown on disk
+
+=item * Quarren::Plugin::Search::<something>, a search plugin
+
+=item * Quarren::Plugin::Cron infrastructure, and Quarren::Plugin::Cron::Search, to update indexes
+
+=item * At least one more theme plugin
+
+=back
+
+=head3 The 1.04 Roadmap
+
+In 1.04, features get added that let the user create simple data-driven pages, as well as more
+complicated themes and blogs.
+
+=over
+
+=item * Quarren::Plugin::Core::CustomFields, to add custom fields to a page/post
+
+=item * Quarren::Plugin::Core::CustomCSS, so users can customize themes
+
+=item * Quarren::Plugin::DataRender::CSV (use CSV data to populate a page)
+
+=item * Quarren::Plugin::Core::Upload
+
+=item * Quarren::Plugin::Core::Shortcode::Gallery
+
+=item * At least one more theme
+
+=back
+
+=head3 After that?
+
+The sky's the limit. Most everything that would need to happen after that is plugins, just waiting to be written.
+By 1.04, most of the plugin APIs should be pretty well-defined, and ready for folks to use. Releases for the core
+will only be needed for Core API changes, or changes to the Core UI.
+
+Here's some idea fodder:
+
+=over
+
+=item * Simple analytic plugin
+
+=item * Plugins for e-commerce
+
+=item * Comments system and/or plugins to interface with other systems.
+
+=item * CSV or RSS ingestion plugin bulk article data
+
+=item * Cookie-handler plugin
+
+=back
+
+=head2 Interested in helping?
+
+I'd love to hear your thoughts. Open an issue on GitLab, or connect with me on irc.perl.org's #quarren channel.
+
+=head2 Author
+
+This article has been written by D Ruth Holloway (GeekRuthie) for the Perl Dancer
+Advent Calendar 2020.
+
+=head2 Copyright & License
+
+Copyright (C) 2020 by D Ruth Holloway (GeekRuthie). This work is licensed under a 
+L<Creative Commons Attribution 4.0 International License|https://creativecommons.org/licenses/by/4.0/>.
+
+=cut
