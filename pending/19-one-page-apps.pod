@@ -1,0 +1,95 @@
+=head1 Making a one-page app using Dancer2::Plugin::Ajax
+
+It's possible to make bits of DOM on a Dancer2 template behave like a one-page application, auto-updating
+themselves using some clever JavaScript and L<Dancer2::Plugin::Ajax>. In this article, I'll give you a quick
+runthrough of how to do that.
+
+=head2 The example: messaging
+
+In this example, I want the app to check every few minutes for messages coming from some other system. I'll
+have Dancer2 look for the actual messages, and the frontend of the app will call a route using C<.ajax>, and 
+if there's a message, update some DOM. I'll be using jQuery for this, though other tookits have similar sorts
+of constructs.
+
+Here's the HTML needed for the message block:
+
+=begin html
+
+<div id='messageBlock' style='min-height: 50px; padding:10px; margin: 20px; border: 1px solid black'>
+  <h2>Messages from Beyond:</h2>
+  <div id='messageResults'></div>    <!-- Nothing in this div.  Yet. -->
+</div>
+
+=end
+
+And here's the route we'll be calling. In this example, I'm randomly generating the messages, but in a real
+app, you might be fetching them from a message box, a file, a database, or whatever. Because it's what I'm used
+to, I set the application-type in my config.yml to C<'application/json'>, but this can do xml, or whatever
+you need; just make sure that's what you're returning!
+
+=begin perl
+
+use Dancer2::Plugin::Ajax;
+
+ajax '/messages' => sub {
+   my @messages = (
+      'Boo! I betcha I scared you, ha-ha!',
+      'A girl has no name, but she still has a list.',
+      'Space, the final frontier.',
+      '',
+      '<h1>Really big text</h1>',
+   );
+   return to_json({ message => @messages[int(rand(5))] });
+};
+
+=end
+
+Now, here's where the wizardry comes in. Call a function that repeats an AJAX request every ten seconds, and
+on success, update the DOM in that empty div we created for these messages.  If you've got the style right,
+the larger div with the border box will even enlarge and shrink in height as needed. 
+
+=begin javascript
+
+$(document).ready( function() {
+  var timer = setInterval(
+    function() {
+      $.ajax({
+        url: '/messages',
+        type: 'GET',
+        success: function(data) {
+           // Update the DOM
+           $('#messageResults').html(data.message);
+        },
+        error: function(event, stat, error) {
+          // throw a message into the browser's developer console
+          var str = 'Request failed. Status: ' + stat + ' Error: ' + error;
+          console.log(str);
+        },
+      });
+    },
+ 10000);    // in milliseconds.
+});
+
+=end
+
+=head2 Nice, but what can you do with it?
+
+Whatever you like, really; some obvious things for this little example would be to append the messages to a 
+list until dismissed, or css treachery to make them fade in and out. On the Perl/Dancer2 side, you could have
+the route check for some event to happen--an okay from a manager, some outside processing finishing, you-name-it,
+and then letting the user know the success or failure. You could also cause growl or other notification blocks
+to appear as needed with a pattern like this; just change the JavaScript to do what you need.
+
+We've used patterns like this for auto-updating blocks of HTML based on the results of a request in a few places
+at my current job, and I'm using it on a pet project I'm tinkering with. It's easy to use and maintain, and works
+like a dream!
+
+=head2 Author
+
+This article has been written by D Ruth Holloway (GeekRuthie) for the Perl Dancer
+Advent Calendar 2020.
+
+=head2 Copyright & License
+
+Copyright (C) 2020 by D Ruth Holloway (GeekRuthie). This work is licensed under a 
+L<Creative Commons Attribution 4.0 International License|https://creativecommons.org/licenses/by/4.0/>.
