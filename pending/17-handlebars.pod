@@ -1,7 +1,7 @@
 =head1 Dancer2::Template::Handlebars
 
 I know that our editor-in-chief this year, the amazing L<Cromedome|https://metacpan.org/author/CROMEDOME>, is hoping
-for some deep wisdom here about why and how I created Dancer2::Template::Handlebars.
+for some deep wisdom here about why and how I created L<Dancer2::Template::Handlebars>.
 
 He's going to have to get used to disappointment.
 
@@ -55,8 +55,9 @@ Then in your template,
 
 And for me, you'd get HOLLOWAY, Ruth.
 
-If you have a bit of HTML your Dancer application is generating, or storing in a database, you can cause those
-to be passed along with a "triple-stache":  C<{{{ generated_html_field }}}>.
+By default, the "double-stache" construct used in Handlebars templates will escape your HTML, which may not be
+what you want. If you have a bit of HTML your Dancer application is generating, or storing in a database, you
+can tell Handlebars to skip the escaping with a "triple-stache":  C<{{{ generated_html_field }}}>.
 
 For me, at least, the aesthetics of Handlebars are clean and easy to read, and the helper format creates a nice
 easy-to-read layout. It's lightweight, and easy to read and code. Is it the next "best thing since sliced bread?"
