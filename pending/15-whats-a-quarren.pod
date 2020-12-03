@@ -68,7 +68,7 @@ My goals for the project are
 =head3 The "Core" of Quarren
 
 The core of the system includes pages, users, and the plugin infrastructure to find and utilize plugins.
-Literally everthing else is a plugin. A default renderer and theme is provided, to "pass through" raw HTML
+Literally everything else is a plugin. A default renderer and theme is provided, to "pass through" raw HTML
 from a page, and a single default permalink system ("slug") is included in the core.  With those bits
 in place, and no plugins, you can hand-hack HTML into a group of pages, and the system will properly render
 them.  I'm working on a very basic admin UI that would let you do just that, and for a single-page site, that
