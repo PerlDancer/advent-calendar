@@ -39,7 +39,7 @@ ajax '/messages' => sub {
       '',
       '<h1>Really big text</h1>',
    );
-   return to_json({ message => @messages[int(rand(5))] });
+   send_as JSON => { message => @messages[int(rand(5))] };
 };
 
 =end
