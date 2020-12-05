@@ -1,0 +1,173 @@
+=encoding utf8
+
+=head1 Dancer 2FA Demo
+
+This demo shows how Two-Factor Authentication (2FA) can be implemented with Dancer2,
+Dancer2::Plugin::Auth::Extensible and a couple of other Perl modules.
+
+=head2 Get the source code from GitHub
+
+    ~# git clone https://github.com/racke/dancer2-tfa-demo.git
+
+=head2 Start the app
+
+    ~# cd dancer2-tfa-demo
+    ~# plackup -o 127.0.0.1 bin/app.psgi
+    HTTP::Server::PSGI: Accepting connections at http://127.0.0.1:5000/
+
+=head2 Login and Setup 2FA
+
+Go to the browser and enter the login URL L<http://127.0.0.1:5000/login>.
+
+=for html <img src="/images/2020/22/2FA_login.png"/>
+
+The default credentials are  I<dancer2> as username and I<2fanow> as password.
+You can change or add users in the L<configuration file|/Configuration>.
+
+=for html <img src="/images/2020/22/2FA_demo.png"/>
+
+Now use an 2FA app like Authy, Google Authenticator or FreeOTP+ to scan the QR code
+and confirm the token.
+
+Finally log out and test your token.
+
+=for html <img src="/images/2020/22/2FA_relogin.png"/>
+
+=head2 Authentication
+
+2FA is implemented as roles for L<Dancer2::Plugin::Auth::Extensible>.
+
+There is a role Dancer2::Plugin::Auth::Extensible::Role::TFA which provides the
+functionality.
+
+It includes a Demo provider for  Dancer2::Plugin::Auth::Extensible, with
+implements the oath methods:
+
+=over 4
+
+=item authen_oath_validation_date
+
+=item authen_oath_secret
+
+=item set_authen_oath_validation_date
+
+=item set_authen_oath_secret
+
+=back
+          
+=head2 Checking the token
+
+We intercept the standard authentication of Dancer2::Plugin::Auth::Extensible from the Demo provider using around:
+
+  around authenticate_user => sub {
+    my ($orig, $self, $username, $password, @args) = @_;
+    my $ret = $orig->($self, $username, $password, @args);
+
+    return unless $ret;
+    if ($self->check_tfa($username,
+                         $self->plugin->app->request->param('token'))) {
+        return $ret;
+    }
+    else {
+        return;
+    }
+  };
+
+So we first call the original authenticate_user method and only if that is successful we are
+checking the token.
+
+We determine the token that is valid at the current time and compared that with the token passed by the user:
+
+  my $expected = Authen::OATH->new->totp($secret);
+
+  if ($token eq $expected) {
+     ...
+  }
+  else {
+     ...
+  }
+
+=head2 Creating the secret
+
+The secret is created with L<Data::SimplePassword>, default length is 30 characters.
+
+The secret is stored on the server and in the authentication app of the user.
+The demo keeps the secret in memory.
+
+=head2 Generating image with QR code
+
+First we create an object which is going to generate an image with the QR code.
+
+  my $qr = Imager::QRCode->new(
+     size => 6,
+     margin => 2,
+     version => 1,
+     level => 'M',
+     casesensitive => 1,
+  );
+
+  my $data;
+
+Now we construct the label that is going to be used by the authentication app. It consists of the fixed string
+and the user name in parenthesis.
+
+  my $instance = $self->qr_code_label;
+  my $user_link = uri_escape("$instance (" . $username . ')');
+
+  my $img = $qr->plot("otpauth://totp/$user_link?secret=" . encode_base32($secret));
+  $img->write(data => \$data, type => 'png');
+
+We send this back with:
+
+  $self->plugin->app->send_file (\$data, content_type => 'image/png');
+
+=head2 Configuration
+
+We are using a fixed set of credentials in the configuration file C<config.yml>.
+
+    plugins:
+      Auth::Extensible:
+        realms:
+          users:
+           provider: Demo
+           username_key_name: user
+           users:
+             - user: dancer2
+               pass: 2fanow
+
+=head1 Routes
+
+The routes for 2FA are established by the plugin, e.g.
+
+    $app->add_route(
+        method => 'get',
+        regexp => '/tfa/setup',
+        code => sub { $self->tfa_setup }
+    );
+
+=head2 GET /tfa/setup/
+
+Shows the form for 2FA setup with the QR code.
+
+=head2 GET /tfa/qrcode.png
+
+Produces QR code.
+
+=head2 POST /tfa/setup/
+
+Verifies token from 2FA setup form.
+
+=head1 Use cases
+
+We are using Two-Factor Authentication for a couple of websites for ECA and an online shop
+in Germany.
+
+=head1 Limitations
+
+As the secrets are stored into memory, this demo should be run only as a single instance.
+Maybe L<Dancer2::Plugin::Cache::CHI> could help here.
+
+=head1 Author
+
+This article has been written by Stefan Hornburg (Racke) for the Perl Dancer 
+Advent Calendar 2020.
