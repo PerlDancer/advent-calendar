@@ -1,0 +1,52 @@
+=head1 Collective Voice: Using Dancer2 at a Digital Marketing Agency
+
+TODO: Add an opening paragraph.
+
+=head2 Project Background
+
+At Knowmad Digital Marketing, we have been outsourcing a set of services to a 3rd party. As we have grown, we are in-housing these services which includes a review portal similar to L<Grade.us|https://www.grade.us/home> and L<GatherUp|https://gatherup.com>. The pricing plans for these services start at $100+ per month. As former web developers, we decided to build our own solution. Thus was born Collective Voice.
+
+=head2 Business Case
+
+The growth of the web has empowered customers to have greater power than ever. Buyers often turn to customer testimonials and reviews to determine whether or not they trust a product, service, and even a seller. In fact, buyers read L<seven reviews on average|https://www.brightlocal.com/research/local-consumer-review-survey/#Q17> before deciding to trust a business.
+
+But, getting reviews can be challenging. How do you make it easy for happy clients to leave reviews? When soliciting reviews from your customers, how do you prevent unhappy clients from leaving negative reviews?
+A testimonial review portal can benefit.
+
+=head2 Testimonial Portal Requirements
+
+Our immediate needs are far simpler than what the commercial solutions offer. We identified the following requirements for our software:
+
+=over
+
+=item * Make it easy for happy customers to provide 5-star reviews
+
+=item * Provide a feedback mechanism for less satisfied customers
+
+=item * Support multiple domains
+
+=item * Display 1-4 links to review sites for 4-5 stars
+
+=item * Email form submissions for 3 or less stars
+
+=back
+
+
+=head2 Tech Stack
+
+
+
+=head2 Interested in helping?
+
+Is this an application that you'd like to use? I welcome your thoughts. Open an issue on GitHub, or connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/>.
+
+=head2 Author
+
+This article has been written by William McKee (knowmad) for the Perl Dancer Advent Calendar 2020. Connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/> or at L<www.knowmad.com|https://www.knowmad.com>.
+
+=head2 Copyright & License
+
+Copyright (C) 2020 by William McKee (knowmad). This work is licensed under a
+L<Creative Commons Attribution 4.0 International License|https://creativecommons.org/licenses/by/4.0/>.
+
+=cut
