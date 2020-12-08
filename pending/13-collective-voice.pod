@@ -4,7 +4,7 @@ TODO: Add an opening paragraph.
 
 =head2 Project Background
 
-At Knowmad Digital Marketing, we have been outsourcing a set of services to a 3rd party. As we have grown, we are in-housing these services which includes a review portal similar to L<Grade.us|https://www.grade.us/home> and L<GatherUp|https://gatherup.com>. The pricing plans for these services start at $100+ per month. As former web developers, we decided to build our own solution. Thus was born Collective Voice.
+At Knowmad Digital Marketing, we help clients get found when their prospects are looking for them online. One of the services that we provide has been outsourced to a 3rd party provider for several years. As we have grown, we are in-housing this service which includes an online review portal L<GatherUp|https://gatherup.com>. The pricing plans for these services start at $100+ per month. As former web developers, we decided to build our own solution. Thus was born Collective Voice.
 
 =head2 Business Case
 
@@ -34,7 +34,27 @@ Our immediate needs are far simpler than what the commercial solutions offer. We
 
 =head2 Tech Stack
 
+=head3 Back-End
 
+Having a deep experience with Perl that goes back into the mid-90's, Dancer was an obvious choice for this project. It provides a simple but powerful web application framework that was quick to setup and get running so that I could focus more time and effort on the front-end design. As an adherent to test-driven development, I appreciate the built-in support for automated testing. Read more about L<testing in the Dancer2::Manual|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#TESTING>.
+
+=head3 Front-End
+
+As a long-time developer, I have my usual set of front-end frameworks that I'm comfortable using such as Bootstrap. For this application, I wanted to experiment with newer tools that were light-weight and introduced a new way of building user interfaces.
+
+A programmer friend had recently suggested that I try out Tailwind CSS. This framework is built as a set of tiny components that you bring together to construct unique user interfaces. There is a site with pre-built components that includes both free and paid components at L<tailwindui.com|https://tailwindui.com>.
+
+It took a lot of trial and error to get into the hang of writing declarative CSS but I am hooked! It eliminates the need for using id's and nested classes, relying instead on a set of primitive utilities. The end result is less coding and more succinct designs. Check out an example at L<tailwindcss.com/docs/utility-first|https://tailwindcss.com/docs/utility-first>.
+
+One of the downsides of using minimalist frameworks is that you often need to pull in other libraries to provide additional support. In this case, I needed a Javascript library for the modal dialogs and form validation.
+
+Rather than pulling in a fat library like jquery for this purpose, I learned that many Tailwind developers were opting for a lightweight alternative called Alipine JS. This library offers the reactive and declarative nature of big frameworks like Vue or React at a much lower cost.
+
+Phil Smith has a good L<introductory article at Smashing Magazine|https://www.smashingmagazine.com/2020/03/introduction-alpinejs-javascript-framework/>.
+
+I found the L<Alptail|https://www.alptail.com> collection of open-source UI components extremely valuable as I built the UI. It provided the star rating and modal dialogs. Thanks to L< Daniel Palmer|https://www.twitter.com/userlastname> for putting that together.
+
+=head2
 
 =head2 Interested in helping?
 
