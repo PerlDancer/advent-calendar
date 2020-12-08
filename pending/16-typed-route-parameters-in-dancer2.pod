@@ -1,0 +1,146 @@
+=head1 Typed Route Parameters in Dancer2
+
+Dancer2 version 0.300000 introduced typed route parameters, allowing you
+to use L<Type::Tiny> type constraints with your named route parameters.
+
+=head2 Quick Intro
+
+The default type library is the one shipped with Dancer2:
+L<Dancer2::Core::Types>. This extends L<Types::Standard> with a small number
+of extra types, allowing simple type constraints like the following:
+
+    get '/user/:id[Int]' => sub {
+        # matches /user/34 but not /user/jamesdean
+
+        my $user_id = route_parameters->get('id');
+    };
+ 
+    get '/user/:username[Str]' => sub {
+        # matches /user/jamesdean but not /user/34 since that is caught
+        # by previous route
+
+        my $username = route_parameters->get('username');
+    };
+
+You can even use type constraints to add a regexp check:
+
+    get '/book/:date[StrMatch[qr{\d\d\d\d-\d\d-\d\d}]]' => sub {
+        # matches /book/2014-02-04
+
+        my $date = route_parameters->get('date');
+    };
+
+Constraints can be combined in the normal L<Type::Tiny> way, such as:
+
+    get '/some/:thing[Int|[StrMatch[qr{\d\d\d\d-\d\d-\d\d}]]' => sub {
+        # matches Int like /some/234 and dates like /some/2020-12-08
+
+        my $thing = route_parameters->get('thing');
+    };
+
+=head2 Using Your Own Type Library
+
+To access the full power of typed route parameters you will probably want
+to create your own custom types. Assuming your main app class is C<MyApp>,
+then you might want to create C<MyApp::Types> to hold your type library.
+For example:
+
+    package MyApp::Types;
+
+    # import Type::Library and declare our exported types
+    use Type::Library -base -declare => qw(
+       IsoDate
+       ItemAction
+       Slug
+       Username
+    );
+
+    # import sugar from Type::Utils
+    use Type::Utils -all;
+
+    # here we import all of the type libraries whose types we want to include
+    # in our library
+    BEGIN {
+        extends 
+          Dancer2::Core::Types
+          Types::Common::Numeric
+          Types::Common::String
+        );
+    }
+
+    # An ISO date.
+    # simplified example, you'd probably want something with better validation
+    declare IsoDate, as NonEmptySimpleStr,
+        where { $_ =~ /^(\d+)-(\d{2})-(\d{2})$/ };
+
+    # Enums are a nice way to constrain to a set of values
+    enum ItemAction = [qw/ comsume drop equip repair unequip /];
+
+    # Valid slug: lowercase alphanumeric with hyphens
+    declare Slug, as NonEmptySimpleStr,
+        where { $_ =~ /^[a-z0-9-]*$/ };
+
+    # If usernames are length-constrained then is better than Str
+    declare Username, as NonEmptySimpleStr,
+        where { length($_) > 6 && length ($_) < 50 };
+
+    1;
+
+You then need to add the following line to your C<config.yml> so that Dancer2
+knows which type library to use for typed parameters:
+
+    type_library: My::Type::Library
+
+Now you're ready to use your type checks in your route definitions:
+
+    package MyApp;
+
+    use Dancer2;
+
+    get '/user/:id[PositiveInt]' => sub {
+        # PositiveInt imported from Types::Common::Numeric gives us a better
+        # check than simple Int
+
+        my $user_id = route_parameters->get('id');
+    };
+
+    get '/user/:username[Username]' => sub {
+        my $username = route_parameters->get('username');
+    };
+
+    get '/book/:date[IsoDate]' => sub {
+        my $date = route_parameters->get('date');
+    };
+
+    get '/item/:action[ItemAction]/:item[Slug|PositiveInt]' => sub {
+        # action constrained by enum
+        # item by its symbolic slug, or its integer ID
+
+        my $action = route_parameters->get('action');
+        my $item   = route_parameters->get('item');
+    };
+
+=head2 Using Other Type Libraries
+
+You can always import other type libraries into your own library, as per
+the example in the previous example, but if you just want to use a type
+once you might not want to do that. In this case you can simply include
+the type library in the type definition of the route parameter:
+
+    get '/user/:username[My::Type::Library::Username]' => sub {
+        my $username = route_parameters->get('username');
+    };
+
+=head2 Need Typed Query or Body Parameters?
+
+For now core Dancer2 doesn't support this, but if you need it, then have a
+look at SawyerX's excellent L<Dancer2::Plugin::ParamTypes>.
+
+=head2 Author
+
+This article has been written by Peter Mottram (SysPete) for the Perl Dancer
+Twelve Days of Christmas 2020.
+
+=head2 Copyright
+
+No copyright retained. Enjoy, and keep Dancing!
