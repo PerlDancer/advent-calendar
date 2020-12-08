@@ -1,0 +1,64 @@
+=head1 Multi-Tenant Dancer
+
+TODO: Add an opening paragraph.
+
+=head2 Single-Tenant vs Multi-Tenant
+
+TODO: WLM
+
+"A single instance of the software and supporting infrastructure serve a single customer. With single tenancy, each customer has his or her own independent database and instance of the software. Essentially, there is no sharing happening with this option." -- https://digitalguardian.com/blog/saas-single-tenant-vs-multi-tenant-whats-difference
+
+See also
+https://www.liquidweb.com/kb/what-is-single-tenant-vs-multi-tenant-software/
+
+
+
+
+=head2 Configuring Dancer for Multi-Tenancy
+
+Dancer2 has several environment variables which support a multi-tenant configuration for your web application. The ones that we'll focus on for this article include the following:
+
+=over
+
+=item * DANCER_CONFDIR: Sets the configuration directory for config.yml and similar.
+
+=item * DANCER_ENVDIR: Sets the environment directory for testing, development and production configuration files.
+
+=item * DANCER_ENVIRONMENT: Sets the given environment. Defaults to B<development>.
+
+=item * DANCER_PUBLIC: Sets the public directory location.
+
+=item * DANCER_VIEWS: Sets the views (templates) directory.
+
+=back
+
+See L<Dancer2::Config docs|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Config.pod> for full details.
+
+
+=head2 Example Application
+
+TODO: JAC
+
+# Nginx config file
+# Directory setup
+
+
+=head2 Additional Usage Ideas
+
+In addition to providing multi-tenancy support, this technique could also be used when testing front-end changes to an application. Or to provide a test environment for QA teams that does not impact visitor logging or analytics for the production site (see the DANCER_LOGGER environment variable).
+
+=head2 Author
+
+This article has been written by William McKee (knowmad) and Jason A. Crome (cromedome) for the Perl Dancer Advent Calendar 2020.
+
+Connect with William on L<LinkedIn|https://www.linkedin.com/in/williammckee/> or at L<www.knowmad.com|https://www.knowmad.com>.
+
+Connect with Jason.... TODO: JAC
+
+
+=head2 Copyright & License
+
+Copyright (C) 2020 by William McKee (knowmad) and Jason A. Crome (cromedome). This work is licensed under a
+L<Creative Commons Attribution 4.0 International License|https://creativecommons.org/licenses/by/4.0/>.
+
+=cut
