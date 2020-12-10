@@ -1,6 +1,6 @@
 =head1 Dancer2::Template::Handlebars
 
-I know that our editor-in-chief this year, the amazing L<Cromedome|https://metacpan.org/author/CROMEDOME>, is hoping
+I know that our editor-in-chief this year, the amazing L<cromedome|https://metacpan.org/author/CROMEDOME>, is hoping
 for some deep wisdom here about why and how I created L<Dancer2::Template::Handlebars>.
 
 He's going to have to get used to disappointment.
@@ -43,7 +43,7 @@ Handlebars.registerHelper('loud', function (aString) {
 	    return aString.toUpperCase()
 })
 
-=end 
+=end javascript
 
 Then in your template,
 
