@@ -83,7 +83,7 @@ some on GitHub, and I cannot imagine how they coped with the onslaught of
 spammy PRs, all for a lousy t-shirt (ok, the shirt was pretty cool...).
 
 To Digital Ocean's credit, I think they did an admirable job of trying to 
-stop the bleeding. But for me, the spirit of Hacktoberfesr has been ruined, 
+stop the bleeding. But for me, the spirit of Hacktoberfest has been ruined, 
 and it makes me hesitant to set foot in those waters in the future.
 
 Dancer Community, what say you? Would you participate in a future
