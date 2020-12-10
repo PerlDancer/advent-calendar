@@ -48,7 +48,7 @@ For example:
     package MyApp::Types;
 
     # import Type::Library and declare our exported types
-    use Type::Library -base -declare => qw(
+    use Type::Library -base, -declare => qw(
        IsoDate
        ItemAction
        Slug
@@ -61,7 +61,7 @@ For example:
     # here we import all of the type libraries whose types we want to include
     # in our library
     BEGIN {
-        extends 
+        extends qw(
           Dancer2::Core::Types
           Types::Common::Numeric
           Types::Common::String
@@ -74,7 +74,7 @@ For example:
         where { $_ =~ /^(\d+)-(\d{2})-(\d{2})$/ };
 
     # Enums are a nice way to constrain to a set of values
-    enum ItemAction = [qw/ comsume drop equip repair unequip /];
+    enum ItemAction => [qw/ comsume drop equip repair unequip /];
 
     # Valid slug: lowercase alphanumeric with hyphens
     declare Slug, as NonEmptySimpleStr,
@@ -89,7 +89,7 @@ For example:
 You then need to add the following line to your C<config.yml> so that Dancer2
 knows which type library to use for typed parameters:
 
-    type_library: My::Type::Library
+    type_library: MyApp::Types
 
 Now you're ready to use your type checks in your route definitions:
 
@@ -120,6 +120,8 @@ Now you're ready to use your type checks in your route definitions:
         my $item   = route_parameters->get('item');
     };
 
+    true;
+
 =head2 Using Other Type Libraries
 
 You can always import other type libraries into your own library, as per
@@ -138,8 +140,8 @@ look at SawyerX's excellent L<Dancer2::Plugin::ParamTypes>.
 
 =head2 Author
 
-This article has been written by Peter Mottram (SysPete) for the Perl Dancer
-Twelve Days of Christmas 2020.
+This article has been written by Peter Mottram (SysPete) for the Twelve Days
+of Dancer 2020.
 
 =head2 Copyright
 
