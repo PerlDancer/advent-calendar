@@ -15,7 +15,7 @@ The Twelve Days of Dancer (starting December 13th):
 16 - [D] Typed Route Parameters in Dancer2 (SysPete)
 17 - [D] Dancer2::Template::Handlebars (GeekRuthie)
 18 - [A] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
-19 - [A] AwardSniffer (for ham radio enthusiasts - built with Dancer2 (GeekRuthie)
+19 - [P] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
 20 - [A] Dancer2::Plugin::Minion (cromedome)
 21 - [A] Async and promises (Sawyer X)
 22 - [A] Dancer2 and Two-Factor Authentication (2FA) (racke)
