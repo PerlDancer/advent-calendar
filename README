@@ -9,11 +9,11 @@ If you have ideas or want to volunteer, find us in irc.perl.org/#dancer, or
 email the dancer-users mailing list, or contact cromedome@cpan.org - thanks!
 
 The Twelve Days of Dancer (starting December 13th):
-13 - [A] State of the Dancer (cromedome)
+13 - [D] State of the Dancer (cromedome)
 14 - [A] CollectiveVoice - Using Dancer2 at a Digital Marketing Agency (William McKee)
-15 - [A] QuarrenCMS (GeekRuthie)
-16 - [P] Typed Route Parameters in Dancer2 (SysPete)
-17 - [A] Dancer2::Template::Handlebars (GeekRuthie)
+15 - [D] QuarrenCMS (GeekRuthie)
+16 - [D] Typed Route Parameters in Dancer2 (SysPete)
+17 - [D] Dancer2::Template::Handlebars (GeekRuthie)
 18 - [A] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
 19 - [A] AwardSniffer (for ham radio enthusiasts - built with Dancer2 (GeekRuthie)
 20 - [A] Dancer2::Plugin::Minion (cromedome)
