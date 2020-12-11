@@ -5,6 +5,9 @@
 This demo shows how Two-Factor Authentication (2FA) can be implemented with Dancer2,
 Dancer2::Plugin::Auth::Extensible and a couple of other Perl modules.
 
+It also shows how Dancer2::Plugin::Auth::Extensible enhances your Dancer application
+with user management using very little code.
+
 =head2 Get the source code from GitHub
 
     ~# git clone https://github.com/racke/dancer2-tfa-demo.git
@@ -137,6 +140,25 @@ We are using a fixed set of credentials in the configuration file C<config.yml>.
 
 =head1 Routes
 
+Dancer2::Plugin::Auth::Extensible supplements the demo with routes for login and logout,
+so we only need a few more routes specific to 2FA.
+
+=head2 2FA
+
+=head3 GET /tfa/setup/
+
+Shows the form for 2FA setup with the QR code.
+
+=head3 GET /tfa/qrcode.png
+
+Produces QR code.
+
+=head3 POST /tfa/setup/
+
+Verifies token from 2FA setup form.
+
+=head2 From plugin
+
 The routes for 2FA are established by the plugin, e.g.
 
     $app->add_route(
@@ -144,18 +166,6 @@ The routes for 2FA are established by the plugin, e.g.
         regexp => '/tfa/setup',
         code => sub { $self->tfa_setup }
     );
-
-=head2 GET /tfa/setup/
-
-Shows the form for 2FA setup with the QR code.
-
-=head2 GET /tfa/qrcode.png
-
-Produces QR code.
-
-=head2 POST /tfa/setup/
-
-Verifies token from 2FA setup form.
 
 =head1 Use cases
 
