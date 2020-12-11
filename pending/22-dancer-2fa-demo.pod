@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 Dancer 2FA Demo
+=head1 Dancer Two-Factor Authentication Demo
 
 This demo shows how Two-Factor Authentication (2FA) can be implemented with Dancer2,
 Dancer2::Plugin::Auth::Extensible and a couple of other Perl modules.
