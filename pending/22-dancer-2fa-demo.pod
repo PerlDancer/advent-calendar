@@ -76,7 +76,7 @@ We intercept the standard authentication of Dancer2::Plugin::Auth::Extensible fr
 So we first call the original authenticate_user method and only if that is successful we are
 checking the token.
 
-We determine the token that is valid at the current time and compared that with the token passed by the user:
+We determine the token that is valid at the current time and compare that with the token passed by the user:
 
   my $expected = Authen::OATH->new->totp($secret);
 
