@@ -10,19 +10,23 @@ email the dancer-users mailing list, or contact cromedome@cpan.org - thanks!
 
 The Twelve Days of Dancer (starting December 13th):
 13 - [D] State of the Dancer (cromedome)
-14 - [A] CollectiveVoice - Using Dancer2 at a Digital Marketing Agency (William McKee)
+14 - [D] CollectiveVoice - Using Dancer2 at a Digital Marketing Agency (knowmad)
 15 - [D] QuarrenCMS (GeekRuthie)
 16 - [D] Typed Route Parameters in Dancer2 (SysPete)
 17 - [D] Dancer2::Template::Handlebars (GeekRuthie)
+13 - [A] State of the Dancer (cromedome)
+15 - [A] QuarrenCMS (GeekRuthie)
+16 - [A] Typed Parameters in Dancer2 (SysPete)
+17 - [A] Dancer2::Template::Handlebars (GeekRuthie)
 18 - [A] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
 19 - [D] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
 20 - [A] Dancer2::Plugin::Minion (cromedome)
 21 - [A] Async and promises (Sawyer X)
 22 - [A] Dancer2 and Two-Factor Authentication (2FA) (racke)
-23 - [ ] ???
+23 - [A] Multi-Tenant Dancer (knowmad and cromedome)
 24 - [A] Content Negotiation with Dancer2::Serializer::Mutable (veryrusty)
 
-Flags: 
+Flags:
 
 [ ] : up for adoption
 [A] : "Assigned", someone volunteered to write it
