@@ -36,29 +36,50 @@ Finally log out and test your token.
 
 =for html <img src="/images/2020/22/2FA_relogin.png"/>
 
+=head2 Two-Factor Authentication
+
+=head3 Creating the secret
+
+The demo application creates the secret when the user is logged in and goes to the 2FA setup page for the first time.
+The secret is created with L<Data::SimplePassword>, default length is 30 characters.
+
+=head3 Generating image with QR code
+
+First we create an object which is going to generate an image with the QR code.
+
+  my $qr = Imager::QRCode->new(
+     size => 6,
+     margin => 2,
+     version => 1,
+     level => 'M',
+     casesensitive => 1,
+  );
+
+Now we construct the label that is going to be used by the authentication app. It consists of the fixed string
+and the user name in parenthesis.
+
+  my $instance = $self->qr_code_label;
+  my $user_link = uri_escape("$instance (" . $username . ')');
+
+  my $data;
+  my $img = $qr->plot("otpauth://totp/$user_link?secret=" . encode_base32($secret));
+  $img->write(data => \$data, type => 'png');
+
+We send this back with:
+
+  $self->plugin->app->send_file (\$data, content_type => 'image/png');
+
+=head3 Storing the secret
+
+The secret is stored on the server and in the authentication app of the user.
+The demo keeps the secret in memory.
+
 =head2 Authentication
 
-2FA is implemented as roles for L<Dancer2::Plugin::Auth::Extensible>.
+The authentication code is split into two modules, a role with the logic for the specific routes and a demo
+provider which consumes that role and takes care of the secret's generation and the "storage".
 
-There is a role Dancer2::Plugin::Auth::Extensible::Role::TFA which provides the
-functionality.
-
-It includes a Demo provider for  Dancer2::Plugin::Auth::Extensible, with
-implements the oath methods:
-
-=over 4
-
-=item authen_oath_validation_date
-
-=item authen_oath_secret
-
-=item set_authen_oath_validation_date
-
-=item set_authen_oath_secret
-
-=back
-          
-=head2 Checking the token
+=head3 Login
 
 We intercept the standard authentication of Dancer2::Plugin::Auth::Extensible from the Demo provider using around:
 
@@ -89,42 +110,6 @@ We determine the token that is valid at the current time and compare that with t
   else {
      ...
   }
-
-=head2 Creating the secret
-
-The demo application creates the secret when the user is logged in and goes to the 2FA setup page for the first time.
-The secret is created with L<Data::SimplePassword>, default length is 30 characters.
-
-=head2 Generating image with QR code
-
-First we create an object which is going to generate an image with the QR code.
-
-  my $qr = Imager::QRCode->new(
-     size => 6,
-     margin => 2,
-     version => 1,
-     level => 'M',
-     casesensitive => 1,
-  );
-
-Now we construct the label that is going to be used by the authentication app. It consists of the fixed string
-and the user name in parenthesis.
-
-  my $instance = $self->qr_code_label;
-  my $user_link = uri_escape("$instance (" . $username . ')');
-
-  my $data;
-  my $img = $qr->plot("otpauth://totp/$user_link?secret=" . encode_base32($secret));
-  $img->write(data => \$data, type => 'png');
-
-We send this back with:
-
-  $self->plugin->app->send_file (\$data, content_type => 'image/png');
-
-=head2 Storing the secret
-
-The secret is stored on the server and in the authentication app of the user.
-The demo keeps the secret in memory.
 
 =head2 Configuration
 
