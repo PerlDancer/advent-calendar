@@ -92,10 +92,8 @@ We determine the token that is valid at the current time and compare that with t
 
 =head2 Creating the secret
 
+The demo application creates the secret when the user is logged in and goes to the 2FA setup page for the first time.
 The secret is created with L<Data::SimplePassword>, default length is 30 characters.
-
-The secret is stored on the server and in the authentication app of the user.
-The demo keeps the secret in memory.
 
 =head2 Generating image with QR code
 
@@ -123,6 +121,11 @@ and the user name in parenthesis.
 We send this back with:
 
   $self->plugin->app->send_file (\$data, content_type => 'image/png');
+
+=head2 Storing the secret
+
+The secret is stored on the server and in the authentication app of the user.
+The demo keeps the secret in memory.
 
 =head2 Configuration
 
