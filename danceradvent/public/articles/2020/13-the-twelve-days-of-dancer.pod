@@ -1,0 +1,111 @@
+=head1 The Twelve Days of Dancer
+
+It's hard to believe that the decade of 2020 is almost behind us. This has 
+been a challenging year for so many people in so many ways, and while many
+software projects have been relatively productive during this time, we Dancers
+have been pretty quiet. While we have been working to keep our families, jobs,
+and companies going, we've had to say goodbye to friends, families, and loved
+ones, and we had to survive the messes that were COVID-19 and the mess that
+was Hacktoberfest. So let me be the first to apologize for a really quiet 
+year here. 
+
+When we last ran a calendar in 2018, we made the decision to value quality 
+over quantity, and ran an abbreviated calendar (The Twelve Days of Dancer)
+rather than a full advent calendar. This was received really well, and 2020
+seemed like the perfect time to bring it back. 
+
+This year, we revisit some old topics, introduce some exciting new web
+applications that have been built with Dancer2, and cover some of the most
+recent changes in the framework. In 2018, we featured some crossover articles
+with the Mojolicious team, and I'm pleased to say that Joel is back with yet
+another installment for us. We're really excited by this year's content, and
+we hope you will be, too.
+
+As David Bowie once said, "Let's Dance!"
+
+=head2 State of the Dancer
+
+This year brought a few new features, a lot of documentation patches, and a
+number of bug fixes and routine maintenance to Dancer2. If there were such a
+thing as the Golden Dancer award, it would certainly go to veryrusty this 
+year - not only did he have the honor of closing one of the oldest open issues
+in Dancer2, but he also closed 4 issues with a single pull request. 
+
+And that is not to say anyone else's work was any less important - the 
+documentation continues to improve with the help of our awesome community. Bug
+reports are one of the most important contributions anyone can make - your
+reports help us make the framework better for everyone!
+
+There are a couple of specific items worth discussing in more detail:
+
+=head3 Typed Parameters
+
+Thanks to SysPete, we now have typed route parameters in the core of Dancer2. 
+This feature can help make your code more succinct and readable and less prone
+to bugs and other issues. This is one of the most exciting new features in
+Dancer2 - make sure to check out SysPete's article about it this year.
+
+=head3 Dancer(1)
+
+David Precious (bigpresh) is still doing a great job maintaining Dancer, but
+has also switched employers, and is no longer developing and maintaining
+Dancer(1) as part of his day job. 
+
+So, what does this mean for Dancer(1)? In the immediate future, probably 
+nothing. Longer term, it means having some discussion among the core team and
+the community over how long to continue supporting the original version, and 
+what that support might look like. 
+
+As there are changes in the long-term status of Dancer(1), we will make every
+effort to keep the community informed. 
+
+=head2 Questions for the Community
+
+While there's not enough here for a formal survey, there are a couple of 
+questions that I'd like to pose to our community:
+
+=over 4
+
+=item * GitHub Discussions
+
+GitHub has a new discussions system, and it appears to be a modern replacement
+for what was Google Groups. The Dancer Core Team has yet to discuss how or if
+we might use these going forward. As a community, do you see value in us using
+this? Would you use it more or less than IRC or the mailing list when looking 
+for help and information?
+
+=item * Hacktoberfest
+
+Dear Reader, if only I could express the level of stress and frustration I
+encountered the first days of Hacktoberfest this year - the number of spam
+PRs we received was pretty ridiculous, and we are a much smaller project than
+some on GitHub, and I cannot imagine how they coped with the onslaught of 
+spammy PRs, all for a lousy t-shirt (ok, the shirt was pretty cool...).
+
+To Digital Ocean's credit, I think they did an admirable job of trying to 
+stop the bleeding. But for me, the spirit of Hacktoberfest has been ruined, 
+and it makes me hesitant to set foot in those waters in the future.
+
+Dancer Community, what say you? Would you participate in a future
+Hacktoberfest given the chance?
+
+=back
+
+Please, engage us on the mailing list, Twitter, IRC, or wherever you run into 
+one of your friendly neighborhood Dancer Core Team members.
+
+=head2 Dance, Dance, Dance!
+
+And with that, let our mini advent calendar continue! Thanks for supporting
+us as much (or more) than we support you. Looking forward to 2021!
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Twelve Days
+of Dancer.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome / CromeDome

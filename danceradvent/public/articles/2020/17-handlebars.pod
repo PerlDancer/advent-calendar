@@ -1,0 +1,85 @@
+=head1 Dancer2::Template::Handlebars
+
+I know that our editor-in-chief this year, the amazing L<cromedome|https://metacpan.org/author/CROMEDOME>, is hoping
+for some deep wisdom here about why and how I created L<Dancer2::Template::Handlebars>.
+
+He's going to have to get used to disappointment.
+
+I realized a while back that, after nearly 20 years of writing Perl, I didn't have a single module on CPAN.
+It seemed to me that something simple-ish would be a good idea, just so I could work out the workflow, and
+I'd been playing around with some templating using L<Handlebars|https://handlebarsjs.com/> for another project
+of mine. To make it even easier, the underling L<Text::Handlebars> was already present, and our clever colleague
+L<Yanick|https://metacpan.org/author/YANICK> had already written L<Dancer::Template::Handlebars>, from which I
+could crib some code as needed.
+
+All the bits were in place, it was just up to me to learn the bits and pieces of creating, testing, and submitting
+a module.  But why this one?
+
+=head2 Why you should like Handlebars, and use it
+
+Handlebars, like Template Toolkit and many others, can take objects handed to it from Dancer2's template-processing
+system, and insert data into pages, at your direction.  So, if you have a list of people objects with names,
+you can get a list of them:
+
+=begin html
+
+{{#each people}}
+  {{ lastname }}, {{ firstname }}<br>
+{{/each}}
+
+=end html
+
+Handlebars also supports "partials", subtemplates you might want to call, similar in behavior to TT's C<INCLUDE> or C<PROCESS>
+tools. You can even dynamically call a partial by referencing a variable name containing the name of the partial!
+
+What sets Handlebars apart from Template Toolkit is its model of "helpers."  There are a few built-in helpers, like
+C<#each> and C<#with>, which create loop iterators, C<#if> and C<#unless> that create conditionals, and a C<lookup>
+C<log> helper, which provide data access and logging, respectively. But everything else you might want to do is a helper
+you must include or write. Writing them is relatively straightforward JavaScript, like so:
+
+=begin javascript
+
+Handlebars.registerHelper('loud', function (aString) {
+	    return aString.toUpperCase()
+})
+
+=end javascript
+
+Then in your template,
+
+=begin html
+
+{{loud lastname }}, {{ firstname }}<br>
+
+=end html
+
+And for me, you'd get HOLLOWAY, Ruth.
+
+By default, the "double-stache" construct used in Handlebars templates will escape your HTML, which may not be
+what you want. If you have a bit of HTML your Dancer application is generating, or storing in a database, you
+can tell Handlebars to skip the escaping with a "triple-stache":  C<{{{ generated_html_field }}}>.
+
+For me, at least, the aesthetics of Handlebars are clean and easy to read, and the helper format creates a nice
+easy-to-read layout. It's lightweight, and easy to read and code. Is it the next "best thing since sliced bread?"
+Not at all. But it's a good templating language, that some developers might find useful.
+
+=head2 So, how did I turn that into a plugin for Dancer2?
+
+As I mentioned before, Yanick had already done a Dancer plugin for Handlebars. He had also created L<Dancer::Template::Mustache>,
+and ported that to L<Dancer2::Template::Mustache>, so I had a template to go by. 
+
+I mercilessly plagarized. That's how I did it. I even told Yanick that I was plagarizing, and he just encouraged me.
+Then I used L<Dist::Zilla> to get it ready and release it.
+
+If you've got a Dancer plugin that you'd like to see ported to Dancer2, I strongly recommend this trick; take a look at
+a similar module where someone has already done that migration, and go and do likewise. It's not hard!
+
+=head2 Author
+
+This article has been written by D Ruth Holloway (GeekRuthie) for the Perl Dancer
+Advent Calendar 2020.
+
+=head2 Copyright & License
+
+Copyright (C) 2020 by D Ruth Holloway (GeekRuthie). This work is licensed under a 
+L<Creative Commons Attribution 4.0 International License|https://creativecommons.org/licenses/by/4.0/>.

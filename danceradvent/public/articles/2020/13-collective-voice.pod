@@ -1,0 +1,76 @@
+=head1 Collective Voice: Using Dancer2 at a Digital Marketing Agency
+
+At L<Knowmad Digital Marketing|https://www.knowmad.com>, we help clients get found when prospects are looking for them online. One of the services that we provide has been outsourced to a 3rd party provider for several years. As we have grown, we are in-housing this service which includes an online review portal L<GatherUp|https://gatherup.com>. The pricing plans for these services start at $100+ per month. As former web developers, we decided to build our own solution. Thus was born Collective Voice.
+
+=head2 Business Case
+
+The growth of the web has empowered customers to have greater power than ever. Buyers often turn to customer testimonials and reviews to determine whether or not they trust a product, service, and even a seller. In fact, surveys show that buyers read L<seven reviews on average|https://www.brightlocal.com/research/local-consumer-review-survey/#Q17> before deciding to trust a business.
+
+But, getting reviews can be challenging. How do you make it easy for happy clients to leave reviews? And, when soliciting reviews from your customers, how do you prevent unhappy clients from leaving negative reviews?
+A testimonial review portal can benefit.
+
+=head2 Testimonial Portal Requirements
+
+Our immediate needs are far simpler than what the commercial solutions offer. We identified the following requirements for our software:
+
+=over
+
+=item * Make it easy for happy customers to provide 5-star reviews
+
+=item * Provide a feedback mechanism for less satisfied customers
+
+=item * Support multiple domains
+
+=item * Display 1-4 links to review sites for 4-5 stars
+
+=item * Email form submissions for 3 or less stars
+
+=back
+
+
+=head2 Tech Stack
+
+=head3 Back-End
+
+Having a deep experience with Perl that goes back into the mid-90's, L<Dancer|http://perldancer.org> was an obvious choice for this project. It provides a simple but powerful web application framework that is quick to setup and get running so that I could focus more time and effort on the front-end design. As an adherent of test-driven development, I appreciate the built-in support for automated testing. Read more about L<testing in the Dancer2::Manual|https://metacpan.org/pod/distribution/Dancer2/lib/Dancer2/Manual.pod#TESTING>.
+
+=head3 Front-End
+
+As a long-time developer, I have my usual set of front-end frameworks that I'm comfortable using such as Bootstrap and jQuery. For this application, I wanted to experiment with newer tools that were light-weight and introduced a new way of building user interfaces.
+
+A programmer friend had recently suggested that I try out Tailwind CSS. This framework is built as a set of tiny components that you bring together to construct unique user interfaces. There is a site with pre-built components that includes both free and paid components at L<tailwindui.com|https://tailwindui.com>.
+
+It took a bit of trial and error to get into the hang of building interfaces up from simple utility classes, but I am hooked! It eliminates the need for writing custom CSS using id's and nested classes. The end result is less coding and more succinct designs. Check out an example at L<tailwindcss.com/docs/utility-first|https://tailwindcss.com/docs/utility-first>.
+
+One of the downsides of using minimalist frameworks is that you often need to pull in other libraries to provide additional support. In this case, I needed a Javascript library for the modal dialogs and form validation.
+
+Rather than pulling in a fat library like jQuery for this purpose, I learned that many Tailwind developers were opting for a lightweight alternative called Alipine JS. This library offers the reactive and declarative nature of big frameworks like Vue or React at a much lower resource cost.
+
+Phil Smith has a good L<introductory article at Smashing Magazine|https://www.smashingmagazine.com/2020/03/introduction-alpinejs-javascript-framework/>.
+
+Lastly, I found the L<Alptail|https://www.alptail.com> collection of open-source UI components invaluable as I built the UI. It provided the star rating and modal dialogs. Thanks to L< Daniel Palmer|https://www.twitter.com/userlastname> for putting that together.
+
+=head2 Bringing it All Together
+
+With the foundations laid, it's time to bring everything together for the big dance. There are 2 services that were needed
+
+For hosting the application, I chose a $5/month Linode server with Debian 10. In the repository, I have written a detailed description of how to get the application up and running within this environment that's available in the repository which will be released soon. Linode often offers free credit when signing up as a new user. If you'd like to support my work, please use L<my referral link|https://www.linode.com/?r=9ec435ff3180734d255046be6e2b302f1d1f0992>.
+
+For delivering the form submissions back to the company being reviewed, I opted for <SendGrid|https://sendgrid.com>. Sure we could install an MTA to the server such as Postfix. And, debugging email delivery is not my idea of fun.
+
+=head2 Getting Started
+
+So far, I have been doing development in a private repository. I will be releasing v1.0 to the world via a public GitHub repository in the next couple of weeks.
+
+Is this an application that you'd like to use or have ideas for how to improve it? I welcome your thoughts. Follow me on L<GitHub|https://github.com/knowmad> or connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/>.
+
+=head2 Author
+
+This article has been written by William McKee (knowmad) for the Perl Dancer Advent Calendar 2020. Connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/> or at L<www.knowmad.com|https://www.knowmad.com>.
+
+=head2 Copyright & License
+
+Copyright (C) 2020 by William McKee (knowmad). This work is licensed under a
+L<Creative Commons Attribution 4.0 International License|https://creativecommons.org/licenses/by/4.0/>.
+
+=cut
