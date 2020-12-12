@@ -107,14 +107,13 @@ First we create an object which is going to generate an image with the QR code.
      casesensitive => 1,
   );
 
-  my $data;
-
 Now we construct the label that is going to be used by the authentication app. It consists of the fixed string
 and the user name in parenthesis.
 
   my $instance = $self->qr_code_label;
   my $user_link = uri_escape("$instance (" . $username . ')');
 
+  my $data;
   my $img = $qr->plot("otpauth://totp/$user_link?secret=" . encode_base32($secret));
   $img->write(data => \$data, type => 'png');
 
