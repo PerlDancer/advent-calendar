@@ -44,7 +44,7 @@ It took a bit of trial and error to get into the hang of building interfaces up 
 
 One of the downsides of using minimalist frameworks is that you often need to pull in other libraries to provide additional support. In this case, I needed a Javascript library for the modal dialogs and form validation.
 
-Rather than pulling in a fat library like jQuery for this purpose, I learned that many Tailwind developers were opting for a lightweight alternative called Alipine JS. This library offers the reactive and declarative nature of big frameworks like Vue or React at a much lower resource cost.
+Rather than pulling in a fat library like jQuery for this purpose, I learned that many Tailwind developers were opting for a lightweight alternative called Alpine JS. This library offers the reactive and declarative nature of big frameworks like Vue or React at a much lower resource cost.
 
 Phil Smith has a good L<introductory article at Smashing Magazine|https://www.smashingmagazine.com/2020/03/introduction-alpinejs-javascript-framework/>.
 
