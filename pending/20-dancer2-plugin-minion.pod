@@ -1,0 +1,85 @@
+=head1 Dancer2::Plugin::Minion (aka, Using Minion in Dancer Apps, Revisited)
+
+In 2018, L<I wrote about my experience using Minion|http://advent.perldancer.org/2018/16> at 
+my employer at that time. Since then, I changed to another employer, where again, L<Minion> was
+the appropriate solution to the issue of long-running jobs in our application. They desired
+to have a more Dancer-ish, polished, and integrated solution, and thanks to them,
+L<Dancer2::Plugin::Minion> was born.
+
+I don't see a lot of value rehashing the rationale behind this - I think this was covered
+pretty well in the 2018 article - so feel free to pop back there if you're looking for 
+some backstory and analysis. With that, let's move on to...
+
+=head2 The Code!
+
+It requires a minimal amount of configuration to set up L<Minion> in your L<Dancer2> apps:
+
+    plugins:
+        Minion:
+            dsn: sqlite:test.db
+            backend: SQLite
+
+Fill in whatever values for DSN and backend match your existing Minion setup. And that's
+it - your L<Dancer2> app can now talk to L<Minion>!
+
+The plugin exports a keyword, C<minion>, that exposes all of L<Minion> to your L<Dancer2> 
+application. I'm not promising it will be as seamless as an experience as the one when
+you are building L<Mojolicious> applications, but it is really powerful.
+
+Two other keywords are created by the plugin, C<add_task> and C<enqueue>, that map directly 
+to the same methods available in C<Minion>. These tasks are common enough to warrant having
+their own keywords to save you the little bit of additional typing to use them.
+
+Here's a totally fabricated example to demonstrate how each of these methods can be
+used in your L<Dancer2> application:
+
+    hook before => sub {
+        # Define a long running task
+        add_task( process_widgets => sub {
+            my ($job, $first, $second) = @_;
+            # Do some time-consuming, expensive stuff here, then...
+            $job->finish($first + $second);
+        });
+    };
+     
+    get '/start-widget-process' => sub {
+        my $id = enqueue(process_widgets => [1, 1]);
+        # Do something with $id
+    };
+     
+    get '/widget-process-status/:id' => sub {
+        my $id = route_parameters->get( 'id' );
+        my $result = minion->job($id)->info->{result};
+        # Now, do something useful with this...
+    };
+
+=head2 Future Plans
+
+To be honest, I don't know what the future holds for this module. My own uses of it have
+been pretty minimal compared to the potential of what you can use it for. In my mind,
+this leaves the future a pretty blank slate. Is there something you'd like to see? I'd love to
+hear from you! Reach out at C<cromedome at cpan dot org> and let me know your thoughts and ideas
+for this plugin.
+
+=head2 Giving Credit Where Credit is Due
+
+L<Dancer2::Plugin::Minion> saw the light of day thanks to the wonderful people at
+L<Clearbuilt|https://clearbuilt.com>. They are the nicest group of people you could 
+ever hope to work for/with, and I am extremely grateful for them giving me the time 
+to not only build this module out, but so much more. 
+
+=head2 Other Notes
+
+There is no plugin for Dancer 1 at the time of this writing, nor do I expect
+there will ever be one, at least not of my doing.
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Twelve Days
+of Dancer.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome / CromeDome

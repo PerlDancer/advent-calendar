@@ -16,7 +16,7 @@ The Twelve Days of Dancer (starting December 13th):
 17 - [D] Dancer2::Template::Handlebars (GeekRuthie)
 18 - [D] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
 19 - [D] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
-20 - [A] Dancer2::Plugin::Minion (cromedome)
+20 - [P] Dancer2::Plugin::Minion (cromedome)
 21 - [A] Async and promises (Sawyer X)
 22 - [A] Dancer2 and Two-Factor Authentication (2FA) (racke)
 23 - [A] Multi-Tenant Dancer (knowmad and cromedome)
