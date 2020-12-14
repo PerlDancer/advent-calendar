@@ -56,7 +56,8 @@ With the foundations laid, it's time to bring everything together for the big da
 
 For hosting the application, I chose a $5/month Linode server with Debian 10. In the repository, I have written a detailed description of how to get the application up and running within this environment that's available in the repository which will be released soon. Linode often offers free credit when signing up as a new user. If you'd like to support my work, please use L<my referral link|https://www.linode.com/?r=9ec435ff3180734d255046be6e2b302f1d1f0992>.
 
-For delivering the form submissions back to the company being reviewed, I opted for <SendGrid|https://sendgrid.com>. Sure we could install an MTA to the server such as Postfix. And, debugging email delivery is not my idea of fun.
+For delivering the form submissions back to the company being reviewed, I opted
+for L<SendGrid|https://sendgrid.com>. Sure we could install an MTA to the server such as Postfix. And, debugging email delivery is not my idea of fun.
 
 =head2 Getting Started
 
