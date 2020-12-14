@@ -1,10 +1,21 @@
 =head1 Collective Voice: Using Dancer2 at a Digital Marketing Agency
 
-At L<Knowmad Digital Marketing|https://www.knowmad.com>, we help clients get found when prospects are looking for them online. One of the services that we provide has been outsourced to a 3rd party provider for several years. As we have grown, we are in-housing this service which includes an online review portal L<GatherUp|https://gatherup.com>. The pricing plans for these services start at $100+ per month. As former web developers, we decided to build our own solution. Thus was born Collective Voice.
+At L<work|https://www.knowmad.com>, we have used Perl for over 20 years for web
+application development and automation. Recently, we have created, and are just
+about to open source, an application designed to collect online testimonials.
+There are similar paid services which include an online review portal such as
+L<GatherUp|https://gatherup.com>. The pricing plans for these services start at
+$75+ per month. As web developers, we decided to build our own solution. Thus
+was born Collective Voice.
 
 =head2 Business Case
 
-The growth of the web has empowered customers to have greater power than ever. Buyers often turn to customer testimonials and reviews to determine whether or not they trust a product, service, and even a seller. In fact, surveys show that buyers read L<seven reviews on average|https://www.brightlocal.com/research/local-consumer-review-survey/#Q17> before deciding to trust a business.
+The growth of the web has empowered customers to have greater power than ever.
+Buyers often turn to customer testimonials and reviews to determine whether or
+not they trust a product, service, and even a seller. In fact, surveys show that
+buyers read L<seven reviews on
+average|https://www.brightlocal.com/research/local-consumer-review-survey/#Q17>
+before deciding to trust a business.
 
 But, getting reviews can be challenging. How do you make it easy for happy clients to leave reviews? And, when soliciting reviews from your customers, how do you prevent unhappy clients from leaving negative reviews?
 A testimonial review portal can benefit.
@@ -15,15 +26,15 @@ Our immediate needs are far simpler than what the commercial solutions offer. We
 
 =over
 
-=item * Make it easy for happy customers to provide 5-star reviews
+=item # Make it easy for happy customers to provide 5-star reviews
 
-=item * Provide a feedback mechanism for less satisfied customers
+=item # Provide a feedback mechanism for less satisfied customers
 
-=item * Support multiple domains
+=item # Support multiple domains
 
-=item * Display 1-4 links to review sites for 4-5 stars
+=item # Display 1-4 links to review sites for 4-5 stars
 
-=item * Email form submissions for 3 or less stars
+=item # Email form submissions for 3 or less stars
 
 =back
 
