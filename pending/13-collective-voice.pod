@@ -26,15 +26,15 @@ Our immediate needs are far simpler than what the commercial solutions offer. We
 
 =over
 
-=item # Make it easy for happy customers to provide 5-star reviews
+=item 1. Make it easy for happy customers to provide 5-star reviews
 
-=item # Provide a feedback mechanism for less satisfied customers
+=item 2. Provide a feedback mechanism for less satisfied customers
 
-=item # Support multiple domains
+=item 3. Support multiple domains
 
-=item # Display 1-4 links to review sites for 4-5 stars
+=item 4. Display 1-4 links to review sites for 4-5 stars
 
-=item # Email form submissions for 3 or less stars
+=item 5. Email form submissions for 3 or less stars
 
 =back
 
