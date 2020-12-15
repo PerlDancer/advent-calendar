@@ -26,32 +26,173 @@ The plugin exports a keyword, C<minion>, that exposes all of L<Minion> to your L
 application. I'm not promising it will be as seamless as an experience as the one when
 you are building L<Mojolicious> applications, but it is really powerful.
 
-Two other keywords are created by the plugin, C<add_task> and C<enqueue>, that map directly 
+Two more keywords are created by the plugin, C<add_task> and C<enqueue>, that map directly 
 to the same methods available in C<Minion>. These tasks are common enough to warrant having
 their own keywords to save you the little bit of additional typing to use them.
+
+Lastly, the keyword C<minion_app> creates a Minion application, which you can then mount
+via L<Plack> (if you want to have an admin dashboard for Minion in your Dancer app), or 
+if you want to enable the Minion CLI in your Dancer apps. I will demonstrate this below.
 
 Here's a totally fabricated example to demonstrate how each of these methods can be
 used in your L<Dancer2> application:
 
-    hook before => sub {
-        # Define a long running task
-        add_task( process_widgets => sub {
-            my ($job, $first, $second) = @_;
-            # Do some time-consuming, expensive stuff here, then...
-            $job->finish($first + $second);
-        });
+    use Dancer2;
+    use Dancer2::Plugin::Minion;
+    use Plack::Builder;
+    use File::Basename 'fileparse';
+
+    add_task thumbnails => sub {
+        my ($job, $original) = @_;
+        require Image::Imlib2::Thumbnail;
+        my $thumb = Image::Imlib2::Thumbnail->new;
+        my ($base, $dir, $ext) = fileparse( $original, qr/\.[^.]*?$/ );
+        $_->{name} = "$base-$_->{name}" for @{ $thumb->sizes };
+        my @generated = $thumb->generate($original, $dir);
+        $job->finish(\@generated);
     };
-     
-    get '/start-widget-process' => sub {
-        my $id = enqueue(process_widgets => [1, 1]);
-        # Do something with $id
+
+This creates a task, C<thumbnails>, to automatically generate multiple
+thumbnails when provided with an original image.
+
+    # This exposes all of the minion commands
+    if (@ARGV && $ARGV[0] eq 'minion') {
+        minion_app()->start;
+        exit 0;
+    }
+
+This bit of magic exposes the entire L<Minion> CLI to your app - so you can
+use the various subcommands like C<worker> and C<job>.
+
+    set views => '.';
+
+    get '/' => sub {
+        template 'upload';
     };
-     
-    get '/widget-process-status/:id' => sub {
-        my $id = route_parameters->get( 'id' );
-        my $result = minion->job($id)->info->{result};
-        # Now, do something useful with this...
+
+This sets up a simple file uploader app. It also tells L<Dancer2> to look for
+its templates in the same directory as the app.
+
+    post '/' => sub {
+        my $file = upload('file');
+        my $name = $file->basename;
+        my $target = path('public', $name);
+        $file->copy_to($target);
+        enqueue(thumbnails => [$target]);
+        redirect "/$name";
     };
+
+Here, we consume a file upload, stash it on disk, and call the C<thumbnails>
+job to render multiple thumbnails. This might take a while, so we don't want
+to tie up the browser waiting for them to finish.
+
+    builder {
+        # mount the container app at /dashboard/
+        # note that the trailing slash is very important
+        mount '/dashboard/' => minion_app( '/foo/bar' )->start;
+        mount '/' => start;
+    };
+
+Finally, we create the L<Plack> application by mounting our L<Dancer2> 
+application to the root URL, and attaching the L<Minion> dashboard to the
+C</dashboard/> URL (the trailing C</> is required!). It also sets the 
+"Back to Site" link on the dashboard to the ficticious URL C</foo/bar>.
+
+=head2 Now, Let's Put it All Together
+
+Here's everything you need to make this example work (put all files in the 
+same directory):
+
+    # Save this as app.psgi
+    use Dancer2;
+    use Dancer2::Plugin::Minion;
+    use Plack::Builder;
+    use File::Basename 'fileparse';
+
+    add_task thumbnails => sub {
+        my ($job, $original) = @_;
+        require Image::Imlib2::Thumbnail;
+        my $thumb = Image::Imlib2::Thumbnail->new;
+        my ($base, $dir, $ext) = fileparse( $original, qr/\.[^.]*?$/ );
+        $_->{name} = "$base-$_->{name}" for @{ $thumb->sizes };
+        my @generated = $thumb->generate($original, $dir);
+        $job->finish(\@generated);
+    };
+
+    # This exposes all of the minion commands
+    if (@ARGV && $ARGV[0] eq 'minion') {
+        minion_app()->start;
+        exit 0;
+    }
+
+    set views => '.';
+
+    get '/' => sub {
+        template 'upload';
+    };
+
+    post '/' => sub {
+        my $file = upload('file');
+        my $name = $file->basename;
+        my $target = path('public', $name);
+        $file->copy_to($target);
+        enqueue(thumbnails => [$target]);
+        redirect "/$name";
+    };
+
+    builder {
+        # mount the container app at /dashboard/
+        # note that the trailing slash is very important
+        mount '/dashboard/' => minion_app( '/foo/bar' )->start;
+        mount '/' => start;
+    };
+
+    # Save as cpanfile
+    requires 'Dancer2';
+    requires 'Dancer2::Plugin::Minion';
+    requires 'Image::Imlib2::Thumbnail';
+
+    # Save as config.yml
+    plugins:
+        Minion:
+            dsn: sqlite:test.db
+            backend: SQLite
+
+    # Save as upload.tt
+    <html>
+      <head>
+        <title>Upload your wish pictures</title>
+      </head>
+      <body>
+        <h1>Upload your wish pictures</h1>
+
+        <form action="/" enctype="multipart/form-data" method="post">
+          <input type="file" name="file">
+          <input type="submit">
+        </form>
+      </body>
+    </html>
+
+To run the web app:
+
+    plackup app.psgi
+
+And finally, to run the L<Minion> worker:
+
+    perl app.psgi minion worker
+
+And remember, you can also run other L<Minion> commands this way:
+
+    perl app.psgi minion job 
+    perl app.psgi minion job -b kill ...
+
+You can see a sample of the app running:
+
+=for html <img src="/images/2020/20/file-upload.png">
+
+And the dashboard, too:
+
+=for html <img src="/images/2020/20/minion-dashboard.png">
 
 =head2 Future Plans
 
@@ -75,8 +216,8 @@ there will ever be one, at least not of my doing.
 
 =head2 Author
 
-This article has been written by Jason Crome (CromeDome) for the Twelve Days
-of Dancer.
+This article has been written by Jason Crome (CromeDome) (with B<much> 
+assistance from Joel Berger) for the Twelve Days of Dancer.
 
 =head2 Copyright
 
