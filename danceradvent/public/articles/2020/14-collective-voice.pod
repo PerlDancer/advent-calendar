@@ -25,15 +25,15 @@ Our immediate needs are far simpler than what the commercial solutions offer. We
 
 =over
 
-=item # Make it easy for happy customers to provide 5-star reviews
+=item 1. Make it easy for happy customers to provide 5-star reviews
 
-=item # Provide a feedback mechanism for less satisfied customers
+=item 2. Provide a feedback mechanism for less satisfied customers
 
-=item # Support multiple domains
+=item 3. Support multiple domains
 
-=item # Display 1-4 links to review sites for 4-5 stars
+=item 4. Display 1-4 links to review sites for 4-5 stars
 
-=item # Email form submissions for 3 or less stars
+=item 5. Email form submissions for 3 or less stars
 
 =back
 
@@ -58,7 +58,7 @@ Rather than pulling in a fat library like jQuery for this purpose, I learned tha
 
 Phil Smith has a good L<introductory article at Smashing Magazine|https://www.smashingmagazine.com/2020/03/introduction-alpinejs-javascript-framework/>.
 
-Lastly, I found the L<Alptail|https://www.alptail.com> collection of open-source UI components invaluable as I built the UI. It provided the star rating and modal dialogs. Thanks to L< Daniel Palmer|https://www.twitter.com/userlastname> for putting that together.
+Lastly, I found the L<Alptail|https://www.alptail.com> collection of open-source UI components invaluable as I built the UI. It provided the star rating and modal dialogs. Thanks to L<Daniel Palmer|https://www.twitter.com/userlastname> for putting that together.
 
 =head2 Bringing it All Together
 
@@ -71,13 +71,17 @@ for L<SendGrid|https://sendgrid.com>. Sure we could install an MTA to the server
 
 =head2 Getting Started
 
+=for html <s>
+
 So far, I have been doing development in a private repository. I will be releasing v1.0 to the world via a public GitHub repository in the next couple of weeks.
 
-Is this an application that you'd like to use or have ideas for how to improve it? I welcome your thoughts. Follow me on L<GitHub|https://github.com/knowmad> or connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/>.
+=for html </s>
+
+This application is L<available on GitHub|https://github.com/knowmad/CollectiveVoice>. Follow the steps in README.md to get started and share your gratitude, frustrations or ideas for how to improve it. I welcome your comments!
 
 =head2 Author
 
-This article has been written by William McKee (knowmad) for the Perl Dancer Advent Calendar 2020. Connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/> or at L<www.knowmad.com|https://www.knowmad.com>.
+This article has been written by William McKee (knowmad) for the Perl Dancer Advent Calendar 2020. Follow me on L<GitHub|https://github.com/knowmad> or connect with me on L<LinkedIn|https://www.linkedin.com/in/williammckee/> or at L<www.knowmad.com|https://www.knowmad.com>.
 
 =head2 Copyright & License
 
