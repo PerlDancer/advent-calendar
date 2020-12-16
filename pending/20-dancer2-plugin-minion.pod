@@ -12,6 +12,12 @@ some backstory and analysis. With that, let's move on to...
 
 =head2 The Code!
 
+We're going to build an image uploader that lets a child uoload a picture of an item on
+their Christmas list to Santa. We're going to save that image to a public image directory,
+and then it will generate a variety of sizes of thumbnails for that image. We don't want
+the client to have to wait on the generation to complete (they have other things to upload
+to Santa after all!), so we will use Minion to generate those thumbnails in the background.
+
 It requires a minimal amount of configuration to set up L<Minion> in your L<Dancer2> apps:
 
     plugins:
@@ -143,7 +149,7 @@ same directory):
     builder {
         # mount the container app at /dashboard/
         # note that the trailing slash is very important
-        mount '/dashboard/' => minion_app( '/foo/bar' )->start;
+        mount '/dashboard/' => minion_app( 'http://localhost:5000/upload' )->start;
         mount '/' => start;
     };
 
