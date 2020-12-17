@@ -1,0 +1,162 @@
+=head1 Post-processing HTML with Mojo::DOM
+
+Santa's elves were frantic! The big man had just noticed that the North Pole's
+website had links that didn't protect their users. They used C<http://> rather
+than C<https://> and that was very naughty. Santa wanted it fixed and he wanted
+it now!
+
+Some elves thought the best thing to do was to just sift through the site and
+find the naughty urls and fix them but others were worried it would take too
+long and Christmas would be ruined. Finally one proposed that they should just
+dynamically fix up any urls on the page right before sending it to the client.
+
+"It's a piece of cake," he said, "just use an 'after' hook". The other elves
+were still worried. "How do we know what to fix? After all we can't L<use a
+regex|https://stackoverflow.com/a/1732454/468327>," they complained. "Of course
+not, we can use a DOM parser, like L<Mojo::DOM>, even though the site itself
+uses L<Dancer2>," he replied.
+
+He added the following bit of code to the app,
+
+    hook after => sub {
+      require Mojo::DOM;
+      my $dom = Mojo::DOM->new(response->content);
+      $dom->find('a[href^="http:"]')
+        ->each(sub{ $_->{href} =~ s/^http/https/ });
+      response->content("$dom");
+    };
+
+"Now every time it renders a page, it will find anchor tags whose href
+attribute contains an insecure url starting with C<http> and fix it! Here let's
+check. The welcome page looks something like this,"
+
+
+    <html>
+      <head>
+        <title>Welcome to Santa's Workshop Online!</title>
+      </head>
+      <body>
+        <h1>Welcome to Santa's Workshop Online!</h1>
+
+        This is the place to <a id="check" href="/check">your naughty/nice
+        status</a> or send me <a id="list" href="/list">your list</a>. If you
+        would like to request some of Mrs. Claus' famous homemade candies,
+        please visit her at <a id="mrsclaus"
+        href="http://mrsclaus.example.org">her site</a>.
+        ...
+      </body>
+    </html>
+
+"... and we can see that it works by writing some tests. We can use
+L<Test::Mojo> since it L<works with Dancer2
+also|http://advent.perldancer.org/2018/20>."
+
+    use Mojo::Base -strict;
+
+    use Test::More;
+    use Test::Mojo;
+
+    my $t = Test::Mojo->with_roles('+PSGI')->new('app.psgi');
+
+    $t->get_ok('/')
+      ->status_is(200)
+      ->text_like('html body h1' => qr|welcome|i)
+      ->attr_is('#list' => href => '/list')
+      ->attr_is('#check' => href => '/check')
+      ->attr_like('#mrsclaus' => href => qr|^https:|)
+      ->element_exists_not('[href^="http:"]');
+
+    done_testing;
+
+They were careful to check that known urls were rewriten correctly while not
+accidentally changing others that shouldn't, like relative internal urls.
+Everyone was excited and the youngest elf, a spry 500 year old named Olaf, was
+about to slip something a little more festive into the eggnog when the big red
+and white striped phone rang!
+
+It was Santa again. He had decided that since 2020 had been a hard year for
+everyone, he wanted to wish everyone a happier 2021, and he wanted to do it in
+the footer on every page.
+
+The elves got back to work. Luckily they already had their HTML post-processor
+in place, they just needed to add another rule. They moved the url tranform to
+a subroutine named https and stubbed in a new one called footer,
+
+    hook after => sub {
+      require Mojo::DOM;
+      my $dom = Mojo::DOM->new(response->content);
+      https($dom);
+      footer($dom);
+      response->content("$dom");
+    };
+
+but what should it do?
+
+Quickly the elves realized that this was going to be more complicated because
+some pages, like the welcome, didn't have a footer, but others, like the
+toyshop page already did.
+
+    <html>
+      <head>
+        <title>Preview Next Year's Toys!</title>
+      </head>
+      <body>
+        <h1>Preview Next Year's Toys!</h1>
+
+        <ul><li>...</li></ul>
+        <footer>
+          <p>Made with love by Elves!</p>
+        </footer>
+      </body>
+    </html>
+
+Still the solution wasn't hard, they'd simply try to find a footer tag and if
+they didn't get one, they'd add it as the last element in the C<< <body> >>.
+
+    sub footer {
+      my $dom = shift;
+      my $footer = $dom->at('body footer');
+
+      # no footer found, build one just before </body>
+      unless ($footer) {
+        $dom->at('body')->append_content($dom->new_tag('footer'));
+        $footer = $dom->at('body footer');
+      }
+
+      my $wish = $dom->new_tag(p => id => 'wish' => 'Wishing you a happier 2021!');
+      $footer->append_content($wish);
+    }
+
+Now when they wrote the tests they had to be a little careful, when they create
+the footer, they can check that the footer is the last element in the body, but
+when they don't they can't be sure, so they make the test a little more
+generic.
+
+    use Mojo::Base -strict;
+
+    use Test::More;
+    use Test::Mojo;
+
+    my $t = Test::Mojo->with_roles('+PSGI')->new('app.psgi');
+
+    $t->get_ok('/')
+      ->status_is(200)
+      ->text_is('body > footer:last-child > p#wish:last-child', 'Wishing you a happier 2021!');
+
+    $t->get_ok('/toyshop')
+      ->status_is(200)
+      ->text_is('body footer > p#wish:last-child', 'Wishing you a happier 2021!');
+
+    done_testing;
+
+In either case, using Test::Mojo and CSS selectors made writing otherwise
+complex tests a breeze.
+
+Soon one of the senior elves addressed the crowd. "I just heard back from
+Santa," he said, "and he's feeling much more jolly. Great work everyone!" Just
+then some movement in the back of the room caught his eye. "Hey what's Olaf
+doing to that eggnog?!"
+
+---
+
+See entire finished app at L<https://gist.github.com/jberger/18990fc4d2197ce1ce61edb88e2ed6fa>.
