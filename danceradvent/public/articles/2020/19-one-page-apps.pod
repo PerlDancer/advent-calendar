@@ -13,64 +13,53 @@ of constructs.
 
 Here's the HTML needed for the message block:
 
-=begin html
-
-<div id='messageBlock' style='min-height: 50px; padding:10px; margin: 20px; border: 1px solid black'>
-  <h2>Messages from Beyond:</h2>
-  <div id='messageResults'></div>    <!-- Nothing in this div.  Yet. -->
-</div>
-
-=end
+    <div id='messageBlock' style='min-height: 50px; padding:10px; margin: 20px; border: 1px solid black'>
+        <h2>Messages from Beyond:</h2>
+        <div id='messageResults'></div>    <!-- Nothing in this div.  Yet. -->
+    </div>
 
 And here's the route we'll be calling. In this example, I'm randomly generating the messages, but in a real
 app, you might be fetching them from a message box, a file, a database, or whatever. Because it's what I'm used
 to, I set the application-type in my config.yml to C<'application/json'>, but this can do xml, or whatever
 you need; just make sure that's what you're returning!
 
-=begin perl
+    use Dancer2::Plugin::Ajax;
 
-use Dancer2::Plugin::Ajax;
+    ajax '/messages' => sub {
+        my @messages = (
+            'Boo! I betcha I scared you, ha-ha!',
+            'A girl has no name, but she still has a list.',
+            'Space, the final frontier.',
+            '',
+            '<h1>Really big text</h1>',
+        );
+        send_as JSON => { message => @messages[int(rand(5))] };
+    };
 
-ajax '/messages' => sub {
-   my @messages = (
-      'Boo! I betcha I scared you, ha-ha!',
-      'A girl has no name, but she still has a list.',
-      'Space, the final frontier.',
-      '',
-      '<h1>Really big text</h1>',
-   );
-   send_as JSON => { message => @messages[int(rand(5))] };
-};
-
-=end
 
 Now, here's where the wizardry comes in. Call a function that repeats an AJAX request every ten seconds, and
 on success, update the DOM in that empty div we created for these messages.  If you've got the style right,
 the larger div with the border box will even enlarge and shrink in height as needed. 
 
-=begin javascript
-
-$(document).ready( function() {
-  var timer = setInterval(
-    function() {
-      $.ajax({
-        url: '/messages',
-        type: 'GET',
-        success: function(data) {
-           // Update the DOM
-           $('#messageResults').html(data.message);
-        },
-        error: function(event, stat, error) {
-          // throw a message into the browser's developer console
-          var str = 'Request failed. Status: ' + stat + ' Error: ' + error;
-          console.log(str);
-        },
-      });
-    },
- 10000);    // in milliseconds.
-});
-
-=end
+  $(document).ready( function() {
+    var timer = setInterval(
+      function() {
+        $.ajax({
+          url: '/messages',
+          type: 'GET',
+          success: function(data) {
+             // Update the DOM
+             $('#messageResults').html(data.message);
+          },
+          error: function(event, stat, error) {
+            // throw a message into the browser's developer console
+            var str = 'Request failed. Status: ' + stat + ' Error: ' + error;
+            console.log(str);
+          },
+        });
+      },
+   10000);    // in milliseconds.
+  });
 
 =head2 Nice, but what can you do with it?
 
