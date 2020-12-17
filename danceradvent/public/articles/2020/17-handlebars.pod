@@ -21,13 +21,9 @@ Handlebars, like Template Toolkit and many others, can take objects handed to it
 system, and insert data into pages, at your direction.  So, if you have a list of people objects with names,
 you can get a list of them:
 
-=begin html
-
-{{#each people}}
-  {{ lastname }}, {{ firstname }}<br>
-{{/each}}
-
-=end html
+    {{#each people}}
+        {{ lastname }}, {{ firstname }}
+    {{/each}}
 
 Handlebars also supports "partials", subtemplates you might want to call, similar in behavior to TT's C<INCLUDE> or C<PROCESS>
 tools. You can even dynamically call a partial by referencing a variable name containing the name of the partial!
@@ -37,21 +33,13 @@ C<#each> and C<#with>, which create loop iterators, C<#if> and C<#unless> that c
 C<log> helper, which provide data access and logging, respectively. But everything else you might want to do is a helper
 you must include or write. Writing them is relatively straightforward JavaScript, like so:
 
-=begin javascript
-
-Handlebars.registerHelper('loud', function (aString) {
+    Handlebars.registerHelper('loud', function (aString) {
 	    return aString.toUpperCase()
-})
-
-=end javascript
+    })
 
 Then in your template,
 
-=begin html
-
-{{loud lastname }}, {{ firstname }}<br>
-
-=end html
+    {{loud lastname }}, {{ firstname }}
 
 And for me, you'd get HOLLOWAY, Ruth.
 
