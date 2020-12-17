@@ -94,7 +94,7 @@ to tie up the browser waiting for them to finish.
     builder {
         # mount the container app at /dashboard/
         # note that the trailing slash is very important
-        mount '/dashboard/' => minion_app( 'https://northpole.org/upload' )->start;
+        mount '/dashboard/' => minion_app( 'https://northpole.com/' )->start;
         mount '/' => start;
     };
 
@@ -102,7 +102,7 @@ Finally, we create the L<Plack> application by mounting our L<Dancer2>
 application to the root URL, and attaching the L<Minion> dashboard to the
 C</dashboard/> URL (the trailing C</> is required!). It also sets the 
 "Back to Site" link on the dashboard to the ficticious URL 
-C<https://northpole.org/upload>.
+C<https://northpole.com/>.
 
 =head2 Now, Let's Put it All Together
 
@@ -149,7 +149,7 @@ same directory):
     builder {
         # mount the container app at /dashboard/
         # note that the trailing slash is very important
-        mount '/dashboard/' => minion_app( 'https://northpole.org/upload' )->start;
+        mount '/dashboard/' => minion_app( 'https://northpole.com/' )->start;
         mount '/' => start;
     };
 
