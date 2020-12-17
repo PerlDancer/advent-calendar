@@ -1,0 +1,170 @@
+=encoding utf8
+
+=head1 Dancer Two-Factor Authentication Demo
+
+This demo shows how Two-Factor Authentication (2FA) can be implemented with Dancer2,
+Dancer2::Plugin::Auth::Extensible and a couple of other Perl modules.
+
+It also shows how Dancer2::Plugin::Auth::Extensible enhances your Dancer application
+with user management using very little code.
+
+=head2 Get the source code from GitHub
+
+    ~# git clone https://github.com/racke/dancer2-tfa-demo.git
+
+=head2 Start the app
+
+    ~# cd dancer2-tfa-demo
+    ~# plackup -o 127.0.0.1 bin/app.psgi
+    HTTP::Server::PSGI: Accepting connections at http://127.0.0.1:5000/
+
+=head2 Login and Setup 2FA
+
+Go to the browser and enter the login URL L<http://127.0.0.1:5000/login>.
+
+=for html <img src="/images/2020/22/2FA_login.png"/>
+
+The default credentials are  I<dancer2> as username and I<2fanow> as password.
+You can change or add users in the L<configuration file|/Configuration>.
+
+=for html <img src="/images/2020/22/2FA_demo.png"/>
+
+Now use an 2FA app like Authy, Google Authenticator or FreeOTP+ to scan the QR code
+and confirm the token.
+
+Finally log out and test your token.
+
+=for html <img src="/images/2020/22/2FA_relogin.png"/>
+
+=head2 Two-Factor Authentication
+
+=head3 Creating the secret
+
+The demo application creates the secret when the user is logged in and goes to the 2FA setup page for the first time.
+The secret is created with L<Data::SimplePassword>, default length is 30 characters.
+
+=head3 Generating image with QR code
+
+First we create an object which is going to generate an image with the QR code.
+
+  my $qr = Imager::QRCode->new(
+     size => 6,
+     margin => 2,
+     version => 1,
+     level => 'M',
+     casesensitive => 1,
+  );
+
+Now we construct the label that is going to be used by the authentication app. It consists of the fixed string
+and the user name in parenthesis.
+
+  my $instance = $self->qr_code_label;
+  my $user_link = uri_escape("$instance (" . $username . ')');
+
+  my $data;
+  my $img = $qr->plot("otpauth://totp/$user_link?secret=" . encode_base32($secret));
+  $img->write(data => \$data, type => 'png');
+
+We send this back with:
+
+  $self->plugin->app->send_file (\$data, content_type => 'image/png');
+
+=head3 Storing the secret
+
+The secret is stored on the server and in the authentication app of the user.
+The demo keeps the secret in memory.
+
+=head2 Authentication
+
+The authentication code is split into two modules, a role with the logic for the specific routes and a demo
+provider which consumes that role and takes care of the secret's generation and the "storage".
+
+=head3 Login
+
+We intercept the standard authentication of Dancer2::Plugin::Auth::Extensible from the Demo provider using around:
+
+  around authenticate_user => sub {
+    my ($orig, $self, $username, $password, @args) = @_;
+    my $ret = $orig->($self, $username, $password, @args);
+
+    return unless $ret;
+    if ($self->check_tfa($username,
+                         $self->plugin->app->request->param('token'))) {
+        return $ret;
+    }
+    else {
+        return;
+    }
+  };
+
+So we first call the original authenticate_user method and only if that is successful we are
+checking the token.
+
+We determine the token that is valid at the current time and compare that with the token passed by the user:
+
+  my $expected = Authen::OATH->new->totp($secret);
+
+  if ($token eq $expected) {
+     ...
+  }
+  else {
+     ...
+  }
+
+=head2 Configuration
+
+We are using a fixed set of credentials in the configuration file C<config.yml>.
+
+    plugins:
+      Auth::Extensible:
+        realms:
+          users:
+           provider: Demo
+           username_key_name: user
+           users:
+             - user: dancer2
+               pass: 2fanow
+
+=head1 Routes
+
+Dancer2::Plugin::Auth::Extensible supplements the demo with routes for login and logout,
+so we only need a few more routes specific to 2FA.
+
+=head2 2FA
+
+=head3 GET /tfa/setup/
+
+Shows the form for 2FA setup with the QR code.
+
+=head3 GET /tfa/qrcode.png
+
+Produces QR code.
+
+=head3 POST /tfa/setup/
+
+Verifies token from 2FA setup form.
+
+=head2 From plugin
+
+The routes for 2FA are established by the plugin, e.g.
+
+    $app->add_route(
+        method => 'get',
+        regexp => '/tfa/setup',
+        code => sub { $self->tfa_setup }
+    );
+
+=head1 Use cases
+
+We are using Two-Factor Authentication for a couple of websites for ECA and an online shop
+in Germany.
+
+=head1 Limitations
+
+As the secrets are stored into memory, this demo should be run only as a single instance.
+Maybe L<Dancer2::Plugin::Cache::CHI> could help here.
+
+=head1 Author
+
+This article has been written by Stefan Hornburg (Racke) for the Perl Dancer 
+Advent Calendar 2020.
