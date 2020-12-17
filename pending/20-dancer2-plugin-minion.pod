@@ -40,8 +40,7 @@ Lastly, the keyword C<minion_app> creates a Minion application, which you can th
 via L<Plack> (if you want to have an admin dashboard for Minion in your Dancer app), or 
 if you want to enable the Minion CLI in your Dancer apps. I will demonstrate this below.
 
-Here's a totally fabricated example to demonstrate how each of these methods can be
-used in your L<Dancer2> application:
+Let's see what this looks like:
 
     use Dancer2;
     use Dancer2::Plugin::Minion;
@@ -95,14 +94,15 @@ to tie up the browser waiting for them to finish.
     builder {
         # mount the container app at /dashboard/
         # note that the trailing slash is very important
-        mount '/dashboard/' => minion_app( '/foo/bar' )->start;
+        mount '/dashboard/' => minion_app( 'https://northpole.org/upload' )->start;
         mount '/' => start;
     };
 
 Finally, we create the L<Plack> application by mounting our L<Dancer2> 
 application to the root URL, and attaching the L<Minion> dashboard to the
 C</dashboard/> URL (the trailing C</> is required!). It also sets the 
-"Back to Site" link on the dashboard to the ficticious URL C</foo/bar>.
+"Back to Site" link on the dashboard to the ficticious URL 
+C<https://northpole.org/upload>.
 
 =head2 Now, Let's Put it All Together
 
@@ -149,7 +149,7 @@ same directory):
     builder {
         # mount the container app at /dashboard/
         # note that the trailing slash is very important
-        mount '/dashboard/' => minion_app( 'http://localhost:5000/upload' )->start;
+        mount '/dashboard/' => minion_app( 'https://northpole.org/upload' )->start;
         mount '/' => start;
     };
 
