@@ -14,7 +14,7 @@ The Twelve Days of Dancer (starting December 13th):
 15 - [D] QuarrenCMS (GeekRuthie)
 16 - [D] Typed Route Parameters in Dancer2 (SysPete)
 17 - [D] Dancer2::Template::Handlebars (GeekRuthie)
-18 - [A] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
+18 - [D] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
 19 - [D] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
 20 - [A] Dancer2::Plugin::Minion (cromedome)
 21 - [A] Async and promises (Sawyer X)
