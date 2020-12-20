@@ -1,4 +1,4 @@
-=head1 Asynchronous Dancer2 using Promises PT. 1 - The What and Why
+=head1 Asynchronous Dancer2 PT. 1 - What, Why, and How?
 
 Dancer2 has support for asynchronous programming, allowing you to:
 
