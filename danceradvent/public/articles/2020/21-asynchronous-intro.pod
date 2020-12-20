@@ -18,7 +18,7 @@ also read about in this previous post on it.
 =head2 This sounds familiar...
 
 If you think you've heard this before, it might be because of
-L<this article|https://advent.perldancer.org/2020>
+L<this article|https://advent.perldancer.org/2016>
 from the Perl Advent Calendar of 2016, in which we cover the
 asynchronous interface that Dancer2 provides.
 
@@ -114,7 +114,7 @@ researching L<IO::Async>.
 The L<Plack> web server we will use with L<AnyEvent> is L<Twiggy>, but
 if you're using L<IO::Async>, you can use L<Net::Async::HTTP::Server>.
 
-=head2 So what example are w using here?
+=head2 So what example are we using here?
 
 For our example, we built a small application that, when called, will
 reach a Covid-19 API to retrieve the top countries with confirmed cases.
