@@ -135,7 +135,7 @@ a DB call).
 Theoretically yes. We're not looking at the most optimal code, but just
 enough contrived code to deliver the message but not entirely useless.
 
-=item * What's trimmed mean?
+=item * What's a trimmed mean?
 
 Mean (average) is not a very reliable metric, since it can be easily
 offset by outliers. You have ten good grades and one really bad one.
@@ -172,7 +172,7 @@ First, our initial code:
     use constant {
         'MAX_COUNTRIES' => 5,
         'MAX_DAYS'      => 7,
-        'SUMMARY_URL'   => 'https://covid-api.mmediagroup.fr/v1/history?status=confirmed',
+        'SUMMARY_URL'   => 'https://covid-api.mmediagroup.fr/v1/cases',
         'COUNTRY_URL'   => 'https://covid-api.mmediagroup.fr/v1/history?country=%s&status=Confirmed',
         'LTRIM'         => '0.25',
     };
@@ -203,14 +203,14 @@ asynchronous code.
 =item * Any time we have asynchronous code blocks
 
 Whenever we have a subroutine that needs access to the Dancer2 DSL,
-we need to change the C<sub> into a C<delayed> sub.
+we need to change the C<sub> into a C<delayed> C<sub>.
 
 =back
 
 Using C<delayed> can be done without parenthesis (just like other
-Dancer2 keywords) and without the C<sub> keyword. Or, if you decide
-to use it with parenthesis and the C<sub> keyword, you could use
-parenthesis.
+Dancer2 keywords) and without the C<sub> keyword. You can also use
+it with parenthesis and the C<sub> keyword, which will allow you
+to make use of subroutine signatures.
 
 The following are equivalent:
 
@@ -257,7 +257,8 @@ when our following asynchronous code finishes running.
 
 Yes, we declare first what we do when code ends and only then write the
 code. Welcome to asynchronous code. You might also now understand why
-Promises is such a popular pattern, which we will see in the next article.
+Promises is such a popular pattern, which we will see in the next part
+of this series.
 
 We then provide the async code to run, namely an HTTP request to our API.
 The subroutine calling C<< $cv-&gt;end >> notes the end of the async
@@ -299,6 +300,10 @@ Our next goal is to pick the top countries based on the most confirmed
 cases using a simple sort. I won't go into the data structure the API
 returns because that's the least valuable part here.
 
+In short, we take all of our countries, excluding the "Global" category
+the API provides, then each country's C<confirmed> key is compared and
+sorted, eventually picking only the amount we want.
+
     my @countries = ( sort {
         $data->{$b}{'All'}{'confirmed'} <=> $data->{$a}{'All'}{'confirmed'}
     } grep $_ ne 'Global', keys $data->%* )[ 0 .. MAX_COUNTRIES() ];
@@ -313,10 +318,15 @@ This code will be run within the C<http_get> callback.
 
 =head3 Introducing multiple concurrent requests
 
-Once we these list of top countries, we want to get the results for each
+Once we get this list of top countries, we want to get the results for each
 country's history. Here is where the real magic happens.
 
-We want to make another C<http_get> call for each country.
+We want to make another C<http_get> call for each country and we want these
+to run B<concurrently>. This way, no matter how many we have, the time
+won't really change, since they are happening at the same time.
+
+(On larger-scale applications, you would likely defend against running too
+many concurrent requests. The API itself might throttle you as well.)
 
         my $yesterday = DateTime->now->subtract( 'days' => 1 );
         foreach my $country (@countries) {
@@ -554,8 +564,8 @@ L<M-Media-Group API|https://github.com/M-Media-Group/Covid-19-API> supports
 retrieving the history for all countries, so this two-step process is
 unnecessary.
 
-The statistics are not necessarily helpful or even accurate. You might come
-up with a better calculation that is more accurate and provides more insight.
+The calculation we do is not necessarily helpful. You might come up with a
+better calculation that is more useful and provides more insight.
 
 =item * HTML output
 
