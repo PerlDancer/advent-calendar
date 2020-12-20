@@ -17,9 +17,9 @@ The Twelve Days of Dancer (starting December 13th):
 18 - [D] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
 19 - [D] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
 20 - [D] Dancer2::Plugin::Minion (cromedome)
-21 - [A] Async and promises (Sawyer X)
-22 - [D] Dancer2 and Two-Factor Authentication (2FA) (racke)
-23 - [A] Multi-Tenant Dancer (knowmad and cromedome)
+21 - [D] Dancer2 and Two-Factor Authentication (2FA) (racke)
+22 - [A] Async and promises, part 1 (Sawyer X)
+23 - [A] Async and promises, part 2 (Sawyer X)
 24 - [A] Content Negotiation with Dancer2::Serializer::Mutable (veryrusty)
 
 Flags:
