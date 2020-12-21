@@ -261,8 +261,8 @@ Promises is such a popular pattern, which we will see in the next part
 of this series.
 
 We then provide the async code to run, namely an HTTP request to our API.
-The subroutine calling C<< $cv-&gt;end >> notes the end of the async
-code and will trigger the C<< $cv-&gt;cb >> code we set up.
+The subroutine calling C<< $cv->end >> notes the end of the async
+code and will trigger the C<< $cv->cb >> code we set up.
 
 =head3 Let's add some data validation
 
