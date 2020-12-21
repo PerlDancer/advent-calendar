@@ -12,7 +12,7 @@ some backstory and analysis. With that, let's move on to...
 
 =head2 The Code!
 
-We're going to build an image uploader that lets a child uoload a picture of an item on
+We're going to build an image uploader that lets a child upload a picture of an item on
 their Christmas list to Santa. We're going to save that image to a public image directory,
 and then it will generate a variety of sizes of thumbnails for that image. We don't want
 the client to have to wait on the generation to complete (they have other things to upload
@@ -101,8 +101,8 @@ to tie up the browser waiting for them to finish.
 Finally, we create the L<Plack> application by mounting our L<Dancer2> 
 application to the root URL, and attaching the L<Minion> dashboard to the
 C</dashboard/> URL (the trailing C</> is required!). It also sets the 
-"Back to Site" link on the dashboard to the ficticious URL 
-C<https://northpole.com/>.
+"Back to Site" link on the dashboard to the North Pole website
+(C<https://northpole.com/>).
 
 =head2 Now, Let's Put it All Together
 
