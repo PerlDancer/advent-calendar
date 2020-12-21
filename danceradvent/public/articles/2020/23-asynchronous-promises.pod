@@ -84,7 +84,7 @@ which category you fall in (maybe both?), we're now going to do it together.
 
 =head3 Update our imports
 
-package CovidStats::Promises;
+    package CovidStats::Promises;
 
     use Dancer2;
     use experimental qw< postderef signatures >;
