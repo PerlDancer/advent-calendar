@@ -514,6 +514,10 @@ I recommend checking out L<IO::Async>. It comes with a host of useful, advanced,
 modern tools. It has a lot of thorough documentation. It has a lively community,
 and a responsive and supportive author.
 
+You can read more about L<IO::Async>
+L<here|http://www.perladvent.org/2018/2018-12-14.html> and in Paul Evans'
+L<Advent Calendar 2020|https://leonerds-code.blogspot.com/2020/12/>.
+
 =head2 Author
 
 This article has been written by Sawyer X for the Perl
