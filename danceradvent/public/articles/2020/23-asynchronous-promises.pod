@@ -153,7 +153,7 @@ the logic.
 
             return \@countries;
         ))->then( delayed( sub ($countries) {...} ) );
- 
+
 We start by getting the Promise (by calling C<promise> on the deferred) and
 from now on, we can just start chaining C<then> methods. The C<$data>
 variable will eventually (once it actually gets called) be the parameter
@@ -218,7 +218,7 @@ of them using... C<collect>!
 
             return collect(@promises);
         }))->then( delayed( sub (@stats_by_country) {...} ) );
- 
+
 Notice we repeat the same pattern with create a deferred Promise, then making
 all of these requests, adding the Promise from the deferred object into an
 array, and eventually calling C<collect> to create a single Promise.
