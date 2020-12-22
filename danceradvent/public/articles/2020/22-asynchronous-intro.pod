@@ -13,7 +13,7 @@ Dancer2 has support for asynchronous programming, allowing you to:
 =back
 
 These are provided by the Delayed Response capability, which you can
-also read about in this previous post on it.
+also read about in a previous post on it.
 
 =head2 This sounds familiar...
 
@@ -22,7 +22,7 @@ L<this article|https://advent.perldancer.org/2016>
 from the Perl Advent Calendar of 2016, in which we cover the
 asynchronous interface that Dancer2 provides.
 
-But just because we wrote about it in the past, does not mean we can't
+But just because we wrote about it in the past, it does not mean we can't
 write about it again. Some messages are worth repeating. :)
 
 =head2 So what's this about?
@@ -30,7 +30,7 @@ write about it again. Some messages are worth repeating. :)
 This two-part article will teach you about writing asynchronous code
 using promises.
 
-This first part will focus on what asynchronous programming in, giving
+This first part will focus on what asynchronous programming is, giving
 you some context, and we will even write some asynchronous code.
 
 In the next part, we will focus on rewriting this code using the
@@ -48,7 +48,7 @@ Imagine you need to make multiple database requests to calculate a response
 for the user. You need to request the user data, then the reservations for
 the user, and the latest messages they might have. Given the user ID from
 the session, these DB calls don't depend on each other, but alas, you must
-wait for each one to finish before you do the next one.
+wait for each one to finish before you call the next one.
 
 If you're using asynchronous programming, you could trigger multiple DB
 calls at the same time and wait for them to finish.
@@ -97,7 +97,7 @@ between them, but for our purposes, they can all be viewed as similar
 enough to be used interchangeably.
 
 To be a slightly more technical (without the 100 lines of text I have
-decided to spare you), asynchronous code is an umbrella term. Our code
+decided to spare you), asynchronous code is an umbrella term. We
 will write asynchronous code that will work using an event loop and
 non-blocking calls. Streaming is the term for continuously feeding
 a stream of information versus a single response.
@@ -116,9 +116,9 @@ if you're using L<IO::Async>, you can use L<Net::Async::HTTP::Server>.
 
 =head2 So what example are we using here?
 
-For our example, we built a small application that, when called, will
+For our example, we will build a small application that, when called, will
 reach a Covid-19 API to retrieve the top countries with confirmed cases.
-Then, it will fetch each country's confirmed cases for the last period
+Then it will fetch each country's confirmed cases for the last period
 and create a trimmed mean / truncated mean.
 
 =over 4
@@ -133,7 +133,7 @@ a DB call).
 =item * Could this be cached daily?
 
 Theoretically yes. We're not looking at the most optimal code, but just
-enough contrived code to deliver the message but not entirely useless.
+enough contrived code to deliver the message but not be entirely useless.
 
 =item * What's a trimmed mean?
 
@@ -281,7 +281,7 @@ code and will trigger the C<< $cv->cb >> code we set up.
                     1;
                 } or do {
                     content("Sorry, failed to fetch data: $!");
-                    done();
+                    $cv->end();
                     return;
                 };
 
@@ -340,7 +340,7 @@ many concurrent requests. The API itself might throttle you as well.)
                     1;
                 } or do {
                     content("Sorry, failed to fetch data for $country: $!");
-                    done();
+                    $cv->end();
                     return;
                 };
 
@@ -452,7 +452,7 @@ The full program is:
                     1;
                 } or do {
                     content("Sorry, failed to fetch data: $!");
-                    done();
+                    $cv->end();
                     return;
                 };
 
@@ -462,7 +462,7 @@ The full program is:
 
                 if (!@countries) {
                     content("Sorry, failed to received countries\n");
-                    done();
+                    $cv->end();
                     return;
                 }
 
@@ -478,7 +478,7 @@ The full program is:
                             1;
                         } or do {
                             content("Sorry, failed to fetch data for $country: $!");
-                            done();
+                            $cv->end();
                             return;
                         };
 
