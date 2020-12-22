@@ -94,7 +94,7 @@ in some cases, they are just unnecessary overhead.
 
 There are multiple definitions floating around. There are differences
 between them, but for our purposes, they can all be viewed as similar
-enough to be use interchangeably.
+enough to be used interchangeably.
 
 To be a slightly more technical (without the 100 lines of text I have
 decided to spare you), asynchronous code is an umbrella term. Our code
