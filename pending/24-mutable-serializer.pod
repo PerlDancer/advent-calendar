@@ -1,0 +1,120 @@
+=head1 Simple content negotiation with the mutable serializer.
+
+If you define a serializer in your Dancer2 app then that is what your app
+"speaks". All output will returned serialized. Use common frontend frameworks
+like react, vue, or angular, and you will need to be able to return JSON.
+However there are other options that may be suitable or be driven by business
+requirements.
+
+Out of the box Dancer2 ships with serailizers for YAML, JSON and Data::Dumper.
+Others are avalable on CPAN for XML and CBOR. Why limit yourself to one when
+you can have them all ?
+
+=head2 set serializer => Mutable
+
+Dancer2 provides a mutable serializer as part of the core distribution. In
+this context "mutable" refers to being able to alter the serialization based
+on request headers. When a request is made, the HTTP request C<Accept> header
+declares the mime type the clients wants for the response.
+
+Lets get things rolling with a example. The mapping of mime types to serializers
+is defined inline here to include XML and exclude (Data::)Dumper. To keep it
+simple there's only one route.
+
+    package Example::App;
+    use Dancer2;
+    # https://github.com/PerlDancer/Dancer2/issues/1568
+    use YAML;
+    use Dancer2::Serialier::XML;
+
+    set engines => {
+        serializer => {
+            Mutable => {
+                mapping => {
+                    'text/x-yaml'      => 'YAML',
+                    'text/html'        => 'YAML',
+                    'text/x-json'      => 'JSON',
+                    'application/json' => 'JSON',
+                    'text/xml'         => 'XML',
+                }
+            }
+        }
+    };
+    set serializer => 'Mutable';
+  
+    get '/' => sub {
+          return {
+              Australia     => '+61-3-8652-1453',
+              'New Zealand' => '+64-9-886-0565',
+              UK            => '+44-11-7325-7425',
+              USA           =>  '+1-760-706-7425',
+          };
+    };
+  
+    1; 
+
+Bring this app up via plackup and send some requests at it.
+
+For the YAML fans:
+
+    curl -H 'Accept: text/x-yaml' http://localhost:5000
+
+    ---
+    Australia: +61-3-8652-1453
+    New Zealand: +64-9-886-0565
+    UK: +44-11-7325-7425
+    USA: +1-760-706-7425
+
+Or for the XML lovers: 
+
+    curl -H 'Accept: text/xml' http://localhost:5000
+
+    <opt Australia="+61-3-8652-1453" New Zealand="+64-9-886-0565" UK="+44-11-7325-7425" USA="+1-760-706-7425" />
+
+An `Accept` header with a mime type that doesn't match the mutable serialier mapping will return JSON.
+
+    curl -H 'Accept: nosuch/mimetype' http://localhost:5000.
+
+    {"Australia":"+61-3-8652-1453","New Zealand":"+64-9-886-0565","UK":"+44-11-7325-7425","USA":"+1-760-706-7425"}
+
+
+=head2 Ins and Outs
+
+Serializers also decode request content into body parameters. The mime type from the request `Content-type` header
+is used to select how to decode the incomming data.
+
+Add a route that returns the body parameters as a hashref to the example app above
+
+    POST '/babelfish' => sub {
+        return body_parameters->as_hashref;
+    };
+
+Restart the app and POST a request where the body is JSON encoded and we accept XML back.
+
+    curl -H 'Content-type: application/json' -H 'Accept: text/xml' \
+      -d '{"USA":"+1-760-706-7425","UK":"+44-11-7325-7425","Australia":"+61-3-8652-1453","New Zealand":"+64-9-886-0565"}' \
+      -X POST http://localhost:5000/babelfish
+
+    <opt Australia="+61-3-8652-1453" New Zealand="+64-9-886-0565" UK="+44-11-7325-7425" USA="+1-760-706-7425" />
+
+Translation from JSON to XML may not be that exciting...
+
+=head2 Beyond Serializer::Mutable
+
+Content negotiation can go beyond a single mimetype requested by the client.
+Language choice, media selection, and weighted options are all defined in the
+HTTP specs, but are beyond the current capability of the mutable serializer.
+If this is something you require, Dancer2::Plugin::HTTP::ContentNegotiation may
+fit your needs. Another possibility is a before hook using HTTP::Negotiate.
+
+Use them to go make something awesome.
+
+=head2 Author
+
+This article has been written by Russell @veryrusty Jenkins for the Perl
+Dancer Advent Calendar 2020.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
