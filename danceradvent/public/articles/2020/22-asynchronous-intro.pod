@@ -417,7 +417,7 @@ The full program is:
     use AnyEvent;
     use AnyEvent::HTTP;
     use Statistics::Descriptive::Full;
-    use URI::Escaoe qw< uri_escape >;
+    use URI::Escape qw< uri_escape >;
 
     use constant {
         'MAX_COUNTRIES' => 5,

@@ -1,7 +1,7 @@
 =head1 Asynchronous Dancer2 PT. 2 - Promises and a Bonus!
 
 Now that you're familiar with
-L<asynchronous programming in Dancer2|https://advent.perldancer.org/2020/21>,
+L<asynchronous programming in Dancer2|https://advent.perldancer.org/2020/22>,
 we can delve into taking awkward async code and turning it into more
 manageable code using L<Promises>.
 
