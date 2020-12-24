@@ -18,9 +18,9 @@ The Twelve Days of Dancer (starting December 13th):
 19 - [D] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
 20 - [D] Dancer2::Plugin::Minion (cromedome)
 21 - [D] Dancer2 and Two-Factor Authentication (2FA) (racke)
-22 - [A] Async and promises, part 1 (Sawyer X)
-23 - [A] Async and promises, part 2 (Sawyer X)
-24 - [A] Content Negotiation with Dancer2::Serializer::Mutable (veryrusty)
+22 - [D] Async and promises, part 1 (Sawyer X)
+23 - [D] Async and promises, part 2 (Sawyer X)
+24 - [D] Content Negotiation with Dancer2::Serializer::Mutable (veryrusty)
 
 Flags:
 
