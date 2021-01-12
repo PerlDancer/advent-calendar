@@ -57,6 +57,28 @@ get '/notyet' => sub {
     template 'notyet';
 };
 
+get '/archive' => sub {
+    my $today = DateTime->today();
+
+    my $year = $today->year;
+    $year-- unless $today->month == 12;
+     
+    my @all_entries;
+    for my $y (config->{start_year} .. $year ) { 
+        # Set year param only as _get_entries uses it
+        params->{year} = $y;
+        
+        # Fetch the titles of all the posts so the template can provide a list
+        # of named posts. Exclude the today's article, to keep the mystery ;)
+        push @all_entries, grep { $_->{issued} != $today } _get_entries(params->{year});
+    }
+
+    return template 'archive' => { 
+        all_entries => \@all_entries,
+        year => $year,
+    };
+};
+
 get '/:year' => sub {
     return send_error( "this is not a valid year", 404 )
       unless _control_date( params->{year} );
@@ -105,6 +127,8 @@ get '/feed/:year' => sub {
     );
 };
 
+
+
 get '/:year/:day' => sub {
     # XXX better 404 page for this
     return send_error( "this is not valid date", 404 )
@@ -128,6 +152,8 @@ get '/:year/:day' => sub {
         content => $html
     };
 };
+
+
 
 sub _pod_to_html {
     my $pod_file = shift;
@@ -236,10 +262,11 @@ sub _get_entries {
             link     => $permalink,
             category => 'perl',
             issued   => DateTime->new(
-                year  => params->{year},
+                year  => $year,
                 month => 12,
                 day   => $article->{day}
             ),
+            year     => $year
           };
     }
     return @entries;

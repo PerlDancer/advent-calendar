@@ -1,0 +1,18 @@
+
+<h1>Perl Dancer Advent Calendar Archive</h1>
+
+[% IF all_entries.size %]
+    <h2>Full article list</h2>
+    <p>
+    Here's a full list of the previous posts with their titles:
+    </p>
+    <ul>
+    [% use Dumper %]
+    [% FOR a IN all_entries %]
+        [% next UNLESS a.year %]
+        <li><a href="[% a.year %]/[% a.issued.day %]">[% a.title %]</a> ([% a.year %])</li>
+    [% END %]
+    </ul>
+[% END %]
+
+

@@ -1,0 +1,5 @@
+requires "Dancer2";
+requires "Pod::POM";
+requires "Text::Outdent";
+requires "Dancer::Plugin::Feed";
+requires "Dancer::Plugin::MobileDevice";

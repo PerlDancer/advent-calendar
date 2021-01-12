@@ -36,13 +36,18 @@ Each day of December until Christmas, one article about Dancer. Stay tuned for n
 
 <ul id="sidebar-items">
 <li>
+    <h3>Archive/RSS Feed</h3>
+    <ul class="links">
+      <li><a href="[% uri_base %]/archive">Archive of all articles</a>
+      <li><a class="feed" href="[% uri_base %]/feed/[% year %]">[% year %] RSS Feed</a></li>
+    </ul>
     <h3>About Dancer</h3>
     <ul class="links">
         <li><a href="http://www.perldancer.org/">Dancer homepage</a></li>
         <li><a href="http://twitter.com/PerlDancer">Official Twitter</a></li>
         <li><a href="http://github.com/PerlDancer/Dancer">Dancer on GitHub</a></li>
         <li><a href="http://github.com/PerlDancer/Dancer2">Dancer 2 on GitHub</a></li>
-        <li><a class="feed" href="[% uri_base %]/feed/[% year %]">RSS</a></li>
+        
     </ul>
 </li>
 </ul>
