@@ -1,35 +1,6 @@
-Dancer advent calendar 2020 - The Twelve Days of Dancer!
+Dancer advent calendar - The Twelve Days of Dancer!
 
 Article suggestions / volunteers to write them very much appreciated.
 
-This is the current state of the 2020 Advent Calendar. A few things have
-yet to be confirmed, so this list may go through another iteration or two.
-
 If you have ideas or want to volunteer, find us in irc.perl.org/#dancer, or
 email the dancer-users mailing list, or contact cromedome@cpan.org - thanks!
-
-The Twelve Days of Dancer (starting December 13th):
-13 - [D] State of the Dancer (cromedome)
-14 - [D] CollectiveVoice - Using Dancer2 at a Digital Marketing Agency (knowmad)
-15 - [D] QuarrenCMS (GeekRuthie)
-16 - [D] Typed Route Parameters in Dancer2 (SysPete)
-17 - [D] Dancer2::Template::Handlebars (GeekRuthie)
-18 - [D] Mojo::DOM (and somehow applying this to Dancer2?) (jberger)
-19 - [D] One-page apps using Dancer2::Plugin::Ajax (GeekRuthie)
-20 - [D] Dancer2::Plugin::Minion (cromedome)
-21 - [D] Dancer2 and Two-Factor Authentication (2FA) (racke)
-22 - [D] Async and promises, part 1 (Sawyer X)
-23 - [D] Async and promises, part 2 (Sawyer X)
-24 - [D] Content Negotiation with Dancer2::Serializer::Mutable (veryrusty)
-
-Flags:
-
-[ ] : up for adoption
-[A] : "Assigned", someone volunteered to write it
-[P] : "Pending", someone started writing that article
-[R] : "Review", ready for review (needs typos fixes and proofreading)
-[D] : "Done", ready for publication
-[L] : "Last Review", reviewed but still some things left undone
-
-==== ARTICLE IDEAS
-[ ] Test::WWW::Mechanize::PSGI instead of Plack::Test
