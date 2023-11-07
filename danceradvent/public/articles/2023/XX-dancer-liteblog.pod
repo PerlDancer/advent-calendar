@@ -23,8 +23,7 @@ craft a reusable plugin.
 And here was LiteBlog, a plugin able to change a Dancer2 app into a sleek,
 responsive, and file-based blogging engine.
 
-The 2023 edition of this Dancer Advent Calendar is the perfect chance fo
-The opportunity of this Dancer Advent Calendar, edition 2023, is perfect for me
+The 2023 edition of this Dancer Advent Calendar is the perfect chance for me
 to share a bit about Liteblog, explain its features, and perhaps convince you to 
 update your own personal site with it (why not!).
 
@@ -65,15 +64,11 @@ Editing YAML and Markdown file is the only thing you need to craft content and
 fine-tune your Liteblog site.
 There is no database involved, on-purpose.
 
-At the time of this wrtiting, there isn't any web admin available, but this will
-come in future releases. 
-But as you will see, it is super easy to get started with it.
-
 Before LiteBlog can work its magic, you need a Dancer2 app. Generate it:
 
   $ dancer2 gen -a my_app
 
-Then, run the LiteBlog scaffolder fro mwithin the application directory:
+Then, run the LiteBlog scaffolder from within the application directory:
 
   $ cd my_app
   $ liteblog-scaffold .
@@ -92,28 +87,27 @@ To hook it all up, modify the main app module to enable the LiteBlog plugin:
   1;
 
 Now, your Dancer2 app is a Liteblog. A default '/' route is defined, and widgets
-(that can be defined in your liteblog's settings) can also defined their own
+(that can be defined in your liteblog's settings) can also define their own
 routes.
 The blog engine is actually a Liteblog Widget. But let's just see what happens
 right there, when Liteblog is invoked from a pure Dancer2 app.
 
 Just launch your app and open its URL with your browser.
-ou'll be greeted with a splash screen:
+You'll be greeted with a splash screen:
 
   $ plackup bin/app.psgi
 
 Follow the on-screen instructions to enable features and widgets by adding the
 provided config snippet to your 'config.yml', then restart.
 
-Now, you have Activities cards enabled on the home and a nice article that you
-can read thanks o the Blog widget. Everything is explained in that article, that
-you can freely edit.
+Now, you have C<Activities> cards enabled on the home and a nice article that you
+can read thanks to the C<Blog> widget. 
 
 =head2 Publishing content
 
 LiteBlog makes content creation intuitive. Articles reside in a specified root
 directory as markdown files with coresponding 'meta.yml' for metadata. To
-publish, go in your articles/ folder (it has been created by the scaffolder),
+publish, go in your C<articles/> folder (it has been created by the scaffolder),
 and then follow theses steps:
 
 Create a directory for the category of your post (if not, the article will be
@@ -130,11 +124,11 @@ for an article:
       - "perl"
       - "dancer"
 
-Finally, you can now create the C<content.md> file, which, as it names suggests,
+Finally, you can now create the C<content.md> file, which, as its name suggests,
 should be written in Markdown format and will be used as the actual content of
 the article.
 
-Again, the easiest way to get started is to edit the scaffolded article provided
+The easiest way to get started is to edit the scaffolded article provided
 once you bootstrap your Liteblog app.
 
 =head2 Main features of a Liteblog site
@@ -197,13 +191,16 @@ Here is a Dockerfile to build your LiteBlog image:
     # Start the Dancer2 application with Starman
     CMD ["starman", "--workers=2", "bin/app.psgi", "-p", "5000"]
 
-=head2 Contributing
+=head2 More info & Contributing
 
 To see LiteBlog in action, visit: L<https://alexissukrieh.com>
 
+You can also read about 
+L<the story behind Liteblog|https://alexissukrieh.com/dev/liteblog-a-minimalist-file-based-blog-engine-for-perl/> on my site.
+
 To contribute or report issues, head over to GitHub: L<https://github.com/sukria/Dancer2-Plugin-LiteBlog>
 
-Show your support on CPAN: L<https://metacpan.org/dist/Dancer2-Plugin-LiteBlog>
+And don't forget to show your support on CPAN: L<https://metacpan.org/dist/Dancer2-Plugin-LiteBlog>
 
 =head2 Author
 
