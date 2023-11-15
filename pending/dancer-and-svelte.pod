@@ -114,8 +114,9 @@ Then a perfectly cromulent Svelte frontend could look like the following.
 
         let new_gift;
 
-        const gifts = fetch(`${data.api_root_url}/api/child/${data.child_name}/wishlist`)
-            .then( doc => doc.json() );
+        const gifts = fetch(
+            `${data.api_root_url}/api/child/${data.child_name}/wishlist`
+        ).then( doc => doc.json() );
     </script>
 
     <article>
@@ -126,7 +127,12 @@ Then a perfectly cromulent Svelte frontend could look like the following.
                 <progress class="circle"></progress>
             {:then gifts}
                 {#each gifts as gift (gift.name)}
-                    <form method="POST" action={`${data.api_root_url}/api/child/${data.child_name}/remove_gift`}>
+                    <form 
+                        method="POST" 
+                        action={
+    `${data.api_root_url}/api/child/${data.child_name}/remove_gift`
+                        }
+                    >
                         <div class="row">
                             <input type="hidden" name="gift" value={gift.name} />
                             <div class="max">{gift.name}</div>
@@ -137,12 +143,21 @@ Then a perfectly cromulent Svelte frontend could look like the following.
             {/await}
         </div>
 
-        <form method="POST" action={`${data.api_root_url}/api/child/${data.child_name}/add_gift`}>
+        <form 
+            method="POST" 
+            action={`${data.api_root_url}/api/child/${data.child_name}/add_gift`}>
             <div class="new_gift row">
                 <div class="field border max">
-                    <input type="text" name="new_gift" placeholder="new gift" bind:value={new_gift} />
+                    <input 
+                        type="text" 
+                        name="new_gift" 
+                        placeholder="new gift" 
+                        bind:value={new_gift} />
                 </div>
-                <div><button class="circle" disabled={!new_gift}><i>add</i></button></div>
+                <div>
+                    <button class="circle" disabled={!new_gift}><i>add</i>
+                    </button>
+                </div>
             </div>
         </form>
     </article>
@@ -168,7 +183,7 @@ Then a perfectly cromulent Svelte frontend could look like the following.
 
 And, as the younger generation would say, "boom, here it is".
 
-=for html <img src="FIXME/imgs/svelte-dancer-1.png" />
+=for html <img style="width: 90%" src="/images/2023/dancer-and-svelte/svelte-dancer-1.png" />
 
 (Incidentally, Glugg uses L<beercss|https://www.beercss.com/> to spruce up
 the look of the app. After all, as a Christmas elf, if there is one thing he
@@ -226,7 +241,9 @@ With that, we're going to change the C<script> block of the Svelte page.
 
         let gifts = [];
 
-        const loading = fetch(`${data.api_root_url}/api/child/${data.child_name}/wishlist`)
+        const loading = fetch(
+            `${data.api_root_url}/api/child/${data.child_name}/wishlist`
+            )
             .then( doc => doc.json())
             .then( g => gifts = g);
 
@@ -239,11 +256,16 @@ And we're going to add two things to our HTML: a C<use:enhance={submit_gift}>
 to the C<form> tags, and a C<transition:fade> to the gift rows.
 
 		{#each gifts as gift (gift.name)}
-            <form method="POST" action={`${data.api_root_url}/api/child/${data.child_name}/remove_gift`} use:enhance={submit_gift}>
+            <form 
+                method="POST" 
+                action={
+                    `${data.api_root_url}/api/child/${data.child_name}/remove_gift`
+                } 
+                use:enhance={submit_gift}>
 				<div class="row" transition:fade>
-					<input type="hidden" name="gift" value={gift.name} />
-					<div class="max">{gift.name}</div>
-					<button class="circle"><i>delete</i></button>
+				  <input type="hidden" name="gift" value={gift.name} />
+				  <div class="max">{gift.name}</div>
+				  <button class="circle"><i>delete</i></button>
 				</div>
 			</form>
 		{/each}
@@ -396,7 +418,11 @@ following.
 
             <div class="new_gift row">
                 <div class="field border max">
-                    <input type="text" name="new_gift" placeholder="new gift" bind:value={new_gift} />
+                    <input 
+                        type="text" 
+                        name="new_gift" 
+                        placeholder="new gift" 
+                        bind:value={new_gift} />
                 </div>
                 <div>
                     <button class="circle" 
