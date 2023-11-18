@@ -185,9 +185,9 @@ any of those parameters; just follow the recipe.
 =head2 Cue in Dancer2::Plugin::JsonApi
 
 Now, how does that apply to the dance floor? Glad you asked, for there is a
-(very) new plugin in town, L<Dancer2::Plugin::ApiJson> to help. 
+(very) new plugin in town, L<Dancer2::Plugin::JsonApi> to help. 
 
-The first, and biggest thing that Dancer2::Plugin::ApiJson provides is a way
+The first, and biggest thing that Dancer2::Plugin::JsonApi provides is a way
 to serialize and deserialize those cumbersome JSON:API representations. To do
 that you have to register all your objects in a JSON:API registry.
 
@@ -282,7 +282,7 @@ way:
 
 It's not a solution that works for all cases, but considering that it was
 thrown together within a handful of minutes, it's promising. It could even
-develop into a DBIx-specific set of C<Dancer2::Plugin::ApiJson>. Who knows...
+develop into a DBIx-specific set of C<Dancer2::Plugin::JsonApi>. Who knows...
 if it ends up on the wishlist of a dev who was good all year round, maybe,
 just maybe it'll find its way under the Christmas tree? I guess we'll have to
 wait and see to find out.
