@@ -82,7 +82,7 @@ JSON:API sauce, could look like this:
             relationships=> {
                 gifts => {
                    links => {
-                        self => '/child/cromedone/wishlist',
+                        self => '/child/cromedome/wishlist',
                    },
                    data => [
                         { type => 'gift', id => 'g829137' },
@@ -139,7 +139,7 @@ and you B<can> have a list of related objects.
             relationships=> {
                 gifts => {
                    links => {
-                        self => '/child/cromedone/wishlist',
+                        self => '/child/cromedome/wishlist',
                    },
                    data => [
                         { type => 'gift', id => 'g829137' },
