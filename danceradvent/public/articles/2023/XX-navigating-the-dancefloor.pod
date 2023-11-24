@@ -26,14 +26,14 @@ anymore. Now they need to be C</admin/view/user/...>, right?
 
 We can fix this using C<uri_for>:
 
-    <a href="[% uri_for("/view/user/$user_id?track=$track_code") %]">
+    <a href="[% request.uri_for("/view/user/$user_id?track=$track_code") %]">
     User [% user.id %]
     </a>
 
 This will take into account the possible mounting. Also, it can take care of
 the query parameter for the tracking code.
 
-    <a href="[% uri_for("/view/users/$user_id", { track => $track_code }) %]">
+    <a href="[% request.uri_for("/view/users/$user_id", { track => $track_code }) %]">
     User [% user.id %]
     </a>
 
@@ -61,13 +61,13 @@ template or in any code.
 
 Now let's use the route's name with C<uri_for_route>:
 
-    <a href="[% uri_for_route("view_user", { id => $user_id }) %]">
+    <a href="[% request.uri_for_route("view_user", { id => $user_id }) %]">
     User [% user.id %]
     </a>
 
 Oh, and we can also include the tracking code as a query parameter:
 
-    <a href="[% uri_for_route("view_user", { id => $user_id }, { track => $track_code }) %]">
+    <a href="[% request.uri_for_route("view_user", { id => $user_id }, { track => $track_code }) %]">
     User [% user.id %]
     </a>
 
