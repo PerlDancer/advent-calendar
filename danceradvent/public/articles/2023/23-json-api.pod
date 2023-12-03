@@ -1,7 +1,7 @@
 =head1 Cookiecuttin' data with JSON:API
 
 A web service providing access to a datastore, that's simple. Even moreso with
-Dancer2. Like, let's say you're on L<Glugg's team|LINK TO FIRST ARTICLE>  and
+Dancer2. Like, let's say you're on L<Glugg's team|https://advent.perldancer.org/2023/17>  and
 maintain the North Pole Wishlist Database service. Then your endpoint might
 look something like, say,
 
