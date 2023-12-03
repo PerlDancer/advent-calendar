@@ -1,8 +1,8 @@
 =head1 Svelte as a Dancer
 
 It has been said that Gluggagægir (Glugg to his friends) has been employed by
-the North Pole for a long, long time. And that itself was said a L<long, long
-time ago|https://perladvent.org/2008/13/>. 
+the North Pole for a long, long time. And that itself was said a 
+L<long, long time ago|https://perladvent.org/2008/13/>. 
 
 Let's just say that if elves could grow beards, his would be very grey indeed.
 By now his technological stack is nothing short of geological. Still, he loves
@@ -56,7 +56,8 @@ Svelte takes pride in  degrading gracefully when invoked in a
 JavaScript-less context. Which means that one can write HTML forms like they
 always did, and It Will Just Work (tm).
 
-For example, let's assume the supra-complex North Pole API service is reduced to the following small Dancer2 mockup.
+For example, let's assume the supra-complex North Pole API service is reduced to the 
+following small Dancer2 mockup.
 
     package NorthPole::API;
     use Dancer2;
