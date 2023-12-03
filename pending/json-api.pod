@@ -1,0 +1,290 @@
+=head1 Cookiecuttin' data with JSON:API
+
+A web service providing access to a datastore, that's simple. Even moreso with
+Dancer2. Like, let's say you're on L<Glugg's team|LINK TO FIRST ARTICLE>  and
+maintain the North Pole Wishlist Database service. Then your endpoint might
+look something like, say,
+
+    get '/child/:child_name' =>  sub {
+
+        # database magic replaced by hardcoded
+        # data for the example's sake
+
+        to_json {
+            name => 'cromedome',
+            naughtoscale => 8,
+            wishlist => [
+                'Cessna Skyhawk', 'Verg articulated figure',
+            ],
+        }
+    };
+
+As advertised; simple.
+
+Except...
+
+Except those endpoints never stay simple for long, do they? Those gifts in the
+wishlist? They are probably objects of their own right in the datastore, and
+it'd be nice to be able to follow a thread to get them, somehow. 
+
+Or that same gift list might get too long in the case of greedy kids, so in
+some cases -- for bandwidth's sake -- we
+might want to get the data minus the gifts. 
+
+And if we had
+a list of children, maybe we would like to sort them my name, or by their
+naughtoscale score. 
+
+And what about pagination? 
+
+I'll stop here. But yeah. Those endpoints, they never stay simple for long.
+
+=head2 Doing the same thing over and over again, and expecting the same result
+
+The thing is, all those operations on the data listed in the previous section aren't
+weird feature requests. In fact, it's more surpring to have 
+an API that B<doesn't> get to implement them in one way or
+another. And yet we tend to reinvent the way they are implemented 
+each time they pop up. And that's kind of silly.
+
+Enters L<JSON:API|https://jsonapi.org/>, which is a set of specs that
+prescribes a standard way to serialize database-like data, and how to interact
+with it via a REST-like interface. 
+
+=head2 So what does it look like?
+
+An example will speak volume here. Let's take the data returned by our
+original endpoint.
+
+    {
+        name => 'cromedome',
+        naughtoscale => 8,
+        wishlist => [
+            'Cessna Skyhawk', 'Verg articulated figure',
+        ],
+    }
+
+That same data, when covered in
+JSON:API sauce, could look like this:
+
+    {
+        jsonapi => { version => '1.0 '},
+        links => {
+            self => '/child/cromedome',
+        },
+        data => {
+            id => 'child-83626812-b',
+            type => 'child',
+            attributes => {
+                naughtoscale => 8,
+                name => 'cromedome',
+            }, 
+            relationships=> {
+                gifts => {
+                   links => {
+                        self => '/child/cromedome/wishlist',
+                   },
+                   data => [
+                        { type => 'gift', id => 'g829137' },
+                        { type => 'gift', id => 'g998383' },
+                   ] 
+                }
+            }
+        },
+        included => [
+            {
+                type => 'gift',
+                id => 'g829137',
+                attributes => {
+                    name => 'Cessna Skyhawk'
+                },
+            },
+            {
+                type => 'gift',
+                id => 'g998383',
+                attributes => {
+                    name => 'Verg articulated figure'
+                },
+            }
+        ]
+    }
+
+Now, I know what you are thinking: "HOLLY DECKS THE HALLS, that's verbose!".
+And yes, yes it is. JSON:API doesn't aspire to be terse or pretty, but rather to
+be consistent and straightforward to parse. 
+
+I won't go into the nitty gritties, but the main things to know about 
+a JSON:API serialized object is that you have a wee bit of meta information
+
+        jsonapi => { version => '1.0 '},
+        links => {
+            self => '/child/cromedome',
+        },
+
+and then you always have the object's type and id,
+
+        data => {
+            id => 'child-83626812-b',
+            type => 'child',
+
+you B<can> have attributes of that object, 
+
+            attributes => {
+                naughtoscale => 8,
+                name => 'cromedome',
+            }, 
+
+and you B<can> have a list of related objects.
+
+            relationships=> {
+                gifts => {
+                   links => {
+                        self => '/child/cromedome/wishlist',
+                   },
+                   data => [
+                        { type => 'gift', id => 'g829137' },
+                        { type => 'gift', id => 'g998383' },
+                   ] 
+                }
+            }
+
+It's also possible to have those related objects fleshed out. In that case,
+the information in the C<relationships> hash still stays the C<type>/C<id>
+pair, but the full object would be in an C<included> field.
+
+        included => [
+            {
+                type => 'gift',
+                id => 'g829137',
+                attributes => {
+                    name => 'Cessna Skyhawk'
+                },
+            },
+            {
+                type => 'gift',
+                id => 'g998383',
+                attributes => {
+                    name => 'Verg articulated figure'
+                },
+            }
+        ]
+    }
+
+
+
+As for all those sorting / filtering / including tweaks, the JSON:API specs
+prescribe how to convey them via the endpoint query path. Requesting a subset
+of the attributes is 
+done via C<?fields=name,naughtoscale>. Adding related objects to
+the payload is done via C<?include=gifts>. Pagination is done via
+C<?page[number]=X>  or perhaps C<?page[offset]=Y>.  Is this way of doing thing revolutionary? Not at all.
+Chances are you are already using very keywords. But the point is that it's
+setting a very well-defined mold. No need to ever agonize about the details of
+any of those parameters; just follow the recipe.
+
+=head2 Cue in Dancer2::Plugin::JsonApi
+
+Now, how does that apply to the dance floor? Glad you asked, for there is a
+(very) new plugin in town, L<Dancer2::Plugin::JsonApi> to help. 
+
+The first, and biggest thing that Dancer2::Plugin::JsonApi provides is a way
+to serialize and deserialize those cumbersome JSON:API representations. To do
+that you have to register all your objects in a JSON:API registry.
+
+    use Dancer2::Plugin::JsonApi;
+
+    jsonapi_registry->add_type( child => {   
+        relationships => { wishlist => { type => 'gift' } }
+    } );
+
+Yup, that's all. We didn't even have to declare the C<gift> type at all as it is only
+using the defaults. In fact, if our data source was a C<DBIx::Class> schema,
+we could even do some magic to auto-populate the registry off the
+C<DBIx::Class::ResultSource> classes we have. 
+
+In any case, now we can use the special keyword C<jsonapi> on a route, and...
+it'll work.
+
+    get '/child/:name' => jsonapi 'child' => sub {
+        return +{
+            resultset('Child')
+                ->find({ name => route_parameters->get('name') })
+                ->get_columns 
+        };
+    };
+
+The endpoint returns the data structure properly serialized as JSON:API. It'll
+even automatically populate the C<link.self> for you (you're welcome).
+
+=head2 Dealing with query parameters 
+
+Right now, the plugin 
+only provides the content of C<vars> and the current C<request> as part of the 
+C<$xtra> variable passed to various generating functions supported by 
+L<Dancer2::Plugin::JsonApi::Schema>.
+The actual munging of the data 
+(C<sort>, C<fields>, C<include>, etc.) is left to the developer, as this will
+vary a lot depending on the type of backend, what kind of data is provided,
+etc. 
+
+This might sound like there is still a lot of work left for the developer
+there, but all of those query parameter-controlled behaviors are optional, so
+they can always be implemented as needed. Not to mention that there is the
+potential for creating factories for a lot of those things, given our
+backend provides some method of introspection. 
+
+For example, if our underlying
+data store is accessed via L<DBIx::Class>, here's a naive (but working!) way
+to implement support for the C<fields> and C<include> parameters in a generic
+way:
+
+    sub rs_to_data($rs,$xtra) {
+        return $rs unless blessed $rs;    # it's already a hash
+
+        my %data = $rs->get_columns;
+
+        if ( $xtra->{request}->query_parameters->{fields} ) {
+            my %keep = map { $_ => 1 } 
+                            'id', $xtra->{request}->query_parameters->{fields};
+
+            %data = pairgrep { $keep{$a} } %data;
+        }
+
+        for ( split ",", $xtra->{request}->query_parameters->{include} ) {
+            $data{$_} = [ map { +{ $_->get_columns } } $rs->$_->all ];
+        }
+
+        return \%data;
+    }
+    
+    jsonapi_registry->add_type(
+        'child',
+        {  
+            before_serialize => rs_to_data
+            relationships => {
+                wishlist => {
+                    type  => 'gift',
+                    links => {
+                        self => sub ( $data, $extra_data ) {
+                            return "/child/" . $data->{name} . "/wishlist";
+                        }
+                    }
+                },
+            }
+        }
+    );
+
+    get '/child/:name' => jsonapi 'child' => sub {
+        return resultset('Child')->find( { 
+            name => route_parameters->get('name') 
+        } );
+    };
+
+It's not a solution that works for all cases, but considering that it was
+thrown together within a handful of minutes, it's promising. It could even
+develop into a DBIx-specific set of C<Dancer2::Plugin::JsonApi>. Who knows...
+if it ends up on the wishlist of a dev who was good all year round, maybe,
+just maybe it'll find its way under the Christmas tree? I guess we'll have to
+wait and see to find out.
+
+(but I'd leave a few cookies out on the 24th, just in case)
