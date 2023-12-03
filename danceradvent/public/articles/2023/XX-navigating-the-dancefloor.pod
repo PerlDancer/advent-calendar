@@ -1,0 +1,154 @@
+=head1 Navigating the Dancefloor: The Elegance of Named Routes
+
+B<TL;DR> Hey, you can name routes now! You can also create links to them! It
+also works in templates! Okay read on!
+
+=head2 Paths, Paths, Paths
+
+When working with a large web application or service that includes numerous
+routes that serve multiple purposes, one significant need is to generate
+paths the user will use to navigate between the routes.
+
+In templates for pages, you need to create links and forms that point to
+other routes. Take this contrived example:
+
+    # In your template
+    <!-- part of the menu -->
+    [% FOREACH user IN users %]
+    <a href="/view/user/[% user_id %]?track=[% track_code %]">User [% user.id %]>/a><br/>
+    [% END %]
+
+Let's say your application is mounted (using L<Plack::Builder> or using some
+web server configuration on top of C</admin>. Well, those paths won't work
+anymore. Now they need to be C</admin/view/user/...>, right?
+
+=head2 Generating Paths
+
+We can fix this using C<uri_for>:
+
+    <a href="[% request.uri_for("/view/user/$user_id?track=$track_code") %]">
+    User [% user.id %]
+    </a>
+
+This will take into account the possible mounting. Also, it can take care of
+the query parameter for the tracking code.
+
+    <a href="[% request.uri_for("/view/users/$user_id", { track => $track_code }) %]">
+    User [% user.id %]
+    </a>
+
+While it's longer, it's definitely more readable and less error-prone.
+
+=head2 Hardcode Me Not
+
+The two problems that remain are needing to remember the path for each
+route and to hardcode it in the template or any code that generates
+paths for the user.
+
+We can fix both of those with the new C<uri_for_route()>.
+
+=head2 Name that Route
+
+Begin by providing a name for your routes:
+
+    get 'view_user' => '/view/user/:id' => sub {...};
+
+By prefixing the path with another string, we provide a name for this
+route which we can then use to generate a URI for its path in the
+template or in any code.
+
+=head2 Enter C<uri_for_route>
+
+Now let's use the route's name with C<uri_for_route>:
+
+    <a href="[% request.uri_for_route("view_user", { id => $user_id }) %]">
+    User [% user.id %]
+    </a>
+
+Oh, and we can also include the tracking code as a query parameter:
+
+    <a href="[% request.uri_for_route("view_user", { id => $user_id }, { track => $track_code }) %]">
+    User [% user.id %]
+    </a>
+
+=head2 Naming All Options
+
+C<uri_for_route> has a lot of arguments. It's worthwhile exploring them:
+
+=over 4
+
+=item 1. Route name
+
+The name of the route as you have given it. You can provide a name to all
+routes except C<HEAD>. This means C<GET>, C<POST>, C<PUT>, C<PATCH>, and
+C<DELETE>.
+
+=item 2. Route arguments
+
+These will be the arguments to the route path. We support named arguments,
+typed named arguments, splat, and megasplat:
+
+    # Named arguments
+    post 'req_form' => '/upload/request/:id' => sub {...};
+    $path = uri_for_route( 'req_form', { 'id' => 4 } );
+    # $path = /upload/request/4
+
+    # Typed named arguments
+    post 'req_form' => '/upload/request/:id[Num]' => sub {...};
+    $path = uri_for_route( 'req_form', { 'id' => 4 } );
+    # $path = /upload/request/4
+
+    # Splat and Megasplat
+    post 'req_form' => '/upload/request/*/*/**' => sub {...};
+    $path = uri_for_route( 'req_form', [ 'foo', 'bar', [ 'baz', 'quux' ] ] );
+    # $path = /upload/request/foo/baz/baz/quux
+
+    # And a mix of these
+    post 'req_form' => '/upload/request/:id/*/*/**' => sub {...};
+    $path = uri_for_route(
+        'req_form',
+        {
+            'id'    => 4,
+            'splat' => [ 'foo', 'bar', [ 'baz', 'quux' ] ],
+        },
+    );
+    # $path = /upload/request/4/foo/baz/baz/quux
+
+(Notice that when you're mixing these, the splat-like arguments will
+be under the C<splat> key which shouldn't be used in route arguments.)
+
+=item 3. Query parameters
+
+    get 'view_user' => '/view/user/:id' => sub {...};
+    $path = uri_for_route(
+        'view_user',        # Route name
+        { 'id'  => 4     }, # Route arguments
+        { 'ext' => 'str' }, # Query parameters
+    ); # $path = /view/user/4?ext=str
+
+=item 4. URI escape control
+
+Lastly, we escape all query parameters by default since a user is
+likely to be using them. You don't want accidental HTML and JS code
+to be there.
+
+However, the last argument allows you to disable this ability:
+
+    get 'view_user' => '/view/user/:id' => sub {...};
+    $path = uri_for_route(
+        'view_user',                    # Route name
+        { 'id'  => 4 },                 # Route arguments
+        { 'ext' => '<javascript>...' }, # Query parameters
+        1,                              # Disable escaping
+    ); # $path = /view/user/4?ext=<javascript>...
+
+(We still suggest you leaving this as is, so escaping will occur.)
+
+=back
+
+=head2 Author
+
+This article has been written by Sawyer X for the Perl Dancer Advent Calendar
+2023.
+
+=cut
