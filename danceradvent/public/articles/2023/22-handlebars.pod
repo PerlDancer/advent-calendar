@@ -1,0 +1,107 @@
+=head1 Snazzy Mustaches: Handlebars templating
+
+I had been playing around with L<Mustache|https://github.com/janl/mustache.js/>, and
+Yanick's fantastic plugin for Dancer2, L<Dancer2::Plugin::Mustache>, when
+I bumped into its steroid-fed brother system, L<Handlebars|https://handlebarsjs.com/>,
+and its beautiful system for implementing additional custom helpers into the
+templates.  Yanick had written a Mustache plugin for earlier Dancer, but
+there wasn't one for Dancer2.  So I shamelessly plagarized, remixed those two
+modules, and released my very first module to CPAN.
+
+=head2 About Handlebars
+
+Handlebars, like Mustache, is a minimalist templating system. Like Template Toolkit,
+it provides for variable substitution, including nested objects. Unlike Template Toolkit, 
+though, neither Handlebars nor Mustache ships with a large suite of useful
+functions; creating those is left up to you, with both showing in their
+documentation that those can be easily created in JavaScript within the 
+calling page.
+
+Where they differ, most critically to me, is that Handlebars includes a few
+logical helpers, where Mustache does not. Those are nice to have--C<#if>, C<#unless>, 
+C<#with>, and C<#each> are so ubiquitously used, that it's very useful to
+have those shipped with the system. As Yanick worked out 
+L<in his Dancer plugin for it|https://metacpan.org/pod/Dancer::Template::Handlebars>,
+it's relatively straightforward to write any helpers you need in Perl.
+
+=head1 So how do I use it in my application?
+
+Simply specify it as your template system in your C<config.yml>:
+
+   template: handlebars
+   engines:
+      handlebars:
+        helpers:
+          - MyApp::HandlebarsHelpers
+   
+...and name your templates using the suffix .hbs.  Then, in your route code:
+
+   get '/style/:style' => sub {
+      template 'style' => {
+         style => route_parameters->get('style'),
+      };
+   };
+
+Your template, named C<style.hbs>, might look something like this:
+
+   Why, that's a lovely {{style}} mustache you have!
+
+It works a B<lot> like Template Toolkit, as you can see here.
+
+=head2 Loops
+
+Loops are equally easy in Handlebars.  Suppose you had sent to your template
+an arrayref C<people>, each of which had fields C<name> and C<hometown>. You could
+print that out as a bulleted list like so, in your template:
+
+   <ul>
+   {{#each people}}
+     <li>{{this.name}} is from {{this.hometown}}.</li>
+   {{/each}}
+   </ul>
+
+In the built-in helpers, C<this> will represent the current context or object, and it's always available
+to you inside these loops. No more of this:
+
+   [% FOREACH person IN people %]
+
+...just use C<this>!
+
+=head2 Custom Helpers
+
+You can write a custom helper to take any data you like, and wrap some structure around it in the output
+HTML, and with this setup, you just specify where that module of helpers lives in your C<config.yml>, as I
+did above.  Then, write your code, like so:
+
+   package MyApp::HandlebarsHelpers;
+   use parent Dancer::Template::Handlebars::Helpers;
+
+   sub shout :Helper {
+      my( $context, $text ) = @_;
+      return '<b>' . uc $text . '</b>';
+   }
+
+   1;
+
+You always get the full context at the time of the call, so any page variable (including C<this>, if you're
+inside a loop) can be used. You can specify additional parameters in the call, too, so this template call:
+
+   {{ shout('Hey') }}, friend. Don't forget to wax your mustache!
+
+would output:
+
+=for html <b>HEY</b>, friend. Don't forget to wax your mustache!
+
+=head2 Happy Dancing, from the Plugins Princess.
+
+I joined the Dancer core team this year, and it seems to be the case that I am emerging as the 
+Princess of the Plugins. It's not like I've released a whole bunch of them--there are only
+four on L<CPAN|https://metacpan.org/author/GEEKRUTH>. But there are more coming down the road!
+
+Whatever holidays you and the people you love celebrate at this time of year, I hope they are
+happy and fulfilling. Happy Dancing, and see you in 2024!
+
+=head2 Author
+
+This article was written by L<D Ruth Holloway|https://metacpan.org/author/GEEKRUTH>
+for the Dancer Advent Calendar 2023.
