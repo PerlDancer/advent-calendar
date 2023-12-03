@@ -1,0 +1,111 @@
+=head1 A new plugin for host-specific routing
+
+The L<Dancer2|https://perldancer.org> team decided this year to turn on
+L<GitHub Discussions|https://github.com/PerlDancer/Dancer2/discussions>,
+and the first new-feature idea that came over the transom was a way to
+have routes respond only for specific request hosts.
+
+It is, after all, trivial to have L<nginx|https://nginx.org> or most 
+any other web server that you might be using as a proxy to your Dancer2
+application only be sent information from a specific host:
+
+   upstream dancer_url {
+     server unix:/srv/dancer_app/DEV/server.sock;
+   }
+   server {
+     server_name  my_dancer_app.org;
+     server_name  admin.my_dancer_app.org;
+
+     location / {
+       try_files $uri @proxy;
+     }
+
+     location @proxy {
+       proxy_pass       http://dancer_url;
+     }
+   }
+
+...but how to make specific routes respond only to a specific host?
+My little testbed application, the L<JokeyBot|https://jokeybot.com>, does
+this in a C<before> hook:
+
+   hook before => sub {
+      var dirty      => 0;
+      if ( request->base =~ /dirty\.jokeybot/ ) { var dirty => 1; }
+   };
+
+Thus, if you would like to see jokes that are, shall we say, less acceptable
+in polite company, you just go to L<https://dirty.jokeybot.com>.  
+The C<var> in the hook is used in all the routes needed to inject search
+parameters for jokes that have been marked as "dirty." 
+I<(As an aside, I must in all fairness warn you that I alone curate jokes into the JokeyBot, so the tags and sensibilities of a joke are all mine, and don't represent those of any professional comedian, my employer, or anyone else.)>
+
+=head2 Okay, so why a new plugin?
+
+It may be that you want certain routes to B<only> respond to a specific 
+URL hostname, or that you may have a wildly different function for that
+hostname, that uses the same database. An example of this might be
+if you had some sort of administrative interface, at I<https://admin.my-dancer-app.org>,
+and you wanted those routes to behave completely differently if you point
+at them from the main address.  
+
+Also, let's face it, TIMTOWTDI.  A plugin that gave a route predicate for
+host-specific routing would be another way to do what I did on the JokeyBot.
+The idea had me curious, so I tinkered around for a few hours, and 
+L<Dancer2::Plugin::HostSpecificRoute|https://metacpan.org/pod/Dancer2::Plugin::HostSpecificRoute>
+was born.
+
+=head2 The C<host> Predicate
+
+Dancer2::Plugin::HostSpecificRoute introduced only one new keyword, C<host>,
+which you use as a "predicate" in the introduction to a route, like so:
+
+   get '/' => host 'special.my-dancer-app.com' => sub {
+      # special code here 
+   };
+
+   get '/' => sub {
+      # default code here  
+   };
+
+Using it couldn't be easier! You could, of course, extend this
+to as many routes as you need for as many "special" variants as your
+web server will respond to.  There are a couple of tips I should
+give you, though:
+
+=over 4
+
+=item * Always put your default route (if any) last.
+
+You don't have to have a default fall-back route; if all of the routes
+with C<host> predicates fail to match, the Dancer2 application will
+simply return a 404 error, as no route matches the request. If you 
+choose to have a default behavior, put it last!  For this reason, it's
+useful to keep them all in the same file, if you're splitting your routes
+across multiple files, just so include order doesn't trip you up.
+
+=item * You can use a regex for the host
+
+Simply state your predicate with a regex, like so:  C<host qr/\.funkyhost.example$/>,
+and then any request that otherwise matches the route that is adressed to C<*.funkyhost.example>
+will match.
+
+=item * You don't have to use this for every route
+
+You probably want some routes to behave the same way for all hosts
+that might go there--that's fine, just don't include a C<host> predicate
+on those; they'll behave as normal Dancer2 routes.
+
+=back 
+
+=head2 Conclusion
+
+This little plugin was a simple one to write, and it made me very happy
+to be able to answer a request from a Dancer2 user for this feature. If
+it's something you can use in your own applications, I hope it brings
+you as much joy as I got out of building it. Happy Dancing!
+
+=head2 Author
+
+This article was written by L<D Ruth Holloway|https://metacpan.org/author/GEEKRUTH>
+for the Dancer Advent Calendar 2023.
