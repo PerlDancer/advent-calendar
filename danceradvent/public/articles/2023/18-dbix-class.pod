@@ -1,0 +1,82 @@
+=head1 A new way to use DBIx::Class in your Dancer2 apps!
+
+In software terms, L<Dancer2::Plugin::DBIC|https://metacpan.org/pod/Dancer2::Plugin::DBIC>
+is well into middle-age,
+with the latest release happening just over six years ago. It works
+just fine, and makes integrating your applications with your database
+of choice a pleasurable, easy thing to do. It has focused, well-designed syntactic
+sugar baked in to make your database access smooth and easy to read and maintain.
+
+But with some help, I'd written a new feature for DBIx::Class, 
+L<DBIx::Class::Schema::ResultSetNames|https://metacpan.org/pod/DBIx::Class::Schema::ResultSetNames>,
+and it seemed like it would be a lovely idea to have those new resultset name
+tokens available directly in Dancer2. So here we go!
+
+=head2 Forklift replacement
+
+First of all, L<Dancer2::Plugin::DBIx::Class|https://metacpan.org/pod/Dancer2::Plugin::DBIx::Class>
+is designed to be a forklift upgrade for the older plugin--if you've got existing code using
+that plugin, just change your C<use> statement and your Dancer2
+C<config.yml> or environment file, and it'll Just Work. For those existing
+subroutines, I did a little bit of streamlining, but they're basically Naveed's code,
+tidied up and more conformant with my own coding style.  
+
+=head2 ...and now for the magic.
+
+...but if you have the ResultSetNames module installed and in your schema, that's
+when things get interesting. Dancer2::Plugin::DBIx::Class will import all of your
+resultset names as terms in Dancer2. So, instead of this:
+
+   use Dancer2::Plugin::DBIC;
+   my $set = resultset('Person')->search({...});
+
+you can simply do this:
+
+   use Dancer2::Plugin::DBIx::Class;
+   my $set = persons->search({ ...});
+
+=head2 How about smoothing out C<find>?
+
+C<find> couldn't be easier. With this module, just specify the result name, and 
+the primary key:
+
+   my $person = person(23);     # id on the table.
+
+=head2 There is a caveat, though.
+
+It is entirely possible in a complex web application that you might have
+a table whose resultset name would conflict with a Dancer2 keyword. If
+that's the case--and I'm looking at the table "session" in several of
+the apps I work on in particular--then the resultset name keyword will
+not be created, and a warning will be emitted at application start time.
+
+To get around this, there is a setting in the configuration for the plugin.
+Your config.yml or environment file will look something like this:
+
+   plugins:
+     DBIx::Class:
+       default:
+         dsn: dbi:SQLite:dbname=my.db    # Just about any DBI-compatible DSN goes here
+         schema_class: MyApp::Schema
+         export_prefix: 'db' 
+
+With the export_prefix set, your keywords are all prefixed with C<db_>, so
+a search becomes:
+
+   my $set = db_persons->search({ ...});
+
+You can use any prefix you want, and if you have multiple schema in your
+application, you'll probably want to use different ones on each, to 
+prevent any possibility of collision.
+
+=head2 Neat, huh?
+
+I like it; I'm using it in production on a couple of things I am
+working on, and trying to convince my bosses to use it in our production
+code starting in the new year. I hope it is of use to you, too.  Happy
+Dancing!
+
+=head2 Author
+
+This article was written by L<D Ruth Holloway|https://metacpan.org/author/GEEKRUTH>
+for the Dancer Advent Calendar 2023.
