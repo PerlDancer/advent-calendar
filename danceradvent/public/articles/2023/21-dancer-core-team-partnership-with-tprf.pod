@@ -1,0 +1,70 @@
+=head1 Tidings of Comfort and Joy: Dancer Core Team, TPRF Partnership
+
+In the lead up to Dancer2 1.0.0, the Dancer Core Team finalized an
+arrangement with The Perl and Raku Foundation (TPRF) to have the
+foundation collect and manage funds on behalf of the Dancer project.
+
+=head2 Background
+
+We're a small team, and setting up and managing a non-profit corporation
+is a significant time investment. Every minute we spend managing funds,
+paying bills, etc. is time we aren't spending advancing Dancer. TPRF
+has all of this infrastructure in place already, and such a partnership
+helps TPRF fulfill its goal of supporting the Perl and Raku communities.
+
+From the perspective of the Dancer Core Team, this is a huge win; TPRF
+provides us not only with much needed administrative support, but
+additional avenues to more easily collect and generate revenue to
+fund the ongoing development of Dancer2 and its ecosystem.
+
+For TPRF, we're piloting a program that, if deemed successful, can be
+offered to other projects in the Perl and Raku communities.
+
+=head2 Donations - the gift that keeps on giving
+
+All future donations will go into a fund that's managed by TPRF, and
+existing Dancer funds will be transfered to this fund. In doing this,
+TPRF can extend its 501c status to Dancer donations, meaning that any
+donations made to the Dancer project are fully tax deductible. So not
+only will your donations advance the development of Dancer, but you
+can use these donations to reduce your own tax burden. Everyone wins!
+
+Funds collected by TPRF on behalf of the Dancer project go 100% towards
+Dancer and the Dancer Core Team.
+
+=head2 Details, details
+
+In the spirit of community, the Dancer Core Team agreed to:
+
+=over
+
+=item * Follow a Code of Conduct
+
+This was an easy ask as we already have a Code of Conduct in place for
+the safety and betterment of our community (we'd like to think it's a
+good model for a CoC to be adopted by the greater community).
+
+=item * Responsible spending of funds
+
+We chose a process that works for our team's system of governance for how
+funds can be spent. TL;DR: I can't unilaterally take that vacation to
+Tahiti that I've always wanted (at least not on team funds!).
+
+=back
+
+=head2 Acknowledgements
+
+We'd really like to extend our thanks to TPRF for their willingness to
+work with us on piloting this program. We hope the community is as
+excited for this as we are!
+
+=head2 Author
+
+This article has been written by Jason Crome for the Twelve Days of Dancer.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome / CromeDome
+
