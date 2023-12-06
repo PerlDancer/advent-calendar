@@ -1,0 +1,133 @@
+=head1 Dancer2::Plugin::Mason - What's old is new again!
+
+This year, Retro Santa paid us a visit and gave us a new gift of something
+old - an L<HTML::Mason> plugin for Dancer2!
+
+=head2 But Santa, why? WHY?
+
+Mason is a solid templating engine, but it lacks a controller. A
+number of projects have built their own controllers (such as
+L<Request Tracker (RT)|https://bestpractical.com/request-tracker>), and
+others struggle without one. That's where Dancer2 comes in.
+
+L<Dancer2::Template::Mason> is a template engine for HTML::Mason. If
+HTML::Mason is your favorite template engine, you can now use it
+in your favorite web framework. If you have legacy Mason applications
+that would benefit from having a proper controller, or a general
+refresh with some a more modern design, Dancer2 has your back.
+
+=head2 Does this mean I'm NOT on the Naughty List?
+
+Not at all! It's actually a pretty good gift, combining two powerful tools
+that are already in the toolbox of a lot of Perl developers. Go ahead,
+you can thank Retro Santa now. I'll wait.
+
+HTML::Mason, like all frameworks, has its warts and annoyances, but also
+a lot of upside, and not having HTML::Mason as part of the Dancer2
+ecosystem has been a glaring oversight. No more!
+
+=head2 How do I use it?
+
+First, make your layout (F<views/layouts/main.m>):
+
+    <html lang="en">
+        <head>
+            <title><% $title %></title>
+        </head>
+
+        <body>
+            <% $content %>
+        </body>
+    </html>
+
+    <%args>
+    $title => "It's HTML::Mason... in Dancer2!"
+    $content
+    $deferred
+    $perl_version
+    $dancer_version
+    $settings
+    $request
+    $params
+    $vars
+    $session
+    </%args>
+
+That pile of variables in C<%args>? Like other template engines, Dancer2
+gives you that automatically. HTML::Mason, unlike some other template
+engines (L<Template::Toolkit> for example) makes you explicitly declare
+variables before using them.
+
+Too many variables? You can always reference them via the C<%ARGS> hash.
+
+Next, create your page template (F<views/index.m>):
+
+    <p>Hello, <% $ARGS{ name } %>!</p>
+
+And finally, add a route that uses your Mason template:
+
+    get '/:name?' => sub {
+        my $name = body_paramaters->get( 'name' ) // 'Mystery Visitor';
+        template 'index', { name => $name };
+    };
+
+and Bob's your uncle! Now, when you go to C<http://localhost:5000/Uncle%20Bob>
+you'll see:
+
+    Hello, Uncle Bob!
+
+And if you go to C<http://localhost/:5000> you get:
+
+    Hello, Mystery Visitor!
+
+=head2 Care and feeding of your Mason templates
+
+Mason needs a little TLC to be at its best. To get the best performance
+out of Mason, you need to create a template cache in production, easily
+done by adding this to F<environments/production.yml>:
+
+    template: "mason"
+    engines:
+      template:
+        mason:
+          extension: m
+          data_dir: "/path/to/your/app/var/"
+          use_object_files: 1
+          static_source: 1
+
+You'll need to clear the cache when templates change, however:
+
+    rm -rf /path/to/your/app/var/obj
+
+You may find yourself saying, "But Retro Santa, this is such a pain when
+I am developing my app!" And you'd be right to do so! So leave the cache
+disabled while you're developing. In F<environments/development.yml>:
+
+    template: "mason"
+    engines:
+      template:
+        mason:
+          use_object_files: 0
+          static_source: 0
+
+=head2 Ok, where did this gift really come from? Retro Santa my %^$!!!
+
+Yanick is the brains and muscle behind this, with CromeDome doing what
+he does best (poking, prodding, agitating, and encouraging otherwise good
+people to do bad things).
+
+=head2 Acknowledgements
+
+I'd like to thank Jonathan Swartz for the shout-out in the Mason
+documentation, and for contributing a Mason template engine for
+Dancer(1), and Yanick for putting up with my endless shenanigans.
+
+=head2 Author
+
+This article has been written by Jason Crome for the Twelve Days of Dancer.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome / CromeDome
