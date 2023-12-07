@@ -8,17 +8,18 @@ foundation collect and manage funds on behalf of the Dancer project.
 
 We're a small team, and setting up and managing a non-profit corporation
 is a significant time investment. Every minute we spend managing funds,
-paying bills, etc. is time we aren't spending advancing Dancer. TPRF
-has all of this infrastructure in place already, and such a partnership
-helps TPRF fulfill its goal of supporting the Perl and Raku communities.
+paying bills, etc. is time we aren't spending advancing Dancer.
+On the other hand, TPRF has infrastructure in place to manage non-profit
+donations with the goal of supporting the Perl and Raku communities.
+
+We are happy to announce we're piloting a partnership program that, if
+deemed successful, can be offered to other projects in the Perl and Raku
+communities.
 
 From the perspective of the Dancer Core Team, this is a huge win; TPRF
 provides us not only with much needed administrative support, but
 additional avenues to more easily collect and generate revenue to
 fund the ongoing development of Dancer2 and its ecosystem.
-
-For TPRF, we're piloting a program that, if deemed successful, can be
-offered to other projects in the Perl and Raku communities.
 
 =head2 Donations - the gift that keeps on giving
 
@@ -30,7 +31,8 @@ only will your donations advance the development of Dancer, but you
 can use these donations to reduce your own tax burden. Everyone wins!
 
 Funds collected by TPRF on behalf of the Dancer project go 100% towards
-Dancer and the Dancer Core Team.
+Dancer and the Dancer Core Team to be spent on the further development
+of Dancer and Dancer-related projects.
 
 =head2 Details, details
 
@@ -41,14 +43,17 @@ In the spirit of community, the Dancer Core Team agreed to:
 =item * Follow a Code of Conduct
 
 This was an easy ask as we already have a Code of Conduct in place for
-the safety and betterment of our community (we'd like to think it's a
-good model for a CoC to be adopted by the greater community).
+the safety and betterment of our community, which we believe is a good
+model for a CoC to be adopted by the greater community.
 
 =item * Responsible spending of funds
 
 We chose a process that works for our team's system of governance for how
 funds can be spent. TL;DR: I can't unilaterally take that vacation to
 Tahiti that I've always wanted (at least not on team funds!).
+
+In addition to the agreed adherence rules set by TPRF, we intend to openly
+and transparently share with the community how funding will be spent.
 
 =back
 
