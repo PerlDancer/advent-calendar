@@ -1,34 +1,39 @@
 =head1 Tidings of Comfort and Joy: Dancer Core Team, TPRF Partnership
 
-In the lead up to Dancer2 1.0.0, the Dancer Core Team finalized an
-arrangement with The Perl and Raku Foundation (TPRF) to have the
+In the lead up to Dancer2 1.0.0, the Dancer Core Team finalized an exciting
+collaboration with The Perl and Raku Foundation (TPRF) to have the
 foundation collect and manage funds on behalf of the Dancer project.
 
 =head2 Background
 
-We're a small team, and setting up and managing a non-profit corporation
-is a significant time investment. Every minute we spend managing funds,
-paying bills, etc. is time we aren't spending advancing Dancer.
-On the other hand, TPRF has infrastructure in place to manage non-profit
-donations with the goal of supporting the Perl and Raku communities.
+Running an open-source project like Dancer2 is no small feat. Our team,
+though passionate and dedicated, is still fairly small. Dealing with the
+administrative side of things (managing funds, paying bills, etc.) is not
+our strong suit. And every inefficient minute we spend on it, we're not
+spending on advancing Dancer and addressing community needs.
 
-We are happy to announce we're piloting a partnership program that, if
-deemed successful, can be offered to other projects in the Perl and Raku
-communities.
+Enter TPRF: a foundation with the resources and infrastructure to support
+Perl and Raku projects by handling the administration and monetary aspects,
+leaving us free to focus on what we do best - coding and enhancing Dancer.
 
-From the perspective of the Dancer Core Team, this is a huge win; TPRF
-provides us not only with much needed administrative support, but
-additional avenues to more easily collect and generate revenue to
-fund the ongoing development of Dancer2 and its ecosystem.
+We're thrilled to pilot this partnership, which could serve as a model for
+other Perl and Raku projects in the future.
+
+=head2 Why This Matters
+
+TPRF's involvement is a game-changer. They don't just help us with the
+paperwork; they open doors to easily receive new funding and allow us
+to secure the resources we need to fund the ongoing development of Dancer
+and its ecosystem.
 
 =head2 Donations - the gift that keeps on giving
 
 All future donations will go into a fund that's managed by TPRF, and
 existing Dancer funds will be transfered to this fund. In doing this,
-TPRF can extend its 501c status to Dancer donations, meaning that any
-donations made to the Dancer project are fully tax deductible. So not
-only will your donations advance the development of Dancer, but you
-can use these donations to reduce your own tax burden. Everyone wins!
+TPRF can extend its 501c status to Dancer donations, meaning that
+B<any donations made to the Dancer project are fully tax deductible!>
+So not only will your donations advance the development of Dancer, but
+you can use these donations to reduce your own tax burden. Everyone wins!
 
 Funds collected by TPRF on behalf of the Dancer project go 100% towards
 Dancer and the Dancer Core Team to be spent on the further development
@@ -42,20 +47,32 @@ In the spirit of community, the Dancer Core Team agreed to:
 
 =item * Follow a Code of Conduct
 
-This was an easy ask as we already have a Code of Conduct in place for
-the safety and betterment of our community, which we believe is a good
-model for a CoC to be adopted by the greater community.
+We believe in the spirit of a clear, inclusive Code of Conduct to create
+a safe space for the community. Our existing
+L<Code of Conduct|https://metacpan.org/dist/Dancer2/view/lib/Dancer2/Policy.pod>
+serves us in this purpose and we hope more communities will adopt a
+similar policy.
 
 =item * Responsible spending of funds
 
-We chose a process that works for our team's system of governance for how
+We chose a process that works for our team's system of governance on how
 funds can be spent. TL;DR: I can't unilaterally take that vacation to
 Tahiti that I've always wanted (at least not on team funds!).
+
+=back
 
 In addition to the agreed adherence rules set by TPRF, we intend to openly
 and transparently share with the community how funding will be spent.
 
-=back
+=head2 Donating
+
+If you're looking to donate to the Dancer project, you can reach out to
+L<The Perl & Raku Foundation|https://www.perlfoundation.org/donate.html>
+to donate and make it clear the donation should go to the Dancer project.
+
+Thank you for helping us maintain and develop Dancer. Please reach out
+to inform us of your interest in Dancer and if you have any interests in
+particular aspects of Dancer you want to see improved or supported.
 
 =head2 Acknowledgements
 
