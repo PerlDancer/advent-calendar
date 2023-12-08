@@ -104,7 +104,7 @@ And most of the real work is in C<list_body.tt>:
     <% END -%>
 
 There's quite a lot going on there. Some of the complexity comes from HTMX (the
-attributes that start C<hx-*> and some of it is from Bootstrap (the CSS
+attributes that start C<hx-*>) and some of it is from Bootstrap (the CSS
 framework that Pixie uses for all her web sites). But, basically, what this is
 doing is creating a row for every child in the database. Each row has three
 columns. The first two display the ID and name from the database record and
