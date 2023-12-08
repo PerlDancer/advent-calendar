@@ -54,7 +54,7 @@ The first thing to do was to display a list of the children. Her DBIC classes
 made that simple enough. She created an index route that looked like this:
 
     get '/' => sub {
-      my $sch = HTMXmas::Schema->get_schema;
+      my $sch = HTMXmas::Schema->connect(...);
 
       return template 'index.tt', {
         rows => [ $sch->resultset('Child')->all ],
@@ -233,7 +233,7 @@ needs to return the edit form, so it looks like this:
     get '/edit/:id' => sub {
       my $id = route_parameters->get('id');
 
-      my $sch = HTMXmas::Schema->get_schema;
+      my $sch = HTMXmas::Schema->connect(...);
       my $rs  = $sch->resultset('Child');
 
       my $row = $rs->find($id);
@@ -291,7 +291,7 @@ undo any changes and remove the form. They look like this:
 
       my $object = from_json($request->body);
 
-      my $sch = HTMXmas::Schema->get_schema;
+      my $sch = HTMXmas::Schema->connect(...);
       my $rs  = $sch->resultset('Child');
 
       if ($id) {
@@ -308,7 +308,7 @@ undo any changes and remove the form. They look like this:
     get '/reset/:id' => sub {
       my $id     = route_parameters->get('id');
 
-      my $sch = HTMXmas::Schema->get_schema;
+      my $sch = HTMXmas::Schema->connect(...);
       my $rs  = $sch->resultset('Child');
 
       my $row = $rs->find($id);
