@@ -5,21 +5,21 @@ Well, here's a couple of things currently in the hopper:
 
 =head2 The Year of the Docs?
 
-We've had some discussions with an author and technical writer recently
-on how to get our docs rewrite across the finish line. We have some
+We've recently had some discussions with an author and technical writer
+on how to get our docs rewritten across the finish line. We have some
 solid ideas and are picking up some steam on this.
 
-One of the things we accomplished in the lead up to Dancer2 1.0.0 was
+One of the things we accomplished in the lead-up to Dancer2 1.0.0 was
 overhauling some of our supplemental documentation (how to contribute,
 etc.). We're committed to making those changes to the core documentation
 as well.
 
 =head2 Shrinking of the backlog
 
-Sawyer has picked off a few of the oldest issues in the backlog recently,
-and I tend to work from the newest backwards. I am hopeful that before
-long we can meet in the middle. We have a number of open issues, and
-some are so close to completion you can almost taste them. It would be
+Sawyer has recently picked off a few of the oldest issues in the backlog,
+and I tend to work from the newest backward. Before
+long, we can meet in the middle. We have several open issues.
+Some are so close to completion that you can almost taste them. It would be
 great to carry those over the finish line.
 
 =head2 Core Team Meetup/Hackathon?
@@ -32,7 +32,7 @@ virtually, to see what great things will come from all of us getting
 together again.
 
 Shameless plug: donations help make in-person meetups happen. If
-you're interested in helping to sponsor this, please contact us!
+you're interested in helping sponsor this, please contact us!
 
 =head2 Final Thoughts
 
@@ -42,7 +42,7 @@ not promises.
 
 Our community support and excitement over this year's release has
 reaffirmed our reasons for building Dancer2; it's been great to see
-the positive buzz that's been generated this year, and to hear all
+the positive buzz that's been generated this year and to hear all
 the great things our users are building with Dancer2.
 
 Thanks for being such a great community, and we look forward to
