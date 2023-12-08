@@ -125,7 +125,7 @@ C<hx-VERB> attributes for all of the HTTP verbs - C<GET>, C<POST>, C<PUT>,
 C<PATCH> and C<DELETE>. In this case we're using C<hx-delete> because that's
 the correct verb to use to delete a resource. When the icon is clicked, HTMX
 will generate an HTTP C<DELETE> request to C</delete/ID> (where ID is the
-ID of the database row. This means that we'll need to write a route in our
+ID of the database row). This means that we'll need to write a route in our
 Dancer app that matches C<del '/delete/:id'>. We'll see the code for that
 in a minute.
 
