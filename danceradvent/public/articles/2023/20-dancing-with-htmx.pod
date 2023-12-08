@@ -1,0 +1,333 @@
+=head1 Dancing with HTMX
+
+Santa's organisation is, of course, rather traditional. But some parts of it
+are slowly trying to drag themselves into the 21st century. Pixie the Elf
+(her parents had strange ideas about names) suggested that they should consider
+writing a web app that allowed them to maintain a list of the children they
+need to deliver to and which presents each child will be getting. Santa liked
+the idea and suggested that it should be written in Dancer because he liked the
+idea of using a technology that was named after one of his reindeer.
+
+Pixie grumbled to herself a bit about end-users dictating technology decisions
+but found it impossible to disguise her disappointment when he added, "And I
+think it should be a Single Page Application." How on Earth did Santa know
+terms like that? And that was going to make her life far harder than it needed
+to be.
+
+Pixie knew of two ways to write an app in Dancer. The older way was where each
+click on the page made a request to the server and, in response, the server
+created a new page of HTML that replaced the old page. That was the opposite of
+what Santa had asked for. A Single Page Application (or SPA) required the
+server to return data in a format like JSON which Javascript in the web page
+would parse and manipulate in order to update sections of the page to display
+the new data.
+
+The problem was that Pixie hadn't ever got round to learning Javascript in
+enough detail to write code complex enough to do that. And while she loved the
+idea of getting her skills up to date, she really didn't think she had enough
+time to learn all of that before the application was needed. Disheartened, she
+sat in the North Pole canteen reading r/elftech.
+
+A few pages in, she read a post talking about a technology called HTMX which
+sounded like it might be the solution to all of her problems. Effectively
+L<HTML|https://htmx.org/> is a very clever Javascript library that wraps up
+all of the complex Javascript work and gives developers a way to write an
+SPA by just adding a few new attributes to their HTML tags. Pixie thought
+this sounded like the solution to her problem and she went back to her desk
+with a bounce in her step.
+
+HTMX consists of a single library that you need to load. So Pixie added
+the line
+
+    <script src="https://unpkg.com/htmx.org@1.9.6"
+            integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+            crossorigin="anonymous"></script>
+
+to the top of her C<index.tt> (being an SPA, this is the only page in the
+app).
+
+She then quickly created an SQLite database with two tables (one for children
+and one for their presents) and used C<DBIx::Class::Schema::Loader> to
+generate classes to access those tables.
+
+The first thing to do was to display a list of the children. Her DBIC classes
+made that simple enough. She created an index route that looked like this:
+
+    get '/' => sub {
+      my $sch = HTMXmas::Schema->get_schema;
+
+      return template 'index.tt', {
+        rows => [ $sch->resultset('Child')->all ],
+      };
+    };
+
+And the important part of the C<index.tt> template looked like this:
+
+    <div id="list-table">
+    <% INCLUDE list.tt -%>
+    </div>
+
+Two good tips for working with HTMX are 1) use DIVs with IDs for any piece
+of HTML that will be displaying data and 2) use lots of embedded templates.
+This will make it easier to generate HTML that replaces chunks of our page.
+
+The C<list.tt> template looks like this:
+
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>name</th>
+        </tr>
+      </thead>
+      <tbody id="list-body">
+    <% INCLUDE list_body.tt %>
+      </tbody>
+    </table>
+
+And most of the real work is in C<list_body.tt>:
+
+    <% FOREACH row IN rows -%>
+      <tr>
+        <td><% row.id %></td>
+        <td id="edit-<% row.id %>"><% row.name %></td>
+        <td>
+          <i hx-get="/edit/<% row.id %>" hx-target="#edit-<% row.id %>" title="edit"
+             class="bi-pencil-square text-primary" style="font-size: 1.25rem"></i>
+          <i hx-get="/view/<% row.id %>" hx-target="#view" title="view"
+             class="bi-gift-fill text-primary" style="font-size: 1.25rem"></i>
+          <i hx-delete="/delete/<% row.id %>"
+             hx-confirm="Are you sure you want to delete this record?" hx-target="#list-body"
+             title="delete" class="bi-trash-fill text-danger" style="font-size: 1.25rem"></i>
+        </td>
+      </tr>
+    <% END -%>
+
+There's quite a lot going on there. Some of the complexity comes from HTMX (the
+attributes that start C<hx-*> and some of it is from Bootstrap (the CSS
+framework that Pixie uses for all her web sites). But, basically, what this is
+doing is creating a row for every child in the database. Each row has three
+columns. The first two display the ID and name from the database record and
+the third displays some icons that allow the user to interact with the record
+in various ways. The first allows you to edit the name, the second will (when
+the code is implemented) display a list of the presents the child will receive
+and the third deletes the child from the database. Let's start by looking at
+the easiest option, the delete icon.
+
+There are three C<hx-*> attributes on the delete icon:
+
+=over 4
+
+=item hx-delete
+
+This defines the action that clicking on this icon will take. There are
+C<hx-VERB> attributes for all of the HTTP verbs - C<GET>, C<POST>, C<PUT>,
+C<PATCH> and C<DELETE>. In this case we're using C<hx-delete> because that's
+the correct verb to use to delete a resource. When the icon is clicked, HTMX
+will generate an HTTP C<DELETE> request to C</delete/ID> (where ID is the
+ID of the database row. This means that we'll need to write a route in our
+Dancer app that matches C<del '/delete/:id'>. We'll see the code for that
+in a minute.
+
+=item hx-confirm
+
+This is a nice feature that HTMX gives us. Adding an C<hx-confirm> attribute
+to our HTML tells HTMX to intercept a click on the icon and display a pop-up
+message in the browser. The pop-up will have OK and Cancel buttons and the 
+action will only proceed if the OK button is selected. This is a simple way
+to add a confirmation step to potentially destructive actions.
+
+=item hx-target
+
+When HTMX makes a request to the server, it expects to receive HTML back. By
+default, it will replace the contents of the element that triggered the
+request (by, for example, being clicked) with the HTML that was returned. In
+my experience, this is rarely what you want so you can change the element
+that is replaced by defining it using a CSS selector in an C<hx-target>
+attribute. Usually, the simplest way to do this is to put an ID on the element
+you want to replace.
+
+In this case, having deleted a row from the database, we want to replace the
+element containing the list of rows (because it will be one item shorter).
+So we give it a target of C<#list-body> and ensure that ID is defined on the
+correct HTML element (as you'll see in the C<list.tt> template above).
+
+=back
+
+So, we're in the situation where clicking the delete icon will take the
+following steps:
+
+=over 4
+
+=item *
+
+Present a confirmation dialogue.
+
+=item *
+
+Make an HTTP C<DELETE> request to C</delete/ID>.
+
+=item *
+
+Expect to get an HTML fragment back from the server and replace the
+C<#list_body> element with that HTML.
+
+=back
+
+All we need to do now is to write the correct route in our Dancer app. The
+code looks like this:
+
+    del '/delete/:id' => sub {
+      my $id = route_parameters->get('id');
+
+      return 404 unless $id;
+      return 404 if $id =~ /\D/;
+
+      my $sch = HTMXmas::Schema->connect(...);
+      my $rs  = $sch->resultset('Child');
+
+      $rs->find($id)->delete;
+
+      $row->delete;
+
+      return template 'list_body.tt', {
+        rows => [ $rs->all ],
+      };
+    };
+
+The code has two responsibilites. It needs to 1) delete the correct row and 2)
+return the correct HTML. Given the way we've set the system up, this proves to
+be rather easy.
+
+We extract the ID from the route. We check we've got an ID and that it looks
+like an integer (returning 404 if we fail either of those checks). We then
+connect to the database, find the row and delete it.
+
+We can then use our C<list_body.tt> template (see, this is why we broke our
+views down into lots of nested templates) to produce the HTML that we need
+to replace the original table.
+
+That's a lot of detail about a rather simple operation. Let's now look at the
+edit action in a bit less detail. The HTML for the edit icon has the following
+C<hx-*> attributes:
+
+=over 4
+
+=item hx-get
+
+This is the HTML verb to use in the request. We make a C<GET> request to
+C</edit/ID> and it returns HTML that replaces the C<E<lt>tdE<gt>> containing
+the name with a simple form for editing the name.
+
+=item hx-target
+
+Once again, the HTML element that is clicked (the edit icon) is not the one
+that needs to be replaced. We've given the correct C<E<lt>tdE<gt>> element the
+ID C<edit-ID>, so we use that as the target.
+
+=back
+
+We now need to implement the C<get '/edit/:id'> route in our Dancer app. It
+needs to return the edit form, so it looks like this:
+
+    get '/edit/:id' => sub {
+      my $id = route_parameters->get('id');
+
+      my $sch = HTMXmas::Schema->get_schema;
+      my $rs  = $sch->resultset('Child');
+
+      my $row = $rs->find($id);
+
+      return template 'edit_name.tt', {
+        row => $row,
+      };
+    };
+
+And the C<edit_name.tt> template looks like this:
+
+    <form>
+      <input class="form-control" id="name" name="name" value="<% row.name %>">
+      <i hx-post="/update/<% row.id %>" hx-params="<% col %>" hx-ext="json-enc"
+         hx-target="#edit-<% row.id %>" title="save" class="bi bi-check-square
+         text-success" style="font-size: 1.25rem"></i>
+      <i hx-get="/reset/<% row.id %>" hx-target="#edit-<% row.id %>"
+         title="cancel" class="bi bi-x-square text-danger"
+         style="font-size: 1.25rem"></i>
+    </form>
+
+So what we're doing here is replacing some HTML with other HTML that includes
+C<hx-*> attributes. Editing the name is a two-stage process. The first stage
+displays the form for editing the name and the second stage saves any changes
+to the database.
+
+Notice that we've added two icons to the edit form. There's a check mark to
+save the changes to the database and an X that cancels any changes. After
+pressing either of those, the form should be replaced with the original
+C<E<lt>tdE<gt>> - so that's the HTML that the routes should return.
+
+We understand most of the C<hx-*> attributes that are used here, so I won't
+go into them again. There's just one new one to explain.
+
+=over 4
+
+=item hx-ext
+
+There are a number of extensions to the basic HTMX features. By default,
+a C<POST> request like we're using for the update here would use the standard
+C<application/x-www-form-urlencoded> encoding. But in this case, Pixie decided
+to use an extension (called "json-enc") which, instead, encodes the data as
+JSON. She thinks that makes it a little easier to deal with the data at the
+in the Dancer app.
+
+=back
+
+Which brings us neatly back to the Dancer app. We need to add two new routes
+to handle these icon - C<post '/update/:id/'> will save the data to the
+database (and remove the form from the table) and C<get '/reset/:id'> will
+undo any changes and remove the form. They look like this:
+
+    post '/update/:id' => sub {
+      my $id = route_parameters->get('id');
+
+      my $object = from_json($request->body);
+
+      my $sch = HTMXmas::Schema->get_schema;
+      my $rs  = $sch->resultset('Child');
+
+      if ($id) {
+        my $row = $rs->find($id);
+        $row->update($object);
+        $row->discard_changes;
+
+        return sprintf '<td id="edit-%s">%s</td>', $row->id, $row->name;
+      }
+
+      return '404';
+    };
+
+    get '/reset/:id' => sub {
+      my $id     = route_parameters->get('id');
+
+      my $sch = HTMXmas::Schema->get_schema;
+      my $rs  = $sch->resultset('Child');
+
+      my $row = $rs->find($id);
+
+      return sprintf '<td id="edit-%s">%s</td>', $row->id, $row->name;
+    };
+
+Pixie is a little worried about this code. There are a few checks missing
+and that hard-coded HTML in the C<return> statements is embarrassing. But
+it's just a proof of concept and she'll clean it up before it goes into
+production... honest!
+
+There's still a bit more to do. Pixie hasn't started on displaying the
+children's list of toys. She also wants to include a way to add children
+(as well as their choice of toys). And it would be great to be able to
+search for particular children. But she's happy that HTMX has allowed her
+to write the start of her SPA very easily - and without having to learn
+any more Javascript.
+
+Pixie has given me access to the latest version of her code and I have put
+it L<on GitHub|https://github.com/davorg/htmxmas>. I'll keep it up to date
+as she makes improvements over the coming weeks.
