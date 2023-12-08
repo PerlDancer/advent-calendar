@@ -1,7 +1,7 @@
 =head1 Navigating the Dancefloor: The Elegance of Named Routes
 
 B<TL;DR> Hey, you can name routes now! You can also create links to them! It
-also works in templates! Okay read on!
+also works in templates! Okay, read on!
 
 =head2 Paths, Paths, Paths
 
@@ -9,8 +9,8 @@ When working with a large web application or service that includes numerous
 routes that serve multiple purposes, one significant need is to generate
 paths the user will use to navigate between the routes.
 
-In templates for pages, you need to create links and forms that point to
-other routes. Take this contrived example:
+In page templates, you need to create links and forms pointing to other
+routes. Take this contrived example:
 
     # In your template
     <!-- part of the menu -->
@@ -18,7 +18,7 @@ other routes. Take this contrived example:
     <a href="/view/user/[% user_id %]?track=[% track_code %]">User [% user.id %]>/a><br/>
     [% END %]
 
-Let's say your application is mounted (using L<Plack::Builder> or using some
+Let's say your application is mounted (using L<Plack::Builder> or some
 web server configuration on top of C</admin>. Well, those paths won't work
 anymore. Now they need to be C</admin/view/user/...>, right?
 
@@ -37,15 +37,15 @@ the query parameter for the tracking code.
     User [% user.id %]
     </a>
 
-While it's longer, it's definitely more readable and less error-prone.
+While it's longer, it's more readable and less error-prone.
 
 =head2 Hardcode Me Not
 
-The two problems that remain are needing to remember the path for each
-route and to hardcode it in the template or any code that generates
+The remaining problems are needing to remember the path for each
+route and hardcode it in the template or any code that generates
 paths for the user.
 
-We can fix both of those with the new C<uri_for_route()>.
+We can fix both issues with the new C<uri_for_route()>.
 
 =head2 Name that Route
 
@@ -54,7 +54,7 @@ Begin by providing a name for your routes:
     get 'view_user' => '/view/user/:id' => sub {...};
 
 By prefixing the path with another string, we provide a name for this
-route which we can then use to generate a URI for its path in the
+route, which we can then use to generate a URI for its path in the
 template or in any code.
 
 =head2 Enter C<uri_for_route>
@@ -85,7 +85,7 @@ C<DELETE>.
 
 =item 2. Route arguments
 
-These will be the arguments to the route path. We support named arguments,
+These will be the arguments for the route path. We support named arguments,
 typed named arguments, splat, and megasplat:
 
     # Named arguments
@@ -115,7 +115,7 @@ typed named arguments, splat, and megasplat:
     # $path = /upload/request/4/foo/baz/baz/quux
 
 (Notice that when you're mixing these, the splat-like arguments will
-be under the C<splat> key which shouldn't be used in route arguments.)
+be under the C<splat> key, which shouldn't be used in route arguments.)
 
 =item 3. Query parameters
 
@@ -128,8 +128,8 @@ be under the C<splat> key which shouldn't be used in route arguments.)
 
 =item 4. URI escape control
 
-Lastly, we escape all query parameters by default since a user is
-likely to be using them. You don't want accidental HTML and JS code
+Lastly, we escape all query parameters by default since a user will
+likely use them. You don't want accidental HTML and JS code
 to be there.
 
 However, the last argument allows you to disable this ability:
@@ -142,9 +142,20 @@ However, the last argument allows you to disable this ability:
         1,                              # Disable escaping
     ); # $path = /view/user/4?ext=<javascript>...
 
-(We still suggest you leaving this as is, so escaping will occur.)
+(We still suggest you leave this as is, so escaping will occur.)
 
 =back
+
+=head2 Conclusion
+
+In summary, the introduction of named routes with C<uri_for_route> in
+your web development offers a new approach to managing and navigating
+paths within applications.
+
+This feature not only simplifies the process of generating dynamic links
+but also enhances the readability and maintainability of your code. By
+leveraging named routes, you can significantly reduce the complexity
+associated with path management, especially in large-scale applications.
 
 =head2 Author
 
