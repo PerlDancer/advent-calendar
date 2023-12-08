@@ -30,7 +30,7 @@ sat in the North Pole canteen reading r/elftech.
 
 A few pages in, she read a post talking about a technology called HTMX which
 sounded like it might be the solution to all of her problems. Effectively
-L<HTML|https://htmx.org/> is a very clever Javascript library that wraps up
+L<HTMX|https://htmx.org/> is a very clever Javascript library that wraps up
 all of the complex Javascript work and gives developers a way to write an
 SPA by just adding a few new attributes to their HTML tags. Pixie thought
 this sounded like the solution to her problem and she went back to her desk
