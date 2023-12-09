@@ -188,8 +188,6 @@ code looks like this:
 
       $rs->find($id)->delete;
 
-      $row->delete;
-
       return template 'list_body.tt', {
         rows => [ $rs->all ],
       };
@@ -289,7 +287,7 @@ undo any changes and remove the form. They look like this:
     post '/update/:id' => sub {
       my $id = route_parameters->get('id');
 
-      my $object = from_json($request->body);
+      my $object = from_json(request->body);
 
       my $sch = HTMXmas::Schema->connect(...);
       my $rs  = $sch->resultset('Child');
