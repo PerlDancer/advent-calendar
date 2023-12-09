@@ -329,3 +329,9 @@ any more Javascript.
 Pixie has given me access to the latest version of her code and I have put
 it L<on GitHub|https://github.com/davorg/htmxmas>. I'll keep it up to date
 as she makes improvements over the coming weeks.
+
+=head2 Author
+
+This article was written by Dave Cross (dave@perlhacks.com) for the
+Dancer Advent Calendar.
+
