@@ -1,0 +1,210 @@
+=head1 Building a Sleek Blog in a Snap with Dancer2 and LiteBlog
+
+=head2 A Word of Introduction
+
+Perl has a curious way of never truly releasing its grip on a programmer.
+Recently, I felt the need to revamp my website, but the idea of spawning another
+Wordpress docker image on my server felt really overkill for what I had in mind.
+I wanted to do something super simple, with a landing page, a bit of info about
+my social profiles and, maybe, some articles if I wish to write content here and
+there. 
+
+It had been a decade since I last delved into Perl code, but then I saw the
+release of Dancer2 1.0.0, announced by Jason. That was all I needed to
+truly awaken from my hibernation.
+
+So I decided to revisit my first programming love and see how rusty my Perl
+skills were.
+
+As it turns out, not only did I really enjoy building my website from the ground
+up using Dancer2, but it also became clear that I had curated enough material to
+craft a reusable plugin. 
+
+And here was LiteBlog, a plugin able to change a Dancer2 app into a sleek,
+responsive, and file-based blogging engine.
+
+The 2023 edition of this Dancer Advent Calendar is the perfect chance for me
+to share a bit about Liteblog, explain its features, and perhaps convince you to 
+update your own personal site with it (why not!).
+
+=head2 The Concept Behind LiteBlog
+
+Minimalism stands at the core of LiteBlog. The aim was to design something
+uncluttered and lightweight — true to the spirit of Dancer itself.
+
+The system is designed to work without traditional databases. Instead, everything from
+articles to configurations is manageable via static files in YAML or Markdown
+formats.
+
+As I aimed for a modern and responsive design that follows the latest
+HTML/CSS best practices, I decided to use Chat-GPT as my virtual web designer.
+As you may know, it excels in this area, especially when given detailed prompts
+for each design element.  Iterating with it step by step, I managed to get great
+HTML/CSS content that matched exactly what I had in mind for the expected
+render.
+
+Currently,
+L<Dancer2::Plugin::LiteBlog|https://metacpan.org/dist/Dancer2-Plugin-LiteBlog>
+has reached version 0.05. It is stable and ready to serve as the backbone for
+your blog or personal site should you decide to give it a try.
+
+In this article, I'll detail its standout features, show how to bootstrap
+a Liteblog site, and guide you through the content creation process.
+
+If you want to see LiteBlog in action right away, you can head over to my site:
+L<https://alexissukrieh.com>.
+
+=cut
+
+
+=head2 Scaffolding a Dancer2 app into a Liteblog site
+
+In a nutshell, Liteblog is crafted for those who appreciate minimalism.
+Editing YAML and Markdown file is the only thing you need to craft content and 
+fine-tune your Liteblog site.
+There is no database involved, on-purpose.
+
+Before LiteBlog can work its magic, you need a Dancer2 app. Generate it:
+
+  $ dancer2 gen -a my_app
+
+Then, run the LiteBlog scaffolder from within the application directory:
+
+  $ cd my_app
+  $ liteblog-scaffold .
+
+This command populates your app directory with LiteBlog's assets, such as CSS
+files, views, and even starter content.
+
+To hook it all up, modify the main app module to enable the LiteBlog plugin:
+
+  package My::App;
+  use Dancer2;
+  use Dancer2::Plugin::LiteBlog;
+
+  liteblog_init;
+
+  1;
+
+Now, your Dancer2 app is a Liteblog. A default '/' route is defined, and widgets
+(that can be defined in your liteblog's settings) can also define their own
+routes.
+The blog engine is actually a Liteblog Widget. But let's just see what happens
+right there, when Liteblog is invoked from a pure Dancer2 app.
+
+Just launch your app and open its URL with your browser.
+You'll be greeted with a splash screen:
+
+  $ plackup bin/app.psgi
+
+Follow the on-screen instructions to enable features and widgets by adding the
+provided config snippet to your 'config.yml', then restart.
+
+Now, you have C<Activities> cards enabled on the home and a nice article that you
+can read thanks to the C<Blog> widget. 
+
+=head2 Publishing content
+
+LiteBlog makes content creation intuitive. Articles reside in a specified root
+directory as markdown files with coresponding 'meta.yml' for metadata. To
+publish, go in your C<articles/> folder (it has been created by the scaffolder),
+and then follow theses steps:
+
+Create a directory for the category of your post (if not, the article will be
+considered a page). Note that the directory name is the post slug.
+
+Inside, you first need to create the metadata file: C<meta.yml>. It is mandatory
+and should at least contain a title. Here is an example of a valid metadata file
+for an article:
+
+    ---
+    title: "Some Great LiteBlog Article"
+    image: "featured.jpg"
+    tags:
+      - "perl"
+      - "dancer"
+
+Finally, you can now create the C<content.md> file, which, as its name suggests,
+should be written in Markdown format and will be used as the actual content of
+the article.
+
+The easiest way to get started is to edit the scaffolded article provided
+once you bootstrap your Liteblog app.
+
+=head2 Main features of a Liteblog site
+
+As of version 0.05, LiteBlog's toolbox includes:
+
+=over 4
+
+=item B<Activities cards>: Display your profiles and activities in an elegant grid.
+
+=item B<Blog engine>: Effortlessly manage and publish articles.
+
+=item B<Caching system>: Speed up page rendering without breaking a sweat.
+
+=item B<Responsive design>: Your blog will look great on any device.
+
+=item B<Highlight.js support>: Syntax highlighting for articles featuring code.
+
+=back
+
+=head2 Deploying as a Docker image
+
+It's quite classic these days to go with a Docker image for deployment. 
+In case you want to build a Docker image for your Liteblog site, I have
+everything you need.
+
+Here is a Dockerfile to build your LiteBlog image:
+
+    # Use a recent Debian release as base
+    FROM debian:buster-slim
+
+    # Install required packages
+    RUN apt-get update && \
+        apt-get install -y perl cpanminus libdbi-perl build-essential libssl-dev libexpat1-dev && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/*
+
+    # Install Dancer2, Starman, and other necessary CPAN modules
+    RUN cpanm -n Dancer2 Starman
+
+    # Install LiteBlog and its dependencies
+    RUN set -e; \
+        cpanm --installdeps -n Dancer2::Plugin::LiteBlog || (cat /root/.cpanm/work/*/build.log && false)
+
+    RUN set -e; \
+        cpanm Dancer2::Plugin::LiteBlog || (cat /root/.cpanm/work/*/build.log && false)
+
+    # Set the environment for Dancer2
+    ENV DANCER_ENVIRONMENT production
+
+    # Copy your Dancer2 application to the container
+    COPY . /app
+
+    # Set working directory
+    WORKDIR /app
+
+    # Expose the port Starman will run on
+    EXPOSE 5000
+
+    # Start the Dancer2 application with Starman
+    CMD ["starman", "--workers=2", "bin/app.psgi", "-p", "5000"]
+
+=head2 More info & Contributing
+
+To see LiteBlog in action, visit: L<https://alexissukrieh.com>
+
+You can also read about 
+L<the story behind Liteblog|https://alexissukrieh.com/dev/liteblog-a-minimalist-file-based-blog-engine-for-perl/> on my site.
+
+To contribute or report issues, head over to GitHub: L<https://github.com/sukria/Dancer2-Plugin-LiteBlog>
+
+And don't forget to show your support on CPAN: L<https://metacpan.org/dist/Dancer2-Plugin-LiteBlog>
+
+=head2 Author
+
+This article was written by Alexis Sukrieh for the Dancer Advent Calendar 2023.
+
+=cut
+

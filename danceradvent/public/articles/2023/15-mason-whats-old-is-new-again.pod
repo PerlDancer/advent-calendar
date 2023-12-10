@@ -1,0 +1,144 @@
+=head1 Dancer2::Plugin::Mason - What's old is new again!
+
+This year, Retro Santa paid us a visit and gave us a new gift of something
+old - an L<HTML::Mason> plugin for Dancer2!
+
+=head2 But Santa, why? WHY?
+
+Before we start, one thing to clarify. Not unlike Dancer, the Mason
+framework underwent a total rewrite at some point. And, like Dancer, the
+two versions of the framework adopted different namespaces (L<HTML::Mason>
+and L<Mason>, for v1 and v2 respectively) such that the breaking changes
+of the new version wouldn't break old applications. In this article we
+are specifically talking about using the templating engine of the
+original Mason, L<HTML::Mason>.
+
+Mason as a framework is a templating engine and controller logic that is
+tightly coupled to the Apache web server that was meant to power it.
+Something that, at the time, made all the sense in the world. But since
+then... well, the world moved on a little bit. But while the controller
+layer of Mason got superceded by other mechanisms, its templating engine
+remains a strong and solid one. So it's not surprising that a lot of
+projects (such as L<Request Tracker (RT)|https://bestpractical.com/request-tracker>)
+kept using it, pairing it with their own controller layer. Likewise,
+most Perl web frameworks provide a way to use it.
+
+Catalyst? L<Check|Catalyst::View::HTML::Mason>.
+
+Mojolicious? L<Check|Mojolicious::Plugin::Mason1Renderer>.
+
+Dancer1? L<Check|Dancer::Template::Mason>.
+
+Dancer2? ... uh oh.
+
+Well, uh oh no more!
+
+L<Dancer2::Template::Mason> is a template adapter for HTML::Mason. If
+HTML::Mason is your favorite template system, you can now use it
+in your favorite web framework. If you have legacy Mason applications
+that would benefit from having a Dancer-powered controller, or a general
+refresh with some a more modern design, Dancer2 has your back.
+
+=head2 Still talking about Mason in 2023? Does this mean I'm on the Naughty List?
+
+Not at all! It's actually a pretty good gift, combining two powerful tools
+that are already in the toolbox of a lot of Perl developers. Go ahead,
+you can thank Retro Santa now. I'll wait.
+
+=head2 How do I use it?
+
+First, create your layout (F<views/layouts/main.m>):
+
+    <html lang="en">
+        <head>
+            <title><% $title %></title>
+        </head>
+
+        <body>
+            <% $content %>
+        </body>
+    </html>
+
+    <%args>
+    $title => "It's HTML::Mason... in Dancer2!"
+    $content
+    $deferred
+    $perl_version
+    $dancer_version
+    $settings
+    $request
+    $params
+    $vars
+    $session
+    </%args>
+
+That pile of variables in C<%args>? As with its other template adapters,
+Dancer2 gives you those automatically. HTML::Mason, unlike some other template
+engines (L<Template::Toolkit> for example) prefers you to explicitly declare
+variables before using them. But, and don't tell anybody I told you this,
+if you don't wanna declare them, you can reference them all via the
+C<%ARGS> hash too.
+
+Next, create your page template (F<views/index.m>):
+
+    <p>Hello, <% $ARGS{ name } %>!</p>
+
+And finally, add a route that uses your Mason template:
+
+    get '/:name?' => sub {
+        my $name = body_paramaters->get( 'name' ) // 'Mystery Visitor';
+        template 'index', { name => $name };
+    };
+
+and Bob's your uncle! Seriously! Now, when you go to
+C<http://localhost:5000/Uncle%20Bob> you'll see:
+
+    Hello, Uncle Bob!
+
+And if you go to C<http://localhost/:5000> you get:
+
+    Hello, Mystery Visitor!
+
+=head2 Care and feeding of your Mason templates
+
+Off the shelf, the engine will re-compile the templates each time they
+are accessed, which is what one wants when developing. When the time
+comes for production and a little more ooomph is desired, the templates
+can be easily cached by adding the following to
+F<environments/production.yml>:
+
+    template: "mason"
+    engines:
+      template:
+        mason:
+          extension: m
+          data_dir: "/path/to/your/app/var/"
+          use_object_files: 1
+          static_source: 1
+
+You'll need to clear the cache when templates change, however:
+
+    rm -rf /path/to/your/app/var/obj
+
+=head2 Ok, where did this gift really come from? Retro Santa my %^$!!!
+
+There are actually two mischievous elves hiding behind the beard and
+Santa suit. Yanick reworked his original Dancer1 Mason plugin, thanks
+to CromeDome's relentless poking, prodding, agitating, encouraging,
+testing, troubleshooting, and patch submitting.
+
+=head2 Acknowledgements
+
+I'd like to thank Jonathan Swartz for the shout-out in the Mason
+documentation, and for contributing a Mason (v2) template adapter for
+Dancer(1), and Yanick for putting up with my endless shenanigans.
+
+=head2 Author
+
+This article has been written by Jason Crome for the Twelve Days of Dancer.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome / CromeDome

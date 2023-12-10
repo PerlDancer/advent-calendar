@@ -1,0 +1,443 @@
+=head1 Svelte as a Dancer
+
+It has been said that Gluggagægir (Glugg to his friends) has been employed by
+the North Pole for a long, long time. And that itself was said a 
+L<long, long time ago|https://perladvent.org/2008/13/>. 
+
+Let's just say that if elves could grow beards, his would be very grey indeed.
+By now his technological stack is nothing short of geological. Still, he loves
+to keep himself abreast of what's new. After all, he knows developers are like
+sharks. Except that they don't live in water. And they have digits, because
+typing with fins would be helluvah awkward. And anchovies. Not a lot of
+developers really dig anchovies. Least of all on pizzas. 
+
+Anyway, the point is: to thrive developers must keep moving, must continue to
+learn what's new, or they doom themselves into the sunless abyss of bygone
+technologies, where old, tired systems slowly sink, and become code legacy.
+
+=head2 Svelte a Claus
+
+With that in mind, it's no big surprise that Glugg played a lot with
+JavaScript frameworks in the last few years. L<Angular|https://angular.io/>, 
+L<React|https://react.dev/>, 
+L<Vue|https://vuejs.org/>, and a sundry
+others, he tried them like so many delicacies in a Christmas buffet. These
+days, his darling is L<Svelte|https://svelte.dev/>. It does much while keeping
+close to the standards, and has a general "Can Do" vibe that reminds him a lot
+of his favorite Bactrian language.
+
+While those JavaScript frameworks were born in the primordial tag soup of the
+browser, most of them now offer ways to write both frontend and backend in the
+same environment. React has L<Next|https://nextjs.org/>, 
+Vue has L<Nuxt|https://v2.nuxt.com/>, and Svelte has
+L<SvelteKit|https://kit.svelte.dev/>. Brings awesome possibilities for new
+projects. But, as Glugg could tell you, frontends come and go like so many
+toys of the year. But backends? Ah, backends are like traditions, encrusting
+themselves for generations, seldom modified, let alone replaced.
+
+=head2 The time of the year where the old touches the new
+
+But that doesn't faze Glugg at all. Even though this year he's hacking
+together a quick web interface to the gift wishlist database so that elves can
+easily consult and edit wishlists wherever they are. The database and its API
+are top-secret North Pole special sauces, so we can't really discuss them here
+without an ironclad NDA, but let's just drop some names like 'DBIx::Class' and
+'Dancer2', and leave it at that.
+
+So, how does Glugg would connect a Svelte frontend to a Dancer2 backend? 
+
+As it turns out, in many ways. Let's, in Christmas' true tradition, visit three of them.
+
+=head2 The ghost of HTML forms past
+
+The 
+first way to embrace the future is to, paradoxically, ignore it.
+Svelte takes pride in  degrading gracefully when invoked in a 
+JavaScript-less context. Which means that one can write HTML forms like they
+always did, and It Will Just Work (tm).
+
+For example, let's assume the supra-complex North Pole API service is reduced to the 
+following small Dancer2 mockup.
+
+    package NorthPole::API;
+    use Dancer2;
+
+    my $frontend_root_url = "http://localhost:5173";
+
+    my $db = {
+        cromedome => [
+            { name => 'Pony' },
+            { name => 'Cessna Skyhawk' },
+            { name => 'Hyperborean Huntsman Compendium' },
+        ]
+    };
+
+    get '/api/child/:child_name/wishlist' => sub {
+        my $name = route_parameters->get('child_name');
+        to_json $db->{$name};
+    };
+
+    post '/api/child/:child_name/add_gift' => sub {
+        my $name = route_parameters->get('child_name');
+
+        push $db->{$name}->@*, +{ name => body_parameters->get('new_gift') };
+
+        redirect "$frontend_root_url/child/$name/wishlist";
+    };
+
+    post '/api/child/:child_name/remove_gift' => sub {
+        my $child_name = route_parameters->get('child_name');
+        my $to_remove  = body_parameters->get('gift');
+
+        $db->{$child_name} =
+        [ grep { $_->{name} ne $to_remove } $db->{$child_name}->@* ];
+
+        redirect "$frontend_root_url/child/$child_name/wishlist";
+    };
+
+    true;
+
+Then a perfectly cromulent Svelte frontend could look like the following.
+
+    // in src/routes/child/[child_name]/wishlist/+page.js
+    const api_root_url = "http://localhost:5000";
+
+    export async function load({ params: { child_name} }) {
+        return {
+            api_root_url,
+            child_name,
+        };
+    }
+
+    // in src/routes/child/[child_name]/wishlist/+page.svelte
+    <script>
+        export let data;
+
+        let new_gift;
+
+        const gifts = fetch(
+            `${data.api_root_url}/api/child/${data.child_name}/wishlist`
+        ).then( doc => doc.json() );
+    </script>
+
+    <article>
+        <h1>Wishlist of {data.child_name}</h1>
+
+        <div class="gifts">
+            {#await gifts}
+                <progress class="circle"></progress>
+            {:then gifts}
+                {#each gifts as gift (gift.name)}
+                    <form 
+                        method="POST" 
+                        action={
+    `${data.api_root_url}/api/child/${data.child_name}/remove_gift`
+                        }
+                    >
+                        <div class="row">
+                            <input type="hidden" name="gift" value={gift.name} />
+                            <div class="max">{gift.name}</div>
+                            <button class="circle"><i>delete</i></button>
+                        </div>
+                    </form>
+                {/each}
+            {/await}
+        </div>
+
+        <form 
+            method="POST" 
+            action={`${data.api_root_url}/api/child/${data.child_name}/add_gift`}>
+            <div class="new_gift row">
+                <div class="field border max">
+                    <input 
+                        type="text" 
+                        name="new_gift" 
+                        placeholder="new gift" 
+                        bind:value={new_gift} />
+                </div>
+                <div>
+                    <button class="circle" disabled={!new_gift}><i>add</i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </article>
+
+    <style>
+        h1 {
+            margin-bottom: 0.5em;
+        }
+        .gifts {
+            margin-left: 2em;
+            margin-right: 3em;
+            margin-bottom: 2em;
+        }
+        .gifts .row {
+            margin-bottom: 0.5em;
+        }
+        .new_gift {
+            margin-left: 2em;
+            margin-right: 3em;
+        }
+    </style>
+
+
+And, as the younger generation would say, "boom, here it is".
+
+=for html <img style="width: 90%" src="/images/2023/dancer-and-svelte/svelte-dancer-1.png" />
+
+(Incidentally, Glugg uses L<beercss|https://www.beercss.com/> to spruce up
+the look of the app. After all, as a Christmas elf, if there is one thing he
+knows, is that neat, shiny wrappings are nothing to sneeze at.)
+
+=head2 The ghost of enhancement present
+
+The good thing with that first frontend page is that it 
+does everything we want in an old-fashioned way. The less good thing
+with it is that it does  everything we want in an old-fashioned way.
+Sure, having the form submit triggering a reload the page is 
+great for backward compatibility (and all the elves still using
+L<WWW::Mechanize> to interact with the page will appreciate it), but 
+younger elves are also expecting zippier interfaces. Updates of the page
+without those janky reloads.
+
+Well, what if Glugg told you you can have your fruitcake and eat it too?
+
+Svelte has a way to define form such that without JavaScript, it'll behave as
+a regular HTML form. And if JavaScript is around... well, then it can do
+something a little more special.
+
+For this version, to make things more convenient we alter the Dancer2 service
+to return the wishlist of the kid instead of a redirect.
+
+
+    post '/child/:child_name/add_gift' => sub {
+        my $name = route_parameters->get('child_name');
+
+        push $db->{$name}->@*, +{ name => body_parameters->get('new_gift') };
+
+        return to_json $db->{$name};
+    };
+
+    post '/child/:child_name/remove_gift' => sub {
+        my $child_name = route_parameters->get('child_name');
+        my $to_remove  = body_parameters->get('gift');
+
+        $db->{$child_name} =
+            [ grep { $_->{name} ne $to_remove } $db->{$child_name}->@* ];
+
+        return to_json $db->{$child_name};
+    };
+
+With that, we're going to change the C<script> block of the Svelte page.
+
+
+    <script>
+        import { enhance } from '$app/forms';
+        import { fade } from 'svelte/transition';
+
+        export let data;
+
+        let new_gift;
+
+        let gifts = [];
+
+        const loading = fetch(
+            `${data.api_root_url}/api/child/${data.child_name}/wishlist`
+            )
+            .then( doc => doc.json())
+            .then( g => gifts = g);
+
+        const submit_gift = () => ({result}) => {
+            gifts = result;
+        };
+    </script>
+
+And we're going to add two things to our HTML: a C<use:enhance={submit_gift}>
+to the C<form> tags, and a C<transition:fade> to the gift rows.
+
+		{#each gifts as gift (gift.name)}
+            <form 
+                method="POST" 
+                action={
+                    `${data.api_root_url}/api/child/${data.child_name}/remove_gift`
+                } 
+                use:enhance={submit_gift}>
+				<div class="row" transition:fade>
+				  <input type="hidden" name="gift" value={gift.name} />
+				  <div class="max">{gift.name}</div>
+				  <button class="circle"><i>delete</i></button>
+				</div>
+			</form>
+		{/each}
+
+With that, we don't reload the page if we're in a JavaScript-capable browser.
+Instead, we update the list of gifts in-place. Using a little fade in or fade
+out effect too, because as Glugg's slightly lisping friend would put it: "itch
+noth weally quweezmaz withouth a dasch oth pizzazz".
+
+=head2 The ghost of space age future
+
+The mechanism that we just saw works well for most cases. But what if we
+need... bigger guns? What if we have a heavier API, which requires more beefy
+magic behind the scene (think authentication, session information, and other
+devilish details)? Not a problem. Svelte provides the form manipulation tools
+we saw, but don't restrict us to it. We can elect to go as wild as turtledoves
+on the second day of Christmas. 
+
+For example, let's change our backend service look more RESTy, and let's
+equip it with an L<OpenAPI|https://www.openapis.org/> definition.
+
+
+    get '/child/:child_name/wishlist' => sub {
+        my $name = route_parameters->get('child_name');
+        to_json $db->{$name};
+    };
+
+    put '/child/:child_name/wishlist' => sub {
+        my $name = route_parameters->get('child_name');
+
+        warn "adding new gift";
+
+        push $db->{$name}->@*, +{ name => body_parameters->get('gift') };
+
+        return to_json $db->{$name};
+    };
+
+    del '/child/:child_name/wishlist' => sub {
+        my $child_name = route_parameters->get('child_name');
+        my $to_remove  = body_parameters->get('gift');
+
+        warn "removing gift\n";
+
+        $db->{$child_name} =
+        [ grep { $_->{name} ne $to_remove } $db->{$child_name}->@* ];
+
+        return to_json $db->{$child_name};
+    };
+
+    get '/openapi.json' => sub {
+        to_json {
+            openapi => '3.0.1',
+            servers => [
+                { url => 'http://localhost:5000/api' }
+            ],
+            paths => {
+                '/child/{child_name}/wishlist' => {
+                    parameters => [
+                        { name => 'child_name', in => 'path' }    
+                    ],
+                    get => {
+                        operationId => 'get_child_wishlist',
+                    },
+                    put => {
+                        operationId => 'add_to_child_wishlist',
+                        parameters => [
+                            { name => 'gift', in => 'body' }    
+                        ],
+                    },
+                    delete => {
+                        operationId => 'remove_from_child_wishlist',
+                        parameters => [
+                            { name => 'gift', in => 'body' }    
+                        ],
+                    }
+                }
+            }
+        }
+    }; 
+
+(Note that
+for this we
+could have used L<Dancer2::Plugin::OpenAPIRoutes>, or
+L<Dancer2::Plugin::Swagger2>, or even made puppy eyes at Yanick to port
+L<Dancer::Plugin::Swagger> to Dancer.)
+
+Then one of the many things we could do is to use the npm package 
+L<openapi-client-axios|https://www.npmjs.com/package/openapi-client-axios>
+which reads that OpenAPI definition file right off our backend and create
+the API object straight out of it. And with that the Svelte page becomes the
+following.
+
+
+    <script>
+        import { fade } from 'svelte/transition';
+
+        import OpenAPIClientAxios from "openapi-client-axios";
+
+        const api = new OpenAPIClientAxios({
+            definition: "/api/openapi.json",
+        });
+        api.init();
+
+        export let data;
+        let new_gift;
+
+        let gifts = [];
+
+        const loading = api.getClient()
+            .then( client => client.get_child_wishlist(data.child_name) )
+            .then( ({data}) => gifts = data );
+
+        const submit_gift = () => ({result}) => {
+            gifts = result;
+        };
+
+        async function add_gift() {
+            const client = await api.getClient();
+            await client.add_to_child_wishlist(data.child_name,{gift: new_gift});
+            gifts = [ ...gifts, { name: new_gift }];
+        }
+
+        const remove_gift = (gift) => async () => {
+            const client = await api.getClient();
+            await client.remove_from_child_wishlist(data.child_name,{gift});
+            gifts = gifts.filter( ({name}) => name !== gift );
+        }
+
+    </script>
+
+    <article>
+        <h1>Wishlist of {data.child_name}</h1>
+
+        <div class="gifts">
+        {#await loading}
+            <progress class="circle"></progress>
+        {:then}
+            {#each gifts as gift (gift.name)}
+                    <div class="row" transition:fade>
+                        <input type="hidden" name="gift" value={gift.name} />
+                        <div class="max">{gift.name}</div>
+                        <button class="circle" 
+                            on:click={remove_gift(gift.name)}>
+                            <i>delete</i>
+                        </button>
+                    </div>
+            {/each}
+        {/await}
+        </div>
+
+            <div class="new_gift row">
+                <div class="field border max">
+                    <input 
+                        type="text" 
+                        name="new_gift" 
+                        placeholder="new gift" 
+                        bind:value={new_gift} />
+                </div>
+                <div>
+                    <button class="circle" 
+                        disabled={!new_gift}
+                        on:click={add_gift}><i>add</i></button>
+                </div>
+            </div>
+    </article>
+
+=head2 A merry framework to us all; Glugg love them, everyone.
+
+So, what's the takeaway of today's article? Perhaps that old recipes bring
+comfort, but that there is nothing wrong with spicing it up with new flavors
+now and then.
+
+Merry Xmas!
+

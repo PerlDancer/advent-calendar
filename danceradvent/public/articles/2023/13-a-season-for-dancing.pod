@@ -1,0 +1,137 @@
+=head1 The Twelve Days of Dancer, 2023 Edition
+
+Well, we made it another year! 2023 is about to ride off into the sunset,
+and 2024 is just around the corner. It's been a while since we've done
+one of these, and the Dancer Core Team thought that with the exciting
+year we've had, how better to wrap up the year with pretty paper and a
+bow than to celebrate with the 2023 installment of the Twelve Days of
+Dancer!
+
+=head2 State of the Dancer
+
+This has been an exciting year for Dancer2, and another lap around the
+sun for Dancer(1).
+
+=head3 Dancer2 1.0.0
+
+The big news of 2023 is the release of Dancer2 1.0.0. This is perhaps the
+most exciting release of Dancer2 since it first found its way into the
+Perl community; possibly ever!
+
+With this release, we're very publicly planting the flag that Dancer2 is
+stable and ready for the big time. But anyone who's used Dancer2 in the
+last 6 or 7 years already knew that, didn't you? :-)
+
+So, why now? What happened? Let's take a peek behind the curtain and see
+how this all happened.
+
+=head3 July in Toronto
+
+On a warm, sunny July day in Toronto, three core team members (Sawyer,
+Yanick, and Jason), found themselves in close proximity for the first
+time in a long while. Seizing this rare opportunity, they decided to
+commandeer a table near the conference's registration area. Their
+mission? To chart the future course of Dancer2's journey towards greater
+heights in the world of web development. Or something like that.
+
+GeekRuthie, a long time vocal supporter and contributor to Dancer and
+its community, also happened to be at the conference, was able to join
+the meeting to help shape what the future world of
+Dancer2 dominance would look like.
+
+We cogitated and brainstormed and
+schemed and marshalled our resources, and laid out what the next release
+of Dancer2 should look like, lined up our troops, and sprang into action.
+
+=head3 But what to call it?
+
+As we hammered out details of the next release, the question arose of
+what version number to use. Should it be 0.500000? 0.450000? 123456?
+The more we talked, the further away that answer became.
+
+It was then Yanick came up with the most amazing idea:
+I<< the next version should be B<1.0.0>. >>
+
+Dancer2 had been
+stable for years at that point. We were spending too much time on
+determining a version number, when really we could just jump to
+1.0.0, go with a simpler versioning scheme that everyone understood
+(including us!), and giving us a few extra clock cycles to spend on
+more important things (like dinner).
+
+We ironed out a few more details,
+and once the conference wrapped up, the hard work began. It took
+longer than we had originally anticipated, but finally, Dancer2
+1.0.0 was unleashed upon an unsuspecting world.
+
+The community feedback on this has been amazing, and exceeded our
+wildest expectations. Thank you so much for your support and glowing
+reception of this release!
+
+=head3 New core member!
+
+The meeting in Toronto directly led to the GeekRuthie joining the
+Dancer Core Team. We're excited to have her as part of the team;
+Ruth's software development and social skills, plus her great ideas,
+are a wonderful, welcomed addition to the team.
+
+=head3 Dancer(1)
+
+David Precious (bigpresh) continues to oversee Dancer(1). While it
+requires minimal attention, allowing more focus on Dancer2, we remain
+committed to its maintenance. We'll keep the community updated on any
+significant changes to Dancer(1).
+
+=head2 Questions for the Community
+
+We have a few questions and invitations for our community:
+
+=over
+
+=item * Porting of Dancer(1) Plugins
+
+We have a wishlist of Dancer plugins to be ported to Dancer2 on our
+L<wiki|https://github.com/PerlDancer/Dancer2/wiki/Wishlist>.
+
+Are you interested in tackling any of these? Let us know and we'll
+offer whatever assistance and moral support that we can!
+
+If there's more you'd like to see ported, we encourage you to add to the
+wiki.
+
+=item * GitHub Discussions
+
+With the launch of Dancer2 1.0.0, we also enabled GitHub Discussions for
+Dancer2. Do you find this to be valuable? Would you prefer to stick to IRC
+and the mailing list? Are there other avenues of communication (Slack,
+Discord, etc.) you'd like us to pursue?
+
+=item * Future Direction
+
+Is there something you'd like to see in Dancer2 that we haven't addressed?
+We'd love to hear about it!
+
+Open an issue on GitHub, post to our mailing
+list, or start a discussion on GitHub. Our goal is to best serve the needs
+of our community, and we rely on your feedback and ideas to make that
+happen.
+
+=back
+
+=head2 Let's Dance!
+
+Grab that framework and bust a move on the dancefloor! Enjoy our carefully
+curated selection of articles, and grow your Dancer toolbox just a bit
+more. We hope these inspire you to further engage and participate in
+this wonderful community.
+
+=head2 Author
+
+This article has been written by Jason Crome (CromeDome) for the Twelve Days
+of Dancer.
+
+=head2 Copyright
+
+No copyright retained. Enjoy.
+
+Jason A. Crome / CromeDome
