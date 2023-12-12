@@ -46,7 +46,12 @@ hook 'before' => sub {
 
 get '/' => sub {
     my $redirect_year = vars->{current_year};
-    while (! grep { $_->{viewable} } @{  _articles_viewable($redirect_year) }) {
+    # Starting with this year, go back until we find a year that has
+    # an article for the 24th (even if it's not yet viewable, because
+    # we could be early-December on a Twelve Days of Dancer year where
+    # we only have articles from 13th-24th, but we still want to go to
+    # this year's page so it's clear we do have upcoming articles)
+    while (!_article_exists($redirect_year, 24)) {
         $redirect_year--;
     }
     debug "going to $redirect_year";
