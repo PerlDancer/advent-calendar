@@ -74,7 +74,7 @@ HTML, and with this setup, you just specify where that module of helpers lives i
 did above.  Then, write your code, like so:
 
    package MyApp::HandlebarsHelpers;
-   use parent Dancer::Template::Handlebars::Helpers;
+   use parent Dancer2::Template::Handlebars::Helpers;
 
    sub shout :Helper {
       my( $context, $text ) = @_;
